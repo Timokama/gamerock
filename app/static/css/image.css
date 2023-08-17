@@ -1,0 +1,20 @@
+.image {
+  border-radius: 50%;
+  width: 50px;
+  height: auto;
+}
+
+figure {
+  float: left;
+  padding: 1px;
+  margin: auto;
+  height: 50px;
+}
+
+figcaption {
+  background-color: #fff;
+  color: black;
+  font-style: italic;
+  padding: 1px;
+  font-size: 18px;
+}

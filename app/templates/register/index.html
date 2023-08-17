@@ -1,0 +1,19 @@
+{% extends 'base_f/base.html' %}
+{% block content %}
+<span style="justify-content: center;" class="title"><h1>{% block title %}Registered Members{% endblock %}</h1></span>
+<br> 
+    <div id="myUL" class="register" style="justify-content: center;">    
+        {% for register in user.family %}
+            <li class="content">
+            <p>{{ register.id }}: {{ register.firstname}} {{ register.lastname }} </br>            
+              Created at: {{ register.created_at }}</br> </p>
+            <p></br>
+            <hr>
+            <a href="{{url_for('register.deposit', depo_id = register.id)}}">
+                <button>Profile</button>
+            </a>
+            </li>
+        {% endfor %}
+    </div>
+
+{% endblock %}

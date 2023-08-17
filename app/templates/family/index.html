@@ -1,0 +1,18 @@
+{% extends 'base_f/base.html' %}
+
+{% block content %}
+<span class="title"><h1>{% block title %} Family {% endblock %}</h1></span>
+<div class="content">
+        <div id="myUL">
+            {% for father in user.family %}
+            <li class="register">
+                <p>Name:<a href="{{url_for('family.family', depo_id = father.id)}}">{{ father.firstname}} {{ father.lastname }}</a></p>
+                <p>{{father.id_number}}</p>
+                <div class="content">
+                    <p>Created at: {{ father.created_at }}</p></br>
+                </div>
+            </li>
+            {% endfor %}
+        </div><hr>
+</div>
+{% endblock %}

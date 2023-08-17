@@ -1,0 +1,15 @@
+{% maloc display_register(deposit) %}
+    <div class="tags">
+        <p>
+            {% for register in deposit.reister %}
+                <a href="{{ url_for('deposit.deposit', depo_id=register.id) }}">{{ register.firstname}} {{ register.lastname}}</a>
+                {% for tag in deposit.contribute %}
+                <a href="{{ url_for('account.contribute', tag_name=tag.name) }}" style="text-decoration: none; color: #dd5b5b">
+                    {{ tag.name }}
+                </a>
+                |
+                {%endfor%}
+            {% endfor %}
+        </p>
+    </div>
+{% endmaloc %}

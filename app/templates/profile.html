@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<figure><img src="/static/photos/user.jpg" alt="user" style="border-radius: 50%; width: 50px; height: auto; float:right;"><figcaption>{{ user }}<br></figcaption></figure>
+<h1 class="title">
+  Welcome, {{ name }}!
+  <br>
+</h1>
+<div class="content">
+Email: {{ email }}<br>
+Contact: {{ contact }} <br>
+</div></b>
+<span class="title"><h1 style="color: black;">{% block title %} Memeber Registration {% endblock %}</h1></span>
+    <div>
+        
+      <hr>
+
+        <a href="{{ url_for('register.index')}}"><button>Members </button></a> <a href="{{url_for('account.index')}}"><button>Contribution Accounts</button></a><br><br>
+        <a href="{{url_for('register.create')}}"><button>New Member</button></a>
+        <a href="{{url_for('account.cont')}}"><button>New Contribution</button></a>
+    </div>
+{% endblock %}

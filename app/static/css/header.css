@@ -1,0 +1,7 @@
+/* Header style */
+header {
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+  height: 90px;
+  width: 100%;
+}

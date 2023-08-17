@@ -1,0 +1,40 @@
+{% extends 'base_f/base.html' %}
+
+{% block content %}
+    <h1 style="width: 100%">{% block title %} Add New Member {% endblock %}</h1>
+    <form method="post">
+        <p>
+            <label for="firstname">First Name:</label>
+            <input type="text" name="firstname"
+                   placeholder="First Name">
+            </input>
+        </p>
+
+        <p>
+            <label for="lastname">Last Name:</label>
+            <input type="text" name="lastname"
+                   placeholder="Last Name">
+            </input>
+        </p>
+
+        <p>
+            <label for="id_number">ID:</label>
+            <input type="number" name="id_number"
+                   placeholder="id number">
+            </input>
+        </p>
+
+        <p>
+            <label for="date_of_birth">Date of birth:</label>
+            <input type="date" name="date_of_birth"
+                   placeholder="Date of birth">
+            </input>
+        </p>
+
+        <p>
+            <!-- <button type="submit"><a href="{{url_for('register.index')}}">Save and close </a></button> -->
+            <button type="submit">Save</button>
+
+        </p>
+    </form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% from 'macros.html' import display_tags %}
+{% extends 'base_f/base.html' %}
+{% block content %}
+<span class="title"><h1>{% block title %} The Details Page {% endblock %}</h1></span>
+<div class="content">
+    <div class="live-search-list" type="None">
+            <div class="register">
+            <p class="title">
+                {{ register.firstname}} {{ register.lastname }}
+            </p>
+            <div class="content">
+                
+                Date of birth {{ register.date_of_birth }}<br>
+                Date created: {{ register.created_at }}<br>
+                <br>
+                Ksh. {{ total }}</br></dr>
+                <div class="content">
+                {% for deposit in deposit %}
+                {{ display_tags(deposit)}}<br></br>
+                {% endfor %}
+                </div>
+                <hr>                
+            </div>
+            </div>
+    </div>
+</div>
+{% endblock %}

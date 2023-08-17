@@ -1,0 +1,24 @@
+{% from 'macros.html' import display_tags %}
+{% extends 'base_f/base.html' %}
+
+{% block content %}
+<span class="title"><h1>{% block title %} Deposits {% endblock %}</h1></span>
+
+<div id="myUL" class="register">
+        {% for father in register %}
+        <div class="content" id="myUL">
+            <li>    
+                <p>Name:<a href="{{url_for('deposit.deposit', depo_id = father.id)}}">{{ father.firstname}} {{ father.lastname }}</a></p>
+                <form action="/deposit" method="post">
+                <div class="content">
+                {%for deposit in father.depo_id %}
+        
+                {{ display_tags(deposit) }}
+                {%endfor%}
+            </form>
+            </div>
+            </li>
+        </div>
+        {%endfor%}
+    </div>
+{% endblock %}

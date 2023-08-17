@@ -1,0 +1,102 @@
+/* static/css/style.css */
+h2 {
+    width: 100;
+   }
+.title {
+    margin: 5px;
+    }
+
+.content {
+    color: black;
+    width: 500px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    }
+
+.contribute {
+    color: black;
+    width: 500px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    }
+
+.details {
+    color: black;
+    width: 500px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    }
+.register {
+    flex: 20%;
+    width: 1000px;
+    padding: 10px;
+    margin: 5px;
+    background-color: #f3f3f3;
+    inline-size: 100%;
+    }
+.title a {
+    color: #00a36f;
+    text-decoration: none;
+}
+nav a {
+    color: #d64161;
+    font-size: 2em;
+    margin-left: 50px;
+    text-decoration: none;
+    }
+
+.vl {
+  border-left: 4px solid black;
+  height: auto;
+  position: absolute;
+  left: 20px;
+  margin-left: -3px;
+  top: 0;
+}
+:root {
+    --bg-color: white;
+    --main-color: coral;
+    --secondary-color: lavenderblush;
+}
+
+* {
+    box-sizing: border-box;
+}
+body {
+    
+    height: auto;
+    color: var(--main-color);
+    font-family: sans-serif;
+    display: grid;
+    justify-content: center;
+}
+
+label {
+    display: block;
+    color: black;
+    font-size: medium;
+}
+
+label span {
+    min-width: 1in;
+    display: inline-block;
+}
+
+
+input {
+    border: 1px solid var(--main-color);
+    color: black;
+    padding: 0.3em;
+}
+
+.button {
+    background-color: transparent;
+    color: var(--main-color);
+    cursor: pointer;
+}

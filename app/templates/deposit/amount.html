@@ -1,0 +1,31 @@
+{% extends 'base_f/base.html' %}
+
+{% block content %}
+    <h1 style="width: 100%">
+        {% block title %} Enter amount
+        {% endblock title  %}
+    </h1>
+    <body>
+        <form method="post">
+        <p>
+            <label for="amount">Ksh:</label>
+            <input type="number" name="amount"
+                   placeholder="Ksh.">
+            </input>
+        </p>
+        <div class="field">
+            {% for cont in user.contribute %}
+            <label>
+                <input type="checkbox"id="myCheck" name="name" value="{{cont.id}}" >{{cont.name}}
+            </label>
+                {% endfor %}
+        </div>
+            
+        <p>
+            <button type="submit">Send</button>
+            
+            <button><a href="{{url_for('register.deposit', depo_id=register.id)}}">cancel</a></button>
+        </p>
+    </form>
+    </body>
+    {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base_f/base.html' %}
+
+<span class="title"><h1>{% block title %} Reports {% endblock %}</h1></span>
+
+{% block content %}
+
+    <div class="content" style="color: black;">
+      Name: {{contribute.name}}<br>
+      Total amount Ksh: {{total}} 
+      <br>
+      Total Members: {{ members }}
+  </div>
+    <a href="{{ url_for('reports.index')}}"><button>Back</button></a>
+    </div>
+{% endblock %}

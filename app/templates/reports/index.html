@@ -1,0 +1,20 @@
+{% extends 'base_f/base.html' %}
+
+<span class="title"><h1>{% block title %} Reports {% endblock %}</h1></span>
+
+{% block content %}      
+  <div class="content" id="myUL">
+    {% for contribute in user.contribute %}
+    <li class="content">
+    <p><a href="{{url_for('reports.reports', depo_id=contribute.id)}}">{{ contribute.name }}</a></p>
+  </li>
+    {% endfor%}
+  </div>
+  <div class="content" style="color: black;">
+    Total amount Ksh: {{total}} 
+    <br>
+    Total Members: {{ members }}
+</div>
+    <a href="{{ url_for('register.index')}}"><button>Home</button></a>
+    </div>
+{% endblock %}
