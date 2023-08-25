@@ -2,7 +2,7 @@
 {% block content %}
 <span style="justify-content: center;" class="title"><h1>{% block title %}Registered Members{% endblock %}</h1></span>
 <br> 
-    <div id="myUL" class="register" style="justify-content: center;">    
+    <div id="myUL" class="content" style="justify-content: center;">    
         {% for register in user.family %}
             <li class="content">
             <p>{{ register.id }}: {{ register.firstname}} {{ register.lastname }} </br>            

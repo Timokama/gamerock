@@ -11,29 +11,32 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
 </head>
 <body>
-    <div class="navbar-end" style="justify-content: space-between;">
+</header>
+    <nav style="justify-content: center; font-size: medium;">
         
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('main.profile') }}" class="navbar-item">
-            Profile
+            <u style="font-size: medium;">Profile</u>
         </a>
         {% endif %}
         {% if not current_user.is_authenticated %}
         <a href="{{ url_for('auth.login') }}" class="navbar-item">
-            Login
+        <u style="font-size: medium;">Login</u>
         </a>
         <a href="{{ url_for('auth.signup') }}" class="navbar-item">
-        Sign Up
+        <u style="font-size: medium;">Sign Up</u>
         </a>
         {% endif %}
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('auth.logout') }}" class="navbar-item" style="float: right; display: inline;">
-        Logout
+        <u style="font-size: medium;">Logout</u>
         </a>
         {% endif %}
-    </div>
+    </nav>
+</header>
+<hr>
+    {% extends "bootstrap/base.html" %}
     <div class="content">
-        {% extends "bootstrap/base.html" %}
         <div class="container has-text-centered">
            {% block content %}
            {% endblock %}

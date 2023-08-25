@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+{% endblock %} 
 <span class="title"><h1>{% block title %} Welcome to Gamerock {% endblock %}</h1></span>
 
 {% block content %}
-    <body>
+    <body style="justify-content: center;">
         <p style="color: green;">Gamerock</p>
         <img src="/static/photos/africa.jpg" alt="Gamerock" style="height: 450px; width: 450px;">
         <p style="color: black;">
@@ -10,9 +14,11 @@
         Never let yourself get lost in the crowd then, or buried in oblivion stand out. Be conspirous at all cost. Make yourself a magnet of attention by apperaring larger, more colorful, more mysterious than the bland and timid masses.
         </p>
         <hr>
-        <p>Name: {{ name }}</p>
-        <p>Email: {{ email }} </p>
-        <p>Contact: {{ contact }} </p>
+        <div class="content">
+        Name: {{ name }}<br>
+        Email: {{ email }}<br> 
+        Contact: {{ contact }} <br>
+        </div>
         <a href="{{url_for('register.index')}}">Open</a><br>
     </body>
     {% endblock %}

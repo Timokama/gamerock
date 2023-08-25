@@ -1,9 +1,14 @@
 {% extends "base.html" %}
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+{% endblock %}
 
 {% block content %}
-<figure><img src="/static/photos/user.jpg" alt="user" style="border-radius: 50%; width: 50px; height: auto; float:right;"><figcaption>{{ user }}<br></figcaption></figure>
+
+<figure><img src="/static/photos/user.jpg" alt="user" style="border-radius: 50%; width: 50px; height: auto; float:right;"><figcaption>{{ user }}  </figcaption></figure>
 <h1 class="title">
-  Welcome, {{ name }}!
+  <b>Welcome, {{ name }}!</b>
   <br>
 </h1>
 <div class="content">

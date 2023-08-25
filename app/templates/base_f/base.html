@@ -13,8 +13,8 @@
         
     </head>
       
-    <body>
-        <header class=" header">
+    <body >
+        <header class=" header" style="background-color: rgb(137, 135, 235);">
         <nav style="justify-content: space-between;">
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('auth.logout') }}" class="navbar-item" style="float: right; display: inline; color: black; font-size: 20px;">
@@ -27,21 +27,23 @@
             <a href="{{ url_for('account.cont') }}" class="navbar-item" style="float: right; display: inline; color: black; font-size: 20px;">
                 <u>New contribution</u>
             </a>
-            <a href="{{ url_for('main.profile') }}"><figure><img class="image" src="/static/photos/user.jpg" alt="New Member" style="display:inline;margin:3px;"><figcaption>Profile</figcaption></figure></a>
-            <a href="{{url_for('register.create')}}"><figure><img class="image" src="/static/photos/add-user-icon.png" alt="New Member" style="display:inline;margin:3px;"> <figcaption>New member</figcaption></figure></a>
-            <a href="{{ url_for('register.index')}}"><figure><img class="image" src="/static/photos/register.png" alt="Register" style="display:inline;margin:3px; "><figcaption>Register</figcaption></figure></a>
-            <a href="{{ url_for('deposit.index')}}"><figure><img class="image" src="/static/photos/deposits.jpg" alt="Deposits" style="display:inline;margin:3px;height: 51px;"><figcaption>Deposits</figcaption></figure></a>
-            <a href="{{ url_for('family.index')}}"><figure><img class="image" src="/static/photos/family.jpg" alt="Family" style="display:inline;margin:3px;"><figcaption>Family</figcaption></figure></a>
-            <a href="{{ url_for('reports.index')}}"><figure><img class="image" src="/static/photos/reports-prvw.png" alt="Reports" style="display:inline;margin:3px;height: 51px;"><figcaption>Reports</figcaption></figure></a>
+            <a href="{{ url_for('main.profile') }}"><figure><img class="image" src="/static/photos/user.jpg" alt="New Member" style="display:inline;margin:3px;"><figcaption style="background-color:silver ;">Profile</figcaption></figure></a>
+            <a href="{{url_for('register.create')}}"><figure><img class="image" src="/static/photos/add-user-icon.png" alt="New Member" style="display:inline;margin:3px;"> <figcaption style="background-color:silver ;">New member</figcaption></figure></a>
+            <a href="{{ url_for('register.index')}}"><figure><img class="image" src="/static/photos/register.png" alt="Register" style="display:inline;margin:3px; "><figcaption style="background-color:silver ;">Register</figcaption></figure></a>
+            <a href="{{ url_for('deposit.index')}}"><figure><img class="image" src="/static/photos/deposits.jpg" alt="Deposits" style="display:inline;margin:3px;height: 51px;"><figcaption style="background-color:silver ;">Deposits</figcaption></figure></a>
+            <a href="{{ url_for('family.index')}}"><figure><img class="image" src="/static/photos/family.jpg" alt="Family" style="display:inline;margin:3px;"><figcaption style="background-color:silver ;">Family</figcaption></figure></a>
+            <a href="{{ url_for('reports.index')}}"><figure><img class="image" src="/static/photos/reports-prvw.png" alt="Reports" style="display:inline;margin:3px;height: 51px;"><figcaption style="background-color:silver ;">Reports</figcaption></figure></a>
 
             <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
             <script type="text/javascript" src="{{ url_for('static', filename='js/search.js')}}"></script>
         </nav>
         </header>
         <hr>
+        {% extends "bootstrap/base.html" %}
         <div class="content">
-            {% extends "bootstrap/base.html" %}
+        <div class="content">
             {% block content %} {% endblock %}
+        </div>
         </div>
     </body>
 </html>

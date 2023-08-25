@@ -5,8 +5,8 @@
 #myInput {
   background-image: url('search.jpg');
   background-position: left;
-
   background-repeat: no-repeat;
+  float:none;
   width: 50%;
   font-size: 16px;
   padding: 10px 20px 12px 40px;

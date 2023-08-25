@@ -112,7 +112,6 @@ def edit(depo_id):
     depo = Deposit.query.filter_by(reg_id=depo_id).order_by(Deposit.id.desc()).first_or_404()
     if request.method == 'POST':
         depo.amount = request.form['amount']
-            
         db.session.add(depo)
         db.session.commit()
         

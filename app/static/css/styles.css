@@ -1,7 +1,7 @@
 :root {
     --bg-color: white;
     --main-color: coral;
-    --secondary-color: lavenderblush;
+    --secondary-color: rgb(164, 212, 31);
 }
 
 * {
@@ -11,7 +11,7 @@
 
 body {
     background-color: #e0bbbb;
-    color: white;
+    color: rgb(0, 0, 0);
     }
     
     a {
