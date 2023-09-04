@@ -14,7 +14,6 @@ class Register(db.Model):
     child = db.relationship('Child', backref='child')
     depo_id = db.relationship('Deposit', backref='register')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
     contribute = db.relationship('Contribute', secondary=cont_reg, backref='register') 
     def __repr__(self):
         return f'<Member {self.firstname}>'

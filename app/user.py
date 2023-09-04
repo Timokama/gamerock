@@ -9,3 +9,4 @@ class User(UserMixin, db.Model):
     contact = db.Column(db.String(20))
     contribute = db.relationship('Contribute', backref='user')
     family = db.relationship('Register', backref='user')
+    image = db.relationship('Images', backref='user')

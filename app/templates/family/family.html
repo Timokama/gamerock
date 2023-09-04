@@ -1,5 +1,8 @@
 {% extends 'base_f/base.html' %}
-
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
 {% block content %}
 <div class="register" style="color: black;">
     <span class="title"><h1>{% block title %} {{ register.firstname }}'s Family {% endblock %}</h1></span>
@@ -8,7 +11,7 @@
     <a href="{{url_for('register.deposit', depo_id = register.id)}}">
         <button>Profile</button>
     </a>
-    <form method="POST" style="float: right;"
+    <form method="POST" style="float:right;"
             action="{{ url_for('family.delete_family',
                                 depo_id = register.id) }}">
             <input type="submit" value="Delete Family"

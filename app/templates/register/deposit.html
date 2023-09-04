@@ -1,5 +1,8 @@
 {% extends 'base_f/base.html' %}
-
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
 {% block content %}
 
 <span class="title"><h1>{% block title %}{% endblock %}</h1></span>
@@ -24,6 +27,7 @@
         </div>
         <a href="{{ url_for('deposit.amount', depo_id=register.id)}}"><button >Enter amount</button></a>
         <a href="{{ url_for('register.edit', depo_id=register.id) }}"><button>edit amount</button><br></a>
+        <a href="{{url_for('deposit.deposit', depo_id=register.id)}}"><button>Deposits</button></a>
         <a href="{{url_for('family.family', depo_id=register.id)}}"><button>family</button></a>
         <hr>
     </div>

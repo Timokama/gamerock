@@ -5,8 +5,15 @@
 {% endblock %}
 
 {% block content %}
-
-<figure><img src="/static/photos/user.jpg" alt="user" style="border-radius: 50%; width: 50px; height: auto; float:right;"><figcaption>{{ user }}  </figcaption></figure>
+{% if image_list|length == 0 %}
+  <p>Add some Images to the Gallery</p>
+  {% else %}
+  {% for image in image_list %}
+<figure><img style="height: 100px;justify-content: center;" src="data:;base64,{{image}}" alt="user"><figcaption>{{ user }}  </figcaption></figure>
+  {%endfor%}
+  {%endif%}
+  <br><br><br>
+  
 <h1 class="title">
   <b>Welcome, {{ name }}!</b>
   <br>
@@ -15,7 +22,7 @@
 Email: {{ email }}<br>
 Contact: {{ contact }} <br>
 </div></b>
-<span class="title"><h1 style="color: black;">{% block title %} Memeber Registration {% endblock %}</h1></span>
+<span class="title"><h1 style="color: black;">{% block title %} GAMEROCK REGISTRATION {% endblock %}</h1></span>
     <div>
         
       <hr>

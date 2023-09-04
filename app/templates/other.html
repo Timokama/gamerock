@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+{% endblock %}
+
+{% block content %}
+<form enctype="multipart/form-data" method="POST">
+  <input name="image" type="file"/>
+  <input type="submit"/>
+</form>
+
+{% endblock%}

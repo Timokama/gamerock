@@ -34,12 +34,13 @@ h2 {
     }
 .register {
     flex: 20%;
-    width: 1000px;
+    width: 100%;
     padding: 10px;
     margin: 5px;
     background-color: #f3f3f3;
     inline-size: 100%;
     }
+    
 .title a {
     color: #00a36f;
     text-decoration: none;

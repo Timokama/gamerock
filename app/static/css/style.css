@@ -14,8 +14,8 @@ body {
     color: var(--main-color);
     font-size: 1em;
     font-family: sans-serif;
-    display: flex;
-    justify-content: center;
+    display: block;
+    justify-content:center;
 }
 
 h2 {

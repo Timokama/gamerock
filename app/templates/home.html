@@ -6,9 +6,9 @@
 <span class="title"><h1>{% block title %} Welcome to Gamerock {% endblock %}</h1></span>
 
 {% block content %}
-    <body style="justify-content: center;">
+    <body>
         <p style="color: green;">Gamerock</p>
-        <img src="/static/photos/africa.jpg" alt="Gamerock" style="height: 450px; width: 450px;">
+        <img src="/static/photos/africa.jpg" alt="Gamerock" style="height: 450px; width: 450px; justify-content: center; display: flex;">
         <p style="color: black;">
         Court attention at all cost Everything is judge by its appearance, What is unseen counts for nothing.
         Never let yourself get lost in the crowd then, or buried in oblivion stand out. Be conspirous at all cost. Make yourself a magnet of attention by apperaring larger, more colorful, more mysterious than the bland and timid masses.
@@ -19,6 +19,6 @@
         Email: {{ email }}<br> 
         Contact: {{ contact }} <br>
         </div>
-        <a href="{{url_for('register.index')}}">Open</a><br>
+        <a href="{{url_for('register.index')}}"><button>Open</button></a><br>
     </body>
     {% endblock %}

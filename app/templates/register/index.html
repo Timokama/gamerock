@@ -1,4 +1,8 @@
 {% extends 'base_f/base.html' %}
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
 {% block content %}
 <span style="justify-content: center;" class="title"><h1>{% block title %}Registered Members{% endblock %}</h1></span>
 <br> 
