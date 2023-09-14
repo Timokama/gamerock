@@ -4,12 +4,13 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 {% endblock %}
 {% block content %}
-<span style="justify-content: center;" class="title"><h1>{% block title %}Registered Members{% endblock %}</h1></span>
+<span class="title"><h1>{% block title %}Registered Members{% endblock %}</h1></span>
 <br> 
-    <div id="myUL" class="content" style="justify-content: center;">    
+    <div id="myUL" class="content">
         {% for register in user.family %}
             <li class="content">
-            <p>{{ register.id }}: {{ register.firstname}} {{ register.lastname }} </br>            
+            <p>{{ register.id }}: {{ register.firstname}} {{ register.lastname }} </br>
+              ID number: {{ register.id_number }} </br>
               Created at: {{ register.created_at }}</br> </p>
             <p></br>
             <hr>

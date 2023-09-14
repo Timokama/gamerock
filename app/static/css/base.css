@@ -13,6 +13,7 @@ h2 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
     }
 
 .contribute {
@@ -23,6 +24,12 @@ h2 {
     flex-direction: row;
     flex-wrap: wrap;
     }
+.contact {
+    display: inline-block;
+    justify-content: center;
+    margin-left: 45%;
+    padding: auto;
+}
 
 .details {
     color: black;

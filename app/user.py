@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
 class User(UserMixin, db.Model):
@@ -10,3 +11,15 @@ class User(UserMixin, db.Model):
     contribute = db.relationship('Contribute', backref='user')
     family = db.relationship('Register', backref='user')
     image = db.relationship('Images', backref='user')
+
+    @property
+    def passwords(self):
+        raise AttributeError('passwordis not a readable attribute!')
+    
+    @passwords.setter
+    def passwords(self, password):
+        self.password = generate_password_hash(password)
+
+    def verify_passwords(self, password):
+        return check_password_hash(self.password, password)
+

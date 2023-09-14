@@ -34,43 +34,15 @@
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" id="myInput" type="password" name="password" placeholder="Password">
+                    <input class="input is-large" id="myPasswd" type="password" name="password" placeholder="Password">
                 </div>
             </div>
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" id="myInput2" type="password" name="confirm-password" placeholder="Confirm Password">
-                </div>
-            </div>
-            <script>
-                function matchPassword() {
-                  var pw1 = document.getElementById("password");
-                  var pw2 = document.getElementById("confirm-password");
-                  if(pw1 != pw2)
-                  {	
-                      alert("Passwords did not match");
-                  } else {
-                      alert("Password created successfully");
-                  }
-                }
-            </script>
-            <input type="checkbox" onclick="myFunction()">Show Password
+            
+            <input type="checkbox" onclick="myPassword()">Show Password
 
-            <script>
-            function myFunction() {
-            var x = document.getElementById("myInput");
-            var y = document.getElementById("myInput2");
-            if (x.type === "password" && y.type === "password") {
-                x.type = "text";
-                y.type = "text";
-            } else {
-                x.type = "password";
-                y.type = "password";
-            }
-            }
-            </script><br>
+            <script type="text/javascript" src="{{ url_for('static', filename='js/showPassword.js')}}"></script><br>
 
-            <button class="button is-block is-info is-large is-fullwidth" onclick="matchPassword()">Sign Up</button>
+            <button class="button is-block is-info is-large is-fullwidth">Sign Up</button>
         </form>
     </div>
 </div>

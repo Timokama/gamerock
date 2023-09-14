@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash,session
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from .user import User
 from .image import Images
 from . import db
@@ -62,4 +62,58 @@ def signup_post():
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
+# @auth.route('/<int:user_id>/changePassword', methods=['POST', 'GET'])
+# @login_required
+# def password(user_id):
+#     user = User.query.get_or_404(user_id)
+#     #code to validate and user to database goes here
+#     password = generate_password_hash(password=user.password)
+#     passwrd = check_password_hash(user.password, password)
+#     if request.method == 'POST':
+#         passwords = request.form.get('password')
+#         user.password = passwords
+
+#         db.session.add(user)
+#         db.session.commit()
+#         return redirect(url_for('main.profie'))
+#     return render_template('password.html', user = user, passwrd = passwrd)
+
+
+@auth.route("/passwordchange", methods=["GET", "POST"])
+@login_required
+def changepassword():
+    # import mysql.connector as sqltor
+    # mycon=sqltor.connect(host="localhost",user="root",passwd="root",database="gamerock")
+    # db=mycon.cursor
+    """"Change users' password"""
+
+    user = User.query.get_or_404(current_user.id)
+    if request.method == "POST":
+        newPassword = request.form.get("newPassword")
+        newConfirmation = request.form.get("newConfirmation")
+
+        # Ensure that the user has inputted
+        if (not newPassword) or (not newConfirmation):
+            return apology("Please fill all of the provided fields!", 400)
+
+        # Check to see if password confirmation were the same or not
+        if newPassword != newConfirmation:
+            return apology("password did not match with password (again)", 400)
+        
+        user_id = user.id
+        
+        newHash = generate_password_hash("newPassword")
+
+        # user.password = newHash
+        # db.session.add(user)
+        # db.session.commit()
+        db.execute("UPDATE user SET hash = ? WHERE id = ?", newHash, user_id)
+        passwordChange = check_password_hash(newHash, newPassword)
+
+        print(f'\n\n{passwordChange}\n\n')
+        return redirect("/login")
+    else:
+        return render_template("password.html")
+    
 

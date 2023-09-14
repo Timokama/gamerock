@@ -16,6 +16,7 @@ body {
     font-family: sans-serif;
     display: block;
     justify-content:center;
+    padding: auto;
 }
 
 h2 {

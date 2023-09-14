@@ -32,7 +32,7 @@ def profile():
         image = base64.b64encode(img.image).decode('ascii')
         image_list.append(image)
     
-    return render_template('profile.html', name = current_user.name, contact = current_user.contact, email = current_user.email, image_list=image_list)
+    return render_template('profile.html', name = current_user.name, contact = current_user.contact, email = current_user.email, image_list=image_list, img = img)
 
 upload_folder = os.path.join('static')
 
@@ -47,18 +47,14 @@ def gen_file_name(filename):
 @main.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     user = User.query.get_or_404(current_user.id)
-    # img = Images.query.filter_by(user=user).first_or_404()
+   
     if request.method == 'POST':
         file = request.files['image']
         newFile=Images(
         name=file.filename,
         image=file.read(),
         user = user
-        )
-
-        # img.name = newFile.name
-        # img.image = newFile.image
-        
+        )        
         db.session.add(newFile)
         db.session.commit()
         return redirect(url_for('main.profile'))
@@ -80,3 +76,21 @@ def get_images():
 
 #     return send_file(io.BytesIO(file_data.image),
 # attachment_filename='user.jpg',as_attachment=True) 
+
+@main.route('/<int:img_id>/new_upload', methods=['GET', 'POST'])
+def uploadNew(img_id):
+    user = User.query.get_or_404(current_user.id)
+    image = Images.query.get_or_404(img_id)
+    if request.method == 'POST':
+        file = request.files['image']
+        # newFile=Images(
+        # name=file.filename,
+        # image=file.read()
+        # )
+        image.name = file.filename
+        image.image = file.read()
+
+        db.session.add(image)
+        db.session.commit()
+        return redirect(url_for('main.profile'))
+    return render_template('other.html')

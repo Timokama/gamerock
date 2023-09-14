@@ -9,10 +9,12 @@
   <p>Add some Images to the Gallery</p>
   {% else %}
   {% for image in image_list %}
-<figure><img style="height: 100px;justify-content: center;" src="data:;base64,{{image}}" alt="user"><figcaption>{{ user }}  </figcaption></figure>
+  <figure><img style="height: 100px;justify-content: center; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure>
   {%endfor%}
   {%endif%}
-  <br><br><br>
+  <br><br><br><br><br><br>
+  <a href="{{url_for('main.uploadNew', img_id=img.id)}}" style="float: right; justify-content: center;"><button>upload new image</button></a>
+  <br>
   
 <h1 class="title">
   <b>Welcome, {{ name }}!</b>
