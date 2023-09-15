@@ -32,7 +32,7 @@ def login_post():
 
 @auth.route('/signup')
 def signup():
-    return render_template('Signup.html')
+    return render_template('signup.html')
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():

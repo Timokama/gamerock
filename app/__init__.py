@@ -23,7 +23,7 @@ def create_app():
     # app.config["SERVER_NAME"] = 'localhost'
     app.config['SECRET_KEY'] = 'secret_key_goes_here'
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root@localhost/gamerock"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     db.init_app(app)

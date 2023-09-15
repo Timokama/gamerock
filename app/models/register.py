@@ -7,7 +7,7 @@ class Register(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
-    date_of_birth = db.Column(db.String(10))
+    date_of_birth = db.Column(db.Date)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     id_number = db.Column(db.Integer, unique=True)
     wife = db.relationship('Wife', backref='register')
