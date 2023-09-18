@@ -10,7 +10,8 @@
   <p>Add some Images to the Gallery</p>
   {% else %}
   {% for image in image_list %}
-  <figure><img style="float: left;height: 100px; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure>
+  <figure><img style="float: left
+  ;height: 100px; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure>
   {%endfor%}
   {%endif%} 
   <a href="{{url_for('main.uploadNew', img_id=img.id)}}" style="float: right;"><button>upload new image</button></a>
