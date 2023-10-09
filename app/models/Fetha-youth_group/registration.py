@@ -55,9 +55,9 @@ class Registration:
     def __repr__(self):
         return f"Registred '{self.name}', {self.reg_fee}, {self.deposit}, {self.age}"
 #Registration.file_csv()
-reg1=Registration('Timothy',100,500, 2001/19/5)
-reg2=Registration('John',100,500, 2001/20/5)
-print(reg1.age)
-print(reg2.age)
+reg1=Registration('Timothy',100,500, 5/19/2001)
+reg2=Registration('John',100,500, 5/5/2001)
+print(reg1)
+print(reg2)
 #Registration.file_csv()
-#print(Registration.all)
+print(Registration.all)

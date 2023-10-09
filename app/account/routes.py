@@ -3,7 +3,7 @@ from app.account import bp
 from flask_login import login_required, current_user
 from app import db
 from app.user import User
-from app.models.contribute import Contribute
+from app.models.contribute import Contribution
 
 @bp.route('/')
 @login_required
@@ -15,7 +15,7 @@ def index():
 def cont():
     user = User.query.get_or_404(current_user.id)
     if request.method == 'POST':
-        cont = Contribute(name=request.form['name'], user=user)
+        cont = Contribution(name=request.form['name'], user=user)
 
         db.session.add(cont)
         db.session.commit()
@@ -29,7 +29,7 @@ def contribute(tag_name):
     user = User.query.get_or_404(current_user.id)
     register = user.family
     
-    contribute = Contribute.query.filter_by(name=tag_name).order_by(Contribute.id.desc()).first_or_404()
+    contribute = Contribution.query.filter_by(name=tag_name).order_by(Contribute.id.desc()).first_or_404()
 
     return render_template('contribute/tag.html', contribute = contribute, user = user, register = register)
 
@@ -37,7 +37,7 @@ def contribute(tag_name):
 @bp.post('/<int:depo_id>/delete')
 def delete(depo_id):
     user = User.query.get_or_404(current_user.id)
-    contribute = Contribute.query.get_or_404(depo_id)
+    contribute = Contribution.query.get_or_404(depo_id)
     for cont in contribute.deposit:
         db.session.delete(cont)
     db.session.delete(contribute)

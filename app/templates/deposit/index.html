@@ -12,7 +12,7 @@
         <div class="content" id="myUL">
             <li>    
                 <p>Name:<a href="{{url_for('deposit.deposit', depo_id = father.id)}}">{{ father.firstname}} {{ father.lastname }}</a></p>
-                <form action="/deposit" method="post">
+                <form action="/contribution" method="post">
                 <div class="content">
                 {%for deposit in father.depo_id %}
         

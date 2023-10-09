@@ -1,15 +1,25 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>birthday</title>
-    </head>
-    <body>
-        <a href="{{url_for(family.index)}}"><button>Home</button></a>
-        <p>#{{deposet.id}}</p><br>
-        <p>Ksh {{deposet.amount}}</p><br>
-        <hr>
-        <p>{{register.firstname}}</p>
-        <p>{{register.lastname}}</p>
-        <p>{{register.date_of_birth}}</p>
-    </body>
-</html>
+{% extends "base_f/base.html" %}
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
+
+{% block content %}
+<span class="title"><h1>{% block title %} Fetha Members {% endblock %}</h1></span>    
+<div id="myUL">
+    {% for member in member %}
+    <li class="content">
+        <p>{{member.first_name}}
+        {{member.last_name }}
+        <p>Date of birth: {{member.date_of_birth}}</p>
+               
+        {% if age %}
+        <p>Age: {{ age[member.id-1:member.id] }} years</p> 
+        {%endif%}
+    <hr style="color: greenyellow;">
+    <br>
+    </li>
+    {% endfor %}
+    <br>
+</div>
+{% endblock %}

@@ -9,7 +9,11 @@
         {% endblock title  %}
     </h1>
     <body>
+        <p>
+        <button><a style="font-size: 8px;" href="{{url_for('register.deposit', depo_id=register.id)}}"> <- Back</a></button>
+        </p>
         <form method="post">
+        <div>
         <p>
             <label for="amount">Ksh:</label>
             <input type="number" name="amount"
@@ -17,17 +21,43 @@
             </input>
         </p>
         <div class="field">
-            {% for cont in user.contribute %}
-            <label>
-                <input type="checkbox"id="myCheck" name="name" value="{{cont.id}}" >{{cont.name}}
-            </label>
-                {% endfor %}
+                <select id="payment" name="payment" placeholder="Payment Type"style="width:15%" autofocus="">
+                    {% for level in level %}
+                    <option value="{{level.name}}">{{level.name}}: {{level.value}}</option>
+                    {% endfor %}
+                </select>
         </div>
+        
+        <div class="row">
+            <div class="col-25">
+                <label for="transaction_ref">Transaction Reference: </label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="transaction_ref" value="{{register.firstname}} {{register.lastname}}" name="transaction_ref" placeholder="Name">
+            </div>
+        </div>
+        
+        <div class="field">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div style="color: black;font-size: small;" class="notification is-danger">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+            {% for cont in user.event %}
+            <label>
+                <input type="checkbox"id="myCheck" name="propose" value="{{cont.id}}" >{{cont.name}}
+            </label>
+            {% endfor %}
             
+        </div>
+        
         <p>
-            <button type="submit">Send</button>
-            
+        <button type="submit" style="font-size: 8px;">Send</button>
+        <!-- <button><a style="font-size: 8px;" href="{{url_for('register.deposit', depo_id=register.id)}}">Cancel</a></button> -->
         </p>
+    </div>
     </form>
     </body>
     {% endblock %}

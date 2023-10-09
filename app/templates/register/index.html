@@ -10,8 +10,9 @@
         {% for register in user.family %}
             <li class="content">
             <p>{{ register.id }}: {{ register.firstname}} {{ register.lastname }} </br>
+              Phone Number: {{ register.phone_num }}<br>
               ID number: {{ register.id_number }} </br>
-              Created at: {{ register.created_at }}</br> </p>
+              <!-- Created at: {{ register.created_at }}</br> </p> -->
             <p></br>
             <hr>
             <a href="{{url_for('register.deposit', depo_id = register.id)}}">

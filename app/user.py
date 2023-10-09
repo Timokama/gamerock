@@ -1,15 +1,20 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
+from .level import AccessLevel
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
-    email = db.Column(db.String(100), unique=True)
+    surname = db.Column(db.String(1000))
+    first_name = db.Column(db.String(100))
     password = db.Column(db.String(100))
-    name = db.Column(db.String(1000))
-    contact = db.Column(db.String(20))
-    contribute = db.relationship('Contribute', backref='user')
-    family = db.relationship('Register', backref='user')
+    phone_num = db.Column(db.Integer)
+    username = db.Column(db.String(100))
+    role = db.Column(db.Enum(AccessLevel))
+
+    event = db.relationship('CommunityEvent', backref='user')
+    contribution = db.relationship('Contribution', backref='user')
+    family = db.relationship('Member', backref='user')
     image = db.relationship('Images', backref='user')
 
     @property

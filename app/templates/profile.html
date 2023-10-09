@@ -10,8 +10,7 @@
   <p>Add some Images to the Gallery</p>
   {% else %}
   {% for image in image_list %}
-  <figure><img style="float: left
-  ;height: 100px; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure>
+  <figure><img style="float: left;height: 100px; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure><br><br>
   {%endfor%}
   {%endif%} 
   <a href="{{url_for('main.uploadNew', img_id=img.id)}}" style="float: right;"><button>upload new image</button></a>
@@ -21,16 +20,18 @@
   <br>
 </h1>
 <div class="content">
-Email: {{ email }}<br>
+Role: {{ email.name }}<br>
 Contact: {{ contact }} <br>
 </div></b>
-<span class="title"><h1 style="color: black;">{% block title %} GAMEROCK REGISTRATION {% endblock %}</h1></span>
+<span class="title"><h1 style="color: black;">{% block title %} GAMEROCK WELFARE ASSOCIATION {% endblock %}</h1></span>
     <div>
         
       <hr>
 
-        <a href="{{ url_for('register.index')}}"><button>Members </button></a> <a href="{{url_for('account.index')}}"><button>Contribution Accounts</button></a><br><br>
-        <a href="{{url_for('register.create')}}"><button>New Member</button></a>
-        <a href="{{url_for('account.cont')}}"><button>New Contribution</button></a>
+        <a href="{{ url_for('register.index')}}"><button>Members </button></a> 
+        <!-- <a href="{{url_for('account.index')}}"><button>Contribution Accounts</button></a><br><br> -->
+        <a href="{{url_for('register.create')}}"><button>New Member</button></a><br><br>
+        <a href="{{ url_for('community.index') }}"><button>Contributions</button></a>
+        <a href="{{ url_for('community.add_event') }}"><button>Community Event</button></a>
     </div>
 {% endblock %}

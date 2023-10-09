@@ -60,7 +60,7 @@ button,
     border: 1px solid var(--main-color);
     color: var(--bg-color);
     cursor: pointer;
-    font-size: 0.6em;
+    font-size: 8px;
     font-weight: bold;
     margin: 0.3em 0;
     padding: 0.3em 1.3em;

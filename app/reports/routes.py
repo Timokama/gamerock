@@ -3,15 +3,15 @@ from app.reports import bp
 from flask_login import login_required, current_user
 from app.user import User
 from app import db
-from app.models.deposit import Deposit
-from app.models.contribute import Contribute
+# from app.models.deposit import Deposit
+from app.models.contribute import Contribution
 
 
 @bp.route('/')
 @login_required
 def index():
     user = User.query.get_or_404(current_user.id)
-    contribute = user.contribute
+    contribute = user.contribution
     # deposit = Deposit.query.get_or_404(user)
     total = 0
     count = 0
@@ -25,7 +25,7 @@ def index():
 @bp.route('/<int:depo_id>/reports')
 def reports(depo_id):
     # user = User.query.get_or_404(current_user.id)
-    contribute = Contribute.query.get_or_404(depo_id)
+    contribute = Contribution.query.get_or_404(depo_id)
     # deposit = Deposit.query.get_or_404(user)
     total = 0
     count = 0

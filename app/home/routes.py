@@ -7,4 +7,4 @@ from app.user import User
 @bp.route('/')
 @login_required
 def home():
-    return render_template("home.html", contact = current_user.contact, email = current_user.email)
+    return render_template("home.html", contact = current_user.phone_num, email = current_user.role)

@@ -4,21 +4,22 @@ from flask_login import login_user, login_required, logout_user, current_user
 from .user import User
 from .image import Images
 from . import db
-
+from .level import AccessLevel
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
-    return render_template('login.html')
+    level = AccessLevel
+    return render_template('login.html', level = level)
 
 @auth.route('/login', methods=['POST'])
 def login_post():
     # log in code goes here
-    email = request.form.get('email')
+    role = request.form.get('role')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(role=role).first()
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
@@ -32,24 +33,28 @@ def login_post():
 
 @auth.route('/signup')
 def signup():
-    return render_template('signup.html')
+    level = AccessLevel
+    return render_template('signup.html', level=level)
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
     #code to validate and user to database goes here
-    email = request.form.get('email')
-    name = request.form.get('name')
-    contact = request.form.get('contact')
+    surname = request.form.get('surname')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    phone_num = request.form.get('phone_num')
+    username = request.form.get('username')
+    role = request.form.get('role')
     password = request.form.get('password')
 
-    user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
+    user = User.query.filter_by(role=role).first() # if this returns a user, then the email already exists in database
 
     if user: # if a user is found, we want to redirect back to signup page so user can try again
-        flash('Email address already exists')
+        flash('User address already exists')
         return redirect(url_for('auth.signup'))
 
     # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-    new_user = User(email=email, name=name, contact=contact, password=generate_password_hash(password, method='sha256'))
+    new_user = User(surname=surname, first_name=first_name, phone_num=phone_num, password=generate_password_hash(password, method='sha256'), role=role, username=username)
 
     # add the new user to the database
     db.session.add(new_user)
@@ -80,40 +85,40 @@ def logout():
 #     return render_template('password.html', user = user, passwrd = passwrd)
 
 
-@auth.route("/passwordchange", methods=["GET", "POST"])
-@login_required
-def changepassword():
-    # import mysql.connector as sqltor
-    # mycon=sqltor.connect(host="localhost",user="root",passwd="root",database="gamerock")
-    # db=mycon.cursor
-    """"Change users' password"""
+# @auth.route("/passwordchange", methods=["GET", "POST"])
+# @login_required
+# def changepassword():
+#     # import mysql.connector as sqltor
+#     # mycon=sqltor.connect(host="localhost",user="root",passwd="root",database="gamerock")
+#     # db=mycon.cursor
+#     """"Change users' password"""
 
-    user = User.query.get_or_404(current_user.id)
-    if request.method == "POST":
-        newPassword = request.form.get("newPassword")
-        newConfirmation = request.form.get("newConfirmation")
+#     user = User.query.get_or_404(current_user.id)
+#     if request.method == "POST":
+#         newPassword = request.form.get("newPassword")
+#         newConfirmation = request.form.get("newConfirmation")
 
-        # Ensure that the user has inputted
-        if (not newPassword) or (not newConfirmation):
-            return apology("Please fill all of the provided fields!", 400)
+#         # Ensure that the user has inputted
+#         if (not newPassword) or (not newConfirmation):
+#             return apology("Please fill all of the provided fields!", 400)
 
-        # Check to see if password confirmation were the same or not
-        if newPassword != newConfirmation:
-            return apology("password did not match with password (again)", 400)
+#         # Check to see if password confirmation were the same or not
+#         if newPassword != newConfirmation:
+#             return apology("password did not match with password (again)", 400)
         
-        user_id = user.id
+#         user_id = user.id
         
-        newHash = generate_password_hash("newPassword")
+#         newHash = generate_password_hash("newPassword")
 
-        # user.password = newHash
-        # db.session.add(user)
-        # db.session.commit()
-        db.execute("UPDATE user SET hash = ? WHERE id = ?", newHash, user_id)
-        passwordChange = check_password_hash(newHash, newPassword)
+#         # user.password = newHash
+#         # db.session.add(user)
+#         # db.session.commit()
+#         db.execute("UPDATE user SET hash = ? WHERE id = ?", newHash, user_id)
+#         passwordChange = check_password_hash(newHash, newPassword)
 
-        print(f'\n\n{passwordChange}\n\n')
-        return redirect("/login")
-    else:
-        return render_template("password.html")
+#         print(f'\n\n{passwordChange}\n\n')
+#         return redirect("/login")
+#     else:
+#         return render_template("password.html")
     
 

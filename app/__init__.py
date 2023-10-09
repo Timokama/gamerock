@@ -2,7 +2,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
+from flaskwebgui import FlaskUI
 import os
 import sys
 
@@ -25,7 +25,7 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+    ui = FlaskUI(app, width=800, height=1000)
     db.init_app(app)
     
     login_manager = LoginManager()
@@ -58,8 +58,11 @@ def create_app():
     from app.register import bp as register_bp
     app.register_blueprint(register_bp, url_prefix='/register')
 
-    from app.deposit import bp as questions_bp
-    app.register_blueprint(questions_bp, url_prefix='/deposit')
+    from app.community import bp as questions_bp
+    app.register_blueprint(questions_bp, url_prefix='/community')
+
+    from app.deposit import bp as contribute_bp
+    app.register_blueprint(contribute_bp, url_prefix='/contribution')
 
     from app.family import bp as family_bp
     app.register_blueprint(family_bp, url_prefix='/family')

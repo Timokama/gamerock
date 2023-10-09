@@ -17,7 +17,11 @@
     <form method="POST" action="/login" style="justify-content: space-between;">
         <div class="field">
             <div class="control">
-                <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
+                <select class="input is-large" id="role" name="role" placeholder="Your Role" autofocus="">
+                    {% for level in level %}
+                    <option value="{{level.name}}">{{level.name}}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
 

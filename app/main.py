@@ -7,7 +7,6 @@ from .image import Images
 from .user import User
 import os
 import base64
-from PIL import Image
 import io
 
 main = Blueprint('main', __name__)
@@ -15,7 +14,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def index():
-    return render_template('home.html', name = current_user.name, contact = current_user.contact, email = current_user.email)
+    return render_template('home.html', name = current_user.username, contact = current_user.phone_num, email = current_user.role.name)
 
 @main.route('/profile')
 @login_required
@@ -32,7 +31,7 @@ def profile():
         image = base64.b64encode(img.image).decode('ascii')
         image_list.append(image)
     
-    return render_template('profile.html', name = current_user.name, contact = current_user.contact, email = current_user.email, image_list=image_list, img = img)
+    return render_template('profile.html', name = current_user.username, contact = current_user.phone_num, email = current_user.role, image_list=image_list, img = img)
 
 upload_folder = os.path.join('static')
 

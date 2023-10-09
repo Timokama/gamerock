@@ -6,8 +6,8 @@
   background-image: url('search.jpg');
   background-position: left;
   background-repeat: no-repeat;
-  float:right;
-  width: 50%;
+  float:inline-end;
+  width: 35%;
   font-size: 16px;
   padding: 10px 20px 12px 40px;
   border: 1px solid #ddd;

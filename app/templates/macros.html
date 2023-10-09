@@ -1,13 +1,12 @@
 {% macro display_tags(deposit) %}
     <div class="tags">
         <p>
-           
-                {% for tag in deposit.contribute %}
-                <a href="{{ url_for('account.contribute', tag_name=tag.name) }}" style="text-decoration: none; color: #dd5b5b">
-                    {{ tag.name }}
-                </a>
-                |
-                {%endfor%}
+        {% for tag in deposit.event %}
+         <a href="{{ url_for('community.contribute', tag_name=tag.name) }}" style="text-decoration: none; color: #dd5b5b">
+           {{ tag.name }}
+         </a>
+          |
+          {%endfor%}
         </p>
     </div>
 {% endmacro %}

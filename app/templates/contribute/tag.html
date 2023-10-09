@@ -3,19 +3,15 @@
 
 {% block content %}
     <span class="title">
-        <h1>{% block title %} Contribute to "{{ contribute.name }}" {% endblock %}</h1>
+        <h1>{% block title %} Contribution  for {{ event.name }} {% endblock %}</h1>
     </span>
-    <div class="register" style="width: auto;" id="myUL">
-        {% for register in contribute.register %}
-        <div class="content" id="myUL">
+    <div class="register" style="width: 25%;height: 2px;" id="myUL">
+        {% for member in event.contribute %}
+        <div id="myUL">
         <li>
-            <p><a href="{{url_for('deposit.deposit', depo_id = register.id)}}">{{register.firstname}} {{register.lastname}}</a></p>
-            <hr>
-            <div class="content">
-                {% for deposit in register.depo_id%}
-                {{ display_tags(deposit) }}
-                {%endfor%}
-            </div>
+            <p><a href="{{url_for('deposit.deposit', depo_id = member.id)}}">{{member.transaction_ref}}</a>
+                {{member.payment_type}}:  {{member.amount}}
+            </p>
             <hr>
         </li>
     </div>
