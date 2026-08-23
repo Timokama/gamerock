@@ -1,0 +1,466 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .edit-profile-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .edit-profile-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .edit-profile-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: -150px;
+        left: -150px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(118, 75, 162, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .edit-profile-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .edit-profile-brand {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .edit-profile-brand::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .edit-profile-brand::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+
+    .edit-profile-brand-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .edit-profile-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .edit-profile-brand h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    .edit-profile-brand p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .edit-profile-form-section {
+        padding: 2.5rem 2rem;
+    }
+
+    .edit-profile-form-header {
+        margin-bottom: 1.75rem;
+    }
+
+    .edit-profile-form-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.35rem;
+    }
+
+    .edit-profile-form-header p {
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.01em;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        color: #0f172a;
+        font-family: inherit;
+        height: 2.75rem;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+        background: #ffffff;
+    }
+
+    .form-group input::placeholder {
+        color: #94a3b8;
+    }
+
+    .btn-save-profile {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+        margin-top: 0.5rem;
+    }
+
+    .btn-save-profile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    }
+
+    .btn-save-profile:active {
+        transform: translateY(0);
+    }
+
+    .edit-profile-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+
+    .edit-profile-footer a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .edit-profile-footer a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 0.85rem 1.1rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .alert-danger {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    @media (max-width: 768px) {
+        .edit-profile-card {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .edit-profile-brand {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .edit-profile-brand h2 {
+            font-size: 1.25rem;
+        }
+
+        .edit-profile-form-section {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    [data-theme="dark"] .edit-profile-wrapper {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+
+    [data-theme="dark"] .edit-profile-card {
+        background: #1e293b;
+        border-color: #334155;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .edit-profile-form-header h3 {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .edit-profile-form-header p {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .form-group label {
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .form-group input {
+        background: #0f172a;
+        border-color: #334155;
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .form-group input:focus {
+        background: #1e293b;
+        border-color: #14b8a6;
+    }
+
+    [data-theme="dark"] .form-group input::placeholder {
+        color: #64748b;
+    }
+
+    [data-theme="dark"] .btn-save-profile {
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+    }
+
+    [data-theme="dark"] .btn-save-profile:hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    [data-theme="dark"] .edit-profile-footer {
+        border-top-color: #334155;
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .edit-profile-footer a {
+        color: #667eea;
+    }
+
+    [data-theme="dark"] .edit-profile-footer a:hover {
+        color: #764ba2;
+    }
+
+    [data-theme="dark"] .alert-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    [data-theme="dark"] .alert-success {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    [data-theme="light"] .edit-profile-wrapper {
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+    }
+
+    [data-theme="light"] .edit-profile-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="light"] .edit-profile-form-header h3 {
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .edit-profile-form-header p {
+        color: #475569;
+    }
+
+    [data-theme="light"] .form-group label {
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .form-group input {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .form-group input:focus {
+        background: #ffffff;
+        border-color: #14b8a6;
+    }
+
+    [data-theme="light"] .form-group input::placeholder {
+        color: #94a3b8;
+    }
+
+    [data-theme="light"] .btn-save-profile {
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+    }
+
+    [data-theme="light"] .btn-save-profile:hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    }
+
+    [data-theme="light"] .edit-profile-footer {
+        border-top-color: #e2e8f0;
+        color: #475569;
+    }
+
+    [data-theme="light"] .edit-profile-footer a {
+        color: #667eea;
+    }
+
+    [data-theme="light"] .edit-profile-footer a:hover {
+        color: #764ba2;
+    }
+
+    [data-theme="light"] .alert-danger {
+        background: #fef2f2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
+
+    [data-theme="light"] .alert-success {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-wrapper">
+    <div class="edit-profile-card">
+        <div class="edit-profile-brand">
+            <div class="edit-profile-brand-content">
+                <div class="edit-profile-logo">✏️</div>
+                <h2>Edit Profile</h2>
+                <p>Update your personal information and account details</p>
+            </div>
+        </div>
+
+        <div class="edit-profile-form-section">
+            <div class="edit-profile-form-header">
+                <h3>Profile Information</h3>
+                <p>Modify your account details below</p>
+            </div>
+
+            <form method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Surname</label>
+                        <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_num">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone_num" name="phone_num" value="{{ user.phone_num or '' }}">
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn-save-profile">Save Changes</button>
+                </div>
+
+                <div class="edit-profile-footer">
+                    <p class="mb-0"><a href="{{ url_for('main.profile') }}">← Back to Profile</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

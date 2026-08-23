@@ -1,27 +1,631 @@
 {% extends 'base_f/base.html' %}
+
+{% block page_title %}Edit Contribution{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<style>
+.edit-contribution-wrapper {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-contribution-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.edit-contribution-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.edit-contribution-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+}
+
+.edit-contribution-brand {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-contribution-brand::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.edit-contribution-brand::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -20%;
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.edit-contribution-brand-content {
+    position: relative;
+    z-index: 1;
+}
+
+.edit-contribution-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.edit-contribution-brand h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+.edit-contribution-brand p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.edit-contribution-form-section {
+    padding: 2.5rem 2rem;
+}
+
+.edit-contribution-form-header {
+    margin-bottom: 1.75rem;
+}
+
+.edit-contribution-form-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.35rem;
+}
+
+.edit-contribution-form-header p {
+    color: #475569;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.member-info-compact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.member-info-compact .member-avatar-sm {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+}
+
+.member-info-compact .member-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.member-info-compact .member-name {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1rem;
+    margin-bottom: 0.15rem;
+}
+
+.member-info-compact .member-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+    color: #0f172a;
+    font-family: inherit;
+    height: 2.75rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #14b8a6;
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+    background: #ffffff;
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.form-group select option.placeholder-option {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.form-group select option[value=""].placeholder-option {
+    color: #94a3b8;
+}
+
+.currency-field {
+    position: relative;
+}
+
+.currency-field .currency-prefix {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.95rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.currency-field .form-control {
+    padding-left: 2.5rem;
+}
+
+.field-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.field-hint::before {
+    content: 'ℹ️';
+    font-size: 0.75rem;
+}
+
+.btn-save-contribution {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+    margin-top: 0.5rem;
+}
+
+.btn-save-contribution:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.45);
+}
+
+.btn-save-contribution:active {
+    transform: translateY(0);
+}
+
+.edit-contribution-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.edit-contribution-footer a {
+    color: #0f766e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.edit-contribution-footer a:hover {
+    color: #115e59;
+    text-decoration: underline;
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+    padding: 0.85rem 1.1rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.family-section-compact {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.family-section-compact h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.family-member-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.family-member-item:last-child {
+    border-bottom: none;
+}
+
+.family-member-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.family-member-avatar.spouse {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    color: white;
+}
+
+.family-member-avatar.child {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    color: white;
+}
+
+.family-member-info strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+.family-member-info span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .edit-contribution-card {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .edit-contribution-brand {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .edit-contribution-brand h2 {
+        font-size: 1.25rem;
+    }
+
+    .edit-contribution-form-section {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+[data-theme="dark"] .edit-contribution-wrapper {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+[data-theme="dark"] .edit-contribution-card {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .edit-contribution-form-header h3 {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .edit-contribution-form-header p {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .form-group label {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus {
+    background: #1e293b;
+    border-color: #14b8a6;
+}
+
+[data-theme="dark"] .form-group input::placeholder {
+    color: #64748b;
+}
+
+[data-theme="dark"] .form-group select option.placeholder-option {
+    color: #64748b;
+}
+
+[data-theme="dark"] .btn-save-contribution {
+    box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4);
+}
+
+[data-theme="dark"] .btn-save-contribution:hover {
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.5);
+}
+
+[data-theme="dark"] .edit-contribution-footer {
+    border-top-color: #334155;
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .edit-contribution-footer a {
+    color: #14b8a6;
+}
+
+[data-theme="dark"] .edit-contribution-footer a:hover {
+    color: #0f766e;
+}
+
+[data-theme="dark"] .alert-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="light"] .edit-contribution-wrapper {
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+}
+
+[data-theme="light"] .edit-contribution-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="light"] .edit-contribution-form-header h3 {
+    color: #0f172a;
+}
+
+[data-theme="light"] .edit-contribution-form-header p {
+    color: #475569;
+}
+
+[data-theme="light"] .form-group label {
+    color: #0f172a;
+}
+
+[data-theme="light"] .form-group input,
+[data-theme="light"] .form-group select {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #0f172a;
+}
+
+[data-theme="light"] .form-group input:focus,
+[data-theme="light"] .form-group select:focus {
+    background: #ffffff;
+    border-color: #14b8a6;
+}
+
+[data-theme="light"] .form-group input::placeholder {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .form-group select option.placeholder-option {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .btn-save-contribution {
+    box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+}
+
+[data-theme="light"] .btn-save-contribution:hover {
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.45);
+}
+
+[data-theme="light"] .edit-contribution-footer {
+    border-top-color: #e2e8f0;
+    color: #475569;
+}
+
+[data-theme="light"] .edit-contribution-footer a {
+    color: #0f766e;
+}
+
+[data-theme="light"] .edit-contribution-footer a:hover {
+    color: #115e59;
+}
+
+[data-theme="light"] .alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+</style>
 {% endblock %}
+
 {% block content %}
-    <h1 style="width: 100%">
-        {% block title %} Edit amount
-        {% endblock title  %}
-    </h1>
-    <body>
-        <form method="post">
-        <p>
-            <label for="amount">Ksh:</label>
-            <input type="number" name="amount"
-                   value="{{ deposit.amount }}"
-                   placeholder="Ksh.">
-            </input>
-        </p>
-        <p>
-            <button type="submit">Edit</button>
-            
-            <button><a href="{{url_for('register.deposit', depo_id=register.id)}}">cancel</a></button>
-        </p>
-    </form>
-    </body>
-    {% endblock %}
+<div class="edit-contribution-wrapper">
+    <div class="edit-contribution-card">
+        <div class="edit-contribution-brand">
+            <div class="edit-contribution-brand-content">
+                <div class="edit-contribution-logo">✏️</div>
+                <h2>Edit Contribution</h2>
+                <p>Update contribution details for {{ register.firstname }} {{ register.lastname }} and keep payment history accurate.</p>
+            </div>
+        </div>
+
+        <div class="edit-contribution-form-section">
+            <div class="edit-contribution-form-header">
+                <h3>Contribution Details</h3>
+                <p>Modify the contribution information below</p>
+            </div>
+
+            <div class="member-info-compact">
+                <div class="member-avatar-sm">{{ register.firstname[0] }}{{ register.lastname[0] }}</div>
+                <div class="member-details">
+                    <div class="member-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</div>
+                    <div class="member-meta">Member ID: {{ register.id }} · 📱 {{ register.phone_num|member_phone if register.phone_num else 'N/A' }}</div>
+                </div>
+            </div>
+
+            <form method="post">
+                <input type="hidden" name="transaction_ref" value="{{ register.firstname }} {{ register.lastname }}">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="amount">Amount (Ksh)</label>
+                        <div class="currency-field">
+                            <span class="currency-prefix">Ksh</span>
+                            <input type="number" class="form-control" id="amount" name="amount" value="{{ deposit.amount }}" required min="1" step="0.01" placeholder="Enter amount">
+                        </div>
+                        <p class="field-hint">Enter the contribution amount in Kenyan Shillings</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment">Payment Type</label>
+                        <select class="form-control" id="payment" name="payment" required>
+                            <option value="" class="placeholder-option">Select Payment Type</option>
+                                {% for name, value in payment_options %}
+                                <option value="{{ value }}" {% if deposit.payment_type and deposit.payment_type.value == value %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                        </select>
+                        <p class="field-hint">Select the payment method used</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="propose">Community Event (Optional)</label>
+                    <select class="form-control" id="propose" name="propose">
+                        <option value="" class="placeholder-option">Select Event</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}" {% if deposit.propose == event.id %}selected{% endif %}>{{ event.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="field-hint">Link this contribution to a specific community event if applicable</p>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn-save-contribution">Update Contribution</button>
+                </div>
+
+                <div class="edit-contribution-footer">
+                    <p class="mb-0"><a href="{{ url_for('deposit.deposit', depo_id=register.id) }}">Cancel</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

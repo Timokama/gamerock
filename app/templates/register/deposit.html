@@ -1,45 +1,772 @@
 {% extends 'base_f/base.html' %}
+
+{% block page_title %}{{ register.firstname }}'s Profile{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<style>
+.deposit-profile-shell {
+    padding-bottom: 2.5rem;
+}
+
+.deposit-profile-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.deposit-profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.deposit-profile-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
+.deposit-profile-header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.deposit-profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.deposit-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.deposit-profile-info h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.deposit-profile-info p {
+    margin: 0.35rem 0 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+}
+
+.deposit-profile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Stats Cards */
+.deposit-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.deposit-stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.deposit-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.deposit-stat-card.primary::before { background: linear-gradient(180deg, #667eea, #764ba2); }
+.deposit-stat-card.success::before { background: linear-gradient(180deg, #10b981, #059669); }
+.deposit-stat-card.warning::before { background: linear-gradient(180deg, #f59e0b, #d97706); }
+.deposit-stat-card.info::before { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+
+.deposit-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.deposit-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.deposit-stat-card.primary .deposit-stat-icon { background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08)); }
+.deposit-stat-card.success .deposit-stat-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08)); }
+.deposit-stat-card.warning .deposit-stat-icon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08)); }
+.deposit-stat-card.info .deposit-stat-icon { background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.08)); }
+
+.deposit-stat-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.deposit-stat-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    line-height: 1.2;
+    margin-bottom: 0.2rem;
+}
+
+.deposit-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Profile Card */
+.professional-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+    width:100%
+}
+
+.professional-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 1.1rem 1.5rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.professional-card .card-header::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.professional-card .card-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.professional-card .card-body {
+    padding: 1.75rem;
+}
+
+.member-avatar-lg {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+    flex-shrink: 0;
+}
+
+.member-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    background: var(--bg-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.member-detail-item:hover {
+    border-color: var(--primary-color);
+    background: var(--card-bg);
+    transform: translateY(-1px);
+}
+
+.member-detail-item .detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.member-detail-item .detail-content {
+    min-width: 0;
+}
+
+.member-detail-item .detail-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.member-detail-item .detail-value {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+/* Table Card */
+.report-table-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.report-table-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.report-table-card .card-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.report-table-card .table {
+    margin-bottom: 0;
+}
+
+.report-table-card .table th {
+    background: #f8fafc;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.report-table-card .table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.report-table-card .table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Payment Badges */
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.payment-badge.cash {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+.payment-badge.mpesa {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.payment-badge.bank {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.payment-badge.cheque {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+/* Result Count */
+.result-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Profile Section Title */
+.profile-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .deposit-profile-header {
+        padding: 1.5rem;
+    }
+
+    .deposit-profile-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .deposit-profile-info h3 {
+        font-size: 1.25rem;
+    }
+
+    .deposit-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .report-table-card .table {
+        font-size: 0.8rem;
+    }
+
+    .report-table-card .table th,
+    .report-table-card .table td {
+        padding: 0.5rem 0.5rem;
+    }
+}
+
+[data-theme="dark"] .report-table-card .table th {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .report-table-card .table tbody tr:hover {
+    background: var(--light-color);
+}
+
+/* Pending Contributions */
+.pending-contributions-table {
+    width: 100%;
+}
+
+.pending-contributions-table thead th {
+    background: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+.pending-contributions-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pending-contributions-table tbody tr:hover {
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.pending-contributions-table .pending-event-icon-cell {
+    width: 40px;
+    text-align: center;
+}
+
+.pending-contributions-table .pending-event-name {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.pending-contributions-table .pending-event-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.pending-contributions-table .pending-event-details {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.pending-contributions-table .pending-event-actions {
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .pending-contributions-table thead th,
+    .pending-contributions-table tbody td {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .pending-contributions-table .pending-event-icon-cell {
+        width: 32px;
+    }
+}
+</style>
 {% endblock %}
+
 {% block content %}
-
-<span class="title"><h1>{% block title %}{% endblock %}</h1></span>
-
-<div class="content" style="color: black; font-size: medium;">
-    <div class="register">
-        <form method="POST" style="float:right;font-size: 10px;"
-        action="{{ url_for('register.delete',
-                            depo_id=register.id) }}">
-        <img class="image" style="border-radius: 0%;" src="/static/photos/Delete.jpg" alt="delete"onclick="return confirm('Are you sure you want to delete this entry?')">
-        <!-- <input type="submit" style="background-color: coral; font-size: smaller;" src="static/photos/Delete.jpg" alt="delete"
-            onclick="return confirm('Are you sure you want to delete this entry?')"> -->
-        </form>
-        
-        <a href="{{url_for('register.index')}}"><button style="float:left;">Home</button></a>
-        <hr>
-        <p class="title">
-            Name: {{ register.firstname}} {{ register.lastname }} {{ register.surname }}
-        </p>
-        <div class="register">
-            <p>Phone Number: {{ register.phone_num }}<br></p>
-            <p>Date of birth {{ register.date_of_birth }}<br></p>
-            <p>Id: {{register.id_number}}<br></p>
-            <p>Created at: {{ register.created_at }}<br></p>
+<div class="deposit-profile-shell">
+    <div class="deposit-profile-header">
+        <div class="deposit-profile-header-content">
+            <div class="deposit-profile-avatar">
+                {% if member_profile_image %}
+                <img src="data:{{ member_profile_mime_type }};base64,{{ member_profile_image }}" alt="{{ register.firstname }} {{ register.lastname }} {{ register.surname }}">
+                {% else %}
+                {{ register.firstname[0] }}{{ register.lastname[0] }}
+                {% endif %}
+            </div>
+            <div class="deposit-profile-info">
+                <h3>{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h3>
+                <p>Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</p>
+                <span class="deposit-profile-badge">
+                    <span>👤</span> Registered Member
+                </span>
+            </div>
         </div>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="notification is-danger">
-            {{ messages[0] }}
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="professional-card mb-3">
+                <div class="card-header">
+                    <h4>Member Information</h4>
+                </div>
+                <div class="card-body">
+                    <div class="member-detail-item">
+                        <span class="detail-icon">📱</span>
+                        <span>{{ register.phone_num|member_phone if register.phone_num else 'N/A' }}</span>
+                    </div>
+                    <div class="member-detail-item">
+                        <span class="detail-icon">🆔</span>
+                        <span>{{ register.id_number|member_id if register.id_number else 'N/A' }}</span>
+                    </div>
+                    <div class="member-detail-item">
+                        <span class="detail-icon">🎂</span>
+                        <span>{{ register.date_of_birth if register.date_of_birth else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="professional-card mb-3">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4><i class="bi bi-cash-stack me-2"></i>Contribution Summary</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="mb-0 fw-bold" style="color: var(--primary-color);">Ksh. {{ '{:,}'.format(contributions|sum(attribute='amount') if contributions else 0) }}</h2>
+                    <p class="text-muted mb-0 mt-1">{{ contributions|length }} transaction{{ 's' if contributions|length != 1 else '' }}</p>
+                    <hr style="margin: 1rem 0; border-color: var(--border-color);">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="fw-bold" style="font-size: 1.1rem; color: var(--dark-color);">
+                                {% set last = contributions[-1] if contributions else None %}
+                                {{ last.trans_date.strftime('%b %d') if last and last.trans_date else 'N/A' }}
+                            </div>
+                            <small class="text-muted">Last Contribution</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="fw-bold" style="font-size: 1.1rem; color: var(--dark-color);">
+                                {% set payment_types = contributions | map(attribute='payment_type') | map(attribute='value') | unique | list %}
+                                {{ payment_types|length }}
+                            </div>
+                            <small class="text-muted">Payment Methods</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if pending_contributions %}
+            <div class="professional-card">
+                <div class="card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+                    <h4><i class="bi bi-hourglass-split me-2"></i>Pending Contributions</h4>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 pending-contributions-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th>Event</th>
+                                    <th>Date</th>
+                                    <th>Details</th>
+                                    <th style="width: 120px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in pending_contributions %}
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight: 600; color: var(--dark-color);">{{ event.name }}</span>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <i class="bi bi-calendar-event me-1" style="color: var(--text-muted);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'Date TBD' }}
+                                    </td>
+                                    <td style="color: #475569;">{{ event.details[:150] if event.details else 'No details provided' }}{% if event.details and event.details|length > 150 %}...{% endif %}</td>
+                                    <td style="text-align: center; white-space: nowrap;">
+                                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                        <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="action-btn primary btn-sm">
+                                            <i class="bi bi-plus-circle me-1"></i>Contribute
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-        {% endwith %}
-        <a href="{{url_for('deposit.amount', depo_id=register.id)}}"><button >Enter amount</button></a>
-        <a href="#"><button>edit amount</button><br></a>
-        <a href="#"><button>Deposits</button></a>
-        <a href="{{url_for('family.family', depo_id=register.id)}}"><button>family</button></a>
-        <hr>
+
+        <div class="col-lg-8 mb-4">
+            <div class="report-table-card">
+                <div class="card-header">
+                    <h4>Contribution History</h4>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="report-filters" style="margin-bottom: 0; box-shadow: none; border: none; padding: 1rem;">
+                        <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
+                            <div class="filter-row" id="deposit-history-filters">
+                                <div class="filter-group">
+                                    <label for="deposit-history-search">Search</label>
+                                    <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="deposit-history-payment-type">Payment Type</label>
+                                    <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
+                                        <option value="">All</option>
+                                        <option value="CASH">Cash</option>
+                                        <option value="MOBILE_MONEY">M-Pesa</option>
+                                        <option value="BANK">Bank</option>
+                                    </select>
+                                </div>
+                                <div class="filter-actions">
+                                    <button type="button" class="action-btn primary" onclick="filterDepositHistory()">🔍 Filter</button>
+                                    <button type="button" class="action-btn outline" onclick="clearDepositHistoryFilters()">✕ Clear</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="result-count" style="padding: 0.75rem 1rem 0;">
+                        Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)
+                    </div>
+                    {% if contributions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="deposit-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Payment Type</th>
+                                    <th>Event</th>
+                                    <th style="width: 120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for deposit in contributions %}
+                                <tr>
+                                    <td>{{ deposit.trans_date.strftime('%B %d, %Y') if deposit.trans_date else 'N/A' }}</td>
+                                    <td class="fw-semibold">Ksh. {{ '{:,}'.format(deposit.amount or 0) }}</td>
+                                    <td class="payment-type-cell" data-payment-type="{{ deposit.payment_type.name if deposit.payment_type else '' }}">
+                                        {% if deposit.payment_type.value == 'Ksh' %}
+                                        <span class="payment-badge cash">{{ deposit.payment_type.value }}</span>
+                                        {% elif deposit.payment_type.value == 'MPESA' %}
+                                        <span class="payment-badge mpesa">{{ deposit.payment_type.value }}</span>
+                                        {% elif deposit.payment_type.value == 'BANK DEPOSIT' %}
+                                        <span class="payment-badge bank">{{ deposit.payment_type.value }}</span>
+                                        {% else %}
+                                        <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ deposit.payment_type.value if deposit.payment_type else 'N/A' }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ deposit.community_event.name if deposit.community_event else 'N/A' }}</td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="row-actions-toggle" type="button"
+                                                    aria-haspopup="true" aria-expanded="false"
+                                                    aria-label="Actions for contribution by {{ deposit.member.firstname }} {{ deposit.member.lastname }}"
+                                                    onclick="toggleRowActions(this)">
+                                                <span aria-hidden="true">⚙</span>
+                                                <span>Actions</span>
+                                                <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                            </button>
+                                            <div class="row-actions-menu" role="menu">
+                                                <div class="row-actions-menu-header">
+                                                    <span class="row-actions-menu-title">{{ deposit.member.firstname }} {{ deposit.member.lastname }} {{ deposit.member.surname }}</span>
+                                                    <span class="row-actions-menu-sub">💳 Contribution</span>
+                                                </div>
+                                                <a href="{{ url_for('deposit.deposit', depo_id=deposit.member.id) }}" class="row-action-item" role="menuitem">
+                                                    <span class="row-action-icon" aria-hidden="true">📄</span>
+                                                    <span class="row-action-copy">
+                                                        <span class="row-action-label">View Deposits</span>
+                                                        <span class="row-action-hint">View contribution history</span>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-cash-coin"></i></div>
+                        <h3>No Contributions Yet</h3>
+                        <p>This member hasn't made any contributions yet.</p>
+                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary"><i class="bi bi-plus-circle me-1"></i>Add First Contribution</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterDepositHistory() {
+    var search = document.getElementById('deposit-history-search').value.toLowerCase();
+    var paymentType = document.getElementById('deposit-history-payment-type').value;
+    var rows = document.querySelectorAll('#deposit-history-table tbody tr');
+    var visibleCount = 0;
+
+    rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        var isVisible = true;
+
+        if (search && !text.includes(search)) {
+            isVisible = false;
+        }
+
+        if (paymentType) {
+            var paymentCell = row.querySelector('.payment-type-cell');
+            var paymentName = paymentCell ? paymentCell.getAttribute('data-payment-type') : '';
+            if (paymentName !== paymentType) {
+                isVisible = false;
+            }
+        }
+
+        row.style.display = isVisible ? '' : 'none';
+        if (isVisible) visibleCount++;
+    });
+
+    var countEl = document.getElementById('deposit-history-count');
+    if (countEl) {
+        countEl.textContent = visibleCount;
+    }
+}
+
+function clearDepositHistoryFilters() {
+    document.getElementById('deposit-history-search').value = '';
+    document.getElementById('deposit-history-payment-type').value = '';
+    filterDepositHistory();
+}
+</script>
 {% endblock %}

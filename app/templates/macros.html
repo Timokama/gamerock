@@ -2,10 +2,12 @@
     <div class="tags">
         <p>
         {% for tag in deposit.event %}
-         <a href="{{ url_for('community.contribute', tag_name=tag.name) }}" style="text-decoration: none; color: #dd5b5b">
-           {{ tag.name }}
+         <a href="{{ url_for('community.contribute', tag_name=tag.name) }}" class="badge bg-primary me-1">
+            {{ tag.name }}
          </a>
-          |
+          {% if not loop.last %}
+          <span class="text-muted mx-1">|</span>
+          {% endif %}
           {%endfor%}
         </p>
     </div>

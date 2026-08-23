@@ -13,7 +13,7 @@ class Child(db.Model):
     date_of_birth = db.Column(db.Date)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     
-    wife_id = db.Column(db.Integer, db.ForeignKey('wife.id'))
+    spouse_id = db.Column(db.Integer, db.ForeignKey('spouse.id'))
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
 
     def __repr__(self):

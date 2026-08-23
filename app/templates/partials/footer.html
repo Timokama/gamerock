@@ -1,0 +1,163 @@
+{# ============================================================
+   Shared professional site footer.
+   Included by base.html and base_f/base.html so both layouts
+   stay in sync. Links adapt to authentication + role.
+   ============================================================ #}
+<footer class="site-footer" role="contentinfo">
+    <div class="footer-container">
+        <div class="footer-main">
+            <!-- Brand -->
+            <div class="footer-brand">
+                <a class="footer-logo" href="{{ url_for('home.home') if current_user.is_authenticated else url_for('auth.index') }}">
+                    <span class="footer-logo-icon" aria-hidden="true">GW</span>
+                    <span class="footer-logo-copy">
+                        <span class="footer-logo-text">Gamerock</span>
+                        <span class="footer-logo-sub">Welfare Association</span>
+                    </span>
+                </a>
+                <p class="footer-description">
+                    Building stronger communities through welfare, unity and sustainable
+                    development &mdash; transparent contributions, supported families.
+                </p>
+
+                <ul class="footer-badges">
+                    <li class="footer-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                        Members first
+                    </li>
+                    <li class="footer-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        100% transparent
+                    </li>
+                </ul>
+
+                <div class="footer-social" aria-label="Contact channels">
+                    <a href="mailto:gamerock2026@gmail.com" class="social-link" aria-label="Email us" title="gamerock2026@gmail.com">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                    </a>
+                    <a href="tel:0745908682" class="social-link" aria-label="Call us" title="0745908682">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </a>
+                    <a href="https://maps.google.com/?q=Nyeri,Kenya" target="_blank" rel="noopener" class="social-link" aria-label="Find us on the map" title="Nyeri, Kenya">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 8 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Link columns -->
+            <nav class="footer-links-grid" aria-label="Footer navigation">
+                {% if current_user.is_authenticated %}
+                <div class="footer-column">
+                    <h2 class="footer-column-title">Navigate</h2>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('home.home') }}">Overview</a></li>
+                        <li><a href="{{ url_for('main.profile') }}">My Profile</a></li>
+                        <li><a href="{{ url_for('register.index') }}">Members</a></li>
+                        <li><a href="{{ url_for('family.index') }}">Family</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h2 class="footer-column-title">Contributions</h2>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('deposit.index') }}">Deposits</a></li>
+                        <li><a href="{{ url_for('community.index') }}">Community Events</a></li>
+                        <li><a href="{{ url_for('reports.index') }}">Reports</a></li>
+                        <li><a href="{{ url_for('family.contact') }}">Birthdays</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="footer-column">
+                    <h2 class="footer-column-title">Association</h2>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('main.faq') }}">FAQ</a></li>
+                        <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h2 class="footer-column-title">Get Started</h2>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('auth.index') }}">Member Login</a></li>
+                        <li><a href="{{ url_for('auth.signup') }}">Create Account</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="footer-column">
+                    <h2 class="footer-column-title">Support</h2>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.faq') }}">Help &amp; FAQ</a></li>
+                        <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('main.contact') }}">Contact Support</a></li>
+                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                        <li><a href="{{ url_for('register.faq_list') }}">Manage FAQs</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="footer-column footer-column-contact">
+                    <h2 class="footer-column-title">Reach Us</h2>
+                    <ul class="footer-links footer-contact-list">
+                        <li>
+                            <a href="tel:0745908682">
+                                <span class="footer-contact-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                </span>
+                                <span>0745908682</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:gamerock2026@gmail.com">
+                                <span class="footer-contact-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                                </span>
+                                <span>gamerock2026@gmail.com</span>
+                            </a>
+                        </li>
+                        <li class="footer-contact-static">
+                            <span class="footer-contact-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 8 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </span>
+                            <span>Nyeri, Kenya</span>
+                        </li>
+                        <li class="footer-contact-static">
+                            <span class="footer-contact-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                            </span>
+                            <span>Mon &ndash; Fri, 8am &ndash; 5pm</span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p class="footer-copyright">
+                    &copy; {{ now().year }} Gamerock Welfare Association.
+                    <span class="footer-copyright-rights">All rights reserved.</span>
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="{{ url_for('main.about') }}#privacy">Privacy Policy</a>
+                    <span class="footer-bottom-sep" aria-hidden="true">&middot;</span>
+                    <a href="{{ url_for('main.about') }}#terms">Terms of Service</a>
+                    <span class="footer-bottom-sep" aria-hidden="true">&middot;</span>
+                    <a href="{{ url_for('main.contact') }}">Contact</a>
+                </div>
+                <button type="button" class="footer-to-top" id="footerToTop" aria-label="Back to top">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+                    <span>Top</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+<script>
+    (function () {
+        var toTop = document.getElementById('footerToTop');
+        if (!toTop) return;
+        toTop.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    })();
+</script>

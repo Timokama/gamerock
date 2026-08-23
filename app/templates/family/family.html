@@ -1,93 +1,1189 @@
 {% extends 'base_f/base.html' %}
+
+{% block page_title %}{{ register.firstname }}'s Family{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<style>
+.family-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.family-page-header h2 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.5rem;
+}
+
+.family-profile-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.family-profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.family-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.family-profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+    flex-shrink: 0;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.family-profile-info {
+    flex: 1;
+    min-width: 220px;
+}
+
+.family-profile-name {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.5rem;
+}
+
+.family-profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.family-profile-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.family-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.spouse-section-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: visible;
+    transition: var(--transition);
+}
+
+.spouse-section-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.spouse-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.spouse-card-header .spouse-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.spouse-card-header .spouse-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.spouse-card-header .spouse-name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.spouse-card-header .spouse-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 0.15rem;
+}
+
+.spouse-card-header .dropdown {
+    position: relative;
+}
+
+.spouse-card-header .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    backdrop-filter: blur(4px);
+}
+
+.spouse-card-header .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.spouse-card-body {
+    padding: 1.5rem;
+}
+
+.spouse-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.spouse-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    background: var(--bg-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.spouse-detail-item:hover {
+    border-color: var(--primary-color);
+    background: var(--card-bg);
+    transform: translateY(-1px);
+}
+
+.spouse-detail-item .detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.spouse-detail-item .detail-content {
+    min-width: 0;
+}
+
+.spouse-detail-item .detail-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.spouse-detail-item .detail-value {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.children-subsection {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.25rem;
+}
+
+.children-subsection-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.children-subsection-header .children-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+    color: #f59e0b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.children-subsection-header h5 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1rem;
+}
+
+.children-subsection-header .children-count-badge {
+    margin-left: auto;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.3rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.children-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.child-card {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+}
+
+.child-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.child-card .child-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+}
+
+.child-card .child-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.child-card .child-name {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.child-card .child-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.child-card .child-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--card-bg);
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.child-card .child-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.direct-children-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: visible;
+}
+
+.direct-children-header {
+    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.direct-children-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.direct-children-body {
+    padding: 1.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-muted);
+    background: var(--bg-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .family-profile-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .family-profile-avatar {
+        align-self: center;
+    }
+
+    .family-profile-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .family-profile-actions {
+        width: 100%;
+    }
+
+    .family-profile-actions .action-btn {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .spouse-card-header {
+        flex-wrap: wrap;
+    }
+
+    .spouse-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .children-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .child-card {
+        flex-wrap: wrap;
+    }
+
+    .child-card .child-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .family-profile-section {
+        padding: 1.5rem;
+    }
+
+    .family-profile-name {
+        font-size: 1.25rem;
+    }
+
+    .family-profile-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
+    }
+
+    .spouse-card-header {
+        padding: 1rem;
+    }
+
+    .spouse-card-body {
+        padding: 1rem;
+    }
+}
+
+/* === Tablet: Spouse & Children as table layout === */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .spouse-details-grid {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .spouse-detail-item {
+        display: table-row;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .spouse-detail-item .detail-icon {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0.6rem 0.75rem;
+        width: 40px;
+    }
+
+    .spouse-detail-item .detail-content {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0.6rem 0;
+    }
+
+    .spouse-detail-item .detail-label {
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+
+    .spouse-detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .children-grid {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .child-card {
+        display: table-row;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        flex-wrap: nowrap;
+    }
+
+    .child-card .child-avatar {
+        display: table-cell;
+        vertical-align: middle;
+        width: 44px;
+        margin: 0 0.5rem 0 0;
+        padding: 0.6rem 0;
+    }
+
+    .child-card .child-info {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0.6rem 0;
+    }
+
+    .child-card .child-actions {
+        display: table-cell;
+        vertical-align: middle;
+        width: auto;
+        padding: 0.6rem 0.25rem;
+        justify-content: flex-end;
+    }
+
+    .child-card .child-meta {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .child-card:last-child {
+        border-bottom: none;
+    }
+}
+
+[data-theme="dark"] .spouse-detail-item {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .child-card {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .spouse-card-header .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .child-card .child-meta span {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .family-profile-meta span {
+    background: var(--light-color);
+    border-color: var(--border-color);
+}
+
+/* ==========================================================
+   Row actions dropdown
+   ========================================================== */
+.row-actions {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+}
+
+.row-actions-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 36px;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.row-actions-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
+    transform: translateY(-1px);
+}
+
+.row-actions-toggle:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.row-actions.open .row-actions-toggle {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.28);
+}
+
+.row-actions-caret {
+    font-size: 0.7rem;
+    line-height: 1;
+    transition: transform 0.18s ease;
+}
+
+.row-actions.open .row-actions-caret {
+    transform: rotate(180deg);
+}
+
+.row-actions-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 268px;
+    padding: 0.4rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    z-index: 1200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+}
+
+.row-actions.open .row-actions-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* When portaled to <body> the menu floats above everything and is never
+   clipped by the scrollable table wrapper. */
+.row-actions-menu.is-portaled {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    position: fixed;
+    margin: 0;
+    z-index: 2000;
+}
+
+/* Flip above the toggle when there is no room below */
+.row-actions.drop-up .row-actions-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+}
+
+.row-actions-menu-header {
+    padding: 0.55rem 0.7rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.35rem;
+}
+
+.row-actions-menu-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.row-actions-menu-sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
+.row-action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.row-action-item:hover,
+.row-action-item:focus-visible {
+    background: var(--light-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    transform: translateX(2px);
+    outline: none;
+}
+
+.row-action-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.row-action-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.row-action-label {
+    line-height: 1.25;
+}
+
+.row-action-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.row-action-item:hover .row-action-hint {
+    color: var(--primary-color);
+    opacity: 0.85;
+}
+
+.row-actions-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.35rem 0.4rem;
+}
+
+.row-action-form {
+    margin: 0;
+}
+
+.row-action-item.danger {
+    color: var(--danger-color);
+}
+
+.row-action-item.danger .row-action-icon {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover,
+.row-action-item.danger:focus-visible {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover .row-action-hint {
+    color: var(--danger-color);
+}
+
+.family-table-card,
+.card {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    top: calc(100% + 6px) !important;
+    bottom: auto !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+    z-index: 1070 !important;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-item:hover {
+    background: var(--light-color);
+    color: var(--primary-color);
+    padding-left: 1.25rem;
+}
+</style>
 {% endblock %}
+
 {% block content %}
-<div class="register" style="width: 45%;color: black;">
-    <span class="title"><h1>{% block title %} {{ register.firstname }}'s Family {% endblock %}</h1></span>
-<br><br>
-    </br>
-    <a href="{{url_for('register.deposit', depo_id = register.id)}}">
-        <button>Profile</button>
-    </a>
-    <form method="POST" style="float:right;"
-            action="{{ url_for('family.delete_family',
-                                depo_id = register.id) }}">
-            <img class="image" style="border-radius: 0%;" src="/static/photos/Delete.jpg" alt="delete"onclick="return confirm('Are you sure you want to delete this entry?')">
-            <!-- <input style="font-size: smaller; background-color: coral;" type="submit" value="Delete Family" -->
-                <!-- onclick="return confirm('Are you sure you want to delete this entry?')"> -->
-    </form><hr>
-    <div class="register" id="myUL">
-        <li class="register">
-            <p>
-            Name: {{register.firstname}} {{ register.lastname }}<br>
-            Id Number: {{register.id_number}}<br>
-            Phone Number: {{register.phone_num}}<br>
-            <!-- <p>Date of birth: {{ register.date_of_birth }}</p> -->
-            Created at: {{ register.created_at }}</p>
-            <a href="{{url_for('family.edit',depo_id=register.id)}}"><button>Edit Name</button></a>
-            <a href="{{ url_for('family.create_wife', depo_id=register.id)}}"><button>New Wife</button></a>
-            <a href="{{ url_for('register.create_child', depo_id=register.id)}}"><button>New Child</button></a>
-        </li>
-        <hr>
-        <div class="register" id="myUL">
-            <li class="register">
-                {% for child in register.child %}
-                <h6>Child</h6>
-
-                <p>
-                Name: {{ child.firstname }} {{ child.lastname }} {{ child.surname }}<br>
-                Phone Number {{ child.phone_num }}<br>
-                Id Number: {{ child.id_number }}<br></p>
-                <!-- <p>Date of birth: {{ child.date_of_birth}}<br></p> -->
-
-                <a href="{{url_for('family.editchild',depo_id=register.id, child_id = child.id )}}"><button>Edit child</button></a>
-                <hr>
-                {% endfor %}
-            </li>
-        </div>
-        <div class="register" id="myUL">
-            <!-- <h3>Family</h3> -->
-        
-        {% for wife in register.wife %}
-        <h6>Wife</h6>
-        <li class="register">
-            <p>
-            Name: {{ wife.firstname }} {{ wife.lastname }} {{ wife.lastname }}<br>
-            Phone Number: {{wife.phone_num}}<br>
-            Id Number: {{wife.id_number}}<br></p>
-
-            <!-- <p>Date of birth: {{ wife.date_of_birth}}</p> -->
-
-            <a href="{{ url_for('family.edit_wife',
-            depo_id = register.id, edit_id=wife.id) }}"><button>Edit Wife</button></a>
-
-            <a href="{{ url_for('family.create_child', depo_id=register.id, wife_id = wife.id)}}"><button> New Child</button></a>
-            </form>
-            <form method="POST"
-                action="{{ url_for('family.delete',
-                                    depo_id = register.id, del_id=wife.id) }}">
-                <input type="submit" value="Delete Wife"
-                    onclick="return confirm('Are you sure you want to delete this entry?')">
-            </form>
-            <hr>
-        </li>
-        </div>
-        <div class="register" id="myUL">
-            {% for child in wife.child %}
-            <h6>Child</h6>
-            <li class="register">
-                <p>
-                    Name: {{ child.firstname }} {{ child.lastname }} {{ child.surname }}<br>
-                    Phone Number {{ child.phone_num }}<br>
-                    Id Number: {{ child.id_number }}<br>
-                </p>
-            <a href="{{url_for('family.edit_child',depo_id=register.id, edit_id = wife.id, child_id = child.id )}}"><button>Edit child</button></a>
-            </li>
-    
-            {% endfor %}
-        </div>
-        {% endfor %}
+<div class="family-page-header">
+    <div>
+        <h2>{{ register.firstname }} {{ register.lastname }}'s Family</h2>
+        <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">Manage family members and relationships</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('family.edit', depo_id=register.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+        <a href="{{ url_for('register.deposit', depo_id=register.id) }}" class="action-btn primary btn-sm">👤 Profile</a>
+    </div>
 </div>
-{% endblock %} 
+
+<div class="report-filters">
+    <form method="get" action="{{ url_for('family.family', depo_id=register.id) }}" onsubmit="return false;">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="family-search">Search Family</label>
+                <input type="text" id="family-search" placeholder="Search by name or ID...">
+            </div>
+            <div class="filter-group">
+                <label for="family-type">Relationship</label>
+                <select id="family-type">
+                    <option value="">All</option>
+                    <option value="spouse">Spouse</option>
+                    <option value="child">Child</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="btn btn-primary" onclick="filterFamilyPage()">🔍 Filter</button>
+                <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()">✕ Clear</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="family-profile-section mb-4">
+    <div class="family-profile-header">
+        <div class="family-profile-avatar">
+            {{ register.firstname[0] }}{{ register.lastname[0] }}
+        </div>
+        <div class="family-profile-info">
+            <h3 class="family-profile-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h3>
+            <div class="family-profile-meta">
+                <span>🆔 {{ register.id_number|member_id }}</span>
+                <span>📱 {{ register.phone_num|member_phone }}</span>
+                <span>🎂 {{ register.date_of_birth }}</span>
+                <span>📅 Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</span>
+            </div>
+        </div>
+        <div class="family-profile-actions">
+            <a href="{{ url_for('family.create_spouse', depo_id=register.id) }}" class="action-btn primary btn-sm">💍 Add Spouse</a>
+            <a href="{{ url_for('register.create_child', depo_id=register.id) }}" class="action-btn outline btn-sm">👶 Add Child</a>
+        </div>
+    </div>
+</div>
+
+{% if register.spouse %}
+{% for spouse in register.spouse %}
+<div class="spouse-section-card" data-family-type="spouse">
+    <div class="spouse-card-header">
+        <div class="spouse-avatar">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</div>
+        <div class="spouse-info">
+            <div class="spouse-name">{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</div>
+            <div class="spouse-subtitle">💍 Spouse</div>
+        </div>
+        <div class="row-actions">
+            <button class="row-actions-toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false"
+                    aria-label="Actions for {{ spouse.firstname }} {{ spouse.lastname }}"
+                    onclick="toggleRowActions(this)">
+                <span aria-hidden="true">⚙</span>
+                <span>Actions</span>
+                <span class="row-actions-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="row-actions-menu" role="menu">
+                <div class="row-actions-menu-header">
+                    <span class="row-actions-menu-title">{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</span>
+                    <span class="row-actions-menu-sub">💍 Spouse</span>
+                </div>
+                <a href="{{ url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true">✏️</span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Edit Spouse</span>
+                        <span class="row-action-hint">Update personal details</span>
+                    </span>
+                </a>
+                <a href="{{ url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true">👶</span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Add Child</span>
+                        <span class="row-action-hint">Link a new child</span>
+                    </span>
+                </a>
+                <div class="row-actions-divider"></div>
+                <form method="POST" action="{{ url_for('family.delete', depo_id=register.id, del_id=spouse.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this spouse?')">
+                    <button type="submit" class="row-action-item danger" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true">🗑</span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Delete Spouse</span>
+                            <span class="row-action-hint">Cannot be undone</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="spouse-card-body">
+        <div class="spouse-details-grid">
+            <div class="spouse-detail-item">
+                <span class="detail-icon">📱</span>
+                <div class="detail-content">
+                    <div class="detail-label">Phone</div>
+                    <div class="detail-value">{{ spouse.phone_num|member_phone }}</div>
+                </div>
+            </div>
+            <div class="spouse-detail-item">
+                <span class="detail-icon">🆔</span>
+                <div class="detail-content">
+                    <div class="detail-label">ID Number</div>
+                    <div class="detail-value">{{ spouse.id_number|member_id }}</div>
+                </div>
+            </div>
+            <div class="spouse-detail-item">
+                <span class="detail-icon">🎂</span>
+                <div class="detail-content">
+                    <div class="detail-label">Date of Birth</div>
+                    <div class="detail-value">{{ spouse.date_of_birth }}</div>
+                </div>
+            </div>
+        </div>
+        {% if spouse.child %}
+        <div class="children-subsection">
+            <div class="children-subsection-header">
+                <span class="children-icon">👶</span>
+                <h5>Children</h5>
+                <span class="children-count-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
+            </div>
+            <div class="children-grid">
+                {% for child in spouse.child %}
+                <div class="child-card" data-family-type="child">
+                    <div class="child-avatar">{{ child.firstname[0] }}{{ child.lastname[0] }}</div>
+                    <div class="child-info">
+                        <div class="child-name">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</div>
+                        <div class="child-meta">
+                            <span>📱 {{ child.phone_num|member_phone }}</span>
+                            <span>🆔 {{ child.id_number|member_id }}</span>
+                            <span>🎂 {{ child.date_of_birth }}</span>
+                        </div>
+                    </div>
+                    <div class="row-actions">
+                        <button class="row-actions-toggle" type="button"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-label="Actions for {{ child.firstname }} {{ child.lastname }}"
+                                onclick="toggleRowActions(this)">
+                            <span aria-hidden="true">⚙</span>
+                            <span>Actions</span>
+                            <span class="row-actions-caret" aria-hidden="true">▾</span>
+                        </button>
+                        <div class="row-actions-menu" role="menu">
+                            <div class="row-actions-menu-header">
+                                <span class="row-actions-menu-title">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</span>
+                                <span class="row-actions-menu-sub">👶 Child</span>
+                            </div>
+                            <a href="{{ url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
+                                <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                <span class="row-action-copy">
+                                    <span class="row-action-label">Edit Child</span>
+                                    <span class="row-action-hint">Update details</span>
+                                </span>
+                            </a>
+                            <div class="row-actions-divider"></div>
+                            <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                <button type="submit" class="row-action-item danger" role="menuitem">
+                                    <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                    <span class="row-action-copy">
+                                        <span class="row-action-label">Delete Child</span>
+                                        <span class="row-action-hint">Cannot be undone</span>
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="family-table-card mb-4">
+    <div class="card-body">
+        <div class="empty-state">
+            <div class="empty-state-icon">💍</div>
+            <h3>No Spouses Added</h3>
+            <p>Add a spouse to start building the family tree.</p>
+            <a href="{{ url_for('family.create_spouse', depo_id=register.id) }}" class="action-btn outline">Add Spouse</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if register.child %}
+<div class="direct-children-section">
+    <div class="direct-children-header">
+        <h4>Children (Direct)</h4>
+        <a href="{{ url_for('register.create_child', depo_id=register.id) }}" class="action-btn primary btn-sm">➕ Add Child</a>
+    </div>
+    <div class="direct-children-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="direct-children-table">
+                <thead>
+                    <tr>
+                        <th>Child</th>
+                        <th>Phone</th>
+                        <th>ID Number</th>
+                        <th>Date of Birth</th>
+                        <th style="width: 120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in register.child %}
+                    <tr class="searchable-item" data-family-type="child" data-child-name="{{ child.firstname }} {{ child.lastname }} {{ child.surname }}">
+                        <td data-label="Child">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                            </div>
+                        </td>
+                        <td data-label="Phone">{{ child.phone_num|member_phone }}</td>
+                        <td data-label="ID Number">{{ child.id_number|member_id }}</td>
+                        <td data-label="Date of Birth">{{ child.date_of_birth if child.date_of_birth else 'N/A' }}</td>
+                        <td data-label="Actions" style="text-align: center;">
+                            <div class="row-actions">
+                                <button class="row-actions-toggle" type="button"
+                                        aria-haspopup="true" aria-expanded="false"
+                                        aria-label="Actions for {{ child.firstname }} {{ child.lastname }}"
+                                        onclick="toggleRowActions(this)">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</span>
+                                        <span class="row-actions-menu-sub">👶 Child</span>
+                                    </div>
+                                    <a href="{{ url_for('family.editchild', depo_id=register.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit Child</span>
+                                            <span class="row-action-hint">Update details</span>
+                                        </span>
+                                    </a>
+                                    <div class="row-actions-divider"></div>
+                                    <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete Child</span>
+                                                <span class="row-action-hint">Cannot be undone</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="direct-children-section">
+    <div class="direct-children-header">
+        <h4>Children (Direct)</h4>
+    </div>
+    <div class="direct-children-body">
+        <div class="empty-state">
+            <div class="empty-state-icon">👶</div>
+            <h3>No Direct Children Added</h3>
+            <p>Add a child directly linked to this member.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterFamilyPage() {
+    var search = document.getElementById('family-search').value.toLowerCase();
+    var type = document.getElementById('family-type').value.toLowerCase();
+    var sections = document.querySelectorAll('.spouse-section-card');
+    var directChildrenTable = document.getElementById('direct-children-table');
+    var directChildrenSection = document.querySelector('.direct-children-section');
+
+    sections.forEach(function(section) {
+        var text = section.textContent.toLowerCase();
+        var typeAttr = section.getAttribute('data-family-type') || '';
+        var matchesSearch = text.includes(search);
+        var matchesType = !type || typeAttr === type || type === 'child';
+        if (matchesSearch && matchesType) {
+            section.style.display = '';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+
+    if (directChildrenTable) {
+        var rows = directChildrenTable.querySelectorAll('tbody tr.searchable-item');
+        var anyVisible = false;
+        rows.forEach(function(row) {
+            var text = row.textContent.toLowerCase();
+            var typeAttr = row.getAttribute('data-family-type') || '';
+            var matchesSearch = text.includes(search);
+            var matchesType = !type || typeAttr === type;
+            if (matchesSearch && matchesType) {
+                row.style.display = '';
+                anyVisible = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        if (directChildrenSection) {
+            directChildrenSection.style.display = anyVisible ? '' : 'none';
+        }
+    }
+}
+
+function clearFamilyFilters() {
+    document.getElementById('family-search').value = '';
+    document.getElementById('family-type').value = '';
+}
+</script>
+{% endblock %}

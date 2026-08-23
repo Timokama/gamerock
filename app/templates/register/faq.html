@@ -1,0 +1,579 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}FAQ Management{% endblock %}
+
+{% block styles %}
+<style>
+/* ---------- FAQ management ---------- */
+.faq-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.faq-admin-header h2 {
+    margin: 0 0 0.25rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.5rem;
+}
+
+.faq-admin-header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.faq-admin-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Stats */
+.faq-admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.faq-stat {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    transition: var(--transition);
+}
+
+.faq-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.faq-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.faq-stat-icon.amber { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
+.faq-stat-icon.teal { background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); }
+.faq-stat-icon.slate { background: linear-gradient(135deg, #475569 0%, #94a3b8 100%); }
+
+.faq-stat-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--dark-color);
+}
+
+.faq-stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+/* Toolbar */
+.faq-toolbar {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.15rem;
+    margin-bottom: 1.5rem;
+}
+
+.faq-toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    align-items: flex-end;
+}
+
+.faq-field {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.faq-field label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.faq-field input,
+.faq-field select {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 9px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.88rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.faq-field input:focus,
+.faq-field select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.faq-toolbar-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Category chips */
+.faq-category-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.faq-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.faq-chip:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.faq-chip.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.faq-chip-count {
+    background: rgba(15, 23, 42, 0.08);
+    border-radius: 9999px;
+    padding: 0.05rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.faq-chip.active .faq-chip-count {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* List */
+.faq-admin-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.faq-admin-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 1rem 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.faq-admin-card-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.faq-admin-card-header .faq-count-pill {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.faq-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem 1rem;
+    padding: 1.1rem 1.35rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s ease;
+}
+
+.faq-row:last-child {
+    border-bottom: none;
+}
+
+.faq-row:hover {
+    background: var(--light-color);
+}
+
+.faq-row-main {
+    min-width: 0;
+}
+
+.faq-row-question {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 0 0.4rem;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--dark-color);
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+}
+
+.faq-row-question:hover {
+    color: var(--primary-color);
+}
+
+.faq-row-question .faq-row-caret {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    margin-top: 0.25rem;
+}
+
+.faq-row.open .faq-row-caret {
+    transform: rotate(180deg);
+    color: var(--primary-color);
+}
+
+.faq-row-answer {
+    display: none;
+    margin: 0.5rem 0 0.35rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.faq-row.open .faq-row-answer {
+    display: block;
+}
+
+.faq-row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.faq-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(102, 126, 234, 0.12);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.22);
+}
+
+.faq-badge.muted {
+    background: rgba(100, 116, 139, 0.12);
+    color: var(--text-muted);
+    border-color: rgba(100, 116, 139, 0.22);
+}
+
+.faq-row-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.faq-row-actions form {
+    margin: 0;
+}
+
+/* Empty state */
+.faq-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-muted);
+}
+
+.faq-empty-icon {
+    font-size: 2.75rem;
+    margin-bottom: 0.85rem;
+    opacity: 0.65;
+}
+
+.faq-empty h3 {
+    color: var(--dark-color);
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.faq-empty p {
+    margin-bottom: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .faq-admin-header {
+        align-items: flex-start;
+    }
+
+    .faq-admin-actions .action-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .faq-toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .faq-toolbar-actions .action-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .faq-row {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .faq-row-actions {
+        justify-content: flex-start;
+    }
+
+    .faq-row-actions .action-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+}
+
+[data-theme="dark"] .faq-chip-count {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .faq-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-admin-header">
+    <div>
+        <h2>FAQ Management</h2>
+        <p>Create and curate the questions members see on the public help page.</p>
+    </div>
+    <div class="faq-admin-actions">
+        <a href="{{ url_for('main.faq') }}" class="action-btn outline btn-sm" target="_blank" rel="noopener">👁 Preview Public Page</a>
+        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm">➕ Add FAQ</a>
+    </div>
+</div>
+
+<div class="faq-admin-stats">
+    <div class="faq-stat">
+        <span class="faq-stat-icon">💬</span>
+        <div>
+            <div class="faq-stat-value">{{ stats.total }}</div>
+            <div class="faq-stat-label">Total Questions</div>
+        </div>
+    </div>
+    <div class="faq-stat">
+        <span class="faq-stat-icon teal">🗂</span>
+        <div>
+            <div class="faq-stat-value">{{ stats.categories }}</div>
+            <div class="faq-stat-label">Categories</div>
+        </div>
+    </div>
+    <div class="faq-stat">
+        <span class="faq-stat-icon amber">🏷</span>
+        <div>
+            <div class="faq-stat-value">{{ stats.uncategorised }}</div>
+            <div class="faq-stat-label">Uncategorised</div>
+        </div>
+    </div>
+    <div class="faq-stat">
+        <span class="faq-stat-icon slate">🔎</span>
+        <div>
+            <div class="faq-stat-value">{{ stats.showing }}</div>
+            <div class="faq-stat-label">Matching Filter</div>
+        </div>
+    </div>
+</div>
+
+<div class="faq-toolbar">
+    <form method="get" action="{{ url_for('register.faq_list') }}">
+        <div class="faq-toolbar-row">
+            <div class="faq-field">
+                <label for="search">Search</label>
+                <input type="search" id="search" name="search" value="{{ filters.search }}" placeholder="Question, answer or category...">
+            </div>
+            <div class="faq-field">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="">All categories</option>
+                    <option value="uncategorised" {% if filters.category == 'uncategorised' %}selected{% endif %}>Uncategorised</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {% if filters.category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="faq-field">
+                <label for="sort">Sort by</label>
+                <select id="sort" name="sort">
+                    <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Newest first</option>
+                    <option value="oldest" {% if filters.sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                    <option value="question" {% if filters.sort == 'question' %}selected{% endif %}>Question A &rarr; Z</option>
+                    <option value="category" {% if filters.sort == 'category' %}selected{% endif %}>Category</option>
+                </select>
+            </div>
+            <div class="faq-toolbar-actions">
+                <button type="submit" class="action-btn primary btn-sm">🔍 Apply</button>
+                <a href="{{ url_for('register.faq_list') }}" class="action-btn outline btn-sm">✕ Reset</a>
+            </div>
+        </div>
+    </form>
+
+    {% if category_counts %}
+    <div class="faq-category-strip">
+        <a href="{{ url_for('register.faq_list', sort=filters.sort) }}" class="faq-chip {% if not filters.category %}active{% endif %}">
+            📋 All <span class="faq-chip-count">{{ stats.total }}</span>
+        </a>
+        {% for category, count in category_counts.items() %}
+        <a href="{{ url_for('register.faq_list', category=category, sort=filters.sort) }}" class="faq-chip {% if filters.category == category %}active{% endif %}">
+            📁 {{ category }} <span class="faq-chip-count">{{ count }}</span>
+        </a>
+        {% endfor %}
+        {% if stats.uncategorised %}
+        <a href="{{ url_for('register.faq_list', category='uncategorised', sort=filters.sort) }}" class="faq-chip {% if filters.category == 'uncategorised' %}active{% endif %}">
+            🏷 Uncategorised <span class="faq-chip-count">{{ stats.uncategorised }}</span>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="faq-admin-card">
+    <div class="faq-admin-card-header">
+        <h4>
+            {% if filters.category == 'uncategorised' %}Uncategorised FAQs
+            {% elif filters.category %}{{ filters.category }} FAQs
+            {% else %}All FAQs{% endif %}
+        </h4>
+        <span class="faq-count-pill">{{ faqs|length }} shown{% if filters.search %} · “{{ filters.search }}”{% endif %}</span>
+    </div>
+
+    {% if faqs %}
+    <div class="faq-rows">
+        {% for faq in faqs %}
+        <div class="faq-row" id="faq-admin-{{ faq.id }}">
+            <div class="faq-row-main">
+                <button type="button" class="faq-row-question" onclick="toggleAdminFaq(this)" aria-expanded="false">
+                    <span class="faq-row-caret" aria-hidden="true">▾</span>
+                    <span>{{ faq.question }}</span>
+                </button>
+                <div class="faq-row-answer">{{ faq.answer }}</div>
+                <div class="faq-row-meta">
+                    {% if faq.category %}
+                    <span class="faq-badge">📁 {{ faq.category }}</span>
+                    {% else %}
+                    <span class="faq-badge muted">🏷 Uncategorised</span>
+                    {% endif %}
+                    <span>Created {{ faq.created_at.strftime('%b %d, %Y') if faq.created_at else 'N/A' }}</span>
+                    {% if faq.updated_at and faq.created_at and faq.updated_at > faq.created_at %}
+                    <span>· Updated {{ faq.updated_at.strftime('%b %d, %Y') }}</span>
+                    {% endif %}
+                    <span>· {{ faq.answer|length }} characters</span>
+                </div>
+            </div>
+            <div class="faq-row-actions">
+                <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                <form method="post" action="{{ url_for('register.faq_delete', faq_id=faq.id) }}"
+                      onsubmit="return confirm('Delete this FAQ?\n\n{{ faq.question|truncate(80)|replace("'", "") }}');">
+                    <button type="submit" class="action-btn danger btn-sm">🗑 Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif stats.total %}
+    <div class="faq-empty">
+        <div class="faq-empty-icon">🔍</div>
+        <h3>No FAQs Match Your Filters</h3>
+        <p>Try a different search term or clear the filters to see all {{ stats.total }} question(s).</p>
+        <a href="{{ url_for('register.faq_list') }}" class="action-btn outline">Clear Filters</a>
+    </div>
+    {% else %}
+    <div class="faq-empty">
+        <div class="faq-empty-icon">💬</div>
+        <h3>No FAQs Yet</h3>
+        <p>Create your first FAQ so members can find answers without calling the office.</p>
+        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary">➕ Add Your First FAQ</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleAdminFaq(button) {
+    var row = button.closest('.faq-row');
+    if (!row) return;
+    var isOpen = row.classList.toggle('open');
+    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+</script>
+{% endblock %}

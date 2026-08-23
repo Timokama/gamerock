@@ -1,0 +1,364 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}{{ 'Edit' if faq else 'Create' }} FAQ{% endblock %}
+
+{% block styles %}
+<style>
+.faq-form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-form-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.faq-form-breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.faq-form-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.faq-form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 1.35rem 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.faq-form-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.faq-form-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.faq-form-header p {
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.faq-form-body {
+    padding: 1.75rem;
+}
+
+.faq-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.faq-form-group label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.45rem;
+}
+
+.faq-form-hint {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.faq-form-counter {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.faq-form-group input,
+.faq-form-group textarea,
+.faq-form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.faq-form-group input:focus,
+.faq-form-group textarea:focus,
+.faq-form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.faq-form-group textarea {
+    min-height: 180px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.faq-category-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+}
+
+.faq-category-suggestion {
+    padding: 0.3rem 0.7rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.faq-category-suggestion:hover,
+.faq-category-suggestion.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Live preview */
+.faq-preview {
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    background: var(--bg-color);
+    margin-bottom: 1.5rem;
+}
+
+.faq-preview-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+}
+
+.faq-preview-question {
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.35rem;
+}
+
+.faq-preview-answer {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.7;
+    white-space: pre-line;
+    margin: 0;
+}
+
+.faq-form-actions {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.faq-form-actions .spacer {
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .faq-form-body {
+        padding: 1.25rem;
+    }
+
+    .faq-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .faq-form-actions .action-btn,
+    .faq-form-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .faq-form-actions .spacer {
+        margin-right: 0;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-form-wrapper">
+    <div class="faq-form-breadcrumb">
+        <a href="{{ url_for('register.faq_list') }}">FAQ Management</a>
+        <span aria-hidden="true">/</span>
+        <span>{{ 'Edit question' if faq else 'New question' }}</span>
+    </div>
+
+    <div class="faq-form-card">
+        <div class="faq-form-header">
+            <span class="faq-form-header-icon">{{ '✏️' if faq else '➕' }}</span>
+            <div>
+                <h4>{{ 'Edit FAQ' if faq else 'Create FAQ' }}</h4>
+                <p>{{ 'Update the question members see on the public help page.' if faq else 'Add a question and answer to the public help page.' }}</p>
+            </div>
+        </div>
+        <div class="faq-form-body">
+            <form method="post" id="faqForm">
+                <div class="faq-form-group">
+                    <label for="question">
+                        <span>Question <span aria-hidden="true">*</span></span>
+                        <span class="faq-form-counter" id="questionCounter">0 / 255</span>
+                    </label>
+                    <input type="text" id="question" name="question" maxlength="255" required
+                           value="{{ faq.question if faq else '' }}"
+                           placeholder="e.g. How do I make a monthly contribution?">
+                    <small class="faq-form-hint">Write it the way a member would ask it &mdash; short and specific.</small>
+                </div>
+
+                <div class="faq-form-group">
+                    <label for="answer">
+                        <span>Answer <span aria-hidden="true">*</span></span>
+                        <span class="faq-form-counter" id="answerCounter">0 characters</span>
+                    </label>
+                    <textarea id="answer" name="answer" required
+                              placeholder="Give a clear, complete answer. Line breaks are preserved.">{{ faq.answer if faq else '' }}</textarea>
+                    <small class="faq-form-hint">Avoid jargon. Mention who to contact if the member still needs help.</small>
+                </div>
+
+                <div class="faq-form-group">
+                    <label for="category"><span>Category</span></label>
+                    <input type="text" id="category" name="category" list="faqCategoryOptions" maxlength="100"
+                           value="{{ faq.category if faq and faq.category else '' }}"
+                           placeholder="Choose an existing category or type a new one">
+                    <datalist id="faqCategoryOptions">
+                        {% for category in categories %}
+                        <option value="{{ category }}"></option>
+                        {% endfor %}
+                    </datalist>
+                    <div class="faq-category-suggestions">
+                        {% for category in categories %}
+                        <button type="button" class="faq-category-suggestion" data-category="{{ category }}">{{ category }}</button>
+                        {% endfor %}
+                    </div>
+                    <small class="faq-form-hint">Questions are grouped by category on the public page. Leave empty for “General”.</small>
+                </div>
+
+                <div class="faq-preview" aria-live="polite">
+                    <div class="faq-preview-label">Live preview</div>
+                    <div class="faq-preview-question" id="previewQuestion">Your question will appear here</div>
+                    <p class="faq-preview-answer" id="previewAnswer">Your answer will appear here.</p>
+                </div>
+
+                <div class="faq-form-actions">
+                    {% if faq %}
+                    <span class="spacer faq-form-counter">
+                        Created {{ faq.created_at.strftime('%b %d, %Y') if faq.created_at else 'N/A' }}
+                    </span>
+                    {% endif %}
+                    <a href="{{ url_for('register.faq_list') }}" class="action-btn outline">Cancel</a>
+                    <button type="submit" class="action-btn primary">{{ '💾 Update FAQ' if faq else '💾 Create FAQ' }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var questionInput = document.getElementById('question');
+    var answerInput = document.getElementById('answer');
+    var categoryInput = document.getElementById('category');
+    var questionCounter = document.getElementById('questionCounter');
+    var answerCounter = document.getElementById('answerCounter');
+    var previewQuestion = document.getElementById('previewQuestion');
+    var previewAnswer = document.getElementById('previewAnswer');
+
+    function syncQuestion() {
+        var value = questionInput.value.trim();
+        questionCounter.textContent = questionInput.value.length + ' / 255';
+        previewQuestion.textContent = value || 'Your question will appear here';
+    }
+
+    function syncAnswer() {
+        var value = answerInput.value.trim();
+        answerCounter.textContent = answerInput.value.length + ' characters';
+        previewAnswer.textContent = value || 'Your answer will appear here.';
+    }
+
+    function syncCategoryChips() {
+        var current = (categoryInput.value || '').trim().toLowerCase();
+        document.querySelectorAll('.faq-category-suggestion').forEach(function (chip) {
+            var match = chip.getAttribute('data-category').toLowerCase() === current;
+            chip.classList.toggle('active', match);
+        });
+    }
+
+    if (questionInput && answerInput) {
+        questionInput.addEventListener('input', syncQuestion);
+        answerInput.addEventListener('input', syncAnswer);
+        syncQuestion();
+        syncAnswer();
+    }
+
+    if (categoryInput) {
+        categoryInput.addEventListener('input', syncCategoryChips);
+        document.querySelectorAll('.faq-category-suggestion').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                var value = chip.getAttribute('data-category');
+                categoryInput.value = categoryInput.value === value ? '' : value;
+                syncCategoryChips();
+            });
+        });
+        syncCategoryChips();
+    }
+
+    var form = document.getElementById('faqForm');
+    if (form) {
+        form.addEventListener('submit', function (event) {
+            if (!questionInput.value.trim() || !answerInput.value.trim()) {
+                event.preventDefault();
+                alert('Both a question and an answer are required.');
+            }
+        });
+    }
+})();
+</script>
+{% endblock %}

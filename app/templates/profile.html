@@ -1,37 +1,1737 @@
-{% extends "base.html" %}
+{% extends "base_f/base.html" %}
+{% block title %}My Profile{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+{{ super() }}
+<style>
+  :root {
+    --prof-primary: #764ba2;
+    --prof-primary-2: #667eea;
+    --prof-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --prof-radius: 18px;
+    --prof-gap: clamp(14px, 2vw, 22px);
+  }
+
+  .prof-wrap {
+    --pad: clamp(16px, 4vw, 34px);
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--pad);
+    display: flex;
+    flex-direction: column;
+    gap: var(--prof-gap);
+  }
+
+  /* ---------- Header card ---------- */
+  .prof-hero {
+    position: relative;
+    border-radius: var(--prof-radius);
+    background: var(--prof-gradient);
+    color: #fff;
+    padding: clamp(20px, 4vw, 34px);
+    overflow: hidden;
+    box-shadow: 0 18px 40px -22px rgba(118, 75, 162, 0.85);
+  }
+  .prof-hero::after {
+    content: "";
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .prof-hero-inner {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 3vw, 28px);
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .prof-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+    flex-shrink: 0;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+  }
+
+  .prof-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+  .prof-avatar-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prof-avatar-fallback {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+    flex-shrink: 0;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+  }
+  .prof-id-block { flex: 1 1 240px; min-width: 0; }
+  .prof-name {
+    margin: 0;
+    font-size: clamp(1.4rem, 4.5vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .prof-sub {
+    margin: 6px 0 0;
+    opacity: 0.92;
+    font-size: clamp(0.85rem, 2.4vw, 1rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+  .prof-sub .dot { opacity: 0.6; }
+  .prof-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .prof-hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .prof-hero-actions .btn {
+    --bs-btn-padding-y: 0.5rem;
+    --bs-btn-padding-x: 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .prof-hero-actions .btn-light {
+    background: #fff;
+    color: var(--prof-primary);
+    border-color: #fff;
+  }
+  .prof-hero-actions .btn-outline-light:hover { background: rgba(255,255,255,0.15); }
+
+  /* ---------- Completeness meter ---------- */
+  .prof-complete {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--card-border, #e6e6f0);
+    border-radius: var(--prof-radius);
+    padding: 16px 18px;
+  }
+  .prof-complete-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .prof-complete-head strong { font-size: 0.95rem; }
+  .prof-complete-track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--track-bg, #eceaf6);
+    overflow: hidden;
+  }
+  .prof-complete-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--prof-gradient);
+    transition: width 0.6s ease;
+  }
+  .prof-complete-missing {
+    margin: 10px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted-color, #6b7280);
+  }
+  .prof-complete-missing ul { margin: 4px 0 0; padding-left: 18px; }
+
+   /* ---------- Stat cards ---------- */
+   .prof-stats {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+     gap: var(--prof-gap);
+   }
+   .prof-stat {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 14px;
+     padding: 1.1rem 1.25rem;
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+     text-decoration: none;
+   }
+   .prof-stat:hover {
+     transform: translateY(-3px);
+     box-shadow: 0 16px 30px -22px rgba(118, 75, 162, 0.8);
+     border-color: var(--prof-primary);
+   }
+   .prof-stat-icon {
+     width: 40px; height: 40px;
+     border-radius: 12px;
+     display: grid; place-items: center;
+     background: rgba(118, 75, 162, 0.08);
+     color: var(--prof-primary);
+     font-size: 1.1rem;
+     transition: background 0.2s ease;
+   }
+   .prof-stat:hover .prof-stat-icon {
+     background: rgba(118, 75, 162, 0.15);
+   }
+   .prof-stat-label {
+     font-size: 0.75rem;
+     color: var(--muted-color, #6b7280);
+     text-transform: uppercase;
+     letter-spacing: 0.04em;
+   }
+   .prof-stat-value {
+     font-size: clamp(1.1rem, 3vw, 1.4rem);
+     font-weight: 800;
+     color: var(--dark-color, #0f172a);
+   }
+   .prof-stat-value small {
+     font-size: 0.7em;
+     font-weight: 600;
+     opacity: 0.6;
+     color: var(--muted-color, #6b7280);
+   }
+
+   /* ---------- Tabs ---------- */
+   .prof-tabs {
+     display: flex;
+     gap: 4px;
+     flex-wrap: wrap;
+     border-bottom: 2px solid var(--card-border, #eceaf6);
+     padding-bottom: 2px;
+     background: var(--card-bg, #fff);
+     margin-bottom: 0;
+   }
+   .prof-tab {
+     appearance: none;
+     border: 0;
+     background: transparent;
+     color: var(--muted-color, #6b7280);
+     font-weight: 600;
+     padding: 12px 18px;
+     border-radius: 12px 12px 0 0;
+     cursor: pointer;
+     position: relative;
+     min-height: 48px;
+     font-size: 0.9rem;
+     display: inline-flex;
+     align-items: center;
+     gap: 6px;
+     transition: color 0.18s ease, background 0.18s ease;
+   }
+   .prof-tab:hover {
+     color: var(--prof-primary);
+     background: var(--input-bg, #f7f6fc);
+   }
+   .prof-tab[aria-selected="true"] {
+     color: var(--prof-primary);
+     background: var(--input-bg, #f7f6fc);
+   }
+   .prof-tab[aria-selected="true"]::after {
+     content: "";
+     position: absolute;
+     left: 14px; right: 14px; bottom: -3px;
+     height: 3px;
+     border-radius: 3px;
+     background: var(--prof-gradient);
+   }
+   .prof-panel { display: none; }
+   .prof-panel.is-active { display: block; animation: profFade 0.25s ease; }
+   @keyframes profFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+   .prof-section {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: var(--prof-radius);
+     padding: clamp(16px, 3vw, 24px);
+   }
+  .prof-section + .prof-section { margin-top: var(--prof-gap); }
+  .prof-section h3 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .prof-section h3 .bi { color: var(--prof-primary); }
+
+  .prof-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 18px;
+  }
+  .prof-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--input-bg, #f7f6fc);
+    border: 1px solid var(--card-border, #eceaf6);
+  }
+  .prof-info .k { font-size: 0.75rem; color: var(--muted-color, #6b7280); }
+  .prof-info .v { font-weight: 600; word-break: break-word; }
+
+  .prof-copy-btn {
+    border: 0;
+    background: transparent;
+    color: var(--prof-primary);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .prof-copy-btn:hover { background: rgba(118, 75, 162, 0.12); }
+
+  /* ---------- Tables ---------- */
+  .prof-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .prof-table th, .prof-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--card-border, #eee);
+    text-align: left;
+  }
+  .prof-table th { font-size: 0.78rem; text-transform: uppercase; color: var(--muted-color, #6b7280); }
+  .prof-table tr:hover td { background: var(--input-bg, #faf9ff); }
+  .prof-cat-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(118, 75, 162, 0.12);
+    color: var(--prof-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .prof-amount { font-weight: 700; white-space: nowrap; }
+
+  /* ---------- Family ---------- */
+  .prof-family-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--prof-gap);
+  }
+  .prof-person {
+    border: 1px solid var(--card-border, #eceaf6);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .prof-person-icon {
+    width: 46px; height: 46px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--prof-gradient);
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  .prof-person .nm { font-weight: 700; }
+  .prof-person .rl { font-size: 0.8rem; color: var(--muted-color, #6b7280); }
+
+  .prof-empty {
+    text-align: center;
+    padding: 26px 16px;
+    color: var(--muted-color, #6b7280);
+    border: 1px dashed var(--card-border, #d9d6ec);
+    border-radius: 14px;
+  }
+  .prof-empty .bi { font-size: 1.8rem; display: block; margin-bottom: 8px; opacity: 0.5; }
+
+   .prof-actions-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+   /* ---------- Quick Links ---------- */
+   .prof-quick-links {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+     gap: 0.85rem;
+   }
+   .prof-quick-link {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 0.4rem;
+     padding: 1rem 0.75rem;
+     background: var(--input-bg, #f7f6fc);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 12px;
+     text-decoration: none;
+     color: var(--text-color, #0f172a);
+     transition: all 0.18s ease;
+     text-align: center;
+     font-size: 0.85rem;
+     font-weight: 500;
+   }
+   .prof-quick-link:hover {
+     background: var(--card-bg, #fff);
+     border-color: var(--prof-primary);
+     transform: translateY(-2px);
+     box-shadow: 0 8px 20px -10px rgba(118, 75, 162, 0.15);
+     color: var(--prof-primary);
+   }
+   .prof-quick-link i {
+     font-size: 1.4rem;
+   }
+
+   /* ---------- Family summary cards ---------- */
+   .prof-family-header {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     flex-wrap: wrap;
+     gap: 0.75rem;
+     margin-bottom: 1rem;
+   }
+   .prof-family-header h3 { margin: 0; font-size: 1.05rem; }
+   .prof-family-header .prof-family-count {
+     font-size: 0.85rem;
+     color: var(--muted-color, #6b7280);
+     font-weight: 600;
+   }
+   .prof-family-summary {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+     gap: 12px;
+     margin-bottom: 1.25rem;
+   }
+   .prof-family-summary .prof-sum {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 14px;
+     padding: 1rem;
+     text-align: center;
+     transition: transform 0.18s ease, box-shadow 0.18s ease;
+   }
+   .prof-family-summary .prof-sum:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 10px 25px -15px rgba(0,0,0,0.08);
+   }
+   .prof-family-summary .prof-sum .prof-sum-icon {
+     width: 40px; height: 40px;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin: 0 auto 0.5rem;
+     font-size: 1.1rem;
+   }
+   .prof-family-summary .prof-sum.spouses .prof-sum-icon { background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.1) 100%); color: #667eea; }
+   .prof-family-summary .prof-sum.children .prof-sum-icon { background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(239,68,68,0.1) 100%); color: #f59e0b; }
+   .prof-family-summary .prof-sum.total .prof-sum-icon { background: linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.06) 100%); color: var(--prof-primary); }
+   .prof-family-summary .prof-sum .prof-sum-value { font-size: 1.4rem; font-weight: 800; color: var(--dark-color, #0f172a); }
+   .prof-family-summary .prof-sum .prof-sum-label { font-size: 0.72rem; color: var(--muted-color, #6b7280); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem; }
+
+   /* ---------- Family member cards ---------- */
+   .prof-family-list {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+     gap: 14px;
+   }
+   .prof-family-member {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 14px;
+     overflow: hidden;
+     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+     transition: var(--transition, all 0.2s ease);
+   }
+   .prof-family-member:hover {
+     box-shadow: 0 8px 24px -12px rgba(0,0,0,0.1);
+     transform: translateY(-2px);
+   }
+   .prof-member-header {
+     display: flex;
+     align-items: center;
+     gap: 0.75rem;
+     padding: 1rem 1.1rem 0.6rem;
+   }
+   .prof-member-header .prof-member-avatar {
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     background: linear-gradient(135deg, var(--prof-primary) 0%, var(--prof-primary-2) 100%);
+     color: white;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 0.95rem;
+     font-weight: 700;
+     flex-shrink: 0;
+     border: 2px solid rgba(255,255,255,0.5);
+   }
+   .prof-member-info {
+     flex: 1;
+     min-width: 0;
+   }
+   .prof-member-name { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--dark-color, #0f172a); }
+   .prof-member-role { font-size: 0.75rem; color: var(--muted-color, #6b7280); text-transform: uppercase; letter-spacing: 0.04em; }
+   .prof-member-actions {
+     display: flex;
+     gap: 0.3rem;
+     padding: 0.4rem 0.6rem 0.75rem;
+   }
+   .prof-member-actions .btn {
+     font-size: 0.75rem;
+     padding: 0.35rem 0.7rem;
+   }
+   .prof-member-details {
+     display: flex;
+     flex-direction: column;
+     gap: 0.3rem;
+     padding: 0 1rem 0.75rem;
+   }
+   .prof-member-details .prof-detail-row {
+     display: flex;
+     justify-content: space-between;
+     font-size: 0.82rem;
+   }
+   .prof-member-details .prof-detail-row .k { color: var(--muted-color, #6b7280); }
+   .prof-member-details .prof-detail-row .v { font-weight: 600; }
+
+   /* ---------- Contribution Activity Chart ---------- */
+   .prof-chart-container {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 14px;
+     padding: 1.25rem;
+     margin-top: 1rem;
+   }
+   .prof-chart-title {
+     font-size: 0.85rem;
+     font-weight: 700;
+     text-transform: uppercase;
+     letter-spacing: 0.04em;
+     color: var(--muted-color, #6b7280);
+     margin-bottom: 1rem;
+   }
+   .prof-chart-bars {
+     display: flex;
+     align-items: flex-end;
+     gap: 6px;
+     height: 160px;
+     padding: 0 0.25rem;
+     border-bottom: 2px solid var(--border-color);
+     border-left: 2px solid var(--border-color);
+     overflow-x: auto;
+   }
+   .prof-chart-bar-wrapper {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     flex: 1;
+     min-width: 50px;
+     height: 100%;
+     justify-content: flex-end;
+   }
+   .prof-chart-bar {
+     width: 100%;
+     max-width: 36px;
+     border-radius: 4px 4px 0 0;
+     background: linear-gradient(180deg, var(--prof-primary) 0%, var(--prof-primary-2) 100%);
+     transition: height 0.6s ease;
+     position: relative;
+     min-height: 2px;
+   }
+   .prof-chart-bar:hover {
+     opacity: 0.85;
+   }
+   .prof-chart-bar .bar-value {
+     position: absolute;
+     top: -18px;
+     left: 50%;
+     transform: translateX(-50%);
+     font-size: 0.7rem;
+     color: var(--muted-color, #6b7280);
+     white-space: nowrap;
+   }
+   .prof-chart-bar .bar-month {
+     position: absolute;
+     bottom: -22px;
+     left: 50%;
+     transform: translateX(-50%);
+     font-size: 0.65rem;
+     color: var(--muted-color, #6b7280);
+     white-space: nowrap;
+   }
+
+   /* ---------- Payment Type Badges (consistent with deposit section) ---------- */
+   .prof-payment-breakdown {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+     gap: 0.75rem;
+     margin-top: 0.75rem;
+   }
+   .prof-payment-item {
+     background: var(--card-bg, #fff);
+     border: 1px solid var(--card-border, #eceaf6);
+     border-radius: 12px;
+     padding: 0.85rem;
+     display: flex;
+     flex-direction: column;
+     gap: 0.3rem;
+   }
+   .prof-payment-item .prof-payment-type {
+     font-size: 0.72rem;
+     text-transform: uppercase;
+     letter-spacing: 0.04em;
+     font-weight: 700;
+   }
+   .prof-payment-item .prof-payment-count { font-size: 1.2rem; font-weight: 800; }
+   .prof-payment-item .prof-payment-amount { font-size: 0.85rem; color: var(--muted-color, #6b7280); }
+   .prof-payment-badge {
+     display: inline-block;
+     padding: 0.25rem 0.6rem;
+     border-radius: 20px;
+     font-size: 0.68rem;
+     font-weight: 700;
+     text-transform: uppercase;
+     letter-spacing: 0.03em;
+   }
+    .prof-payment-badge.cash { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+   .prof-payment-badge.mpesa { background: rgba(16, 185, 129, 0.1); color: #059669; }
+   .prof-payment-badge.bank { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+   .prof-payment-badge.cheque { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+   /* ---------- Contribution Timeline ---------- */
+   .prof-timeline {
+     margin-top: 1rem;
+     border-left: 2px solid var(--border-color);
+     padding-left: 1.25rem;
+   }
+   .prof-timeline-item {
+     position: relative;
+     padding-left: 0.5rem;
+     margin-bottom: 0.75rem;
+   }
+   .prof-timeline-item::before {
+     content: "";
+     position: absolute;
+     left: -1.25rem;
+     top: 0;
+     width: 8px;
+     height: 8px;
+     border-radius: 50%;
+     background: var(--prof-primary);
+   }
+   .prof-timeline-item .prof-timeline-date {
+     font-size: 0.7rem;
+     color: var(--muted-color, #6b7280);
+     text-transform: uppercase;
+     letter-spacing: 0.04em;
+   }
+   .prof-timeline-item .prof-timeline-amount {
+     font-weight: 700;
+     color: var(--dark-color, #0f172a);
+   }
+   .prof-timeline-item .prof-timeline-event {
+     font-size: 0.8rem;
+     color: var(--muted-color, #6b7280);
+   }
+
+   /* ---------- Empty state for contributions ---------- */
+   .prof-contributions-empty {
+     text-align: center;
+     padding: 3rem 1.5rem;
+     color: var(--muted-color, #6b7280);
+   }
+   .prof-contributions-empty .bi { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+
+    /* ---------- Dark mode overrides ---------- */
+  .prof-form .form-label { font-weight: 600; font-size: 0.9rem; }
+  .prof-form .form-control, .prof-form .form-select {
+    border-radius: 12px;
+    min-height: 44px;
+  }
+  .prof-pw-strength { height: 6px; border-radius: 999px; background: var(--track-bg, #eceaf6); overflow: hidden; margin-top: 6px; }
+  .prof-pw-strength i { display: block; height: 100%; width: 0; transition: width 0.3s ease, background 0.3s ease; }
+  .prof-pw-hint { font-size: 0.78rem; color: var(--muted-color, #6b7280); margin-top: 4px; }
+
+  .password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-field .form-control {
+    padding-right: 2.75rem;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--muted-color, #6b7280);
+    cursor: pointer;
+    padding: 0.35rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .password-toggle:hover {
+    color: var(--prof-primary, #764ba2);
+    background: rgba(118, 75, 162, 0.1);
+  }
+
+  .password-toggle:focus-visible {
+    outline: 2px solid var(--prof-primary, #764ba2);
+    outline-offset: 2px;
+  }
+
+  .password-toggle[aria-pressed="true"] {
+    color: var(--prof-primary, #764ba2);
+  }
+
+  /* ---------- Security Section Redesign ---------- */
+  .prof-security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .prof-security-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--prof-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prof-security-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--prof-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .prof-security-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+  }
+
+  .prof-security-card:hover::before {
+    opacity: 1;
+  }
+
+  .prof-security-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .prof-security-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, rgba(118, 75, 162, 0.1), rgba(102, 126, 234, 0.08));
+    color: var(--prof-primary);
+    flex-shrink: 0;
+  }
+
+  .prof-security-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-color);
+  }
+
+  .prof-security-subtitle {
+    margin: 0.15rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .prof-security-input-group {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .prof-security-input-group .form-control {
+    padding-right: 3rem;
+    border: 1.5px solid var(--border-color);
+    background: var(--input-bg);
+    transition: all 0.2s ease;
+  }
+
+  .prof-security-input-group .form-control:focus {
+    border-color: var(--prof-primary);
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+    background: var(--card-bg);
+  }
+
+  .prof-security-toggle {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .prof-security-toggle:hover {
+    color: var(--prof-primary);
+    background: rgba(118, 75, 162, 0.08);
+  }
+
+  .prof-security-toggle:focus-visible {
+    outline: 2px solid var(--prof-primary);
+    outline-offset: 2px;
+  }
+
+  .prof-security-toggle[aria-pressed="true"] {
+    color: var(--prof-primary);
+    background: rgba(118, 75, 162, 0.1);
+  }
+
+  .prof-pw-strength-bar {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--track-bg);
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+
+  .prof-pw-strength-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .prof-pw-strength-fill.weak { width: 25%; background: #e74c3c; }
+  .prof-pw-strength-fill.fair { width: 50%; background: #f1c40f; }
+  .prof-pw-strength-fill.good { width: 75%; background: #2ecc71; }
+  .prof-pw-strength-fill.strong { width: 100%; background: #27ae60; }
+
+  .prof-pw-feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .prof-pw-feedback .bi {
+    font-size: 0.9rem;
+  }
+
+  .prof-security-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .prof-security-actions .btn {
+    flex: 1;
+  }
+
+  .prof-privacy-card {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.02));
+    border: 1px solid var(--border-color);
+    border-radius: var(--prof-radius);
+    padding: 1.5rem;
+  }
+
+  .prof-privacy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .prof-privacy-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+  }
+
+  .prof-privacy-item:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+
+  .prof-privacy-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    flex-shrink: 0;
+  }
+
+  .prof-privacy-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .prof-privacy-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #10b981;
+  }
+
+  html[data-theme="dark"] .password-toggle {
+    color: #a0a0b2;
+  }
+
+  html[data-theme="dark"] .password-toggle:hover {
+    color: #14b8a6;
+    background: rgba(20, 184, 166, 0.1);
+  }
+
+  html[data-theme="dark"] .password-toggle[aria-pressed="true"] {
+    color: #14b8a6;
+  }
+
+  html[data-theme="dark"] .prof-security-card {
+    background: #1a1a2e;
+    border-color: #2e2e40;
+  }
+
+  html[data-theme="dark"] .prof-security-card:hover {
+    border-color: #14b8a6;
+  }
+
+  html[data-theme="dark"] .prof-security-input-group .form-control {
+    background: #23232f;
+    border-color: #2e2e40;
+    color: #d1d1e0;
+  }
+
+  html[data-theme="dark"] .prof-security-input-group .form-control:focus {
+    background: #1a1a2e;
+    border-color: #14b8a6;
+  }
+
+  html[data-theme="dark"] .prof-security-toggle {
+    color: #a0a0b2;
+  }
+
+  html[data-theme="dark"] .prof-security-toggle:hover {
+    color: #14b8a6;
+    background: rgba(20, 184, 166, 0.1);
+  }
+
+  html[data-theme="dark"] .prof-security-toggle[aria-pressed="true"] {
+    color: #14b8a6;
+    background: rgba(20, 184, 166, 0.15);
+  }
+
+  html[data-theme="dark"] .prof-privacy-card {
+    background: rgba(20, 184, 166, 0.04);
+    border-color: #2e2e40;
+  }
+
+  html[data-theme="dark"] .prof-privacy-item {
+    background: #1a1a2e;
+    border-color: #2e2e40;
+  }
+
+  html[data-theme="dark"] .prof-privacy-item:hover {
+    border-color: #14b8a6;
+  }
+
+  /* ---------- Mobile: table -> cards ---------- */
+  @media (max-width: 700px) {
+    .prof-table thead { display: none; }
+    .prof-table, .prof-table tbody, .prof-table tr, .prof-table td { display: block; width: 100%; }
+    .prof-table tr {
+      border: 1px solid var(--card-border, #eceaf6);
+      border-radius: 14px;
+      padding: 6px 12px;
+      margin-bottom: 12px;
+    }
+    .prof-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--card-border, #eee);
+      padding: 9px 0;
+    }
+    .prof-table td:last-child { border-bottom: 0; }
+    .prof-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: var(--muted-color, #6b7280);
+      font-size: 0.82rem;
+    }
+    .prof-hero-inner { justify-content: center; text-align: center; }
+    .prof-id-block { text-align: center; }
+    .prof-sub { justify-content: center; }
+    .prof-hero-actions { justify-content: center; }
+    .prof-family-list { grid-template-columns: 1fr; }
+    .prof-quick-links { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 420px) {
+    .prof-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
+<div class="prof-wrap">
 
-{% if image_list|length == 0 %}
-  <p>Add some Images to the Gallery</p>
-  {% else %}
-  {% for image in image_list %}
-  <figure><img style="float: left;height: 100px; border-radius: 15%;" src="data:;base64,{{image}}" alt="user"><figcaption></figcaption></figure><br><br>
-  {%endfor%}
-  {%endif%} 
-  <a href="{{url_for('main.uploadNew', img_id=img.id)}}" style="float: right;"><button>upload new image</button></a>
-<h1 class="title">
-  <br><br><br>
-  <b>Welcome, {{ name }}!</b>
-  <br>
-</h1>
-<div class="content">
-Role: {{ email.name }}<br>
-Contact: {{ contact }} <br>
-</div></b>
-<span class="title"><h1 style="color: black;">{% block title %} GAMEROCK WELFARE ASSOCIATION {% endblock %}</h1></span>
-    <div>
-        
-      <hr>
-
-        <a href="{{ url_for('register.index')}}"><button>Members </button></a> 
-        <!-- <a href="{{url_for('account.index')}}"><button>Contribution Accounts</button></a><br><br> -->
-        <a href="{{url_for('register.create')}}"><button>New Member</button></a><br><br>
-        <a href="{{ url_for('community.index') }}"><button>Contributions</button></a>
-        <a href="{{ url_for('community.add_event') }}"><button>Community Event</button></a>
+  <!-- Header card -->
+  <section class="prof-hero">
+    <div class="prof-hero-inner">
+      <div class="prof-avatar-wrap">
+        {% if image_list %}
+        <div class="prof-avatar">
+          <img src="data:{{ image_mime_type }};base64,{{ image_list[0] }}" alt="{{ name }}'s profile photo">
+        </div>
+        {% else %}
+        <div class="prof-avatar-fallback">{{ name[0] }}{{ user.surname[0] if user.surname else '' }}</div>
+        {% endif %}
+      </div>
+      <div class="prof-id-block">
+        <h1 class="prof-name">
+          {{ name }} {{ user.surname if user.surname else '' }}
+          <span class="prof-verified-badge" title="Verified Member"><i class="bi bi-patch-check"></i></span>
+        </h1>
+        <div class="prof-sub">
+          <span class="prof-badge"><i class="bi bi-person-badge"></i> {{ email }}</span>
+          {% if contact %}
+          <span><i class="bi bi-telephone"></i> {{ contact }}</span>
+          {% endif %}
+          {% if member and member.created_at %}
+          <span class="dot">·</span>
+          <span><i class="bi bi-calendar-check"></i> Member since {{ member.created_at.strftime('%B %d, %Y') }}</span>
+          {% endif %}
+        </div>
+        <div class="prof-hero-actions">
+          <a class="btn btn-light" href="{{ url_for('main.edit_profile') }}">
+            <i class="bi bi-pencil-square me-1"></i> Edit Profile
+          </a>
+          <a class="btn btn-outline-light" href="{{ url_for('main.upload_file') }}">
+            <i class="bi bi-camera me-1"></i> Change Photo
+          </a>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- Completeness meter -->
+  <section class="prof-complete" aria-label="Profile completeness">
+    <div class="prof-complete-head">
+      <strong><i class="bi bi-clipboard-check me-1"></i> Profile completeness</strong>
+      <span>{{ completeness.percent }}% ({{ completeness.completed }}/{{ completeness.total }})</span>
+    </div>
+    <div class="prof-complete-track"><div class="prof-complete-fill" style="width:{{ completeness.percent }}%"></div></div>
+    {% if completeness.missing %}
+      <p class="prof-complete-missing">
+        Add these to complete your profile:
+        <ul>
+          {% for item in completeness.missing %}<li>{{ item }}</li>{% endfor %}
+        </ul>
+      </p>
+    {% else %}
+      <p class="prof-complete-missing"><i class="bi bi-check-circle me-1"></i> Your profile is complete. Nice work!</p>
+    {% endif %}
+  </section>
+
+  <!-- Stat cards -->
+  <section class="prof-stats" aria-label="Contribution overview">
+    <div class="prof-stat">
+      <div class="prof-stat-icon"><i class="bi bi-piggy-bank"></i></div>
+      <span class="prof-stat-label">Total Contributions</span>
+      <span class="prof-stat-value">Ksh. {{ '{:,}'.format(profile_stats.total_amount) }}</span>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-icon"><i class="bi bi-receipt"></i></div>
+      <span class="prof-stat-label">Deposits</span>
+      <span class="prof-stat-value">{{ profile_stats.count }}</span>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-icon"><i class="bi bi-graph-up"></i></div>
+      <span class="prof-stat-label">Average / Deposit</span>
+      <span class="prof-stat-value">Ksh. {{ '{:,}'.format(profile_stats.average) }}</span>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-icon"><i class="bi bi-calendar-event"></i></div>
+      <span class="prof-stat-label">Last Contribution</span>
+      <span class="prof-stat-value" style="font-size:clamp(0.95rem,2.6vw,1.2rem)">
+        {% if profile_stats.last_date %}{{ profile_stats.last_date.strftime('%d %b %Y') }}{% else %}—{% endif %}
+      </span>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-icon"><i class="bi bi-people"></i></div>
+      <span class="prof-stat-label">Family Members</span>
+      <span class="prof-stat-value">{{ profile_stats.family_count }} <small>· {{ profile_stats.spouse_count }} spouse / {{ profile_stats.children_count }} kids</small></span>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <div class="prof-tabs" role="tablist" aria-label="Profile sections">
+    <button class="prof-tab" role="tab" aria-selected="true" data-prof-tab="overview"><i class="bi bi-person-vcard me-1"></i> Overview</button>
+    <button class="prof-tab" role="tab" aria-selected="false" data-prof-tab="contributions"><i class="bi bi-piggy-bank me-1"></i> Contributions</button>
+    <button class="prof-tab" role="tab" aria-selected="false" data-prof-tab="family"><i class="bi bi-people me-1"></i> Family</button>
+    <button class="prof-tab" role="tab" aria-selected="false" data-prof-tab="settings"><i class="bi bi-gear me-1"></i> Settings</button>
+  </div>
+
+   <!-- Overview panel -->
+   <div class="prof-panel is-active" data-prof-panel="overview">
+     <div class="prof-section">
+       <h3><i class="bi bi-person-vcard"></i> Account Information</h3>
+       <div class="prof-info-grid">
+         <div class="prof-info">
+           <span class="k">First Name</span>
+           <span class="v">{{ user.first_name }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Surname</span>
+           <span class="v">{{ user.surname }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Email Address</span>
+           <span class="v">{{ user.email }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Phone Number</span>
+           <span class="v">{{ user.phone_num or 'Not provided' }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Account Role</span>
+           <span class="v text-capitalize">{{ user.role.value }}</span>
+         </div>
+         {% if member %}
+         <div class="prof-info">
+           <span class="k">Member ID</span>
+           <span class="v">{{ member.id_number|member_id }}
+             <button class="prof-copy-btn" type="button" data-copy="{{ member.id_number|member_id }}" title="Copy Member ID"><i class="bi bi-clipboard"></i></button>
+           </span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Date of Birth</span>
+           <span class="v">{{ member.date_of_birth.strftime('%d %b %Y') if member.date_of_birth else 'Not set' }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Member Since</span>
+           <span class="v">{{ member.created_at.strftime('%B %d, %Y') if member.created_at else 'N/A' }}</span>
+         </div>
+         {% endif %}
+       </div>
+     </div>
+
+     {% if member and summary_data %}
+     <div class="prof-section">
+       <h3><i class="bi bi-bar-chart-line"></i> Engagement Summary</h3>
+       <div class="prof-info-grid">
+         <div class="prof-info">
+           <span class="k">Engagement Score</span>
+           <span class="v">{{ summary_data.engagement_score }}/100</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Active Months</span>
+           <span class="v">{{ profile_stats.active_months }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Average / Month</span>
+           <span class="v">{{ profile_stats.avg_per_month }} deposits</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Consecutive Streak</span>
+           <span class="v">{{ profile_stats.streak }} month{{ 's' if profile_stats.streak != 1 else '' }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Primary Payment</span>
+           <span class="v">{{ summary_data.primary_payment or 'N/A' }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Total Family</span>
+           <span class="v">{{ summary_data.total_family }} member{{ 's' if summary_data.total_family != 1 else '' }}</span>
+         </div>
+       </div>
+     </div>
+     {% endif %}
+
+     {% if member %}
+     <div class="prof-section">
+       <h3><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
+       <div class="prof-quick-links">
+         <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="prof-quick-link">
+           <i class="bi bi-piggy-bank"></i>
+           <span>View Deposit History</span>
+         </a>
+         <a href="{{ url_for('family.family', depo_id=member.id) }}" class="prof-quick-link">
+           <i class="bi bi-people"></i>
+           <span>View Family</span>
+         </a>
+         {% if current_user.role.value in ['admin','devel'] %}
+         <a href="{{ url_for('register.edit', depo_id=member.id) }}" class="prof-quick-link">
+           <i class="bi bi-pencil-square"></i>
+           <span>Edit Member Record</span>
+         </a>
+         {% endif %}
+       </div>
+     </div>
+     {% endif %}
+   </div>
+
+   <!-- Contributions panel -->
+   <div class="prof-panel" data-prof-panel="contributions">
+     <div class="prof-section">
+       <h3><i class="bi bi-piggy-bank"></i> Contribution Summary</h3>
+       <div class="prof-info-grid">
+         <div class="prof-info">
+           <span class="k">Total Contributions</span>
+           <span class="v prof-amount">{{ total_contributions }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Total Deposits</span>
+           <span class="v">{{ profile_stats.count }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Average Contribution</span>
+           <span class="v">Ksh. {{ '{:,}'.format(profile_stats.average) }}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Last Contribution</span>
+           <span class="v">{% if profile_stats.last_date %}{{ profile_stats.last_date.strftime('%d %b %Y') }}{% else %}—{% endif %}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">First Contribution</span>
+           <span class="v">{% if profile_stats.first_date %}{{ profile_stats.first_date.strftime('%d %b %Y') }}{% else %}—{% endif %}</span>
+         </div>
+         <div class="prof-info">
+           <span class="k">Payment Methods</span>
+           <span class="v">{{ profile_stats.payment_breakdown|length }}</span>
+         </div>
+       </div>
+
+       {% if profile_stats.payment_breakdown %}
+       <h3 class="mt-4"><i class="bi bi-bar-chart"></i> By Payment Type</h3>
+       <div class="table-responsive">
+         <table class="prof-table">
+           <thead><tr><th>Type</th><th>Count</th><th>Amount</th></tr></thead>
+           <tbody>
+             {% for label, data in profile_stats.payment_breakdown.items() %}
+             <tr>
+               <td data-label="Type"><span class="prof-cat-badge">{{ label }}</span></td>
+               <td data-label="Count">{{ data.count }}</td>
+               <td data-label="Amount" class="prof-amount">Ksh. {{ '{:,}'.format(data.amount) }}</td>
+             </tr>
+             {% endfor %}
+           </tbody>
+         </table>
+       </div>
+       {% endif %}
+
+       {% set monthly_data = {} %}
+       {% for contribution in contributions %}
+         {% set month_key = contribution.trans_date.strftime('%Y-%m') if contribution.trans_date else 'unknown' %}
+         {% set month_label = contribution.trans_date.strftime('%b %Y') if contribution.trans_date else 'Unknown' %}
+         {% set amount = contribution.amount or 0 %}
+         {% if month_key not in monthly_data %}
+           {% set _ = monthly_data.update({month_key: {'label': month_label, 'amount': 0, 'count': 0}}) %}
+         {% endif %}
+         {% set _ = monthly_data[month_key].update({'amount': monthly_data[month_key]['amount'] + amount, 'count': monthly_data[month_key]['count'] + 1}) %}
+       {% endfor %}
+       {% set sorted_months = monthly_data | dictsort %}
+
+       {% if sorted_months %}
+       <h3 class="mt-4"><i class="bi bi-graph-up"></i> Contribution Activity</h3>
+       <div class="prof-chart-container">
+         <div class="prof-chart-title">Monthly Contributions</div>
+         <div class="prof-chart-bars">
+           {% set max_amount = 0 %}
+           {% for key, data in sorted_months %}
+             {% if data['amount'] > max_amount %}{% set max_amount = data['amount'] %}{% endif %}
+           {% endfor %}
+           {% for key, data in sorted_months %}
+           {% set height_pct = (max_amount > 0) and ((data['amount'] / max_amount * 100) | round) or 0 %}
+           <div class="prof-chart-bar-wrapper">
+             <div class="prof-chart-bar" style="height: {{ height_pct }}%">
+               <span class="bar-value" title="Ksh. {{ '{:,}'.format(data['amount']) }}">{{ '{:,}'.format(data['amount']) }}</span>
+               <span class="bar-month">{{ data['label'] }}</span>
+             </div>
+           </div>
+           {% endfor %}
+         </div>
+       </div>
+       {% endif %}
+
+       {% if member and member.contribute %}
+       <h3 class="mt-4"><i class="bi bi-receipt"></i> Recent Deposits</h3>
+       <div class="table-responsive">
+         <table class="prof-table">
+           <thead>
+             <tr><th>Date</th><th>Amount</th><th>Payment Type</th></tr>
+           </thead>
+           <tbody>
+             {% for contribution in contributions[:15] %}
+             <tr>
+               <td data-label="Date">{{ contribution.trans_date.strftime('%d %b %Y') if contribution.trans_date else 'N/A' }}</td>
+               <td data-label="Amount" class="prof-amount">Ksh. {{ '{:,}'.format(contribution.amount or 0) }}</td>
+               <td data-label="Payment Type"><span class="prof-cat-badge">{{ contribution.payment_type.value if contribution.payment_type else 'N/A' }}</span></td>
+             </tr>
+             {% endfor %}
+           </tbody>
+         </table>
+       </div>
+       {% if contributions|length > 15 %}
+         <p class="text-muted mt-2 mb-0"><i class="bi bi-info-circle me-1"></i> Showing 15 of {{ contributions|length }} deposits. See full history in Deposits.</p>
+       {% endif %}
+       {% endif %}
+
+       {% if member and profile_stats.count %}
+         <div class="prof-actions-row">
+           <a class="btn btn-outline-primary" href="{{ url_for('deposit.deposit', depo_id=member.id) }}"><i class="bi bi-eye me-1"></i> View All Deposits</a>
+           {% if current_user.role.value in ['admin','devel'] %}
+           <a class="btn btn-outline-secondary" href="{{ url_for('deposit.index') }}"><i class="bi bi-download me-1"></i> Export History</a>
+           {% endif %}
+         </div>
+       {% endif %}
+     </div>
+   </div>
+  <div class="prof-panel" data-prof-panel="family">
+    <div class="prof-section">
+      <div class="prof-family-header">
+        <h3><i class="bi bi-people"></i> Family Information</h3>
+        <span class="prof-family-count">
+          {{ spouses|length }} Spouse{{ 's' if spouses|length != 1 else '' }} • {{ all_children|length }} Child{{ 'ren' if all_children|length != 1 else '' }}
+        </span>
+      </div>
+
+      <div class="prof-family-summary">
+        <div class="prof-sum total">
+          <div class="prof-sum-icon">👨‍👩‍👧‍👦</div>
+          <div class="prof-sum-value">{{ spouses|length + all_children|length }}</div>
+          <div class="prof-sum-label">Total Family</div>
+        </div>
+        <div class="prof-sum spouses">
+          <div class="prof-sum-icon">💍</div>
+          <div class="prof-sum-value">{{ spouses|length }}</div>
+          <div class="prof-sum-label">Spouses</div>
+        </div>
+        <div class="prof-sum children">
+          <div class="prof-sum-icon">👶</div>
+          <div class="prof-sum-value">{{ all_children|length }}</div>
+          <div class="prof-sum-label">Children</div>
+        </div>
+      </div>
+
+      {% if spouses or all_children %}
+        <div class="prof-family-list">
+          {% for spouse in spouses %}
+          <div class="prof-family-member">
+            <div class="prof-member-header">
+              <div class="prof-member-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                {{ spouse.firstname[0] }}{{ spouse.lastname[0] if spouse.lastname else spouse.surname[0] }}
+              </div>
+              <div class="prof-member-info">
+                <div class="prof-member-name">{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</div>
+                <div class="prof-member-role">Spouse</div>
+              </div>
+              <div class="prof-member-actions">
+                {% if current_user.role.value in ['admin','devel'] %}
+                <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=spouse.id) }}" class="btn btn-sm btn-outline-secondary" title="Edit Spouse">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <form method="POST" action="{{ url_for('family.delete', depo_id=member.id, del_id=spouse.id) }}" onsubmit="return confirm('Delete this spouse?')">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Spouse"><i class="bi bi-trash"></i></button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            <div class="prof-member-details">
+              {% if spouse.phone_num %}
+              <div class="prof-detail-row">
+                <span class="k">📱 Phone</span>
+                <span class="v">{{ spouse.phone_num|member_phone }}</span>
+              </div>
+              {% endif %}
+              {% if spouse.id_number %}
+              <div class="prof-detail-row">
+                <span class="k">🆔 ID Number</span>
+                <span class="v">{{ spouse.id_number|member_id }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          {% for child in all_children %}
+          <div class="prof-family-member">
+            <div class="prof-member-header">
+              <div class="prof-member-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+                {{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}
+              </div>
+              <div class="prof-member-info">
+                <div class="prof-member-name">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</div>
+                <div class="prof-member-role">Child</div>
+              </div>
+              <div class="prof-member-actions">
+                {% if current_user.role.value in ['admin','devel'] %}
+                <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id if child.spouse_id else member.id, child_id=child.id) }}" class="btn btn-sm btn-outline-secondary" title="Edit Child">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                {% endif %}
+              </div>
+            </div>
+            <div class="prof-member-details">
+              {% if child.date_of_birth %}
+              <div class="prof-detail-row">
+                <span class="k">🎂 Date of Birth</span>
+                <span class="v">{{ child.date_of_birth }}</span>
+              </div>
+              {% endif %}
+              {% if child.phone_num %}
+              <div class="prof-detail-row">
+                <span class="k">📱 Phone</span>
+                <span class="v">{{ child.phone_num|member_phone }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="prof-actions-row">
+          {% if current_user.role.value in ['admin','devel'] %}
+            <a class="btn btn-primary" href="{{ url_for('family.family', depo_id=member.id) }}"><i class="bi bi-eye me-1"></i> View Full Family</a>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="prof-empty">
+          <i class="bi bi-people"></i>
+          No family information recorded yet.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+   <!-- Settings panel -->
+   <div class="prof-panel" data-prof-panel="settings">
+     <div class="prof-section">
+       <h3><i class="bi bi-pencil-square"></i> Edit Profile</h3>
+       <form method="POST" action="{{ url_for('main.update_profile') }}" class="prof-form profile-form" id="profileForm">
+         <input type="hidden" name="form_type" value="profile">
+         <div class="row g-3">
+           <div class="col-md-6">
+             <label class="form-label">First Name</label>
+             <input type="text" name="first_name" class="form-control" value="{{ user.first_name or '' }}">
+           </div>
+           <div class="col-md-6">
+             <label class="form-label">Surname</label>
+             <input type="text" name="surname" class="form-control" value="{{ user.surname or '' }}">
+           </div>
+           <div class="col-md-6">
+             <label class="form-label">Email</label>
+             <input type="email" name="email" class="form-control" value="{{ user.email or '' }}">
+           </div>
+           <div class="col-md-6">
+             <label class="form-label">Phone Number</label>
+             <input type="text" name="phone_num" class="form-control" value="{{ user.phone_num or '' }}">
+           </div>
+         </div>
+         <button type="submit" class="btn btn-primary mt-3">
+           <i class="bi bi-check-circle me-1"></i> Save Changes
+         </button>
+       </form>
+     </div>
+
+      <div class="prof-section">
+        <h3><i class="bi bi-shield-lock"></i> Security</h3>
+        <form method="POST" action="{{ url_for('main.update_profile') }}" class="prof-form profile-form" id="passwordForm">
+          <input type="hidden" name="form_type" value="password">
+          <div class="prof-security-grid">
+             <div class="prof-security-card">
+               <div class="prof-security-header">
+                 <div class="prof-security-icon">🔒</div>
+                 <div>
+                   <div class="prof-security-title">Current Password</div>
+                   <div class="prof-security-subtitle">Enter your existing password</div>
+                 </div>
+               </div>
+                <div class="prof-security-input-group">
+                  <input type="password" name="current_password" class="form-control" id="current_password" autocomplete="current-password">
+                  <button type="button" class="prof-security-toggle password-toggle" id="toggle-current" data-input-id="current_password" title="Show password" aria-label="Show password" aria-pressed="false">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="prof-security-card">
+                <div class="prof-security-header">
+                  <div class="prof-security-icon">🔑</div>
+                  <div>
+                    <div class="prof-security-title">New Password</div>
+                    <div class="prof-security-subtitle">Choose a strong password</div>
+                  </div>
+                </div>
+                <div class="prof-security-input-group">
+                  <input type="password" name="new_password" class="form-control" id="new_password" autocomplete="new-password">
+                  <button type="button" class="prof-security-toggle password-toggle" id="toggle-new" data-input-id="new_password" title="Show password" aria-label="Show password" aria-pressed="false">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                <div class="prof-pw-strength-bar"><div class="prof-pw-strength-fill" id="pwBar"></div></div>
+                <div class="prof-pw-feedback" id="pwHint"><i class="bi bi-info-circle"></i> Use 8+ chars with a mix of letters, numbers & symbols.</div>
+              </div>
+              <div class="prof-security-card">
+                <div class="prof-security-header">
+                  <div class="prof-security-icon">✅</div>
+                  <div>
+                    <div class="prof-security-title">Confirm Password</div>
+                    <div class="prof-security-subtitle">Re-enter your new password</div>
+                  </div>
+                </div>
+                <div class="prof-security-input-group">
+                  <input type="password" name="confirm_password" class="form-control" id="confirm_password" autocomplete="new-password">
+                  <button type="button" class="prof-security-toggle password-toggle" id="toggle-confirm" data-input-id="confirm_password" title="Show password" aria-label="Show password" aria-pressed="false">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+               <div class="prof-pw-feedback" id="pwMatch"></div>
+             </div>
+          </div>
+          <div class="prof-security-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Update Password
+            </button>
+            <button type="reset" class="btn btn-outline-secondary" onclick="document.getElementById('passwordForm').reset(); document.getElementById('pwBar').className='prof-pw-strength-fill'; document.getElementById('pwHint').innerHTML='<i class=\'bi bi-info-circle\'></i> Use 8+ chars with a mix of letters, numbers & symbols.'; document.getElementById('pwMatch').innerHTML='';">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {% if current_user.role.value in ['admin', 'devel'] %}
+      <div class="prof-section">
+        <h3><i class="bi bi-shield-check"></i> Privacy & Visibility</h3>
+        <p style="color: var(--muted-color, #6b7280); font-size: 0.9rem; margin-bottom: 1.25rem;">
+          Control how your profile information is displayed to other members and administrators.
+        </p>
+        <div class="prof-privacy-card">
+          <div class="prof-privacy-grid">
+            <div class="prof-privacy-item">
+              <div class="prof-privacy-icon"><i class="bi bi-eye"></i></div>
+              <div>
+                <div class="prof-privacy-label">Profile Visibility</div>
+                <div class="prof-privacy-value">Public</div>
+              </div>
+            </div>
+            <div class="prof-privacy-item">
+              <div class="prof-privacy-icon"><i class="bi bi-receipt"></i></div>
+              <div>
+                <div class="prof-privacy-label">Contribution History</div>
+                <div class="prof-privacy-value">Visible</div>
+              </div>
+            </div>
+            <div class="prof-privacy-item">
+              <div class="prof-privacy-icon"><i class="bi bi-people"></i></div>
+              <div>
+                <div class="prof-privacy-label">Family Information</div>
+                <div class="prof-privacy-value">Visible</div>
+              </div>
+            </div>
+            <div class="prof-privacy-item">
+              <div class="prof-privacy-icon"><i class="bi bi-camera"></i></div>
+              <div>
+                <div class="prof-privacy-label">Photo Uploads</div>
+                <div class="prof-privacy-value">Allowed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+   </div>
+
+</div>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.prof-tab'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.prof-panel'));
+
+    function activate(name, push) {
+      tabs.forEach(function (t) {
+        var sel = t.getAttribute('data-prof-tab') === name;
+        t.setAttribute('aria-selected', sel ? 'true' : 'false');
+      });
+      panels.forEach(function (p) {
+        p.classList.toggle('is-active', p.getAttribute('data-prof-panel') === name);
+      });
+      if (push !== false) {
+        try { history.replaceState(null, '', '#' + name); } catch (e) {}
+      }
+    }
+
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { activate(t.getAttribute('data-prof-tab')); });
+    });
+
+    // Deep link / hash support
+    var initial = (location.hash || '').replace('#', '');
+    if (initial && panels.some(function (p) { return p.getAttribute('data-prof-panel') === initial; })) {
+      activate(initial, false);
+    }
+
+    // Copy-to-clipboard for member id
+    document.querySelectorAll('[data-copy]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.getAttribute('data-copy');
+        var done = function () {
+          var ic = btn.querySelector('i');
+          if (!ic) return;
+          var prev = ic.className;
+          ic.className = 'bi bi-check2';
+          setTimeout(function () { ic.className = prev; }, 1200);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () {});
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(ta);
+        }
+      });
+    });
+
+    // Password strength + match feedback
+    var np = document.getElementById('new_password');
+    var cp = document.getElementById('confirm_password');
+    var bar = document.getElementById('pwBar');
+    var hint = document.getElementById('pwHint');
+    var match = document.getElementById('pwMatch');
+
+    function score(pw) {
+      if (!pw) return 0;
+      var s = 0;
+      if (pw.length >= 8) s++;
+      if (pw.length >= 12) s++;
+      if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s++;
+      if (/\d/.test(pw)) s++;
+      if (/[^A-Za-z0-9]/.test(pw)) s++;
+      return s;
+    }
+    function paint(pw) {
+      var s = score(pw);
+      var classes = ['', 'weak', 'fair', 'good', 'strong'];
+      var labels = ['Use 8+ chars with a mix of letters, numbers & symbols.', 'Weak', 'Fair', 'Good', 'Strong'];
+      var icons = ['bi-info-circle', 'bi-shield-exclamation', 'bi-shield-plus', 'bi-shield-check', 'bi-shield-shield'];
+      var idx = Math.max(0, Math.min(4, s));
+      if (!pw) { bar.className = 'prof-pw-strength-fill'; hint.innerHTML = '<i class="bi bi-info-circle"></i> Use 8+ chars with a mix of letters, numbers & symbols.'; return; }
+      bar.className = 'prof-pw-strength-fill ' + classes[idx];
+      hint.innerHTML = '<i class="bi ' + icons[idx] + '"></i> ' + labels[idx];
+    }
+    if (np) {
+      np.addEventListener('input', function () { paint(np.value); checkMatch(); });
+    }
+    function checkMatch() {
+      if (!cp || !np) return;
+      if (!cp.value) { match.innerHTML = ''; return; }
+      if (cp.value === np.value) { match.style.color = '#2ecc71'; match.innerHTML = '<i class="bi bi-check-circle"></i> Passwords match'; }
+      else { match.style.color = '#e74c3c'; match.innerHTML = '<i class="bi bi-x-circle"></i> Passwords do not match'; }
+    }
+    if (cp) cp.addEventListener('input', checkMatch);
+
+    // Guard password submit until fields match
+    var pf = document.getElementById('passwordForm');
+    if (pf) {
+      pf.addEventListener('submit', function (e) {
+        if (np && cp && np.value && cp.value && np.value !== cp.value) {
+          e.preventDefault();
+          match.style.color = '#e74c3c';
+          match.textContent = 'Passwords do not match';
+        }
+      });
+    }
+  })();
+
+  function showSection(sectionId) {
+    var tab = sectionId === 'profileSection' ? 'settings' : sectionId;
+    var el = document.querySelector('.prof-tab[data-prof-tab="' + tab + '"]');
+    if (el) el.click();
+  }
+  function changeProfilePicture() {
+    window.location.href = "{{ url_for('main.upload_file') }}";
+  }
+</script>
 {% endblock %}

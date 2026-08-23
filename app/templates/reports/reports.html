@@ -1,15 +1,870 @@
 {% extends 'base_f/base.html' %}
 
-<span class="title"><h1>{% block title %} Reports {% endblock %}</h1></span>
+{% block page_title %}Contribution Report{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .report-page {
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+        min-height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .report-page::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .report-page::after {
+        content: '';
+        position: absolute;
+        bottom: -150px;
+        left: -150px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(118, 75, 162, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .report-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .report-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .report-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .report-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .report-header-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        flex-shrink: 0;
+    }
+
+    .report-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .report-header .report-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0.25rem 0 0;
+    }
+
+    .report-stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .report-stat-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .report-stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .report-stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        flex-shrink: 0;
+    }
+
+    .report-stat-icon.amount {
+        background: rgba(15, 118, 110, 0.1);
+        color: #0f766e;
+    }
+
+    .report-stat-icon.date {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .report-stat-icon.payment {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .report-stat-icon.event {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+
+    .report-stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .report-stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    .report-stat-value.amount {
+        font-size: 1.35rem;
+        color: #0f766e;
+    }
+
+    .report-cards-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .report-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+    }
+
+    .report-card-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .report-card-header-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .report-card-header-icon.member {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .report-card-header-icon.event {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+
+    .report-card-header-icon.total {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .report-card-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .report-card-body {
+        padding: 1.25rem;
+    }
+
+    .report-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .report-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .report-info-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .report-info-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #0f172a;
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .member-avatar-large {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .member-avatar-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .event-image-banner {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-top: 1rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+    }
+
+    .event-image-placeholder {
+        width: 100%;
+        height: 140px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .report-image-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        margin-top: 1.5rem;
+    }
+
+    .report-image-card .card-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .report-image-card .card-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .report-image-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .report-image-card img {
+        width: 100%;
+        max-height: 520px;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .report-image-card .no-image {
+        width: 100%;
+        height: 160px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 0.95rem;
+    }
+
+    .member-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .member-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .member-subtitle {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0.15rem 0 0;
+    }
+
+    .report-badge {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+
+    .report-badge-primary {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .report-badge-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .report-badge-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+
+    .report-badge-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .report-actions .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .report-actions .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+    }
+
+    .report-actions .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        color: white;
+    }
+
+    .report-actions .btn-outline {
+        background: transparent;
+        color: #334155;
+        border: 2px solid #e2e8f0;
+    }
+
+    .report-actions .btn-outline:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .report-section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 1rem;
+    }
+
+    .report-recent-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        margin-top: 1.5rem;
+    }
+
+    .report-recent-card .card-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .report-recent-card .card-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .report-recent-card .table {
+        margin-bottom: 0;
+    }
+
+    .report-recent-card .table th {
+        background: #f8fafc;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 700;
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+    }
+
+    .report-recent-card .table td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .report-recent-card .table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .empty-recent {
+        padding: 2rem;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    @media (max-width: 768px) {
+        .report-header {
+            padding: 1.5rem;
+        }
+
+        .report-header h2 {
+            font-size: 1.25rem;
+        }
+
+        .report-stats-row {
+            grid-template-columns: 1fr;
+        }
+
+        .report-cards-row {
+            grid-template-columns: 1fr;
+        }
+
+        .report-actions {
+            flex-direction: column;
+        }
+
+        .report-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .report-recent-card .table-responsive {
+            overflow-x: auto;
+        }
+    }
+
+    [data-theme="dark"] .report-page {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+
+    [data-theme="dark"] .report-stat-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .report-stat-value {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .report-stat-label {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .report-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .report-card-header {
+        border-bottom-color: #334155;
+    }
+
+    [data-theme="dark"] .report-card-header h4 {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .report-card-body .report-info-label {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .report-card-body .report-info-value {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .member-name {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .member-subtitle {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .report-recent-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .report-recent-card .card-header {
+        border-bottom-color: #334155;
+    }
+
+    [data-theme="dark"] .report-recent-card .card-header h4 {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .report-recent-card .table th {
+        background: #0f172a;
+        border-bottom-color: #334155;
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .report-recent-card .table tbody tr:hover {
+        background: #0f172a;
+    }
+
+    [data-theme="dark"] .report-section-title {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .report-actions .btn-outline {
+        color: #e2e8f0;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .report-actions .btn-outline:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    [data-theme="dark"] .member-avatar-large {
+        background: #334155;
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .event-image-banner {
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .event-image-placeholder {
+        background: #0f172a;
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .report-image-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .report-image-card .card-header {
+        border-bottom-color: #334155;
+    }
+
+    [data-theme="dark"] .report-image-card .card-header h4 {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .report-image-card img {
+        border-color: #334155;
+        background: #0f172a;
+    }
+
+    [data-theme="dark"] .report-image-card .no-image {
+        background: #0f172a;
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    [data-theme="light"] .report-page {
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+    }
+
+    [data-theme="light"] .report-stat-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .report-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .report-recent-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .report-image-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="report-page">
+    <div class="report-container">
+        <div class="report-header">
+            <div class="report-header-content">
+                <div class="report-header-icon">📊</div>
+                <div>
+                    <h2>Contribution Report</h2>
+                    <p class="report-subtitle">Report #{{ contribute.id }} — Detailed view of this contribution record</p>
+                </div>
+            </div>
+        </div>
 
-    <div class="content" style="color: black;">
-      Name: {{contribute.name}}<br>
-      Total amount Ksh: {{total}} 
-      <br>
-      Total Members: {{ members }}
-  </div>
-    <a href="{{ url_for('reports.index')}}"><button>Back</button></a>
+        <div class="report-stats-row">
+            <div class="report-stat-card">
+                <div class="report-stat-icon amount">💰</div>
+                <div>
+                    <div class="report-stat-label">Amount</div>
+                    <div class="report-stat-value amount">Ksh. {{ contribute.amount }}</div>
+                </div>
+            </div>
+            <div class="report-stat-card">
+                <div class="report-stat-icon date">📅</div>
+                <div>
+                    <div class="report-stat-label">Transaction Date</div>
+                    <div class="report-stat-value">{{ contribute.trans_date.strftime('%B %d, %Y') if contribute.trans_date else 'N/A' }}</div>
+                </div>
+            </div>
+            <div class="report-stat-card">
+                <div class="report-stat-icon payment">💳</div>
+                <div>
+                    <div class="report-stat-label">Payment Type</div>
+                    <div class="report-stat-value">
+                        {% if contribute.payment_type.value == 'Ksh' %}
+                        <span class="report-badge report-badge-primary">💵 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        {% elif contribute.payment_type.value == 'MPESA' %}
+                        <span class="report-badge report-badge-success">📱 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        {% elif contribute.payment_type.value == 'BANK DEPOSIT' %}
+                        <span class="report-badge report-badge-warning">🏦 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        {% else %}
+                        <span class="report-badge report-badge-primary">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="report-stat-card">
+                <div class="report-stat-icon event">🎉</div>
+                <div>
+                    <div class="report-stat-label">Community Event</div>
+                    <div class="report-stat-value">{{ contribute.community_event.name if contribute.community_event else 'N/A' }}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if event_image_url %}
+        <div class="report-image-card">
+            <div class="card-header">
+                <div class="report-card-header-icon event">🎉</div>
+                <h4>Event Image — {{ contribute.community_event.name if contribute.community_event else 'N/A' }}</h4>
+            </div>
+            <div class="card-body">
+                <img src="{{ event_image_url }}" alt="{{ contribute.community_event.name if contribute.community_event else 'Event' }}">
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="report-cards-row">
+            <div class="report-card">
+                <div class="report-card-header">
+                    <div class="report-card-header-icon member">👤</div>
+                    <h4>Member Information</h4>
+                </div>
+                <div class="report-card-body">
+                    <div class="member-header">
+                    {% if member_profile_image %}
+                    <div class="member-avatar-large">
+                        <img src="data:;base64,{{ member_profile_image }}" alt="{{ member.firstname }} {{ member.lastname }}">
+                    </div>
+                    {% else %}
+                    <div class="member-avatar-large">{{ member.firstname[0] }}{{ member.lastname[0] }}</div>
+                    {% endif %}
+                    <div>
+                        <p class="member-name">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</p>
+                        <p class="member-subtitle">ID: {{ member.id_number|member_id }} | DOB: {{ member.date_of_birth }}</p>
+                    </div>
+                </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Email</span>
+                        <span class="report-info-value">{{ member.email or 'N/A' }}</span>
+                    </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Phone</span>
+                        <span class="report-info-value">{{ member.phone_num|member_phone if member.phone_num else 'N/A' }}</span>
+                    </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Member Since</span>
+                        <span class="report-info-value">{{ member.created_at.strftime('%B %d, %Y') if member.created_at else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-header">
+                    <div class="report-card-header-icon total">📈</div>
+                    <h4>Contribution Summary</h4>
+                </div>
+                <div class="report-card-body">
+                    <div class="report-info-row">
+                        <span class="report-info-label">This Contribution</span>
+                        <span class="report-info-value" style="color: #0f766e; font-weight: 800;">Ksh. {{ contribute.amount }}</span>
+                    </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Member Total</span>
+                        <span class="report-info-value" style="font-weight: 700;">Ksh. {{ member_total }}</span>
+                    </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Total Transactions</span>
+                        <span class="report-info-value">{{ member.contribute|length }}</span>
+                    </div>
+                    <div class="report-info-row">
+                        <span class="report-info-label">Payment Method</span>
+                        <span class="report-info-value">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if recent_contributions %}
+        <div class="report-recent-card">
+            <div class="card-header">
+                <h4>🕒 Recent Contributions</h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Event</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for deposit in recent_contributions %}
+                        <tr>
+                            <td>{{ deposit.trans_date.strftime('%B %d, %Y') if deposit.trans_date else 'N/A' }}</td>
+                            <td class="fw-semibold">Ksh. {{ deposit.amount }}</td>
+                            <td>
+                                {% if deposit.payment_type.value == 'Ksh' %}
+                                <span class="report-badge report-badge-primary">💵 {{ deposit.payment_type.value }}</span>
+                                {% elif deposit.payment_type.value == 'MPESA' %}
+                                <span class="report-badge report-badge-success">📱 {{ deposit.payment_type.value }}</span>
+                                {% elif deposit.payment_type.value == 'BANK DEPOSIT' %}
+                                <span class="report-badge report-badge-warning">🏦 {{ deposit.payment_type.value }}</span>
+                                {% else %}
+                                <span class="report-badge report-badge-primary">{{ deposit.payment_type.value if deposit.payment_type else 'N/A' }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ deposit.community_event.name if deposit.community_event else 'N/A' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="report-actions">
+            <a href="{{ url_for('reports.index') }}" class="btn btn-outline">← Back to Reports</a>
+            <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="btn btn-primary">💳 View All Deposits</a>
+        </div>
     </div>
+</div>
 {% endblock %}

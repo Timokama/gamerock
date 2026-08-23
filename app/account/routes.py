@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from app.account import bp
 from flask_login import login_required, current_user
 from app import db
@@ -9,7 +9,11 @@ from app.models.contribute import Contribution
 @login_required
 def index():
     user = User.query.get_or_404(current_user.id)
-    return render_template("contribute/index.html", user = user)
+    member = user.member_profile
+    if not member:
+        flash("No member profile found for your account.")
+        return redirect(url_for('main.index'))
+    return render_template("contribute/index.html", user = user, member = member)
 
 @bp.route('/create_account/', methods=('GET', 'POST'))
 def cont():
@@ -24,12 +28,12 @@ def cont():
     return render_template('contribute/post.html', user = user)
 
 
-@bp.route('/contribute/<tag_name>/')
+@bp.route('/contribute/<path:tag_name>/')
 def contribute(tag_name):
     user = User.query.get_or_404(current_user.id)
     register = user.family
     
-    contribute = Contribution.query.filter_by(name=tag_name).order_by(Contribute.id.desc()).first_or_404()
+    contribute = Contribution.query.filter_by(name=tag_name).order_by(Contribution.id.desc()).first_or_404()
 
     return render_template('contribute/tag.html', contribute = contribute, user = user, register = register)
 

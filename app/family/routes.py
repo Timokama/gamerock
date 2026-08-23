@@ -1,22 +1,52 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 # from app.register import bp
 from flask_login import login_required, current_user
-from datetime import date
+from datetime import date, datetime
 from app.family import bp
 from app import db
 from app.user import User
+from app.level import AccessLevel
 from app.models.register import Member
 # from app.models.deposit import Deposit
 from app.models.community_event import CommunityEvent
 from app.models.child import Child
-from app.models.wife import Wife
+from app.models.spouse import Spouse
 from datetime import date
 
 @bp.route('/')
 @login_required
 def index():
     user = User.query.get_or_404(current_user.id)
-    return render_template("family/index.html", user = user)
+    total_members = 0
+    total_spouses = 0
+    total_children = 0
+    member_stats = {}
+    if user.role in (AccessLevel.ADMIN, AccessLevel.DEVEL):
+        members = Member.query.order_by(Member.created_at.desc()).all()
+        total_members = len(members)
+        member_children = {}
+        for member in members:
+            spouse_count = len(member.spouse)
+            direct_children = len(member.child)
+            spouse_children = sum(len(spouse.child) for spouse in member.spouse)
+            total_spouses += spouse_count
+            total_children += direct_children + spouse_children
+            member_stats[member.id] = {
+                'spouse_count': spouse_count,
+                'direct_children': direct_children,
+                'spouse_children': spouse_children,
+                'total_children': direct_children + spouse_children,
+            }
+            all_children = list(member.child)
+            for spouse in member.spouse:
+                all_children.extend(spouse.child)
+            member_children[member.id] = all_children
+        return render_template("family/index.html", members=members, total_members=total_members, total_spouses=total_spouses, total_children=total_children, member_stats=member_stats, member_children=member_children)
+    member = user.member_profile
+    if not member:
+        members = []
+        return render_template("family/index.html", members=members)
+    return render_template("family/index.html", user=user, member=member)
 
 
 @bp.route('/<int:depo_id>/')
@@ -30,97 +60,129 @@ def edit(depo_id):
     if request.method == 'POST':
         firstname=request.form['firstname']
         lastname=request.form['lastname']
-        date_of_birth=request.form['date_of_birth']
+        surname = request.form['surname']
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
         phone_num=request.form['phone_num']
+        email=request.form['email']
         id_number=request.form['id_number']
 
         register.firstname = firstname
         register.lastname = lastname
+        register.surname = surname
+        register.phone_num = phone_num
+        register.email = email
         register.date_of_birth = date_of_birth
-        register.contact = contact
         register.id_number = id_number
+
+        if register.user_account:
+            register.user_account.email = email
+            register.user_account.phone_num = phone_num
+            register.user_account.role = AccessLevel.USER
+        else:
+            existing_user = User.query.filter_by(email=email).first()
+            if not existing_user:
+                new_user = User(
+                    surname=register.surname,
+                    first_name=register.firstname,
+                    email=email,
+                    phone_num=register.phone_num,
+                    passwords=id_number,
+                    role=AccessLevel.USER
+                )
+                db.session.add(new_user)
+                db.session.flush()
+                register.user_id = new_user.id
 
         db.session.add(register)
         db.session.commit()
         return redirect(url_for('family.family', depo_id=register.id))
     return render_template('register/edit.html', register = register, family = register)
 
-@bp.route('/<int:depo_id>/create_wife', methods=('POST', 'GET'))
-def create_wife(depo_id):
+@bp.route('/<int:depo_id>/create_spouse', methods=('POST', 'GET'))
+def create_spouse(depo_id):
+    # If depo_id is 0, redirect to members list
+    if depo_id == 0:
+        flash("Please select a member first to add family information.")
+        return redirect(url_for('register.index'))
+    
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        new_wife = Wife(firstname = request.form['firstname'], lastname = request.form['lastname'], surname = request.form['surname'], phone_num = request.form['phone_num'], date_of_birth = request.form['date_of_birth'], id_number=request.form['id_number'],member = register)
-        db.session.add(new_wife)
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+        new_spouse = Spouse(firstname = request.form['firstname'], lastname = request.form['lastname'], surname = request.form['surname'], phone_num = request.form['phone_num'], date_of_birth = date_of_birth, id_number=request.form['id_number'],member = register)
+        db.session.add(new_spouse)
         db.session.commit()
         return redirect(url_for('family.family', depo_id = register.id))
     return render_template('register/create.html', register=register)
 
-@bp.route('/<int:depo_id>/<int:wife_id>/create_child', methods=('POST', 'GET'))
-def create_child(depo_id, wife_id):
+@bp.route('/<int:depo_id>/<int:spouse_id>/create_child', methods=('POST', 'GET'))
+def create_child(depo_id, spouse_id):
     register = Member.query.get_or_404(depo_id)
-    wife = Wife.query.get_or_404(wife_id)
+    spouse = Spouse.query.get_or_404(spouse_id)
     if request.method == 'POST':
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
         child = Child(
             firstname=request.form['firstname'],
             lastname=request.form['lastname'],
             surname=request.form['surname'],
             phone_num=request.form['phone_num'],
             id_number=request.form['id_number'],
-            date_of_birth=request.form['date_of_birth'],
-            wife = wife
+            date_of_birth=date_of_birth,
+            spouse = spouse
         )
         db.session.add(child)
         db.session.commit()
         return redirect(url_for('family.family', depo_id = register.id))
-    return render_template('register/create.html', register=register, wife = wife)
+    return render_template('register/create.html', register=register, spouse = spouse)
 
 @bp.post('/<int:depo_id>/<int:del_id>/delete')
 def delete(depo_id, del_id):
     register = Member.query.get_or_404(depo_id)
-    wife = Wife.query.get_or_404(del_id)
-    for child in wife.child:
+    spouse = Spouse.query.get_or_404(del_id)
+    for child in spouse.child:
         db.session.delete(child)
-    db.session.delete(wife)
+    db.session.delete(spouse)
     db.session.commit()
     return redirect(url_for('family.family', depo_id = register.id))
 
-@bp.route('/<int:depo_id>/<int:edit_id>/edit_wife', methods=('POST','GET'))
-def edit_wife(depo_id, edit_id):
+@bp.route('/<int:depo_id>/<int:edit_id>/edit_spouse', methods=('POST','GET'))
+def edit_spouse(depo_id, edit_id):
     register = Member.query.get_or_404(depo_id)
-    wife = Wife.query.get_or_404(edit_id)
+    spouse = Spouse.query.get_or_404(edit_id)
     if request.method == 'POST':
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         surname = request.form['surname']
         phone_num = request.form['phone_num']
-        id_number = request.form['id_number']
-        date_of_birth = request.form['date_of_birth']
+        raw_id = request.form['id_number'].strip()
+        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
         
-        wife.firstname = firstname
-        wife.lastname = lastname
-        wife.surname = surname
-        wife.phone_num = phone_num
-        wife.id_number = id_number
-        wife.date_of_birth = date_of_birth
+        spouse.firstname = firstname
+        spouse.lastname = lastname
+        spouse.surname = surname
+        spouse.phone_num = phone_num
+        spouse.id_number = id_number
+        spouse.date_of_birth = date_of_birth
 
-        db.session.add(wife)
+        db.session.add(spouse)
         db.session.commit()
 
         return redirect(url_for('family.family', depo_id = register.id))
-    return render_template('register/edit.html', register = wife, family = register)
+    return render_template('register/edit.html', register = spouse, family = register)
 
 @bp.route('/<int:depo_id>/<int:edit_id>/<int:child_id>/edit_child', methods=('POST','GET'))
 def edit_child(depo_id, edit_id, child_id):
     register = Member.query.get_or_404(depo_id)
-    wife = Wife.query.get_or_404(edit_id)
+    spouse = Spouse.query.get_or_404(edit_id)
     child = Child.query.get_or_404(child_id)
     if request.method == 'POST':
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         surname = request.form['surname']
         phone_num = request.form['phone_num']
-        id_number = request.form['id_number']
-        date_of_birth = request.form['date_of_birth']
+        raw_id = request.form['id_number'].strip()
+        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
         
         child.firstname = firstname
         child.lastname = lastname
@@ -144,8 +206,9 @@ def editchild(depo_id, child_id):
         lastname = request.form['lastname']
         surname = request.form['surname']
         phone_num = request.form['phone_num']
-        id_number = request.form['id_number']
-        date_of_birth = request.form['date_of_birth']
+        raw_id = request.form['id_number'].strip()
+        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
         
         child.firstname = firstname
         child.lastname = lastname
@@ -160,20 +223,22 @@ def editchild(depo_id, child_id):
         return redirect(url_for('family.family', depo_id = register.id))
     return render_template('register/edit.html', register = child, family = register)
 
+@bp.post('/<int:depo_id>/<int:child_id>/delete_child')
+def delete_child(depo_id, child_id):
+    register = Member.query.get_or_404(depo_id)
+    child = Child.query.get_or_404(child_id)
+    db.session.delete(child)
+    db.session.commit()
+    return redirect(url_for('family.family', depo_id = register.id))
+
 @bp.post('/<int:depo_id>/delete/')
 def delete_family(depo_id):
-    depo = Deposit.query.get_or_404(depo_id)
     register = Member.query.get_or_404(depo_id)
-    for man in depo.family:
-        for child in man.child:
+    for spouse in register.spouse:
+        for child in spouse.child:
             db.session.delete(child)
-    for wife in man.wife:
-        for child_ in wife.child:
-            db.session.delete(child_)
-        db.session.delete(wife)
+        db.session.delete(spouse)
     
-    db.session.delete(man)
-    db.session.delete(depo)
     db.session.commit()
     return redirect(url_for('family.index'))
 
@@ -193,8 +258,8 @@ def delete_family(depo_id):
 def contact():
     user = User.query.get_or_404(current_user.id)
     member = user.family
+    age_list = []
     if member:
-        age_list = []
         for birthday in member:
             today = date.today()
             age = today.year - birthday.date_of_birth.year - ((today.month, today.day) < (birthday.date_of_birth.month, birthday.date_of_birth.day))
@@ -202,4 +267,4 @@ def contact():
 
 
 #    return render_template('contact.html', member = member, age = age_list)
-    return render_template("family/birthday.html", member = member, register = register, age=age)
+    return render_template("family/birthday.html", member = member, age=age_list)

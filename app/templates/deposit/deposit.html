@@ -1,34 +1,1162 @@
-{% from 'macros.html' import display_tags %}
 {% extends 'base_f/base.html' %}
+
+{% block page_title %}{{ register.firstname }}'s Contributions{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<style>
+.deposit-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.deposit-page-header h2 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.5rem;
+}
+
+.deposit-page-header p {
+    color: var(--text-muted);
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+}
+
+.deposit-profile-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.deposit-profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.deposit-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.deposit-profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+    flex-shrink: 0;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+.deposit-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.deposit-profile-info {
+    flex: 1;
+    min-width: 220px;
+}
+
+.deposit-profile-name {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.5rem;
+}
+
+.deposit-profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.deposit-profile-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.deposit-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.contribution-section-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    overflow: visible;
+    transition: var(--transition);
+}
+
+.contribution-section-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.contribution-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.contribution-card-header .contribution-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contribution-card-header .contribution-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.contribution-card-header .contribution-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.contribution-card-header .contribution-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 0.15rem;
+}
+
+.contribution-card-header .dropdown {
+    position: relative;
+}
+
+.contribution-card-header .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    backdrop-filter: blur(4px);
+}
+
+.contribution-card-header .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.contribution-card-body {
+    padding: 1.5rem;
+}
+
+.contribution-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.contribution-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    background: var(--bg-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.contribution-detail-item:hover {
+    border-color: var(--primary-color);
+    background: var(--card-bg);
+    transform: translateY(-1px);
+}
+
+.contribution-detail-item .detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.contribution-detail-item .detail-content {
+    min-width: 0;
+}
+
+.contribution-detail-item .detail-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.contribution-detail-item .detail-value {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.pending-contributions-table {
+    width: 100%;
+}
+
+.pending-contributions-table thead th {
+    background: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+.pending-contributions-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pending-contributions-table tbody tr:hover {
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.pending-contributions-table .pending-event-icon-cell {
+    width: 40px;
+    text-align: center;
+}
+
+.pending-contributions-table .pending-event-name {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.pending-contributions-table .pending-event-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.pending-contributions-table .pending-event-details {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.pending-contributions-table .pending-event-actions {
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .pending-contributions-table thead th,
+    .pending-contributions-table tbody td {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .pending-contributions-table .pending-event-icon-cell {
+        width: 32px;
+    }
+}
+
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.payment-badge.cash {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+.payment-badge.mpesa {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.payment-badge.bank {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.payment-badge.cheque {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-muted);
+    background: var(--bg-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .deposit-profile-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .deposit-profile-avatar {
+        align-self: center;
+    }
+
+    .deposit-profile-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .deposit-profile-actions {
+        width: 100%;
+    }
+
+    .deposit-profile-actions .action-btn {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .contribution-card-header {
+        flex-wrap: wrap;
+    }
+
+    .contribution-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .deposit-profile-section {
+        padding: 1.5rem;
+    }
+
+    .deposit-profile-name {
+        font-size: 1.25rem;
+    }
+
+    .deposit-profile-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
+    }
+
+    .contribution-card-header {
+        padding: 1rem;
+    }
+
+    .contribution-card-body {
+        padding: 1rem;
+    }
+}
+
+[data-theme="dark"] .contribution-detail-item {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .pending-contribution-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+/* ==========================================================
+   Row actions dropdown
+   ========================================================== */
+.row-actions {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+}
+
+.row-actions-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 36px;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    backdrop-filter: blur(4px);
+}
+
+.row-actions-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.row-actions-caret {
+    font-size: 0.7rem;
+    line-height: 1;
+    transition: transform 0.18s ease;
+}
+
+.row-actions.open .row-actions-caret {
+    transform: rotate(180deg);
+}
+
+.row-actions-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 268px;
+    padding: 0.4rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    z-index: 1200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+}
+
+.row-actions.open .row-actions-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.row-actions-menu.is-portaled {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    position: fixed;
+    margin: 0;
+    z-index: 2000;
+}
+
+.row-actions.drop-up .row-actions-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+}
+
+.row-actions-menu-header {
+    padding: 0.55rem 0.7rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.35rem;
+}
+
+.row-actions-menu-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.row-actions-menu-sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
+.row-action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.row-action-item:hover,
+.row-action-item:focus-visible {
+    background: var(--light-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    transform: translateX(2px);
+    outline: none;
+}
+
+.row-action-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.row-action-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.row-action-label {
+    line-height: 1.25;
+}
+
+.row-action-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.row-action-item:hover .row-action-hint {
+    color: var(--primary-color);
+    opacity: 0.85;
+}
+
+.row-actions-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.35rem 0.4rem;
+}
+
+.row-action-form {
+    margin: 0;
+}
+
+.row-action-item.danger {
+    color: var(--danger-color);
+}
+
+.row-action-item.danger .row-action-icon {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover,
+.row-action-item.danger:focus-visible {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover .row-action-hint {
+    color: var(--danger-color);
+}
+
+.dropdown-menu {
+    top: calc(100% + 6px) !important;
+    bottom: auto !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+    z-index: 1070 !important;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-item:hover {
+    background: var(--light-color);
+    color: var(--primary-color);
+    padding-left: 1.25rem;
+}
+
+.report-filters {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.report-filters .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.report-filters .filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+
+.report-filters .filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.report-filters .filter-group input,
+.report-filters .filter-group select {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+}
+
+.report-filters .filter-group input:focus,
+.report-filters .filter-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.report-filters .filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.report-filters .filter-actions .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-filters .filter-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.report-filters .filter-actions .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.report-filters .filter-actions .btn-outline {
+    background: transparent;
+    color: var(--text-color);
+    border: 1.5px solid var(--border-color);
+}
+
+.report-filters .filter-actions .btn-outline:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.family-table-card,
+.card {
+    overflow: visible !important;
+}
+</style>
 {% endblock %}
+
 {% block content %}
-<span class="title"><h1>{% block title %} The Details Page {% endblock %}</h1></span>
-<div class="content">
-    <div class="live-search-list" type="None">
-            <div class="register">
-                <a href="{{url_for('register.deposit', depo_id = register.id)}}">
-                    <button>Profile</button>
-                </a>
-            <p class="title">
-                {{ register.firstname}} {{ register.lastname }}
-            </p>
-            <div class="content">
-                
-                Date of birth {{ register.date_of_birth }}<br>
-                Date created: {{ register.created_at }}<br>
-                <br>
-                Ksh. {{ total }}</br></dr>
-                <div class="content">
-                {% for deposit in deposit %}
-                {{ display_tags(deposit)}}<br>{{deposit.amount}}||</br>
-                {% endfor %}
-                </div>
-                <hr>                
-            </div>
-            </div>
+<div class="deposit-page-header">
+    <div>
+        <h2>{{ register.firstname }} {{ register.lastname }}'s Contributions</h2>
+        <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">Manage contribution records and payment history</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary btn-sm">💰 Add Contribution</a>
+        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+        <a href="{{ url_for('register.edit', depo_id=register.id) }}" class="action-btn outline btn-sm">✏️ Edit Member</a>
+        {% endif %}
     </div>
 </div>
+
+<div class="report-filters">
+    <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="contrib-search">Search Contributions</label>
+                <input type="text" id="contrib-search" placeholder="Search by payment type or event..." oninput="filterContributions()">
+            </div>
+            <div class="filter-group">
+                <label for="contrib-type">Payment Type</label>
+                <select id="contrib-type" onchange="filterContributions()">
+                    <option value="">All Types</option>
+                    {% for level in level %}
+                    <option value="{{ level.value }}">{{ level.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="contrib-event">Event</label>
+                <select id="contrib-event" onchange="filterContributions()">
+                    <option value="">All Events</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="btn btn-primary" onclick="filterContributions()">🔍 Filter</button>
+                <button type="button" class="btn btn-outline" onclick="clearContributionsFilters()">✕ Clear</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="deposit-profile-section mb-4">
+    <div class="deposit-profile-header">
+        <div class="deposit-profile-avatar">
+            {% if member_profile_image %}
+            <img src="data:{{ member_profile_mime_type }};base64,{{ member_profile_image }}" alt="{{ register.firstname }}">
+            {% else %}
+            {{ register.firstname[0] }}{{ register.lastname[0] }}
+            {% endif %}
+        </div>
+        <div class="deposit-profile-info">
+            <h3 class="deposit-profile-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h3>
+            <div class="deposit-profile-meta">
+                <span>🆔 {{ register.id_number|member_id }}</span>
+                <span>📱 {{ register.phone_num|member_phone }}</span>
+                <span>🎂 {{ register.date_of_birth }}</span>
+                <span>📅 Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</span>
+            </div>
+        </div>
+        <div class="deposit-profile-actions">
+            <a href="{{ url_for('family.family', depo_id=register.id) }}" class="action-btn outline btn-sm">👨‍👩‍👧‍👦 Family</a>
+            <a href="{{ url_for('reports.reports', depo_id=register.id) }}" class="action-btn primary btn-sm">📊 Reports</a>
+        </div>
+    </div>
+</div>
+
+{% if deposit %}
+{% for depo in deposit %}
+<div class="contribution-section-card" data-contrib-type="{{ depo.payment_type.value if depo.payment_type else '' }}" data-contrib-event-id="{{ depo.community_event.id if depo.community_event else '' }}">
+    <div class="contribution-card-header">
+        <div class="contribution-icon">💰</div>
+        <div class="contribution-info">
+            <div class="contribution-title">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</div>
+            <div class="contribution-subtitle">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }} · {{ depo.payment_type.value if depo.payment_type else 'N/A' }}</div>
+        </div>
+        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+        <div class="row-actions">
+            <button class="row-actions-toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false"
+                    aria-label="Actions for contribution on {{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}"
+                    onclick="toggleRowActions(this)">
+                <span aria-hidden="true">⚙</span>
+                <span>Actions</span>
+                <span class="row-actions-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="row-actions-menu" role="menu">
+                <div class="row-actions-menu-header">
+                    <span class="row-actions-menu-title">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</span>
+                    <span class="row-actions-menu-sub">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}</span>
+                </div>
+                <a href="{{ url_for('deposit.edit_contribution', depo_id=depo.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true">✏️</span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Edit Contribution</span>
+                        <span class="row-action-hint">Update amount or type</span>
+                    </span>
+                </a>
+                <div class="row-actions-divider"></div>
+                <form method="POST" action="{{ url_for('deposit.delete_contribution', depo_id=depo.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this contribution?')">
+                    <button type="submit" class="row-action-item danger" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true">🗑</span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Delete Contribution</span>
+                            <span class="row-action-hint">Cannot be undone</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="contribution-card-body">
+        <div class="contribution-details-grid">
+            <div class="contribution-detail-item">
+                <span class="detail-icon">📅</span>
+                <div class="detail-content">
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}</div>
+                </div>
+            </div>
+            <div class="contribution-detail-item">
+                <span class="detail-icon">💰</span>
+                <div class="detail-content">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</div>
+                </div>
+            </div>
+            <div class="contribution-detail-item">
+                <span class="detail-icon">💳</span>
+                <div class="detail-content">
+                    <div class="detail-label">Payment Type</div>
+                    <div class="detail-value">
+                        {% if depo.payment_type.value == 'Ksh' %}
+                        <span class="payment-badge cash">{{ depo.payment_type.value }}</span>
+                        {% elif depo.payment_type.value == 'MPESA' %}
+                        <span class="payment-badge mpesa">{{ depo.payment_type.value }}</span>
+                        {% elif depo.payment_type.value == 'BANK DEPOSIT' %}
+                        <span class="payment-badge bank">{{ depo.payment_type.value }}</span>
+                        {% else %}
+                        <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ depo.payment_type.value if depo.payment_type else 'N/A' }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="contribution-detail-item">
+                <span class="detail-icon">🎉</span>
+                <div class="detail-content">
+                    <div class="detail-label">Event</div>
+                    <div class="detail-value">{{ depo.community_event.name if depo.community_event else 'N/A' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="empty-state">
+    <div class="empty-state-icon">💰</div>
+    <h3>No Contributions Yet</h3>
+    <p>This member hasn't made any contributions. Start recording payments to see them here.</p>
+    <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary">➕ Add First Contribution</a>
+</div>
+{% endif %}
+
+{% if pending_contributions %}
+<div class="contribution-section-card mt-4">
+    <div class="contribution-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+        <div class="contribution-icon">⏳</div>
+        <div class="contribution-info">
+            <div class="contribution-title">Pending Contributions</div>
+            <div class="contribution-subtitle">{{ pending_contributions|length }} event{{ 's' if pending_contributions|length != 1 else '' }} awaiting payment</div>
+        </div>
+    </div>
+    <div class="contribution-card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 pending-contributions-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                        <th style="width: 120px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in pending_contributions %}
+                    <tr>
+                        <td style="text-align: center;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+                        </td>
+                        <td>
+                            <span style="font-weight: 600; color: var(--dark-color);">{{ event.name }}</span>
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <i class="bi bi-calendar-event me-1" style="color: var(--text-muted);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
+                        </td>
+                        <td style="color: #475569;">{{ event.details[:120] if event.details else 'No details provided' }}{% if event.details and event.details|length > 120 %}...{% endif %}</td>
+                        <td style="text-align: center; white-space: nowrap;">
+                            {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                            <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Contribute</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="empty-state mt-4">
+    <div class="empty-state-icon"><i class="bi bi-check-circle"></i></div>
+    <h3>All Events Covered</h3>
+    <p>This member has contributed to all available events.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterContributions() {
+    var search = document.getElementById('contrib-search').value.toLowerCase();
+    var type = document.getElementById('contrib-type').value.toLowerCase();
+    var event = document.getElementById('contrib-event').value;
+    var cards = document.querySelectorAll('.contribution-section-card');
+    var pendingSection = document.querySelector('.contribution-section-card.mt-4');
+    var pendingCards = document.querySelectorAll('.pending-contribution-card');
+
+    var visibleContributions = 0;
+    cards.forEach(function(card) {
+        if (card.classList.contains('mt-4')) return;
+        var text = card.textContent.toLowerCase();
+        var cardType = card.getAttribute('data-contrib-type') || '';
+        var cardEventId = card.getAttribute('data-contrib-event-id') || '';
+        var matchesSearch = text.includes(search);
+        var matchesType = !type || cardType.toLowerCase() === type;
+        var matchesEvent = !event || cardEventId === event;
+        if (matchesSearch && matchesType && matchesEvent) {
+            card.style.display = '';
+            visibleContributions++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    var visiblePending = 0;
+    pendingCards.forEach(function(card) {
+        var cardEventName = (card.getAttribute('data-pending-event') || '').toLowerCase();
+        var cardEventId = card.getAttribute('data-pending-event-id') || '';
+        var matchesSearch = !search || cardEventName.includes(search);
+        var matchesEvent = !event || cardEventId === event;
+        if (matchesSearch && matchesEvent) {
+            card.style.display = '';
+            visiblePending++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    if (pendingSection) {
+        pendingSection.style.display = visibleContributions > 0 || visiblePending > 0 ? '' : 'none';
+    }
+}
+
+function clearContributionsFilters() {
+    document.getElementById('contrib-search').value = '';
+    document.getElementById('contrib-type').value = '';
+    document.getElementById('contrib-event').value = '';
+    filterContributions();
+}
+
+function closeAllRowActions(except) {
+    document.querySelectorAll('.row-actions.open').forEach(function (wrapper) {
+        if (wrapper === except) return;
+        restoreRowActionsMenu(wrapper);
+        wrapper.classList.remove('open', 'drop-up');
+        var toggle = wrapper.querySelector('.row-actions-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
+}
+
+function restoreRowActionsMenu(wrapper) {
+    var menu = wrapper._menuElement || wrapper.querySelector('.row-actions-menu');
+    if (menu && wrapper._menuOriginal) {
+        wrapper._menuOriginal.appendChild(menu);
+        menu.classList.remove('is-portaled');
+        menu.removeAttribute('style');
+        wrapper._menuOriginal = null;
+        wrapper._menuElement = null;
+    }
+}
+
+function toggleRowActions(button) {
+    var wrapper = button.closest('.row-actions');
+    if (!wrapper) return;
+    var willOpen = !wrapper.classList.contains('open');
+    closeAllRowActions(wrapper);
+
+    wrapper.classList.toggle('open', willOpen);
+    button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+
+    if (!willOpen) {
+        restoreRowActionsMenu(wrapper);
+        wrapper.classList.remove('drop-up');
+        return;
+    }
+
+    var menu = wrapper.querySelector('.row-actions-menu');
+    if (!menu) return;
+
+    if (window.innerWidth > 768) {
+        wrapper._menuOriginal = menu.parentNode;
+        wrapper._menuElement = menu;
+        menu.classList.add('is-portaled');
+        document.body.appendChild(menu);
+        positionRowActionsMenu(wrapper);
+    }
+
+    var firstItem = wrapper.querySelector('.row-action-item');
+    if (firstItem) firstItem.focus({ preventScroll: true });
+}
+
+function positionRowActionsMenu(wrapper) {
+    var menu = wrapper._menuElement || wrapper.querySelector('.row-actions-menu');
+    var toggle = wrapper.querySelector('.row-actions-toggle');
+    if (!menu || !toggle) return;
+
+    var rect = toggle.getBoundingClientRect();
+    var menuWidth = menu.offsetWidth || 268;
+    var menuHeight = menu.offsetHeight || 320;
+
+    var left = rect.right - menuWidth;
+    if (left < 8) left = 8;
+
+    var top = rect.bottom + 8;
+    wrapper.classList.remove('drop-up');
+    if (top + menuHeight > window.innerHeight - 8 && rect.top > menuHeight + 8) {
+        top = rect.top - menuHeight - 8;
+        wrapper.classList.add('drop-up');
+    }
+
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+}
+
+document.addEventListener('click', function (event) {
+    if (!event.target.closest('.row-actions') && !event.target.closest('.row-actions-menu')) {
+        closeAllRowActions(null);
+    }
+});
+
+document.addEventListener('keydown', function (event) {
+    var openWrapper = document.querySelector('.row-actions.open');
+    if (!openWrapper) return;
+
+    if (event.key === 'Escape') {
+        var toggle = openWrapper.querySelector('.row-actions-toggle');
+        closeAllRowActions(null);
+        if (toggle) toggle.focus();
+        return;
+    }
+
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+
+    var items = Array.prototype.slice.call(openWrapper.querySelectorAll('.row-action-item'));
+    if (!items.length) return;
+    event.preventDefault();
+    var index = items.indexOf(document.activeElement);
+    var next = event.key === 'ArrowDown' ? index + 1 : index - 1;
+    if (next < 0) next = items.length - 1;
+    if (next >= items.length) next = 0;
+    items[next].focus();
+});
+
+window.addEventListener('resize', function () {
+    closeAllRowActions(null);
+});
+
+window.addEventListener('scroll', function () {
+    closeAllRowActions(null);
+}, true);
+</script>
 {% endblock %}

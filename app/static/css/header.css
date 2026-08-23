@@ -5,3 +5,8 @@ header {
   height: 90px;
   width: 100%;
 }
+
+[data-theme="dark"] header {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}

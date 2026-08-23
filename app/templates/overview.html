@@ -1,0 +1,717 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}Overview{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+  /* ============================================
+     OVERVIEW DESIGN SYSTEM
+     ============================================ */
+
+  .ov-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 28px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ---------- Hero ---------- */
+  .ov-hero {
+    position: relative;
+    border-radius: 20px;
+    padding: clamp(24px, 4vw, 40px);
+    color: #fff;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
+    box-shadow: 0 20px 50px -20px rgba(102, 126, 234, 0.5);
+  }
+
+  .ov-hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -8%;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ov-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -35%;
+    left: -6%;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ov-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ov-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .ov-hero-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    border: 2px solid rgba(255,255,255,0.35);
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px -6px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+
+  .ov-hero-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+  .ov-hero-title {
+    margin: 0;
+    font-size: clamp(1.3rem, 3.5vw, 1.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .ov-hero-sub {
+    margin: 0.35rem 0 0;
+    color: rgba(255,255,255,0.85);
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    font-weight: 500;
+  }
+
+  .ov-hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .ov-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255,255,255,0.14);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+  }
+
+  .ov-hero-time {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  /* ---------- Stats ---------- */
+  .ov-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .ov-stat {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  .ov-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 16px 0 0 16px;
+  }
+
+  .ov-stat.primary::before { background: linear-gradient(180deg, #667eea, #764ba2); }
+  .ov-stat.success::before { background: linear-gradient(180deg, #10b981, #059669); }
+  .ov-stat.warning::before { background: linear-gradient(180deg, #f59e0b, #d97706); }
+  .ov-stat.info::before { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+
+  .ov-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+  }
+
+  .ov-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .ov-stat.primary .ov-stat-icon { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08)); }
+  .ov-stat.success .ov-stat-icon { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08)); }
+  .ov-stat.warning .ov-stat-icon { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08)); }
+  .ov-stat.info .ov-stat-icon { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.08)); }
+
+  .ov-stat-body { flex: 1; min-width: 0; }
+
+  .ov-stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--dark-color);
+    line-height: 1.15;
+    margin-bottom: 0.15rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ov-stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .ov-stat-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  .ov-stat-trend.up { background: rgba(16,185,129,0.1); color: #059669; }
+  .ov-stat-trend.down { background: rgba(239,68,68,0.1); color: #dc2626; }
+
+  /* ---------- Sections ---------- */
+  .ov-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: clamp(18px, 3vw, 28px);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .ov-section:hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .ov-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ov-section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .ov-section-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
+    color: var(--prof-primary, #764ba2);
+  }
+
+  .ov-section-title {
+    margin: 0;
+    font-weight: 800;
+    color: var(--dark-color);
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+
+  .ov-section-action {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .ov-section-action:hover { opacity: 0.8; text-decoration: none; }
+
+  /* ---------- Profile ---------- */
+  .ov-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .ov-profile-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    background: var(--input-bg, #f7f6fc);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+  }
+
+  .ov-profile-item:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+
+  .ov-profile-key {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ov-profile-value {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+
+  /* ---------- Family ---------- */
+  .ov-family-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ov-family-stat {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    transition: all 0.25s ease;
+  }
+
+  .ov-family-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary-color);
+  }
+
+  .ov-family-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    margin: 0 auto 0.5rem;
+  }
+
+  .ov-family-stat-icon.spouse { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(102,126,234,0.05)); }
+  .ov-family-stat-icon.child { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05)); }
+  .ov-family-stat-icon.total { background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.05)); }
+
+  .ov-family-stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--dark-color);
+    line-height: 1.1;
+  }
+
+  .ov-family-stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.2rem;
+  }
+
+  /* ---------- Quick Links ---------- */
+  .ov-quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .ov-quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 1.25rem 0.85rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ov-quick-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.04));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .ov-quick-link:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ov-quick-link:hover::before { opacity: 1; }
+
+  .ov-quick-link-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
+    transition: all 0.35s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ov-quick-link:hover .ov-quick-link-icon {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    transform: scale(1.08);
+  }
+
+  .ov-quick-link-text {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- Empty state ---------- */
+  .ov-empty {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: 16px;
+  }
+
+  .ov-empty .bi { font-size: 2rem; display: block; margin-bottom: 0.75rem; opacity: 0.5; }
+
+  /* ---------- Dark mode ---------- */
+  [data-theme="dark"] .ov-hero {
+    background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #7c3aed 100%);
+  }
+
+  [data-theme="dark"] .ov-stat { background: var(--card-bg); }
+  [data-theme="dark"] .ov-section { background: var(--card-bg); }
+  [data-theme="dark"] .ov-profile-item { background: var(--input-bg); border-color: var(--border-color); }
+  [data-theme="dark"] .ov-family-stat { background: var(--card-bg); border-color: var(--border-color); }
+  [data-theme="dark"] .ov-quick-link { background: var(--card-bg); border-color: var(--border-color); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 768px) {
+    .ov-hero-inner { flex-direction: column; align-items: flex-start; }
+    .ov-hero-left { width: 100%; }
+    .ov-stats { grid-template-columns: repeat(2, 1fr); }
+    .ov-profile-grid { grid-template-columns: 1fr; }
+    .ov-quick-links { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 480px) {
+    .ov-stats { grid-template-columns: 1fr; }
+    .ov-quick-links { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ov-wrap">
+  <!-- Hero -->
+  <section class="ov-hero">
+    <div class="ov-hero-inner">
+      <div class="ov-hero-left">
+        <div class="ov-hero-avatar">
+          {% if avatar_url %}
+          <img src="{{ avatar_url }}" alt="{{ name }}" loading="eager">
+          {% else %}
+          {{ name[0]|upper }}
+          {% endif %}
+        </div>
+        <div>
+          <h1 class="ov-hero-title">Welcome back, {{ name }}!</h1>
+          <p class="ov-hero-sub">Here's what's happening in your community today.</p>
+          <div class="ov-hero-meta">
+            <span class="ov-hero-badge"><span>🛡</span> {{ role }}</span>
+            <span class="ov-hero-time">{{ now().strftime('%A, %d %B %Y — %I:%M %p') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="ov-stats" aria-label="Key metrics">
+    <div class="ov-stat primary">
+      <div class="ov-stat-icon">👥</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ total_members }}</div>
+        <div class="ov-stat-label">Total Members</div>
+      </div>
+    </div>
+    <div class="ov-stat success">
+      <div class="ov-stat-icon">💰</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
+        <div class="ov-stat-label">Total Contributions</div>
+      </div>
+    </div>
+    <div class="ov-stat warning">
+      <div class="ov-stat-icon">🎉</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ total_events }}</div>
+        <div class="ov-stat-label">Community Events</div>
+      </div>
+    </div>
+    <div class="ov-stat info">
+      <div class="ov-stat-icon">📞</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ contact or 'N/A' }}</div>
+        <div class="ov-stat-label">Contact</div>
+      </div>
+    </div>
+  </section>
+
+  {% if member_details %}
+  <div class="row">
+    <!-- Profile -->
+    <div class="col-lg-5 mb-4">
+      <div class="ov-section">
+        <div class="ov-section-header">
+          <div class="ov-section-header-left">
+            <div class="ov-section-icon">👤</div>
+            <h4 class="ov-section-title">My Profile</h4>
+          </div>
+          <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="ov-profile-grid">
+          <div class="ov-profile-item">
+            <span class="ov-profile-key">Full Name</span>
+            <span class="ov-profile-value">{{ member_details.firstname }} {{ member_details.lastname }} {{ member_details.surname }}</span>
+          </div>
+          <div class="ov-profile-item">
+            <span class="ov-profile-key">ID Number</span>
+            <span class="ov-profile-value">{{ member_details.id_number|member_id }}</span>
+          </div>
+          <div class="ov-profile-item">
+            <span class="ov-profile-key">Phone</span>
+            <span class="ov-profile-value">{{ member_details.phone_num|member_phone or 'Not provided' }}</span>
+          </div>
+          <div class="ov-profile-item">
+            <span class="ov-profile-key">Date of Birth</span>
+            <span class="ov-profile-value">{{ member_details.date_of_birth or 'Not set' }}</span>
+          </div>
+          <div class="ov-profile-item">
+            <span class="ov-profile-key">Member Since</span>
+            <span class="ov-profile-value">{{ member_details.created_at.strftime('%B %d, %Y') if member_details.created_at else 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family -->
+    <div class="col-lg-7 mb-4">
+      <div class="ov-section">
+        <div class="ov-section-header">
+          <div class="ov-section-header-left">
+            <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
+            <h4 class="ov-section-title">Family Network</h4>
+          </div>
+          {% if current_user.member_profile %}
+          <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) }}" class="ov-section-action">View Family <i class="bi bi-arrow-right"></i></a>
+          {% endif %}
+        </div>
+
+        {% if family_stats %}
+        <div class="ov-family-stats">
+          <div class="ov-family-stat">
+            <div class="ov-family-stat-icon spouse">💍</div>
+            <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
+            <div class="ov-family-stat-label">Spouses</div>
+          </div>
+          <div class="ov-family-stat">
+            <div class="ov-family-stat-icon child">👶</div>
+            <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
+            <div class="ov-family-stat-label">Children</div>
+          </div>
+          <div class="ov-family-stat">
+            <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
+            <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
+            <div class="ov-family-stat-label">Total Family</div>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Relationship</th>
+                <th>Phone</th>
+                <th>ID Number</th>
+                <th>Date of Birth</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for spouse in member_details.spouses %}
+              <tr>
+                <td>
+                  <span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span>
+                  <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong>
+                </td>
+                <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                <td>{{ spouse.phone_num|member_phone }}</td>
+                <td>{{ spouse.id_number|member_id }}</td>
+                <td>{{ spouse.date_of_birth }}</td>
+              </tr>
+              {% endfor %}
+              {% for child in member_details.all_children %}
+              <tr>
+                <td>
+                  <span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span>
+                  <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                </td>
+                <td><span class="family-badge child-badge">👶 Child</span></td>
+                <td>{{ child.phone_num|member_phone }}</td>
+                <td>{{ child.id_number|member_id }}</td>
+                <td>{{ child.date_of_birth }}</td>
+              </tr>
+              {% endfor %}
+              {% if not member_details.spouses and not member_details.all_children %}
+              <tr>
+                <td colspan="5">
+                  <div class="ov-empty">
+                    <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
+                    <h3>No Family Members Yet</h3>
+                    <p class="mb-3">Start building your family network by adding spouses and children.</p>
+                    {% if current_user.member_profile %}
+                    <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Quick Links -->
+  <div class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">🔗</div>
+        <h4 class="ov-section-title">Quick Links</h4>
+      </div>
+    </div>
+    <div class="ov-quick-links">
+      <a href="{{ url_for('register.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">👥</span>
+        <span class="ov-quick-link-text">Members</span>
+      </a>
+      <a href="{{ url_for('community.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">🎉</span>
+        <span class="ov-quick-link-text">Community</span>
+      </a>
+      <a href="{{ url_for('reports.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">📊</span>
+        <span class="ov-quick-link-text">Reports</span>
+      </a>
+      {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+      <a href="{{ url_for('register.create') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">➕</span>
+        <span class="ov-quick-link-text">Add Member</span>
+      </a>
+      <a href="{{ url_for('community.add_event') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">✨</span>
+        <span class="ov-quick-link-text">New Event</span>
+      </a>
+      {% endif %}
+      {% if current_user.member_profile %}
+      <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">💳</span>
+        <span class="ov-quick-link-text">My Deposits</span>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

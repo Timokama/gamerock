@@ -1,25 +1,40 @@
 {% extends "base_f/base.html" %}
-{% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-{% endblock %}
+
+{% block page_title %}Fetha Members{% endblock %}
 
 {% block content %}
-<span class="title"><h1>{% block title %} Fetha Members {% endblock %}</h1></span>    
-<div id="myUL">
-    {% for member in member %}
-    <li class="content">
-        <p>{{member.first_name}}
-        {{member.last_name }}
-        <p>Date of birth: {{member.date_of_birth}}</p>
-               
-        {% if age %}
-        <p>Age: {{ age[member.id-1:member.id] }} years</p> 
-        {%endif%}
-    <hr style="color: greenyellow;">
-    <br>
-    </li>
-    {% endfor %}
-    <br>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h4>Fetha Members</h4>
+                <p class="text-muted mt-2">View member birthdays and ages</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="member-grid">
+                    {% for member in member %}
+                    <div class="member-card">
+                        <div class="member-avatar">
+                            {{ member.firstname[0] }}{{ member.lastname[0] }}
+                        </div>
+                        <div class="member-name">{{ member.first_name }} {{ member.last_name }}</div>
+                        <div class="member-details">
+                            <p class="mb-1"><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
+                            {% if age %}
+                            <p class="mb-0"><strong>Age:</strong> {{ age[member.id-1:member.id] }} years</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="empty-state col-12">
+                        <div class="empty-state-icon">🎂</div>
+                        <h3>No Birthday Records</h3>
+                        <p>Birthday records will appear here once members are added.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

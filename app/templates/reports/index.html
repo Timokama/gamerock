@@ -1,20 +1,479 @@
 {% extends 'base_f/base.html' %}
 
-<span class="title"><h1>{% block title %} Reports {% endblock %}</h1></span>
+{% block page_title %}Reports{% endblock %}
 
-{% block content %}      
-  <div class="content" id="myUL">
-    {% for contribute in user.contribute %}
-    <li class="content">
-    <p><a href="#">{{ contribute.name }}</a></p>
-  </li>
-    {% endfor%}
-  </div>
-  <div class="content" style="color: black;">
-    Total amount Ksh: {{total}} 
-    <br>
-    Total Members: {{ members }}
-</div>
-    <a href="{{ url_for('register.index')}}"><button>Home</button></a>
+{% block styles %}
+<meta http-equiv="refresh" content="60">
+<style>
+.report-filters {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.report-filters .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.report-filters .filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+
+.report-filters .filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.report-filters .filter-group input,
+.report-filters .filter-group select {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+}
+
+.report-filters .filter-group input:focus,
+.report-filters .filter-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.report-filters .filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.report-filters .filter-actions .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-filters .filter-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.report-filters .filter-actions .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.report-filters .filter-actions .btn-outline {
+    background: transparent;
+    color: var(--text-color);
+    border: 1.5px solid var(--border-color);
+}
+
+.report-filters .filter-actions .btn-outline:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.report-summary-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary-color);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.report-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.report-summary-card .summary-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.report-summary-card .summary-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.report-summary-card .summary-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.report-table-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.report-table-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.report-table-card .card-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.report-table-card .table {
+    margin-bottom: 0;
+}
+
+.report-table-card .table th {
+    background: #f8fafc;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.report-table-card .table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.report-table-card .table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.report-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.report-badge-primary {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.report-badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.report-badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.report-badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.report-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.report-pagination .page-btn {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-pagination .page-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.report-pagination .page-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.report-export {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.report-export .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.report-export .btn-export {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.report-export .btn-export:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: white;
+}
+
+.result-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+    .report-filters .filter-row {
+        flex-direction: column;
+    }
+
+    .report-filters .filter-group {
+        min-width: 100%;
+    }
+
+    .report-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .report-table-card .table {
+        font-size: 0.8rem;
+    }
+
+    .report-table-card .table th,
+    .report-table-card .table td {
+        padding: 0.5rem 0.5rem;
+    }
+}
+
+[data-theme="dark"] .report-table-card .table th {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .report-table-card .table tbody tr:hover {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .report-summary-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .report-summary-card .summary-value {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .report-summary-card .summary-label {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .report-badge-primary {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .report-badge-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .report-badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fcd34d;
+}
+
+[data-theme="dark"] .report-badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 text-end">
+        <div class="report-export">
+            <a href="{{ url_for('reports.index') }}" class="btn btn-outline">🔄 Refresh</a>
+            <a href="{{ url_for('reports.index', search=search, payment_type=payment_type_filter, date_from=date_from, date_to=date_to, event=event_filter, export='csv') }}" class="btn btn-export">📥 Export CSV</a>
+        </div>
     </div>
+</div>
+
+<!-- Filters -->
+<div class="report-filters">
+    <form method="get" action="{{ url_for('reports.index') }}">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="search">Search</label>
+                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Name, ID..." data-target="reports-accounts-list">
+            </div>
+            <div class="filter-group">
+                <label for="payment_type">Payment Type</label>
+                <select id="payment_type" name="payment_type">
+                    <option value="">All Types</option>
+                    {% for pt in payment_types %}
+                    <option value="{{ pt }}" {% if payment_type_filter == pt %}selected{% endif %}>{{ pt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="event">Event</label>
+                <select id="event" name="event">
+                    <option value="">All Events</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}" {% if event_filter == event.id|string %}selected{% endif %}>{{ event.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="date_from">From Date</label>
+                <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
+            </div>
+            <div class="filter-group">
+                <label for="date_to">To Date</label>
+                <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">🔍 Filter</button>
+                <a href="{{ url_for('reports.index') }}" class="btn btn-outline">✕ Clear</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+<div class="report-summary">
+    <div class="report-summary-card">
+        <div class="summary-icon">💰</div>
+        <div class="summary-value">Ksh. {{ total }}</div>
+        <div class="summary-label">Total Amount</div>
+    </div>
+    <div class="report-summary-card">
+        <div class="summary-icon">📊</div>
+        <div class="summary-value">{{ members }}</div>
+        <div class="summary-label">Total Records</div>
+    </div>
+</div>
+
+<!-- Results Count -->
+<div class="result-count">
+    Showing {{ all_contribution_accounts|length }} contribution record(s)
+    {% if search or payment_type_filter or date_from or date_to or event_filter %}
+    <span> (filtered)</span>
+    {% endif %}
+</div>
+
+<!-- Reports Table -->
+<div class="report-table-card">
+    <div class="card-header">
+        <h4>📊 All Contribution Accounts</h4>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="reports-accounts-list">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Member</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Event</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contribute in all_contribution_accounts %}
+                    <tr>
+                        <td>{{ contribute.trans_date.strftime('%b %d, %Y') if contribute.trans_date else 'N/A' }}</td>
+                        <td>
+                            <strong>{{ contribute.member.firstname }} {{ contribute.member.lastname }}</strong>
+                        </td>
+                        <td class="fw-semibold">Ksh. {{ contribute.amount }}</td>
+                        <td>
+                            {% if contribute.payment_type.value == 'Ksh' %}
+                            <span class="report-badge report-badge-primary">💵 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                            {% elif contribute.payment_type.value == 'MPESA' %}
+                            <span class="report-badge report-badge-success">📱 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                            {% elif contribute.payment_type.value == 'BANK DEPOSIT' %}
+                            <span class="report-badge report-badge-warning">🏦 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                            {% else %}
+                            <span class="report-badge report-badge-primary">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ contribute.community_event.name if contribute.community_event else 'N/A' }}</td>
+                        <td>
+                            <a href="{{ url_for('reports.reports', depo_id=contribute.id) }}" class="action-btn outline btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📊</div>
+                                <h3>No Reports Found</h3>
+                                <p>No contribution records match your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="{{ url_for('register.index') }}" class="action-btn outline">Back to Home</a>
+</div>
 {% endblock %}

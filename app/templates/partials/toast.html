@@ -1,0 +1,22 @@
+{% if messages %}
+<div class="toast-container" aria-live="polite" aria-atomic="true">
+    {% for category, message in messages %}
+    {% set toast_config = {
+        'success': {'icon': 'bi-check-circle-fill', 'color': '#10b981', 'bg': 'rgba(16, 185, 129, 0.1)', 'border': 'rgba(16, 185, 129, 0.2)'},
+        'error': {'icon': 'bi-x-circle-fill', 'color': '#ef4444', 'bg': 'rgba(239, 68, 68, 0.1)', 'border': 'rgba(239, 68, 68, 0.2)'},
+        'danger': {'icon': 'bi-x-circle-fill', 'color': '#ef4444', 'bg': 'rgba(239, 68, 68, 0.1)', 'border': 'rgba(239, 68, 68, 0.2)'},
+        'warning': {'icon': 'bi-exclamation-triangle-fill', 'color': '#f59e0b', 'bg': 'rgba(245, 158, 11, 0.1)', 'border': 'rgba(245, 158, 11, 0.2)'},
+        'info': {'icon': 'bi-info-circle-fill', 'color': '#3b82f6', 'bg': 'rgba(59, 130, 246, 0.1)', 'border': 'rgba(59, 130, 246, 0.2)'}
+    }.get(category, {'icon': 'bi-info-circle-fill', 'color': '#6b7280', 'bg': 'rgba(107, 114, 128, 0.1)', 'border': 'rgba(107, 114, 128, 0.2)'}) %}
+    <div class="toast-item" role="alert" data-toast-category="{{ category }}" style="--toast-color: {{ toast_config.color }}; --toast-bg: {{ toast_config.bg }}; --toast-border: {{ toast_config.border }};">
+        <div class="toast-icon"><i class="bi {{ toast_config.icon }}"></i></div>
+        <div class="toast-content">
+            <div class="toast-message">{{ message }}</div>
+        </div>
+        <button type="button" class="toast-close" aria-label="Close notification" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

@@ -1,35 +1,62 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash,session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+from datetime import datetime
 from .user import User
 from .image import Images
 from . import db
 from .level import AccessLevel
+from app.models.register import Member
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login')
-def login():
+@auth.route('/', methods=['POST', 'GET'])
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('home.home'))
     level = AccessLevel
-    return render_template('login.html', level = level)
+    detected_role = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        if not email:
+            flash('Please enter your email address.', 'danger')
+            return redirect(url_for('auth.index'))
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('No account found with that email address.', 'danger')
+            return redirect(url_for('auth.index'))
+        detected_role = user.role.value
+        session['auth_email'] = email
+        return redirect(url_for('auth.login', role=detected_role))
+    return render_template('index.html', level=level, detected_role=detected_role)
 
-@auth.route('/login', methods=['POST'])
-def login_post():
-    # log in code goes here
-    role = request.form.get('role')
-    password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+# @auth.route('/login')
+# def login():
+    
 
-    user = User.query.filter_by(role=role).first()
+@auth.route('/<role>/login', methods=['POST', 'GET'])
+def login(role):
+    level = AccessLevel
+    session_email = session.get('auth_email')
+    if request.method == 'POST':
+        email = request.form.get('email') or session_email
+        password = request.form.get('password')
+        role_enum = None
+        if role in AccessLevel.__members__:
+            role_enum = AccessLevel[role]
+        else:
+            for member in AccessLevel:
+                if member.value == role:
+                    role_enum = member
+                    break
+        user = User.query.filter_by(email=email, role=role_enum).first()
+        if not user or not check_password_hash(user.password, password):
+            flash('Please check your login details and try again.')
+            return redirect(url_for('auth.login', role=role))
 
-    # check if the user actually exists
-    # take the user-supplied password, hash it, and compare it to the hashed password in the database
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
-
-    # if the above check passes, then we know the user has the right credentials
-    login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+        login_user(user)
+        session.pop('auth_email', None)
+        return redirect(url_for('home.home'))
+    return render_template('login.html', level=level, role=role, session_email=session_email)
 
 @auth.route('/signup')
 def signup():
@@ -38,35 +65,119 @@ def signup():
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
-    #code to validate and user to database goes here
     surname = request.form.get('surname')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     phone_num = request.form.get('phone_num')
-    username = request.form.get('username')
-    role = request.form.get('role')
+    email = request.form.get('email')
     password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+    date_of_birth = request.form.get('date_of_birth')
+    id_number = request.form.get('id_number')
 
-    user = User.query.filter_by(role=role).first() # if this returns a user, then the email already exists in database
-
-    if user: # if a user is found, we want to redirect back to signup page so user can try again
-        flash('User address already exists')
+    if not first_name or not surname:
+        flash('First name and surname are required.', 'danger')
         return redirect(url_for('auth.signup'))
 
-    # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-    new_user = User(surname=surname, first_name=first_name, phone_num=phone_num, password=generate_password_hash(password, method='sha256'), role=role, username=username)
+    if not email:
+        flash('Email address is required.', 'danger')
+        return redirect(url_for('auth.signup'))
 
-    # add the new user to the database
+    if not password:
+        flash('Password is required.', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    if password != confirm_password:
+        flash('Passwords do not match.', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    if len(password) < 6:
+        flash('Password must be at least 6 characters long.', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    last_name = last_name or first_name
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        flash('Email address already exists', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    existing_member = Member.query.filter_by(id_number=id_number).first() if id_number else None
+    if existing_member:
+        flash('ID number already exists. Please check your details.', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    existing_member_email = Member.query.filter_by(email=email).first()
+    if existing_member_email:
+        flash('Email already exists. Please use a different email.', 'danger')
+        return redirect(url_for('auth.signup'))
+
+    role_enum = AccessLevel.USER
+
+    new_user = User(surname=surname, first_name=first_name, email=email, password=generate_password_hash(password, method='pbkdf2:sha256'), role=role_enum)
+
     db.session.add(new_user)
     db.session.commit()
 
-    return redirect(url_for('auth.login'))
+    dob = None
+    if date_of_birth:
+        try:
+            dob = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            pass
+
+    member = Member(
+        firstname=first_name,
+        lastname=last_name,
+        surname=surname,
+        date_of_birth=dob,
+        phone_num=phone_num,
+        email=email,
+        id_number=id_number,
+        user_id=new_user.id,
+        added_by=new_user.id,
+    )
+    db.session.add(member)
+    db.session.commit()
+
+    usr = User.query.get(new_user.id)
+    login_user(usr)
+    return redirect(url_for('home.home'))
 
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
+@auth.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    email = request.form.get('email')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not email or not password or not confirm_password:
+        flash('All fields are required.', 'danger')
+        return redirect(url_for('auth.index'))
+
+    if password != confirm_password:
+        flash('Passwords do not match.', 'danger')
+        return redirect(url_for('auth.index'))
+
+    if len(password) < 6:
+        flash('Password must be at least 6 characters long.', 'danger')
+        return redirect(url_for('auth.index'))
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('No account found with that email address.', 'danger')
+        return redirect(url_for('auth.index'))
+
+    user.password = generate_password_hash(password, method='pbkdf2:sha256')
+    db.session.commit()
+    flash('Password has been reset successfully. You can now login.', 'success')
+    return redirect(url_for('auth.index'))
 
 # @auth.route('/<int:user_id>/changePassword', methods=['POST', 'GET'])
 # @login_required

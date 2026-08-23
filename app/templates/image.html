@@ -1,21 +1,421 @@
 {% extends "base.html" %}
 
+{% block page_title %}Image Gallery{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
-  <link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+.gallery-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.gallery-page-header h2 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+    font-size: 1.6rem;
+}
+
+.gallery-page-header p {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted, #64748b);
+    font-size: 0.9rem;
+}
+
+.upload-panel {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: var(--radius, 14px);
+    box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.upload-panel:hover {
+    box-shadow: var(--shadow-lg, 0 12px 30px rgba(0, 0, 0, 0.12));
+}
+
+.upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1.5rem;
+    border: 2px dashed var(--border-color, #cbd5e1);
+    border-radius: var(--radius, 14px);
+    background: var(--bg-color, #f8fafc);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    position: relative;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+    border-color: var(--primary-color, #14b8a6);
+    background: rgba(20, 184, 166, 0.04);
+    transform: translateY(-2px);
+}
+
+.upload-dropzone .upload-icon {
+    font-size: 3rem;
+    line-height: 1;
+    opacity: 0.9;
+}
+
+.upload-dropzone .upload-title {
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+    font-size: 1.1rem;
+}
+
+.upload-dropzone .upload-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted, #64748b);
+}
+
+.upload-dropzone .upload-browse {
+    color: var(--primary-color, #14b8a6);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-preview {
+    margin-top: 1rem;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius, 14px);
+    background: var(--bg-color, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.upload-preview img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.upload-preview .preview-name {
+    font-weight: 600;
+    color: var(--dark-color, #0f172a);
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+}
+
+.gallery-card {
+    position: relative;
+    border-radius: var(--radius, 14px);
+    overflow: hidden;
+    box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
+    border: 1px solid var(--border-color, #e2e8f0);
+    background: var(--card-bg, #fff);
+    aspect-ratio: 4 / 3;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg, 0 12px 30px rgba(0, 0, 0, 0.12));
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    cursor: zoom-in;
+}
+
+.gallery-card .gallery-overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.gallery-card:hover .gallery-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.gallery-card .gallery-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-card .gallery-zoom {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.gallery-card .gallery-zoom:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted, #64748b);
+    background: var(--card-bg, #fff);
+    border-radius: var(--radius, 14px);
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    color: var(--dark-color, #0f172a);
+    margin-bottom: 0.5rem;
+}
+
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1.5rem;
+}
+
+.lightbox.open {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox .lightbox-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.lightbox .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 576px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+
+    .upload-dropzone {
+        padding: 2rem 1rem;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<ul>
-  {% if image_list|length == 0 %}
-  <p>Add some Images to the Gallery</p>
-  {% else %}
-  {% for image in image_list %}
-  <li>
-  <img src="data:;base64,{{image}}" style="height: 200px;"/>
-  </li>
-  {%endfor%}
-  {%endif%}
-  </ul>
-{% endblock%}
+<div class="gallery-page-header">
+    <div>
+        <h2>Image Gallery</h2>
+        <p>Upload and preview shared images</p>
+    </div>
+</div>
+
+<div class="upload-panel">
+    <form method="POST" action="{{ url_for('main.upload_file') }}" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-dropzone" id="uploadDropzone">
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-title">Drag &amp; drop an image here</div>
+            <div class="upload-hint">or <span class="upload-browse">browse files</span> · JPG, PNG, GIF, WEBP</div>
+            <input type="file" name="image" id="uploadInput" accept="image/*" hidden>
+        </div>
+        <div class="upload-preview" id="uploadPreview">
+            <img id="previewThumb" src="" alt="Preview">
+            <span class="preview-name" id="previewName"></span>
+        </div>
+        <div class="upload-actions">
+            <button type="submit" class="action-btn primary btn-sm">⬆️ Upload Image</button>
+            <button type="button" class="action-btn outline btn-sm" id="clearUpload">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+{% if image_list|length == 0 %}
+<div class="empty-state">
+    <div class="empty-state-icon">📭</div>
+    <h3>No Images Yet</h3>
+    <p>Upload your first image using the panel above.</p>
+</div>
+{% else %}
+<div class="gallery-grid">
+    {% for image in image_list %}
+    <div class="gallery-card">
+        <img src="data:;base64,{{ image }}" alt="Gallery Image" loading="lazy">
+        <div class="gallery-overlay">
+            <span class="gallery-name">Image {{ loop.index }}</span>
+            <button type="button" class="gallery-zoom" aria-label="View image" data-src="data:;base64,{{ image }}">🔍</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-close" aria-label="Close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="Preview">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var dropzone = document.getElementById('uploadDropzone');
+    var input = document.getElementById('uploadInput');
+    var preview = document.getElementById('uploadPreview');
+    var previewThumb = document.getElementById('previewThumb');
+    var previewName = document.getElementById('previewName');
+    var clearBtn = document.getElementById('clearUpload');
+    if (!dropzone || !input) return;
+
+    function showPreview(file) {
+        if (!file) return;
+        preview.style.display = 'flex';
+        previewName.textContent = file.name;
+        var reader = new FileReader();
+        reader.onload = function (e) { previewThumb.src = e.target.result; };
+        reader.readAsDataURL(file);
+    }
+
+    dropzone.addEventListener('click', function () { input.click(); });
+    input.addEventListener('change', function () {
+        if (input.files && input.files[0]) showPreview(input.files[0]);
+    });
+
+    ['dragenter', 'dragover'].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        });
+    });
+    dropzone.addEventListener('drop', function (e) {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            input.files = e.dataTransfer.files;
+            showPreview(e.dataTransfer.files[0]);
+        }
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            preview.style.display = 'none';
+            previewThumb.src = '';
+            previewName.textContent = '';
+        });
+    }
+})();
+
+function openLightbox(src) {
+    var box = document.getElementById('lightbox');
+    var img = document.getElementById('lightboxImg');
+    if (!box || !img) return;
+    img.src = src;
+    box.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    var box = document.getElementById('lightbox');
+    if (!box) return;
+    box.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('click', function (e) {
+    var zoom = e.target.closest('.gallery-zoom');
+    if (zoom) {
+        openLightbox(zoom.getAttribute('data-src'));
+        return;
+    }
+    var box = document.getElementById('lightbox');
+    if (box && box.classList.contains('open') && e.target === box) {
+        closeLightbox();
+    }
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeLightbox();
+});
+</script>
+{% endblock %}

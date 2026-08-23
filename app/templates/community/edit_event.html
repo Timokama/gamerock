@@ -1,0 +1,319 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Edit Event{% endblock %}
+
+{% block styles %}
+<style>
+  .event-page-shell {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .event-page-shell::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .event-page-shell::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .event-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .event-card-brand {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .event-card-brand::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .event-card-brand::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -20%;
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+  }
+
+  .event-brand-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    background: var(--bg-color);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--primary-light);
+    background: rgba(20, 184, 166, 0.04);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.08);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .image-preview {
+    margin-top: 1rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  .image-preview img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .image-preview .remove-image {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .image-preview .remove-image:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+  }
+
+  .field-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .field-hint::before {
+    content: 'ℹ️';
+    font-size: 0.75rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .event-card-brand {
+      padding: 1.5rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .form-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="event-page-shell">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card event-card">
+                <div class="card-header event-card-brand">
+                    <div class="event-brand-logo">✏️</div>
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em;">Edit Event</h2>
+                    <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.9;">Update the details for <strong>{{ event.name }}</strong></p>
+                </div>
+                <div class="card-body" style="padding: 2.5rem 2rem;">
+                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.25rem;">📅</span>
+                        <div>
+                            <strong style="color: var(--dark-color);">{{ event.name }}</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}</div>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" id="eventForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Event Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ event.name }}" required>
+                                <p class="field-hint">Update the event name</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="event_date">Event Date</label>
+                                <input type="date" class="form-control" id="event_date" name="event_date" value="{{ event.event_date }}" required>
+                                <p class="field-hint">Update the event date</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="details">Event Details</label>
+                            <textarea class="form-control" id="details" name="details" rows="5" required>{{ event.details }}</textarea>
+                            <p class="field-hint">Update the event description and details</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Current Event Image</label>
+                            {% if event.image %}
+                            <div class="image-preview">
+                                <img src="{{ url_for('static', filename='images/events/' + event.image) }}" alt="{{ event.name }}">
+                            </div>
+                            {% else %}
+                            <div style="width: 100%; max-height: 160px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 3.5rem; border: 2px dashed var(--border-color);">
+                                📷
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload New Image (Optional)</label>
+                            <div class="upload-zone" id="uploadZone">
+                                <span class="upload-icon">🖼️</span>
+                                <div class="upload-title">Click to upload a new image</div>
+                                <div class="upload-subtitle">Supported formats: JPG, PNG, GIF, WebP</div>
+                                <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+                            </div>
+                            <div class="image-preview d-none" id="imagePreviewContainer">
+                                <img id="imagePreview" src="" alt="Image Preview">
+                                <button type="button" class="remove-image" onclick="removeImage()">✕</button>
+                            </div>
+                            <p class="field-hint mt-2">Upload a new image to replace the current one</p>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i>
+                                Update Event
+                            </button>
+                            <a href="{{ url_for('community.index') }}" class="btn btn-outline">
+                                <i class="bi bi-x-circle"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    var previewContainer = document.getElementById('imagePreviewContainer');
+    var preview = document.getElementById('imagePreview');
+    var uploadZone = document.getElementById('uploadZone');
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.classList.remove('d-none');
+            uploadZone.style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        previewContainer.classList.add('d-none');
+        uploadZone.style.display = 'block';
+    }
+}
+
+function removeImage() {
+    var previewContainer = document.getElementById('imagePreviewContainer');
+    var preview = document.getElementById('imagePreview');
+    var uploadZone = document.getElementById('uploadZone');
+    var fileInput = document.getElementById('image');
+
+    preview.src = '';
+    previewContainer.classList.add('d-none');
+    uploadZone.style.display = 'block';
+    fileInput.value = '';
+}
+</script>
+{% endblock %}

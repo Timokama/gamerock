@@ -1,15 +1,17 @@
-{% maloc display_register(deposit) %}
+{% macro display_register(deposit) %}
     <div class="tags">
         <p>
             {% for member in deposit.member %}
-                <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}">{{ member.firstname}} {{ member.lastname}}</a>
+                <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="text-decoration-none fw-semibold">{{ member.firstname}} {{ member.lastname}}</a>
                 {% for tag in deposit.contribute %}
-                <a href="{{ url_for('account.contribute', tag_name=tag.name) }}" style="text-decoration: none; color: #dd5b5b">
+                <a href="{{ url_for('account.contribute', tag_name=tag.name) }}" class="badge bg-primary me-1">
                     {{ tag.name }}
                 </a>
-                |
+                {% if not loop.last %}
+                <span class="text-muted mx-1">|</span>
+                {% endif %}
                 {%endfor%}
             {% endfor %}
         </p>
     </div>
-{% endmaloc %}
+{% endmacro %}

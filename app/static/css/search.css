@@ -2,35 +2,48 @@
   box-sizing: border-box;
 }
 
-#myInput {
-  background-image: url('search.jpg');
-  background-position: left;
-  background-repeat: no-repeat;
-  float:inline-end;
-  width: 35%;
+.search-box {
+  position: relative;
+  max-width: 400px;
+}
+
+.search-box input[type="text"] {
+  width: 100%;
   font-size: 16px;
-  padding: 10px 20px 12px 40px;
-  border: 1px solid #ddd;
-  margin-bottom: 12px;
-  
+  padding: 12px 20px 12px 45px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-position: 12px center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  transition: all 0.3s ease;
 }
 
-#myUL {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.search-box input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  background-color: white;
 }
 
-#myUL li p{
-  margin-top: -1px; /* Prevent double borders */
-  background-color: #f6f6f6;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 16px;  
-  color: black;
-  display: block
+.search-box input[type="text"]::placeholder {
+  color: #94a3b8;
 }
 
-#myUL li p:hover:not(.header) {
-  background-color: #eee;
+[data-theme="dark"] .search-box input[type="text"] {
+  background-color: var(--card-bg, #1e293b);
+  border-color: var(--border-color, #334155);
+  color: var(--text-color, #e2e8f0);
+}
+
+[data-theme="dark"] .search-box input[type="text"]:focus {
+  background-color: var(--light-color, #0f172a);
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15);
+}
+
+[data-theme="dark"] .search-box input[type="text"]::placeholder {
+  color: var(--text-muted, #64748b);
 }

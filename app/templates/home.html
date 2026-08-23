@@ -1,24 +1,375 @@
 {% extends "base.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
-{% endblock %} 
-<span class="title"><h1>{% block title %} Welcome to Gamerock {% endblock %}</h1></span>
+<style>
+.dashboard-expand-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.dashboard-expand-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.dashboard-expand-btn.expanded {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.dashboard-detail-row {
+    display: none;
+}
+
+.dashboard-detail-row.open {
+    display: table-row;
+}
+
+.dashboard-detail-cell {
+    padding: 0 !important;
+    background: #f8fafc;
+}
+
+.dashboard-detail-card {
+    margin: 0.75rem 1rem 1rem;
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-detail-card .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-detail-card .detail-header .detail-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.dashboard-detail-card .detail-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.dashboard-detail-card .detail-header .detail-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-left: auto;
+}
+
+.dashboard-detail-card .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.dashboard-detail-card .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.dashboard-detail-card .detail-item .detail-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.dashboard-detail-card .detail-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.children-detail-card {
+    margin: 0.75rem 1rem 1rem;
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.children-detail-card .children-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.children-detail-card .children-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.children-detail-card .children-header .children-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-left: auto;
+}
+
+.children-detail-card .children-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.children-detail-card .children-table th {
+    background: #f8fafc;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.children-detail-card .children-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.children-detail-card .children-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.dropdown-menu {
+    top: auto !important;
+    bottom: calc(100% + 6px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-    <body>
-        <p style="color: green; margin-left: 45%;">Gamerock</p>
-        <img src="/static/photos/africa.jpg" alt="Gamerock" style="margin-left: 25%;height: 450px; width: 450px; justify-content: center; display: flex;">
-        <p style="color: black;margin-left: 25%;margin-right: 25%;">
-        Court attention at all cost Everything is judge by its appearance, What is unseen counts for nothing.
-        Never let yourself get lost in the crowd then, or buried in oblivion stand out. Be conspirous at all cost. Make yourself a magnet of attention by apperaring larger, more colorful, more mysterious than the bland and timid masses.
-        </p>
-        <hr>
-        <div style="width: 65%;" class="content">
-        Name: {{ name }}<br>
-        Role: {{ email }}<br> 
-        Contact: {{ contact }} <br>
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-icon primary">👤</div>
+        <div class="card-value">{{ name }}</div>
+        <div class="card-label">Welcome, {{ name }}!</div>
+    </div>
+    <div class="dashboard-card">
+        <div class="card-icon success">👥</div>
+        <div class="card-value">{{ email }}</div>
+        <div class="card-label">Your Role</div>
+    </div>
+    <div class="dashboard-card">
+        <div class="card-icon warning">📞</div>
+        <div class="card-value">{{ contact }}</div>
+        <div class="card-label">Contact Number</div>
+    </div>
+</div>
+
+{% if member_details %}
+<!-- Family Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h4>Family Section</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td style="width: 40px; text-align: center; vertical-align: middle;">
+                                    <span style="font-size: 1.25rem;">👤</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="member-avatar" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700;">
+                                            {{ member_details.firstname[0] }}{{ member_details.lastname[0] }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">{{ member_details.firstname }} {{ member_details.lastname }} {{ member_details.surname }}</h6>
+                                            <p class="text-muted mb-1 small">ID: {{ member_details.id_number|member_id }}</p>
+                                            <p class="text-muted mb-0 small">DOB: {{ member_details.date_of_birth }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% if member_details.spouses %}
+                            <tr>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <button class="dashboard-expand-btn" onclick="toggleDashboardDetail(this, 'spouse-detail-row')" title="Toggle Spouse Details">+</button>
+                                </td>
+                                <td>
+                                    <strong>Spouse Details</strong>
+                                    <span class="family-badge spouse-badge" style="margin-left: 0.5rem;">{{ member_details.spouses|length }} Spouse{{ 's' if member_details.spouses|length != 1 else '' }}</span>
+                                </td>
+                            </tr>
+                            <tr class="dashboard-detail-row" id="spouse-detail-row">
+                                <td colspan="2" class="dashboard-detail-cell">
+                                    <div class="dashboard-detail-card">
+                                        <div class="detail-grid">
+                                            {% for spouse in member_details.spouses %}
+                                            <div class="detail-item">
+                                                <span class="detail-icon">👤</span>
+                                                <span><strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong></span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="detail-icon">📱</span>
+                                                <span>{{ spouse.phone_num|member_phone }}</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="detail-icon">🆔</span>
+                                                <span>{{ spouse.id_number|member_id }}</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="detail-icon">🎂</span>
+                                                <span>{{ spouse.date_of_birth }}</span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% if member_details.all_children %}
+                            <tr>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <button class="dashboard-expand-btn" onclick="toggleDashboardDetail(this, 'children-detail-row')" title="Toggle Children Details">+</button>
+                                </td>
+                                <td>
+                                    <strong>Children Details</strong>
+                                    <span class="family-badge child-badge" style="margin-left: 0.5rem;">{{ member_details.all_children|length }} Child{{ 'ren' if member_details.all_children|length != 1 else 'd' }}</span>
+                                </td>
+                            </tr>
+                            <tr class="dashboard-detail-row" id="children-detail-row">
+                                <td colspan="2" class="dashboard-detail-cell">
+                                    <div class="children-detail-card">
+                                        <div class="children-header">
+                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;">👶</div>
+                                            <h5>All Children</h5>
+                                            <span class="children-badge family-badge child-badge">{{ member_details.all_children|length }} Total</span>
+                                        </div>
+                                        <table class="children-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Phone</th>
+                                                    <th>ID Number</th>
+                                                    <th>Date of Birth</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for child in member_details.all_children %}
+                                                <tr>
+                                                    <td>
+                                                        <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.7rem; margin-right: 0.5rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                                        <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                                                    </td>
+                                                    <td>{{ child.phone_num|member_phone }}</td>
+                                                    <td>{{ child.id_number|member_id }}</td>
+                                                    <td>{{ child.date_of_birth }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% if not member_details.spouses and not member_details.all_children %}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">👨‍👩‍👧‍👦</div>
+                                        <h3>No Family Members Yet</h3>
+                                        <p class="mb-3">Start building your family network by adding spouses and children.</p>
+                                        <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <a href="{{url_for('register.index')}}"><button>Open</button></a><br>
-    </body>
-    {% endblock %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleDashboardDetail(btn, rowId) {
+    var row = document.getElementById(rowId);
+    if (!row) return;
+    var isOpen = row.classList.contains('open');
+    document.querySelectorAll('.dashboard-detail-row.open').forEach(function(r) {
+        r.classList.remove('open');
+        var b = r.querySelector('.dashboard-expand-btn');
+        if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
+    });
+    if (!isOpen) {
+        row.classList.add('open');
+        btn.classList.add('expanded');
+        btn.textContent = '−';
+    } else {
+        row.classList.remove('open');
+        btn.classList.remove('expanded');
+        btn.textContent = '+';
+    }
+}
+</script>
+{% endblock %}

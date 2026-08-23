@@ -1,77 +1,557 @@
 {% extends 'base_f/base.html' %}
+
+{% block title %}Register New Member{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{{ super() }}
+<style>
+    .register-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .register-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: -150px;
+        left: -150px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .register-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-brand {
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-brand::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .register-brand::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+
+    .register-brand-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .register-brand h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    .register-brand p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .register-form-section {
+        padding: 2.5rem 2rem;
+    }
+
+    .register-form-header {
+        margin-bottom: 1.75rem;
+    }
+
+    .register-form-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.35rem;
+    }
+
+    .register-form-header p {
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.01em;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        color: #0f172a;
+        font-family: inherit;
+        height: 2.75rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+        background: #ffffff;
+    }
+
+    .form-group input::placeholder {
+        color: #94a3b8;
+    }
+
+    .btn-register {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+        margin-top: 0.5rem;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.45);
+    }
+
+    .btn-register:active {
+        transform: translateY(0);
+    }
+
+    .register-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+
+    .register-footer a {
+        color: #0f766e;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .register-footer a:hover {
+        color: #115e59;
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 0.85rem 1.1rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .alert-danger {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    @media (max-width: 768px) {
+        .register-card {
+            grid-template-columns: 1fr;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .register-brand {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .register-brand h2 {
+            font-size: 1.25rem;
+        }
+
+        .register-form-section {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .register-wrapper {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+
+        .register-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .register-form-header h3 {
+            color: #f1f5f9;
+        }
+
+        .register-form-header p {
+            color: #94a3b8;
+        }
+
+        .form-group label {
+            color: #e2e8f0;
+        }
+
+        .form-group input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        .form-group input:focus {
+            background: #1e293b;
+            border-color: #14b8a6;
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .btn-register {
+            box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4);
+        }
+
+        .btn-register:hover {
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.5);
+        }
+
+        .register-footer {
+            border-top-color: #334155;
+            color: #94a3b8;
+        }
+
+        .register-footer a {
+            color: #14b8a6;
+        }
+
+        .register-footer a:hover {
+            color: #0f766e;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+    }
+
+    [data-theme="dark"] .register-wrapper {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+
+    [data-theme="dark"] .register-card {
+        background: #1e293b;
+        border-color: #334155;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .register-form-header h3 {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .register-form-header p {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .form-group label {
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .form-group input {
+        background: #0f172a;
+        border-color: #334155;
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .form-group input:focus {
+        background: #1e293b;
+        border-color: #14b8a6;
+    }
+
+    [data-theme="dark"] .form-group input::placeholder {
+        color: #64748b;
+    }
+
+    [data-theme="dark"] .btn-register {
+        box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4);
+    }
+
+    [data-theme="dark"] .btn-register:hover {
+        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.5);
+    }
+
+    [data-theme="dark"] .register-footer {
+        border-top-color: #334155;
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .register-footer a {
+        color: #14b8a6;
+    }
+
+    [data-theme="dark"] .register-footer a:hover {
+        color: #0f766e;
+    }
+
+    [data-theme="dark"] .alert-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    [data-theme="dark"] .alert-success {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    [data-theme="light"] .register-wrapper {
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+    }
+
+    [data-theme="light"] .register-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="light"] .register-form-header h3 {
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .register-form-header p {
+        color: #475569;
+    }
+
+    [data-theme="light"] .form-group label {
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .form-group input {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        color: #0f172a;
+    }
+
+    [data-theme="light"] .form-group input:focus {
+        background: #ffffff;
+        border-color: #14b8a6;
+    }
+
+    [data-theme="light"] .form-group input::placeholder {
+        color: #94a3b8;
+    }
+
+    [data-theme="light"] .btn-register {
+        box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+    }
+
+    [data-theme="light"] .btn-register:hover {
+        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.45);
+    }
+
+    [data-theme="light"] .register-footer {
+        border-top-color: #e2e8f0;
+        color: #475569;
+    }
+
+    [data-theme="light"] .register-footer a {
+        color: #0f766e;
+    }
+
+    [data-theme="light"] .register-footer a:hover {
+        color: #115e59;
+    }
+
+    [data-theme="light"] .alert-danger {
+        background: #fef2f2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
+
+    [data-theme="light"] .alert-success {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+</style>
 {% endblock %}
+
 {% block content %}
-<div>
-    <a href="{{url_for('register.index')}}"><button style="float:left;">Home</button></a><br><br>
-    <h1 style="width: 100%;">{% block title %} Add New Member {% endblock %}</h1>
-    <form method="post">
-        <div class="row">
-            <div class="col-25">
-                <label for="firstname">First Name:</label>
-            </div>
-            <div class="col-75">
-            <input type="text" id="firstname" name="firstname" placeholder="First Name">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="lastname">Last Name:</label>
-            </div>
-            <div class="col-75">
-                <input type="text" id="lastname" name="lastname" placeholder="Last Name"><br>
+<div class="register-wrapper">
+    <div class="register-card">
+        <div class="register-brand">
+            <div class="register-brand-content">
+                <div class="register-logo">✨</div>
+                <h2>Register New Member</h2>
+                <p>Add a new member to the welfare association and create their account.</p>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-25">
-                <label for="surname">Surname:</label>
+        <div class="register-form-section">
+            <div class="register-form-header">
+                <h3>Member Details</h3>
+                <p>Fill in the member information below</p>
             </div>
-            <div class="col-75">
-                <input type="text" id="surname" name="surname" placeholder="Surname"><br>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-25">
-                <label for="date_of_birth">Date of birth: </label>
-            </div>
-            <div class="col-75">
-                <input type="date" id="date_of_birth" name="date_of_birth" placeholder="date_of_birth">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="phone_num">Phone Number: </label>
-            </div>
-            <div class="col-75">
-                <input type="number" id="phone_num" name="phone_num" placeholder="Phone Number">
-            </div>
-        </div>
-        
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="notification is-danger">
-            {{ messages[0] }}
-        </div>
-        {% endif %}
-        {% endwith %}
-        <div class="row">
-            <div class="col-25">
-                <label for="id_number">ID Number: </label>
-            </div>
-            <div class="col-75">
-                <input type="number" id="id_number" name="id_number" placeholder="id number">
-            </div>
-        </div>
-        <hr><br>
+            <form method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" required>
+                    </div>
+                </div>
 
-        <p>
-            <button type="submit">Save</button>
-            <button><a href="{{url_for('register.index')}}">cancel</a></button>
-        </p>
-    </form>
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter surname" required>
+                </div>
 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth</label>
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_number">ID Number</label>
+                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_num">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn-register">Save Member</button>
+                </div>
+
+                <div class="register-footer">
+                    <p class="mb-0"><a href="{{ url_for('register.index') }}">Cancel</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,27 +1,1291 @@
-{% from 'macros.html' import display_tags %}
 {% extends 'base_f/base.html' %}
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-{% endblock %}
-{% block content %}
-<span class="title"><h1>{% block title %} Deposits {% endblock %}</h1></span>
+<style>
+/* Deposit page header */
+.deposit-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
 
-<div id="myUL" class="register">
-        {% for father in register %}
-        <div class="content" id="myUL">
-            <li>    
-                <p>Name:<a href="{{url_for('deposit.deposit', depo_id = father.id)}}">{{ father.firstname}} {{ father.lastname }}</a></p>
-                <form action="/contribution" method="post">
-                <div class="content">
-                {%for deposit in father.depo_id %}
-        
-                {{ display_tags(deposit) }}
-                {%endfor%}
-            </form>
+.deposit-page-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.deposit-page-header .deposit-header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.deposit-page-header .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.deposit-page-header .action-btn.primary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.deposit-page-header .action-btn.primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Deposit filters */
+.deposit-filters {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.deposit-filters .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+}
+
+.deposit-filters .filter-group {
+    flex: 1 1 180px;
+    min-width: 140px;
+}
+
+.deposit-filters .filter-group label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.deposit-filters .filter-group select,
+.deposit-filters .filter-group input {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+}
+
+.deposit-filters .filter-group select:focus,
+.deposit-filters .filter-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.deposit-filters .filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.deposit-filters .filter-actions .btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deposit-filters .filter-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+
+.deposit-filters .filter-actions .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+}
+
+.deposit-filters .filter-actions .btn-outline {
+    background: transparent;
+    color: var(--text-color);
+    border: 1.5px solid var(--border-color);
+}
+
+.deposit-filters .filter-actions .btn-outline:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Deposit table */
+.deposit-table-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+/* Actions column styling */
+.deposit-actions-col {
+    white-space: nowrap;
+}
+
+/* Dropdown actions for contribution rows */
+.admin-action-dropdown .dropdown-toggle {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    min-height: 36px;
+    line-height: 1;
+}
+
+.admin-action-dropdown .dropdown-menu {
+    min-width: 220px;
+}
+
+@media (max-width: 768px) {
+    .admin-action-dropdown {
+        width: 100%;
+    }
+
+    .admin-action-dropdown .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-action-dropdown .dropdown-menu {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        margin-top: 0.5rem;
+        box-shadow: none;
+    }
+
+    .admin-action-dropdown .dropdown-menu.show {
+        display: block;
+    }
+}
+
+.dropdown-menu-header {
+    padding: 0.55rem 0.7rem 0.5rem;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    margin-bottom: 0.35rem;
+}
+
+.dropdown-menu-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-menu-sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted, #64748b);
+    margin-top: 0.1rem;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-color, #e2e8f0);
+    margin: 0.5rem 0;
+}
+
+.dropdown-menu-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.75rem 0.2rem;
+}
+
+/* Table header styling */
+.deposit-table-card .table th {
+    background: #f8fafc;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.deposit-table-card .table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.deposit-table-card .table tbody tr:hover {
+    background: #f8fafc;
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+.deposit-table-card .table tbody tr:hover {
+    background: #f8fafc;
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+/* Expand button for pending contributions */
+.expand-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-color, #e2e8f0);
+    background: var(--card-bg, #fff);
+    color: var(--text-muted, #64748b);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    line-height: 1;
+}
+
+.expand-btn:hover {
+    border-color: var(--primary-color, #14b8a6);
+    color: var(--primary-color, #14b8a6);
+    background: rgba(20, 184, 166, 0.05);
+}
+
+.expand-btn.expanded {
+    background: var(--primary-color, #14b8a6);
+    border-color: var(--primary-color, #14b8a6);
+    color: #fff;
+}
+
+/* Contribute button in pending contributions */
+.contribute-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+}
+
+.contribute-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.35);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Pending Contributions Detail Row */
+.pending-detail-row {
+    display: none;
+}
+
+.pending-detail-row.open {
+    display: table-row;
+}
+
+.pending-detail-cell {
+    padding: 0 !important;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.pending-detail-card {
+    padding: 1rem 1.25rem;
+}
+
+.pending-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.pending-detail-header h5 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark-color, #0f172a);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pending-detail-total {
+    font-size: 0.78rem;
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+}
+
+.pending-contributions-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.pending-contributions-table {
+    width: 100%;
+}
+
+.pending-contributions-table thead th {
+    background: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+
+.pending-contributions-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+}
+
+.pending-contributions-table tbody tr:hover {
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.pending-contribution-empty {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.pending-contributions-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-right: 0.5rem;
+}
+
+.pending-loading {
+    display: block;
+    padding: 0.75rem;
+    text-align: center;
+    color: var(--text-muted, #64748b);
+    font-size: 0.8rem;
+}
+
+/* Family avatar with image */
+.family-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+.family-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.payment-badge.cash {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+.payment-badge.mpesa {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.payment-badge.bank {
+    background: rgba(147, 51, 234, 0.1);
+    color: #9333ea;
+}
+
+.payment-badge.cheque {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.deposit-amount {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+}
+
+/* Result count */
+.result-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .deposit-page-header {
+    background: linear-gradient(135deg, #43419b 0%, #5b21b6 100%);
+}
+
+[data-theme="dark"] .deposit-table-card .table th {
+    background: var(--light-color);
+}
+
+[data-theme="dark"] .deposit-table-card .table tbody tr:hover {
+    background: var(--light-color);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+    .deposit-filters .filter-row {
+        flex-direction: column;
+    }
+
+    .deposit-filters .filter-group {
+        min-width: 100%;
+    }
+
+    .deposit-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .deposit-page-header .deposit-header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .deposit-page-header .action-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .deposit-page-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .deposit-page-header .action-btn {
+        font-size: 0.78rem;
+        padding: 0.45rem 0.85rem;
+        gap: 0.3rem;
+    }
+
+    .deposit-filters {
+        padding: 1rem;
+    }
+
+    .deposit-table-card .table td {
+        padding: 0.55rem 0.75rem;
+        font-size: 0.82rem;
+    }
+}
+
+/* Section sub-header (matching admin_dashboard.html pattern) */
+.profile-section-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.profile-section-sub-header h4 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+    font-size: 1.05rem;
+}
+
+.profile-section-sub-header .section-badge {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.7rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(20, 184, 166, 0.12);
+    color: var(--primary-color, #14b8a6);
+    border: 1px solid rgba(20, 184, 166, 0.25);
+}
+
+/* Row actions dropdown */
+.row-actions {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+}
+
+.row-actions-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 36px;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.row-actions-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
+    transform: translateY(-1px);
+}
+
+.row-actions-toggle:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.row-actions.open .row-actions-toggle {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.28);
+}
+
+.row-actions-caret {
+    font-size: 0.7rem;
+    line-height: 1;
+    transition: transform 0.18s ease;
+}
+
+.row-actions.open .row-actions-caret {
+    transform: rotate(180deg);
+}
+
+.row-actions-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 268px;
+    padding: 0.4rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    z-index: 1200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+}
+
+.row-actions.open .row-actions-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.row-actions-menu.is-portaled {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    position: fixed;
+    margin: 0;
+    z-index: 2000;
+}
+
+.row-actions.drop-up .row-actions-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+}
+
+.row-actions-menu-header {
+    padding: 0.55rem 0.7rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.35rem;
+}
+
+.row-actions-menu-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.row-actions-menu-sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
+.row-action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.row-action-item:hover,
+.row-action-item:focus-visible {
+    background: var(--light-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    transform: translateX(2px);
+    outline: none;
+}
+
+.row-action-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.row-action-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.row-action-label {
+    line-height: 1.25;
+}
+
+.row-action-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.row-action-item:hover .row-action-hint {
+    color: var(--primary-color);
+    opacity: 0.85;
+}
+
+.row-actions-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.35rem 0.4rem;
+}
+
+.row-action-form {
+    margin: 0;
+}
+
+.row-action-item.danger {
+    color: var(--danger-color);
+}
+
+.row-action-item.danger .row-action-icon {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover,
+.row-action-item.danger:focus-visible {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.row-action-item.danger:hover .row-action-hint {
+    color: var(--danger-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% if user.role.name in ['DEVEL', 'ADMIN'] %}
+<!-- Page Header -->
+<div class="deposit-page-header">
+    <h2>Deposits</h2>
+</div>
+
+<!-- Deposit Filters -->
+<div class="deposit-filters">
+    <form method="get" action="{{ url_for('deposit.index') }}">
+        <div class="filter-row">
+            <!-- Admin search filter -->
+            <div class="filter-group">
+                <label for="search">Search Member</label>
+                <input type="text" id="search" name="search" value="{{ filters.search or '' }}" placeholder="Name or ID Number...">
             </div>
-            </li>
+
+            <!-- Payment Type filter -->
+            <div class="filter-group">
+                <label for="payment_type">Payment Type</label>
+                <select id="payment_type" name="payment_type">
+                    <option value="">All Types</option>
+                    {% for level in level %}
+                    <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date filters -->
+            <div class="filter-group">
+                <label for="date_from">From Date</label>
+                <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="date_to">To Date</label>
+                <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">🔍 Filter</button>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">✕ Clear</a>
+            </div>
         </div>
-        {%endfor%}
+    </form>
+</div>
+
+    <!-- Contributions Table -->
+    <div class="profile-section-sub-header">
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+            <div class="dropdown admin-action-dropdown">
+                <button class="dropdown-toggle action-btn primary btn-sm" type="button" onclick="toggleDropdown(this)" aria-label="Deposit Actions" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                    +
+                </button>
+                <div class="dropdown-menu" style="top: 100%; right: 0; min-width: 280px;">
+                    {% if contributions %}
+                    <div class="dropdown-menu-label">Recent Contributions</div>
+                    {% for c in contributions[:5] %}
+                    <div class="dropdown-item" role="menuitem" style="display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.8rem;">
+                            {{ c.member.firstname }} {{ c.member.lastname }} — {{ c.trans_date.strftime('%b %d, %Y') if c.trans_date else 'N/A' }}
+                        </span>
+                        <span class="deposit-amount" style="font-weight: 600;">Ksh. {{ '{:,}'.format(c.amount or 0) }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    {% else %}
+                    <div class="dropdown-item" style="color: var(--text-muted);">No recent contributions</div>
+                    {% endif %}
+                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item" role="menuitem">📄 View All Contributions</a>
+                </div>
+            </div>
+            {% endif %}
+            <h4>All Member Contributions</h4>
+        </div>
     </div>
+    <div class="deposit-table-card">
+        <div class="card-body" style="padding: 0;">
+            {% if members %}
+            <div class="result-count">
+                Showing {{ contributions|length }} contribution record(s)
+                {% if filters.search or filters.payment_type or filters.date_from or filters.date_to %}
+                <span> (filtered)</span>
+                {% endif %}
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                    <th>Member</th>
+                    <th>Total Deposits</th>
+                    <th>Transactions</th>
+                    <th>Payment Methods</th>
+                    <th style="width: 60px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% set contributions_by_member = contributions_by_member | default({}) %}
+                {% for member in members %}
+                {% set member_contributions = contributions_by_member.get(member.id, []) %}
+                <tr class="searchable-item" data-member-name="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" data-member-id="{{ member.id_number|member_id if member.id_number else '' }}">
+                    <td style="text-align: center;">
+                        <button class="expand-btn" onclick="togglePendingContributions(this, '{{ member.id }}')" title="Toggle Pending Contributions">+</button>
+                    </td>
+                    <td data-label="Member">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            {% if member.user_account and member.user_account.image %}
+                            <span class="family-avatar">
+                                <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }}">
+                            </span>
+                            {% else %}
+                            <span class="family-avatar">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
+                            {% endif %}
+                            <div>
+                                <strong style="display: block; font-weight: 600;">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
+                                <span style="font-size: 0.78rem; color: var(--text-muted, #64748b);">{{ member.id_number|member_id if member.id_number else '' }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-label="Total Deposits" class="deposit-amount">Ksh. {{ '{:,}'.format(member_contributions|sum(attribute='amount')) }}</td>
+                    <td data-label="Transactions">{{ member_contributions|length }}</td>
+                    <td data-label="Payment Methods">
+                        {% set payment_types = member_contributions|map(attribute='payment_type')|reject('none')|map(attribute='value')|list %}
+                        {% if payment_types %}
+                            {% for pt in payment_types|unique %}
+                                {% if pt == 'Ksh' %}
+                                <span class="payment-badge cash">{{ pt }}</span>
+                                {% elif pt == 'MPESA' %}
+                                <span class="payment-badge mpesa">{{ pt }}</span>
+                                {% elif pt == 'BANK DEPOSIT' %}
+                                <span class="payment-badge bank">{{ pt }}</span>
+                                {% else %}
+                                <span class="payment-badge" style="background: rgba(144, 144, 144, 0.1); color: #64748b;">{{ pt }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Actions" style="text-align: center;">
+                        <div class="row-actions">
+                            <button class="row-actions-toggle" type="button"
+                                    aria-haspopup="true" aria-expanded="false"
+                                    aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
+                                    onclick="toggleRowActions(this)">
+                                <span aria-hidden="true">⚙</span>
+                                <span>Actions</span>
+                                <span class="row-actions-caret" aria-hidden="true">▾</span>
+                            </button>
+                            <div class="row-actions-menu" role="menu">
+                                <div class="row-actions-menu-header">
+                                    <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
+                                    <span class="row-actions-menu-sub">💳 Member</span>
+                                </div>
+                                <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                    <span class="row-action-icon" aria-hidden="true">📄</span>
+                                    <span class="row-action-copy">
+                                        <span class="row-action-label">View Contributions</span>
+                                        <span class="row-action-hint">View contribution history</span>
+                                    </span>
+                                </a>
+                                <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                    <span class="row-action-icon" aria-hidden="true">💰</span>
+                                    <span class="row-action-copy">
+                                        <span class="row-action-label">Add Contribution</span>
+                                        <span class="row-action-hint">Record new deposit</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="pending-detail-row" id="pending-row-{{ member.id }}">
+                    <td colspan="6" class="pending-detail-cell">
+                        <div class="pending-detail-card">
+                            <div class="pending-detail-header">
+                                <h5>
+                                    {% if member.user_account and member.user_account.image %}
+                                    <span class="family-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                        <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }}">
+                                    </span>
+                                    {% else %}
+                                    <span class="family-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
+                                    {% endif %}
+                                    Pending Contributions
+                                </h5>
+                                <span class="pending-detail-total" id="pending-count-{{ member.id }}">Loading...</span>
+                            </div>
+                            <div class="pending-contributions-list" id="pending-list-{{ member.id }}">
+                                <span class="pending-loading">Loading...</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💰</div>
+            <h3>No Contributions Found</h3>
+            <p class="text-muted mb-0">No contributions match your current filters. Try adjusting your search.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+{% if not register %}
+<div class="row justify-content-center mt-5">
+    <div class="col-12 text-center">
+        <div class="empty-state">
+            <div class="empty-state-icon">👤</div>
+            <h3>No Member Profile</h3>
+            <p class="text-muted">You don't have a member profile yet. Please contact an administrator to create one.</p>
+        </div>
+    </div>
+</div>
+{% else %}
+    <!-- Page Header -->
+<div class="deposit-page-header">
+    <h2>Deposits</h2>
+</div>
+
+<!-- Deposit Filters -->
+<div class="deposit-filters">
+    <form method="get" action="{{ url_for('deposit.index') }}">
+        <div class="filter-row">
+            <!-- User event filter -->
+            <div class="filter-group">
+                <label for="event">Event</label>
+                <select id="event" name="event">
+                    <option value="">All Events</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}" {% if filters.event and filters.event == event.id|string() %}selected{% endif %}>{{ event.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Payment Type filter -->
+            <div class="filter-group">
+                <label for="payment_type">Payment Type</label>
+                <select id="payment_type" name="payment_type">
+                    <option value="">All Types</option>
+                    {% for level in level %}
+                    <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date filters -->
+            <div class="filter-group">
+                <label for="date_from">From Date</label>
+                <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="date_to">To Date</label>
+                <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">🔍 Filter</button>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">✕ Clear</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+    <!-- Contributions Table -->
+    <div class="profile-section-sub-header">
+        <h4>My Contributions</h4>
+    </div>
+    <div class="deposit-table-card">
+        <div class="card-body" style="padding: 0;">
+            {% if contributions %}
+        <div class="result-count">
+            Showing {{ contributions|length }} contribution record(s)
+            {% if filters.event or filters.payment_type or filters.date_from or filters.date_to %}
+            <span> (filtered)</span>
+            {% endif %}
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Event</th>
+                        <th class="deposit-actions-col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrib in contributions %}
+                    <tr>
+                        <td>{{ contrib.trans_date.strftime('%b %d, %Y') if contrib.trans_date else 'N/A' }}</td>
+                        <td class="deposit-amount">Ksh. {{ '{:,}'.format(contrib.amount or 0) }}</td>
+                        <td>
+                            {% set pt = contrib.payment_type.value if contrib.payment_type else '' %}
+                            {% if pt == 'Ksh' %}
+                            <span class="payment-badge cash">{{ pt }}</span>
+                            {% elif pt == 'MPESA' %}
+                            <span class="payment-badge mpesa">{{ pt }}</span>
+                            {% elif pt == 'BANK DEPOSIT' %}
+                            <span class="payment-badge bank">{{ pt }}</span>
+                            {% else %}
+                            <span class="payment-badge" style="background: rgba(144, 144, 144, 0.1); color: #64748b;">{{ pt if pt else 'N/A' }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ contrib.community_event.name if contrib.community_event else 'N/A' }}</td>
+                        <td class="deposit-actions-col">
+                            <div class="row-actions">
+                                <button class="row-actions-toggle" type="button"
+                                        aria-haspopup="true" aria-expanded="false"
+                                        aria-label="Actions for {{ contrib.member.firstname }} {{ contrib.member.lastname }}"
+                                        onclick="toggleRowActions(this)">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">Ksh. {{ '{:,}'.format(contrib.amount or 0) }}</span>
+                                        <span class="row-actions-menu-sub">{{ contrib.trans_date.strftime('%b %d, %Y') if contrib.trans_date else 'N/A' }}</span>
+                                    </div>
+                                    <a href="{{ url_for('deposit.edit_contribution', depo_id=contrib.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit Contribution</span>
+                                            <span class="row-action-hint">Update amount or type</span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💰</div>
+            <h3>No Contributions Found</h3>
+            <p class="text-muted mb-0">No contributions match your current filters. Try adjusting your search.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+    {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleDropdown(button) {
+    var dropdown = button.nextElementSibling;
+    if (dropdown && dropdown.classList.contains('dropdown-menu')) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// State management for pending contributions
+const pendingContributionsCache = {};
+const pendingContributionsLoading = {};
+
+/**
+ * Toggle pending contributions row - collapsible dropdown functionality
+ */
+function togglePendingContributions(btn, memberId) {
+    var row = document.getElementById('pending-row-' + memberId);
+    if (!row) return;
+    
+    var isOpen = row.classList.contains('open');
+    
+    // Close all other open pending rows and reset their buttons
+    document.querySelectorAll('.pending-detail-row.open').forEach(function(r) {
+        if (r !== row) {
+            r.classList.remove('open');
+            var prevRow = r.previousElementSibling;
+            if (prevRow) {
+                var b = prevRow.querySelector('.expand-btn');
+                if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
+            }
+        }
+    });
+    
+    if (!isOpen) {
+        row.classList.add('open');
+        btn.classList.add('expanded');
+        btn.textContent = '−';
+        // Load pending contributions for this member
+        loadPendingContributions(memberId);
+    } else {
+        row.classList.remove('open');
+        btn.classList.remove('expanded');
+        btn.textContent = '+';
+    }
+}
+
+/**
+ * Load pending contributions for a member via API
+ */
+function loadPendingContributions(memberId) {
+    var listEl = document.getElementById('pending-list-' + memberId);
+    var countEl = document.getElementById('pending-count-' + memberId);
+    if (!listEl) return;
+
+    // Check cache first
+    if (pendingContributionsCache[memberId]) {
+        renderPendingContributions(listEl, pendingContributionsCache[memberId], countEl, memberId);
+        return;
+    }
+
+    // Check if already loading
+    if (pendingContributionsLoading[memberId]) return;
+    pendingContributionsLoading[memberId] = true;
+
+    // Show loading state
+    listEl.innerHTML = '<span class="pending-loading">Loading...</span>';
+    if (countEl) countEl.textContent = 'Loading...';
+
+    fetch('/contribution/api/member/' + memberId + '/pending-contributions?_=' + Date.now())
+        .then(function(response) {
+            if (!response.ok) throw new Error('Failed to fetch: ' + response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            pendingContributionsCache[memberId] = data;
+            pendingContributionsLoading[memberId] = false;
+            renderPendingContributions(listEl, data, countEl, memberId);
+        })
+        .catch(function(error) {
+            pendingContributionsLoading[memberId] = false;
+            listEl.innerHTML = '<div class="pending-contribution-empty">⚠️ Error loading data</div>';
+            if (countEl) countEl.textContent = 'Error';
+            console.error('Pending contributions error:', error);
+        });
+}
+
+/**
+ * Render pending contributions data into the list element
+ */
+function renderPendingContributions(listEl, data, countEl, memberId) {
+    var pending = data.pending_contributions || [];
+    var count = data.count || 0;
+
+    // Update count in header
+    if (countEl) {
+        countEl.textContent = count + ' pending';
+    }
+
+    var html = '';
+    if (count === 0) {
+        html += '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;"><div style="font-size:1.5rem;margin-bottom:0.25rem;">✓</div><div style="font-weight:600;color:#10b981;">All caught up!</div><div style="font-size:0.72rem;margin-top:0.25rem;">No pending contributions</div></div>';
+        listEl.innerHTML = html;
+        return;
+    }
+
+    // Render pending items with contribute button
+    pending.forEach(function(event) {
+        html += '<tr>' +
+            '<td style="text-align: center;"><div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div></td>' +
+            '<td><span style="font-weight: 600; color: var(--dark-color);">' + event.name + '</span></td>' +
+            '<td style="white-space: nowrap;"><i class="bi bi-calendar-event me-1" style="color: var(--text-muted);"></i>' + event.event_date + '</td>' +
+            '<td style="color: #475569;">' + (event.details || 'No details provided') + '</td>' +
+            '<td style="text-align: center; white-space: nowrap;"><a href="/contribution/' + memberId + '/amount?event_id=' + event.id + '" class="contribute-btn" title="Contribute to this event">💰 Contribute</a></td>' +
+            '</tr>';
+    });
+    html = '<div class="table-responsive"><table class="table table-hover mb-0 pending-contributions-table"><thead><tr><th style="width: 40px;"></th><th>Event</th><th>Date</th><th>Details</th><th style="width: 120px;">Action</th></tr></thead><tbody>' + html + '</tbody></table></div>';
+    listEl.innerHTML = html;
+}
+
+// Clear cache when page becomes visible again (handles stale data after adding contributions)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        Object.keys(pendingContributionsCache).forEach(function(key) {
+            delete pendingContributionsCache[key];
+        });
+    }
+});
+</script>
 {% endblock %}

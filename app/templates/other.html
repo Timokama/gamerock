@@ -1,15 +1,457 @@
-{% extends "base.html" %}
+{% extends "base_f/base.html" %}
+
+{% block page_title %}Change Photo{% endblock %}
 
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
-  <link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+.change-photo-page {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.change-photo-header {
+    margin-bottom: 1.5rem;
+}
+
+.change-photo-header h2 {
+    font-weight: 800;
+    color: var(--dark-color);
+    margin: 0;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+}
+
+.change-photo-header p {
+    color: var(--text-muted);
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+}
+
+.change-photo-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.change-photo-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.change-photo-card .card-header::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 220px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.change-photo-card .card-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 1;
+}
+
+.change-photo-card .card-body {
+    padding: 2.25rem;
+}
+
+.photo-preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.photo-preview-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(15, 118, 110, 0.3);
+    border: 5px solid rgba(255, 255, 255, 0.35);
+    overflow: hidden;
+    transition: all 0.35s ease;
+    position: relative;
+}
+
+.photo-preview-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.photo-preview-avatar.has-image {
+    font-size: 0;
+}
+
+.photo-preview-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 500;
+}
+
+.photo-requirements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.photo-requirement {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: var(--bg-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 3rem 1.5rem;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-color);
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+    border-color: var(--primary-color);
+    background: rgba(20, 184, 166, 0.04);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.1);
+}
+
+.upload-dropzone .upload-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    opacity: 0.9;
+    transition: transform 0.25s ease;
+}
+
+.upload-dropzone:hover .upload-icon {
+    transform: scale(1.1);
+}
+
+.upload-dropzone .upload-title {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 1.15rem;
+}
+
+.upload-dropzone .upload-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.upload-dropzone .upload-browse {
+    color: var(--primary-color);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-preview {
+    margin-top: 1.25rem;
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.upload-preview img {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+.upload-preview .preview-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+.upload-preview .preview-name {
+    font-weight: 700;
+    color: var(--dark-color);
+    font-size: 0.95rem;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-preview .preview-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.upload-preview .preview-remove {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.upload-preview .preview-remove:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.06);
+}
+
+.upload-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.upload-actions .action-btn {
+    min-width: 160px;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    border-radius: 10px;
+}
+
+@media (max-width: 576px) {
+    .change-photo-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .upload-dropzone {
+        padding: 2.25rem 1rem;
+    }
+
+    .photo-preview-avatar {
+        width: 110px;
+        height: 110px;
+        font-size: 2.25rem;
+    }
+
+    .upload-actions .action-btn {
+        min-width: 100%;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<form enctype="multipart/form-data" method="POST">
-  <input name="image" type="file"/>
-  <input type="submit"/>
-</form>
+<div class="change-photo-page">
+    <div class="change-photo-header">
+        <h2>Change Photo</h2>
+        <p>Upload a new profile image. Keep it clear, friendly, and professional.</p>
+    </div>
 
-{% endblock%}
+    <div class="change-photo-card">
+        <div class="card-header">
+            <h4>Profile Image</h4>
+        </div>
+        <div class="card-body">
+            <div class="photo-preview-section">
+                <div class="photo-preview-avatar" id="previewAvatar">
+                    <img id="currentAvatarImg" src="" alt="Current profile photo" style="display: none;">
+                    <span id="currentAvatarFallback">{{ current_user.first_name[0]|upper }}</span>
+                </div>
+                <p class="photo-preview-hint" id="previewHint">Current profile photo</p>
+                <div class="photo-requirements">
+                    <span class="photo-requirement">🖼 JPG, PNG, GIF or WEBP</span>
+                    <span class="photo-requirement">📏 Max 5 MB</span>
+                    <span class="photo-requirement">👤 Face clearly visible</span>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('main.upload_file') }}" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-dropzone" id="uploadDropzone">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-title">Drag &amp; drop an image here</div>
+                    <div class="upload-hint">or <span class="upload-browse">browse files</span> from your device</div>
+                    <input type="file" name="image" id="uploadInput" accept="image/*" required hidden>
+                </div>
+                <div class="upload-preview" id="uploadPreview">
+                    <img id="previewThumb" src="" alt="Preview">
+                    <div class="preview-info">
+                        <span class="preview-name" id="previewName"></span>
+                        <span class="preview-meta" id="previewMeta"></span>
+                    </div>
+                    <button type="button" class="preview-remove" id="previewRemove" title="Remove selected file">✕</button>
+                </div>
+                <div class="upload-actions">
+                    <button type="submit" class="action-btn primary">⬆️ Upload Photo</button>
+                    <a href="{{ url_for('main.profile') }}" class="action-btn outline">✕ Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var dropzone = document.getElementById('uploadDropzone');
+    var input = document.getElementById('uploadInput');
+    var preview = document.getElementById('uploadPreview');
+    var previewThumb = document.getElementById('previewThumb');
+    var previewName = document.getElementById('previewName');
+    var previewMeta = document.getElementById('previewMeta');
+    var previewRemove = document.getElementById('previewRemove');
+    var previewAvatar = document.getElementById('previewAvatar');
+    var previewHint = document.getElementById('previewHint');
+    var MAX_SIZE = 5 * 1024 * 1024;
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showPreview(file) {
+        if (!file) return;
+        if (file.size > MAX_SIZE) {
+            alert('File is too large. Maximum size is 5 MB.');
+            input.value = '';
+            return;
+        }
+        preview.style.display = 'flex';
+        previewName.textContent = file.name;
+        previewMeta.textContent = formatBytes(file.size) + ' · ' + (file.type || 'unknown type');
+        previewHint.textContent = 'New photo preview';
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            previewThumb.src = e.target.result;
+            if (previewAvatar) {
+                previewAvatar.innerHTML = '<img src="' + e.target.result + '" alt="New photo preview">';
+                previewAvatar.classList.add('has-image');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function resetPreview() {
+        preview.style.display = 'none';
+        previewThumb.src = '';
+        previewName.textContent = '';
+        previewMeta.textContent = '';
+        input.value = '';
+        previewHint.textContent = 'Current profile photo';
+        if (previewAvatar) {
+            previewAvatar.innerHTML = '{{ current_user.first_name[0]|upper }}';
+            previewAvatar.classList.remove('has-image');
+        }
+    }
+
+    dropzone.addEventListener('click', function () { input.click(); });
+    input.addEventListener('change', function () {
+        if (input.files && input.files[0]) showPreview(input.files[0]);
+    });
+
+    previewRemove.addEventListener('click', resetPreview);
+
+    ['dragenter', 'dragover'].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        });
+    });
+    dropzone.addEventListener('drop', function (e) {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            showPreview(e.dataTransfer.files[0]);
+        }
+    });
+
+    (function loadCurrentAvatar() {
+        var img = document.getElementById('currentAvatarImg');
+        var fallback = document.getElementById('currentAvatarFallback');
+        var avatar = document.getElementById('previewAvatar');
+        if (!img || !fallback || !avatar) return;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/avatar?v={{ current_user.id }}', true);
+        xhr.responseType = 'blob';
+        xhr.onload = function () {
+            if (xhr.status === 200 && xhr.response && xhr.response.size > 0) {
+                var url = URL.createObjectURL(xhr.response);
+                img.src = url;
+                img.style.display = 'block';
+                fallback.style.display = 'none';
+                avatar.classList.add('has-image');
+            } else {
+                showFallbackAvatar();
+            }
+        };
+        xhr.onerror = function () {
+            showFallbackAvatar();
+        };
+        xhr.send();
+
+        function showFallbackAvatar() {
+            img.style.display = 'none';
+            fallback.style.display = 'inline';
+            avatar.classList.remove('has-image');
+        }
+    })();
+})();
+</script>
+{% endblock %}

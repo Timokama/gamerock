@@ -1,27 +1,200 @@
 {% extends 'base_f/base.html' %}
+
+{% block page_title %}Contribution Accounts{% endblock %}
+
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<style>
+.accounts-page {
+    padding-bottom: 2rem;
+}
+
+.accounts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.accounts-header h2 {
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.account-card {
+    background: #0f172a;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #f1f5f9;
+}
+
+.account-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.account-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.account-card-title {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.account-card-meta {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.account-card-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.account-card-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+.account-card-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.account-card-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1e293b;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.account-card-footer .action-btn.outline {
+    border-color: #334155;
+    color: #cbd5e1;
+    background: transparent;
+}
+
+.account-card-footer .action-btn.outline:hover {
+    border-color: #667eea;
+    color: #fff;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #0f172a;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    color: #f1f5f9;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+}
+
+.accounts-footer {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #0f172a;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.accounts-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.accounts-footer a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+</style>
 {% endblock %}
+
 {% block content %}
-<span class="title"><h1>{% block title %}Contribute to{% endblock %}</h1></span>
+<div class="accounts-page">
+    <div class="accounts-header">
+        <h2>Contribution Accounts</h2>
+        <a href="{{ url_for('account.cont') }}" class="action-btn primary" style="padding: 0.6rem 1.5rem; font-weight: 600; border-radius: 10px; box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);">
+            ➕ New Account
+        </a>
+    </div>
 
-<div class="content"style="color: black;">
-        <div id="myUL">            
-            {% for account in user.contribute %}
-            <li class="register">
-            <p>Name:<a href="{{ url_for('account.contribute', tag_name = account.name)}}">{{ account.name}} </a></p>
-            <p>created at: {{account.created_at}}</p>
-
-            <form method="POST"
-                action="{{ url_for('account.delete', depo_id=account.id) }}">
-                <input type="submit" value="Delete Member"
-                    onclick="return confirm('Are you sure you want to delete this entry?')">
-              </form>
-            <hr>            
-            </li>
-            {% endfor %}
+    <div class="account-list">
+        {% for account in member.contribute %}
+        <div class="account-card">
+            <div class="account-card-header">
+                <div>
+                    <div class="account-card-title">{{ account.name if account.name else 'Contribution' }}</div>
+                    <div class="account-card-meta">📅 {{ account.trans_date.strftime('%B %d, %Y') if account.trans_date else 'N/A' }}</div>
+                </div>
+                <div class="account-card-amount">Ksh. {{ account.amount }}</div>
+            </div>
+            <div class="account-card-details">
+                <div class="account-card-detail">
+                    <span>💳</span>
+                    <span>{{ account.payment_type.value if account.payment_type else 'N/A' }}</span>
+                </div>
+                <div class="account-card-detail">
+                    <span>🔗</span>
+                    <span>{{ account.transaction_ref }}</span>
+                </div>
+            </div>
+            <div class="account-card-footer">
+                <a href="{{ url_for('reports.reports', depo_id=account.id) }}" class="action-btn outline btn-sm">View Report</a>
+            </div>
         </div>
-        
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <h3>No Contributions Yet</h3>
+            <p>Contributions will appear here once deposits are made.</p>
+            <a href="{{ url_for('account.cont') }}" class="action-btn primary">Create Your First Account</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="accounts-footer">
+        <p class="mb-1">&copy; {{ member.created_at.strftime('%Y') if member.created_at else '2026' }} Gamerock Welfare Association. All rights reserved.</p>
+        <p class="mb-0">Member since {{ member.created_at.strftime('%B %d, %Y') if member.created_at else 'N/A' }}</p>
+    </div>
 </div>
 {% endblock %}
