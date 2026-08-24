@@ -1,6 +1,10 @@
 __pycache__
+<<<<<<< HEAD
+env/ 
+=======
 venv/
 env/
+>>>>>>> backup-20260823-210419
 __pychar__/*
 project/* __pychar__/*
 .aider*
