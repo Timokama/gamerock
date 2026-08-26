@@ -1,0 +1,135 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Budgets{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    /* Ensure row-actions dropdowns aren't clipped by the card on mobile */
+    .mg-card .table-responsive,
+    .mg-card .row-actions {
+        overflow: visible !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mg-page-header">
+    <h2>Budgets</h2>
+    <a href="{{ url_for('budget.create') }}" class="btn btn-primary">➕ New Budget</a>
+</div>
+
+<div class="mg-card mb-4">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('budget.index') }}" class="filter-row">
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search budgets...">
+            </div>
+            <div class="filter-group">
+                <label>Fiscal Year</label>
+                <input type="text" name="fiscal_year" value="{{ fiscal_year or '' }}" placeholder="e.g. 2025">
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">All</option>
+                    <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
+                    <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
+                    <option value="Active" {{ 'selected' if status == 'Active' }}>Active</option>
+                    <option value="Closed" {{ 'selected' if status == 'Closed' }}>Closed</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ url_for('budget.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mg-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Fiscal Year</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Items</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    <tr>
+                        <td><strong>{{ budget.name }}</strong></td>
+                        <td>{{ budget.fiscal_year or 'N/A' }}</td>
+                        <td>Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
+                        <td>
+                            <span class="mg-badge mg-badge-{{ 'success' if budget.status == 'Approved' else 'warning' if budget.status == 'Draft' else 'info' if budget.status == 'Active' else 'danger' }}">
+                                {{ budget.status }}
+                            </span>
+                        </td>
+                        <td>{{ budget.items.count() }}</td>
+                        <td>{{ budget.created_at.strftime('%b %d, %Y') if budget.created_at else 'N/A' }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ budget.name }}">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">{{ budget.name }}</span>
+                                        <span class="row-actions-menu-sub">Budget #{{ budget.id }}</span>
+                                    </div>
+                                    <a href="{{ url_for('budget.view', budget_id=budget.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">View Budget</span>
+                                            <span class="row-action-hint">See full details</span>
+                                        </span>
+                                    </a>
+                                    <a href="{{ url_for('budget.edit', budget_id=budget.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit Budget</span>
+                                            <span class="row-action-hint">Update details and items</span>
+                                        </span>
+                                    </a>
+                                    <form method="post" action="{{ url_for('budget.delete', budget_id=budget.id) }}" class="row-action-form" onsubmit="return confirm('Delete this budget? This cannot be undone.');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove budget</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📒</div>
+                                <h3>No Budgets Yet</h3>
+                                <p>Create your first budget to start tracking community finances.</p>
+                                <a href="{{ url_for('budget.create') }}" class="btn btn-primary">Create Budget</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

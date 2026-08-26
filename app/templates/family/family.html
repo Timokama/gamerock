@@ -4,847 +4,960 @@
 
 {% block styles %}
 <style>
-.family-page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
+    .family-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
 
-.family-page-header h2 {
-    margin: 0;
-    font-weight: 700;
-    color: var(--dark-color);
-    font-size: 1.5rem;
-}
+    .family-page-header h2 {
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-2xl);
+    }
 
-.family-profile-section {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
-}
+    .family-profile-section {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        padding: var(--space-8);
+        margin-bottom: var(--space-6);
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow var(--transition-base), border-color var(--transition-base);
+    }
 
-.family-profile-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-}
+    .family-profile-section:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-medium);
+    }
 
-.family-profile-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
+    .family-profile-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
 
-.family-profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 700;
-    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
-    flex-shrink: 0;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-}
-
-.family-profile-info {
-    flex: 1;
-    min-width: 220px;
-}
-
-.family-profile-name {
-    margin: 0;
-    font-weight: 700;
-    color: var(--dark-color);
-    font-size: 1.5rem;
-}
-
-.family-profile-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.family-profile-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--bg-color);
-    padding: 0.35rem 0.75rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.family-profile-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.spouse-section-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    margin-bottom: 1.5rem;
-    overflow: visible;
-    transition: var(--transition);
-}
-
-.spouse-section-card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-}
-
-.spouse-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-    border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.spouse-card-header .spouse-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.spouse-card-header .spouse-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.spouse-card-header .spouse-name {
-    font-weight: 700;
-    font-size: 1.15rem;
-    margin: 0;
-    line-height: 1.3;
-}
-
-.spouse-card-header .spouse-subtitle {
-    font-size: 0.85rem;
-    opacity: 0.9;
-    margin-top: 0.15rem;
-}
-
-.spouse-card-header .dropdown {
-    position: relative;
-}
-
-.spouse-card-header .dropdown-toggle {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    backdrop-filter: blur(4px);
-}
-
-.spouse-card-header .dropdown-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
-}
-
-.spouse-card-body {
-    padding: 1.5rem;
-}
-
-.spouse-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.spouse-detail-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem;
-    background: var(--bg-color);
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    transition: var(--transition);
-}
-
-.spouse-detail-item:hover {
-    border-color: var(--primary-color);
-    background: var(--card-bg);
-    transform: translateY(-1px);
-}
-
-.spouse-detail-item .detail-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    color: #667eea;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
-
-.spouse-detail-item .detail-content {
-    min-width: 0;
-}
-
-.spouse-detail-item .detail-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-weight: 600;
-    margin-bottom: 0.15rem;
-}
-
-.spouse-detail-item .detail-value {
-    font-weight: 600;
-    color: var(--dark-color);
-    font-size: 0.95rem;
-    word-break: break-word;
-}
-
-.children-subsection {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1.25rem;
-}
-
-.children-subsection-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.children-subsection-header .children-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
-    color: #f59e0b;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.children-subsection-header h5 {
-    margin: 0;
-    font-weight: 700;
-    color: var(--dark-color);
-    font-size: 1rem;
-}
-
-.children-subsection-header .children-count-badge {
-    margin-left: auto;
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-    padding: 0.3rem 0.85rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.children-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-}
-
-.child-card {
-    background: var(--bg-color);
-    border-radius: 12px;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: var(--transition);
-}
-
-.child-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transform: translateY(-1px);
-}
-
-.child-card .child-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
-}
-
-.child-card .child-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.child-card .child-name {
-    font-weight: 700;
-    color: var(--dark-color);
-    font-size: 0.95rem;
-    margin-bottom: 0.25rem;
-}
-
-.child-card .child-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.child-card .child-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: var(--card-bg);
-    padding: 0.15rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-}
-
-.child-card .child-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.direct-children-section {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    margin-bottom: 1.5rem;
-    overflow: visible;
-}
-
-.direct-children-header {
-    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-    color: white;
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.direct-children-header h4 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.15rem;
-}
-
-.direct-children-body {
-    padding: 1.5rem;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 3rem 1.5rem;
-    color: var(--text-muted);
-    background: var(--bg-color);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.empty-state-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.6;
-}
-
-.empty-state h3 {
-    color: var(--dark-color);
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-}
-
-.empty-state p {
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
-}
-
-@media (max-width: 768px) {
     .family-profile-header {
-        flex-direction: column;
-        align-items: stretch;
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        flex-wrap: wrap;
     }
 
     .family-profile-avatar {
-        align-self: center;
-    }
-
-    .family-profile-meta {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .family-profile-actions {
-        width: 100%;
-    }
-
-    .family-profile-actions .action-btn {
-        flex: 1;
-        text-align: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-bold);
+        box-shadow: var(--shadow-lg);
+        flex-shrink: 0;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
     }
 
-    .spouse-card-header {
-        flex-wrap: wrap;
+    .family-profile-section:hover .family-profile-avatar {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-xl);
     }
 
-    .spouse-details-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .children-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .child-card {
-        flex-wrap: wrap;
-    }
-
-    .child-card .child-actions {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: 0.5rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .family-profile-section {
-        padding: 1.5rem;
+    .family-profile-info {
+        flex: 1;
+        min-width: 220px;
     }
 
     .family-profile-name {
-        font-size: 1.25rem;
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-2xl);
     }
 
-    .family-profile-avatar {
-        width: 64px;
-        height: 64px;
-        font-size: 1.5rem;
+    .family-profile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        margin-top: var(--space-3);
+        color: var(--text-tertiary);
+        font-size: var(--text-sm);
+    }
+
+    .family-profile-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        background: var(--bg-primary);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-fast);
+    }
+
+    .family-profile-meta span:hover {
+        border-color: var(--border-medium);
+        background: var(--bg-secondary);
+    }
+
+    .family-profile-actions {
+        display: flex;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+    }
+
+    .spouse-section-card {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        margin-bottom: var(--space-6);
+        overflow: visible;
+        transition: all var(--transition-base);
+    }
+
+    .spouse-section-card:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-medium);
+        transform: translateY(-2px);
     }
 
     .spouse-card-header {
-        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: var(--space-5) var(--space-6);
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        position: relative;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .spouse-card-header .spouse-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xl);
+        font-weight: var(--font-weight-bold);
+        flex-shrink: 0;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-base);
+    }
+
+    .spouse-section-card:hover .spouse-card-header .spouse-avatar {
+        transform: scale(1.05);
+    }
+
+    .spouse-card-header .spouse-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .spouse-card-header .spouse-name {
+        font-weight: var(--font-weight-bold);
+        font-size: var(--text-lg);
+        margin: 0;
+        line-height: var(--leading-tight);
+    }
+
+    .spouse-card-header .spouse-subtitle {
+        font-size: var(--text-sm);
+        opacity: 0.9;
+        margin-top: var(--space-1);
+    }
+
+    .spouse-card-header .dropdown {
+        position: relative;
+    }
+
+    .spouse-card-header .dropdown-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        font-family: inherit;
+    }
+
+    .spouse-card-header .dropdown-toggle:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .spouse-card-header .dropdown-toggle:focus-visible {
+        outline: 2px solid white;
+        outline-offset: 2px;
     }
 
     .spouse-card-body {
-        padding: 1rem;
+        padding: var(--space-6);
     }
-}
 
-/* === Tablet: Spouse & Children as table layout === */
-@media (min-width: 768px) and (max-width: 1024px) {
     .spouse-details-grid {
-        display: table;
-        width: 100%;
-        border-collapse: collapse;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
     }
 
     .spouse-detail-item {
-        display: table-row;
-        padding: 0;
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-base);
+    }
+
+    .spouse-detail-item:hover {
+        border-color: var(--primary-500);
+        background: var(--bg-secondary);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
     }
 
     .spouse-detail-item .detail-icon {
-        display: table-cell;
-        vertical-align: middle;
-        padding: 0.6rem 0.75rem;
         width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        color: #667eea;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-lg);
+        flex-shrink: 0;
+        transition: transform var(--transition-base);
+    }
+
+    .spouse-detail-item:hover .detail-icon {
+        transform: scale(1.1);
     }
 
     .spouse-detail-item .detail-content {
-        display: table-cell;
-        vertical-align: middle;
-        padding: 0.6rem 0;
+        min-width: 0;
     }
 
     .spouse-detail-item .detail-label {
-        display: inline-block;
-        margin-right: 0.5rem;
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-1);
     }
 
-    .spouse-detail-item:last-child {
-        border-bottom: none;
+    .spouse-detail-item .detail-value {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        word-break: break-word;
+    }
+
+    .children-subsection {
+        border-top: 1px solid var(--border-light);
+        padding-top: var(--space-5);
+    }
+
+    .children-subsection-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+    }
+
+    .children-subsection-header .children-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+        color: #f59e0b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-lg);
+        flex-shrink: 0;
+        transition: transform var(--transition-base);
+    }
+
+    .children-subsection-header:hover .children-icon {
+        transform: scale(1.1);
+    }
+
+    .children-subsection-header h5 {
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-base);
+    }
+
+    .children-subsection-header .children-count-badge {
+        margin-left: auto;
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-bold);
+        border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
     .children-grid {
-        display: table;
-        width: 100%;
-        border-collapse: collapse;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-4);
     }
 
     .child-card {
-        display: table-row;
-        padding: 0;
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-        flex-wrap: nowrap;
+        background: var(--bg-primary);
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        transition: all var(--transition-base);
+    }
+
+    .child-card:hover {
+        border-color: var(--primary-500);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+        background: var(--bg-secondary);
     }
 
     .child-card .child-avatar {
-        display: table-cell;
-        vertical-align: middle;
         width: 44px;
-        margin: 0 0.5rem 0 0;
-        padding: 0.6rem 0;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-bold);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+    }
+
+    .child-card:hover .child-avatar {
+        transform: scale(1.08);
+        box-shadow: var(--shadow-lg);
     }
 
     .child-card .child-info {
-        display: table-cell;
-        vertical-align: middle;
-        padding: 0.6rem 0;
+        flex: 1;
+        min-width: 0;
     }
 
-    .child-card .child-actions {
-        display: table-cell;
-        vertical-align: middle;
-        width: auto;
-        padding: 0.6rem 0.25rem;
-        justify-content: flex-end;
+    .child-card .child-name {
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        margin-bottom: var(--space-1);
     }
 
     .child-card .child-meta {
         display: flex;
-        gap: 0.5rem;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
     }
 
-    .child-card:last-child {
-        border-bottom: none;
+    .child-card .child-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        background: var(--bg-secondary);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-fast);
     }
-}
 
-[data-theme="dark"] .spouse-detail-item {
-    background: var(--light-color);
-}
+    .child-card:hover .child-meta span {
+        border-color: var(--border-medium);
+    }
 
-[data-theme="dark"] .child-card {
-    background: var(--light-color);
-}
+    .child-card .child-actions {
+        display: flex;
+        gap: var(--space-2);
+        flex-shrink: 0;
+    }
 
-[data-theme="dark"] .spouse-card-header .dropdown-toggle {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
-}
+    .direct-children-section {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        margin-bottom: var(--space-6);
+        overflow: visible;
+        transition: box-shadow var(--transition-base), border-color var(--transition-base);
+    }
 
-[data-theme="dark"] .child-card .child-meta span {
-    background: var(--card-bg);
-    border-color: var(--border-color);
-}
+    .direct-children-section:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-medium);
+    }
 
-[data-theme="dark"] .family-profile-meta span {
-    background: var(--light-color);
-    border-color: var(--border-color);
-}
+    .direct-children-header {
+        background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        color: white;
+        padding: var(--space-5) var(--space-6);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
 
-/* ==========================================================
-   Row actions dropdown
-   ========================================================== */
-.row-actions {
-    position: relative;
-    display: inline-block;
-    text-align: left;
-}
+    .direct-children-header h4 {
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--text-lg);
+    }
 
-.row-actions-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: 36px;
-    padding: 0.45rem 0.8rem;
-    border: 1px solid var(--border-color);
-    border-radius: 9px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    font-size: 0.82rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-}
+    .direct-children-body {
+        padding: var(--space-6);
+    }
 
-.row-actions-toggle:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
-    transform: translateY(-1px);
-}
+    .empty-state {
+        text-align: center;
+        padding: var(--space-12) var(--space-6);
+        color: var(--text-tertiary);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-light);
+    }
 
-.row-actions-toggle:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
+    .empty-state-icon {
+        font-size: var(--text-3xl);
+        margin-bottom: var(--space-4);
+        opacity: 0.6;
+    }
 
-.row-actions.open .row-actions-toggle {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.28);
-}
+    .empty-state h3 {
+        color: var(--text-primary);
+        margin-bottom: var(--space-2);
+        font-size: var(--text-xl);
+    }
 
-.row-actions-caret {
-    font-size: 0.7rem;
-    line-height: 1;
-    transition: transform 0.18s ease;
-}
+    .empty-state p {
+        margin-bottom: var(--space-6);
+        color: var(--text-secondary);
+    }
 
-.row-actions.open .row-actions-caret {
-    transform: rotate(180deg);
-}
+    @media (max-width: 1024px) {
+        .family-profile-section {
+            padding: var(--space-6);
+        }
 
-.row-actions-menu {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 8px);
-    min-width: 268px;
-    padding: 0.4rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-    z-index: 1200;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-6px);
-    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
-}
+        .spouse-card-body {
+            padding: var(--space-5);
+        }
 
-.row-actions.open .row-actions-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
+        .direct-children-body {
+            padding: var(--space-5);
+        }
+    }
 
-/* When portaled to <body> the menu floats above everything and is never
-   clipped by the scrollable table wrapper. */
-.row-actions-menu.is-portaled {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    position: fixed;
-    margin: 0;
-    z-index: 2000;
-}
+    @media (max-width: 768px) {
+        .family-profile-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
 
-/* Flip above the toggle when there is no room below */
-.row-actions.drop-up .row-actions-menu {
-    top: auto;
-    bottom: calc(100% + 8px);
-}
+        .family-profile-avatar {
+            align-self: center;
+        }
 
-.row-actions-menu-header {
-    padding: 0.55rem 0.7rem 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 0.35rem;
-}
+        .family-profile-meta {
+            flex-direction: column;
+            gap: var(--space-2);
+        }
 
-.row-actions-menu-title {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--dark-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+        .family-profile-actions {
+            width: 100%;
+        }
 
-.row-actions-menu-sub {
-    display: block;
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    margin-top: 0.1rem;
-}
+        .family-profile-actions .action-btn {
+            flex: 1;
+            text-align: center;
+            justify-content: center;
+        }
 
-.row-action-item {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    width: 100%;
-    padding: 0.55rem 0.65rem;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--text-color);
-    font-size: 0.85rem;
-    font-weight: 600;
-    font-family: inherit;
-    text-align: left;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
+        .spouse-card-header {
+            flex-wrap: wrap;
+        }
 
-.row-action-item:hover,
-.row-action-item:focus-visible {
-    background: var(--light-color);
-    color: var(--primary-color);
-    text-decoration: none;
-    transform: translateX(2px);
-    outline: none;
-}
+        .spouse-details-grid {
+            grid-template-columns: 1fr;
+        }
 
-.row-action-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(15, 118, 110, 0.1);
-    color: var(--primary-color);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-}
+        .children-grid {
+            grid-template-columns: 1fr;
+        }
 
-.row-action-copy {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
+        .child-card {
+            flex-wrap: wrap;
+        }
 
-.row-action-label {
-    line-height: 1.25;
-}
+        .child-card .child-actions {
+            width: 100%;
+            justify-content: flex-end;
+            margin-top: var(--space-2);
+        }
+    }
 
-.row-action-hint {
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--text-muted);
-}
+    @media (max-width: 576px) {
+        .family-profile-section {
+            padding: var(--space-5);
+        }
 
-.row-action-item:hover .row-action-hint {
-    color: var(--primary-color);
-    opacity: 0.85;
-}
+        .family-profile-name {
+            font-size: var(--text-xl);
+        }
 
-.row-actions-divider {
-    height: 1px;
-    background: var(--border-color);
-    margin: 0.35rem 0.4rem;
-}
+        .family-profile-avatar {
+            width: 64px;
+            height: 64px;
+            font-size: var(--text-2xl);
+        }
 
-.row-action-form {
-    margin: 0;
-}
+        .spouse-card-header {
+            padding: var(--space-4);
+        }
 
-.row-action-item.danger {
-    color: var(--danger-color);
-}
+        .spouse-card-body {
+            padding: var(--space-4);
+        }
 
-.row-action-item.danger .row-action-icon {
-    background: rgba(239, 68, 68, 0.12);
-    color: var(--danger-color);
-}
+        .direct-children-header {
+            padding: var(--space-4);
+        }
 
-.row-action-item.danger:hover,
-.row-action-item.danger:focus-visible {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger-color);
-}
+        .direct-children-body {
+            padding: var(--space-4);
+        }
+    }
 
-.row-action-item.danger:hover .row-action-hint {
-    color: var(--danger-color);
-}
+    /* === Tablet: Spouse & Children as table layout === */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .spouse-details-grid {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.family-table-card,
-.card {
-    overflow: visible !important;
-}
+        .spouse-detail-item {
+            display: table-row;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+        }
 
-.dropdown-menu {
-    top: calc(100% + 6px) !important;
-    bottom: auto !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0 !important;
-    z-index: 1070 !important;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
-    padding: 0.5rem 0;
-    min-width: 200px;
-}
+        .spouse-detail-item .detail-icon {
+            display: table-cell;
+            vertical-align: middle;
+            padding: var(--space-3) var(--space-3);
+            width: 40px;
+        }
 
-.dropdown-item {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+        .spouse-detail-item .detail-content {
+            display: table-cell;
+            vertical-align: middle;
+            padding: var(--space-3) 0;
+        }
 
-.dropdown-item:hover {
-    background: var(--light-color);
-    color: var(--primary-color);
-    padding-left: 1.25rem;
-}
+        .spouse-detail-item .detail-label {
+            display: inline-block;
+            margin-right: var(--space-2);
+        }
+
+        .spouse-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .children-grid {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .child-card {
+            display: table-row;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: nowrap;
+        }
+
+        .child-card .child-avatar {
+            display: table-cell;
+            vertical-align: middle;
+            width: 44px;
+            margin: 0 var(--space-2) 0 0;
+            padding: var(--space-3) 0;
+        }
+
+        .child-card .child-info {
+            display: table-cell;
+            vertical-align: middle;
+            padding: var(--space-3) 0;
+        }
+
+        .child-card .child-actions {
+            display: table-cell;
+            vertical-align: middle;
+            width: auto;
+            padding: var(--space-3) var(--space-2);
+            justify-content: flex-end;
+        }
+
+        .child-card .child-meta {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .child-card:last-child {
+            border-bottom: none;
+        }
+    }
+
+    [data-theme="dark"] .spouse-detail-item {
+        background: var(--secondary-800);
+    }
+
+    [data-theme="dark"] .child-card {
+        background: var(--secondary-800);
+    }
+
+    [data-theme="dark"] .spouse-card-header .dropdown-toggle {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    [data-theme="dark"] .child-card .child-meta span {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .family-profile-meta span {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .spouse-section-card {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .direct-children-section {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .empty-state {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .empty-state h3 {
+        color: var(--secondary-100);
+    }
+
+    /* ==========================================================
+       Row actions dropdown
+       ========================================================== */
+    .row-actions {
+        position: relative;
+        display: inline-block;
+        text-align: left;
+    }
+
+    .row-actions-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-height: 36px;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        font-family: inherit;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        box-shadow: var(--shadow-xs);
+    }
+
+    .row-actions-toggle:hover {
+        border-color: var(--primary-500);
+        color: var(--primary-600);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .row-actions-toggle:focus-visible {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+    }
+
+    .row-actions.open .row-actions-toggle {
+        background: var(--primary-500);
+        border-color: var(--primary-500);
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .row-actions-caret {
+        font-size: 0.7rem;
+        line-height: 1;
+        transition: transform var(--transition-fast);
+    }
+
+    .row-actions.open .row-actions-caret {
+        transform: rotate(180deg);
+    }
+
+    .row-actions-menu {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 8px);
+        min-width: 268px;
+        padding: var(--space-2);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        z-index: var(--z-dropdown);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition: all var(--transition-fast);
+    }
+
+    .row-actions.open .row-actions-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* When portaled to <body> the menu floats above everything and is never
+       clipped by the scrollable table wrapper. */
+    .row-actions-menu.is-portaled {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        position: fixed;
+        margin: 0;
+        z-index: var(--z-modal);
+    }
+
+    /* Flip above the toggle when there is no room below */
+    .row-actions.drop-up .row-actions-menu {
+        top: auto;
+        bottom: calc(100% + 8px);
+    }
+
+    .row-actions-menu-header {
+        padding: var(--space-2) var(--space-3) var(--space-2);
+        border-bottom: 1px solid var(--border-light);
+        margin-bottom: var(--space-1);
+    }
+
+    .row-actions-menu-title {
+        display: block;
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .row-actions-menu-sub {
+        display: block;
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
+        margin-top: var(--space-1);
+    }
+
+    .row-action-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        width: 100%;
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        border-radius: var(--radius-lg);
+        background: transparent;
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        font-family: inherit;
+        text-align: left;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .row-action-item:hover,
+    .row-action-item:focus-visible {
+        background: var(--bg-tertiary);
+        color: var(--primary-600);
+        text-decoration: none;
+        transform: translateX(2px);
+        outline: none;
+    }
+
+    .row-action-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-lg);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 118, 110, 0.1);
+        color: var(--primary-500);
+        font-size: var(--text-sm);
+        flex-shrink: 0;
+        transition: all var(--transition-fast);
+    }
+
+    .row-action-item:hover .row-action-icon {
+        background: rgba(15, 118, 110, 0.15);
+        transform: scale(1.05);
+    }
+
+    .row-action-copy {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .row-action-label {
+        line-height: var(--leading-tight);
+    }
+
+    .row-action-hint {
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-tertiary);
+    }
+
+    .row-action-item:hover .row-action-hint {
+        color: var(--primary-600);
+        opacity: 0.85;
+    }
+
+    .row-actions-divider {
+        height: 1px;
+        background: var(--border-light);
+        margin: var(--space-1) var(--space-2);
+    }
+
+    .row-action-form {
+        margin: 0;
+    }
+
+    .row-action-item.danger {
+        color: var(--danger-600);
+    }
+
+    .row-action-item.danger .row-action-icon {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger-500);
+    }
+
+    .row-action-item.danger:hover,
+    .row-action-item.danger:focus-visible {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger-600);
+    }
+
+    .row-action-item.danger:hover .row-action-hint {
+        color: var(--danger-600);
+    }
+
+    .family-table-card,
+    .card {
+        overflow: visible !important;
+    }
+
+    .dropdown-menu {
+        top: calc(100% + 6px) !important;
+        bottom: auto !important;
+        margin-top: var(--space-2) !important;
+        margin-bottom: 0 !important;
+        z-index: var(--z-dropdown) !important;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-2) 0;
+        min-width: 200px;
+    }
+
+    .dropdown-item {
+        padding: var(--space-2) var(--space-4);
+        font-size: var(--text-sm);
+        transition: all var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .dropdown-item:hover {
+        background: var(--bg-tertiary);
+        color: var(--primary-600);
+        padding-left: var(--space-5);
+    }
+
+    .dropdown-item:focus-visible {
+        outline: none;
+        background: var(--bg-tertiary);
+        color: var(--primary-600);
+    }
 </style>
 {% endblock %}
 
@@ -852,7 +965,7 @@
 <div class="family-page-header">
     <div>
         <h2>{{ register.firstname }} {{ register.lastname }}'s Family</h2>
-        <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">Manage family members and relationships</p>
+        <p style="color: var(--text-tertiary); margin: var(--space-1) 0 0; font-size: var(--text-sm);">Manage family members and relationships</p>
     </div>
     <div class="d-flex gap-2">
         <a href="{{ url_for('family.edit', depo_id=register.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
@@ -916,8 +1029,7 @@
         <div class="row-actions">
             <button class="row-actions-toggle" type="button"
                     aria-haspopup="true" aria-expanded="false"
-                    aria-label="Actions for {{ spouse.firstname }} {{ spouse.lastname }}"
-                    onclick="toggleRowActions(this)">
+                    aria-label="Actions for {{ spouse.firstname }} {{ spouse.lastname }}">
                 <span aria-hidden="true">⚙</span>
                 <span>Actions</span>
                 <span class="row-actions-caret" aria-hidden="true">▾</span>
@@ -997,37 +1109,38 @@
                             <span>🎂 {{ child.date_of_birth }}</span>
                         </div>
                     </div>
-                    <div class="row-actions">
-                        <button class="row-actions-toggle" type="button"
-                                aria-haspopup="true" aria-expanded="false"
-                                aria-label="Actions for {{ child.firstname }} {{ child.lastname }}"
-                                onclick="toggleRowActions(this)">
-                            <span aria-hidden="true">⚙</span>
-                            <span>Actions</span>
-                            <span class="row-actions-caret" aria-hidden="true">▾</span>
-                        </button>
-                        <div class="row-actions-menu" role="menu">
-                            <div class="row-actions-menu-header">
-                                <span class="row-actions-menu-title">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</span>
-                                <span class="row-actions-menu-sub">👶 Child</span>
-                            </div>
-                            <a href="{{ url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
-                                <span class="row-action-icon" aria-hidden="true">✏️</span>
-                                <span class="row-action-copy">
-                                    <span class="row-action-label">Edit Child</span>
-                                    <span class="row-action-hint">Update details</span>
-                                </span>
-                            </a>
-                            <div class="row-actions-divider"></div>
-                            <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
-                                <button type="submit" class="row-action-item danger" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true">🗑</span>
+                    <div class="child-actions">
+                        <div class="row-actions">
+                            <button class="row-actions-toggle" type="button"
+                                    aria-haspopup="true" aria-expanded="false"
+                                    aria-label="Actions for {{ child.firstname }} {{ child.lastname }}">
+                                <span aria-hidden="true">⚙</span>
+                                <span>Actions</span>
+                                <span class="row-actions-caret" aria-hidden="true">▾</span>
+                            </button>
+                            <div class="row-actions-menu" role="menu">
+                                <div class="row-actions-menu-header">
+                                    <span class="row-actions-menu-title">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</span>
+                                    <span class="row-actions-menu-sub">👶 Child</span>
+                                </div>
+                                <a href="{{ url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
+                                    <span class="row-action-icon" aria-hidden="true">✏️</span>
                                     <span class="row-action-copy">
-                                        <span class="row-action-label">Delete Child</span>
-                                        <span class="row-action-hint">Cannot be undone</span>
+                                        <span class="row-action-label">Edit Child</span>
+                                        <span class="row-action-hint">Update details</span>
                                     </span>
-                                </button>
-                            </form>
+                                </a>
+                                <div class="row-actions-divider"></div>
+                                <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                    <button type="submit" class="row-action-item danger" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Delete Child</span>
+                                            <span class="row-action-hint">Cannot be undone</span>
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1085,8 +1198,7 @@
                             <div class="row-actions">
                                 <button class="row-actions-toggle" type="button"
                                         aria-haspopup="true" aria-expanded="false"
-                                        aria-label="Actions for {{ child.firstname }} {{ child.lastname }}"
-                                        onclick="toggleRowActions(this)">
+                                        aria-label="Actions for {{ child.firstname }} {{ child.lastname }}">
                                     <span aria-hidden="true">⚙</span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>

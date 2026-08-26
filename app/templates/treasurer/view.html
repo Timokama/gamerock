@@ -1,0 +1,95 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}{{ record.category }} Record{% endblock %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+<div class="mg-detail-container">
+    <div class="mg-page-header">
+        <h2>{{ record.category }} Record</h2>
+            <div class="row-actions">
+                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                    <span aria-hidden="true">⚙</span>
+                    <span>Actions</span>
+                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                </button>
+                <div class="row-actions-menu" role="menu">
+                <a href="{{ url_for('treasurer.edit', record_id=record.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Edit Record</span>
+                        <span class="row-action-hint">Update transaction details</span>
+                    </span>
+                </a>
+                {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                <form method="post" action="{{ url_for('treasurer.delete', record_id=record.id) }}" class="row-action-form" onsubmit="return confirm('Delete this record? This cannot be undone.');">
+                    <button type="submit" class="row-action-item danger" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Delete</span>
+                            <span class="row-action-hint">Permanently remove record</span>
+                        </span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Record Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Category</span>
+                <span class="mg-detail-value">{{ record.category }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Record Type</span>
+                <span class="mg-detail-value">
+                    {% if record.record_type == 'Income' %}
+                    <span class="mg-badge mg-badge-success">{{ record.record_type }}</span>
+                    {% elif record.record_type == 'Expense' %}
+                    <span class="mg-badge mg-badge-danger">{{ record.record_type }}</span>
+                    {% else %}
+                    <span class="mg-badge mg-badge-info">{{ record.record_type }}</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Amount</span>
+                <span class="mg-detail-value">Ksh. {{ '{:,}'.format(record.amount) }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Transaction Date</span>
+                <span class="mg-detail-value">{{ record.transaction_date.strftime('%B %d, %Y') }}</span>
+            </div>
+            {% if record.reference %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Reference</span>
+                <span class="mg-detail-value">{{ record.reference }}</span>
+            </div>
+            {% endif %}
+            {% if record.description %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Description</span>
+                <span class="mg-detail-value">{{ record.description }}</span>
+            </div>
+            {% endif %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created By</span>
+                <span class="mg-detail-value">{{ record.creator.first_name if record.creator else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created At</span>
+                <span class="mg-detail-value">{{ record.created_at.strftime('%B %d, %Y %I:%M %p') if record.created_at else 'N/A' }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline">← Back to Treasurer Records</a>
+    </div>
+</div>
+{% endblock %}

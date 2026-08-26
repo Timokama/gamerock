@@ -19,11 +19,11 @@ from app.models.faq import FAQ
 from sqlalchemy.orm import joinedload, subqueryload
 
 def is_developer():
-    return current_user.is_authenticated and current_user.role == AccessLevel.DEVEL
+    return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
 
 def can_manage_faq():
     """Developers and administrators may manage the knowledge base."""
-    return current_user.is_authenticated and current_user.role in (AccessLevel.DEVEL, AccessLevel.ADMIN)
+    return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
 
 @bp.route('/')
 @login_required
@@ -77,7 +77,7 @@ def index():
 
     members = query.order_by(Member.created_at.desc()).all()
 
-    return render_template('register/index.html', user=user, members=members, filters={
+    return render_template('register/index.html', user=user, members=members, access_levels=AccessLevel, filters={
         'search': search,
         'email': email,
         'phone': phone,
@@ -515,6 +515,43 @@ def assign_user(member_id):
     else:
         flash('User account not found.')
     
+    return redirect(url_for('register.index'))
+
+@bp.post('/<int:member_id>/assign_role')
+@login_required
+def assign_role(member_id):
+    if not is_developer():
+        flash('You do not have permission to assign roles.')
+        return redirect(url_for('register.index'))
+    
+    member = Member.query.get_or_404(member_id)
+    if not member.user_id:
+        flash('This member does not have a user account.')
+        return redirect(url_for('register.index'))
+    
+    role_name = request.form.get('role')
+    if not role_name:
+        flash('No role specified.')
+        return redirect(url_for('register.index'))
+    
+    try:
+        new_role = AccessLevel[role_name]
+    except KeyError:
+        flash('Invalid role specified.')
+        return redirect(url_for('register.index'))
+    
+    if new_role == AccessLevel.DEVEL:
+        flash('Developer role cannot be assigned through this interface.')
+        return redirect(url_for('register.index'))
+    
+    user = User.query.get_or_404(member.user_id)
+    if user.role == new_role:
+        flash(f'{member.firstname} {member.lastname} already has the {new_role.display_name} role.')
+        return redirect(url_for('register.index'))
+    
+    user.role = new_role
+    db.session.commit()
+    flash(f'Successfully assigned {new_role.display_name} role to {member.firstname} {member.lastname}.')
     return redirect(url_for('register.index'))
 
 FAQ_DEFAULT_CATEGORIES = [

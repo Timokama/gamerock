@@ -453,7 +453,26 @@
                         </td>
                         <td>{{ contribute.community_event.name if contribute.community_event else 'N/A' }}</td>
                         <td>
-                            <a href="{{ url_for('reports.reports', depo_id=contribute.id) }}" class="action-btn outline btn-sm">View</a>
+                            <div class="row-actions">
+                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for report">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">{{ contribute.member.firstname }} {{ contribute.member.lastname }}</span>
+                                        <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(contribute.amount) }}</span>
+                                    </div>
+                                    <a href="{{ url_for('reports.reports', depo_id=contribute.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">View Report</span>
+                                            <span class="row-action-hint">See contribution details</span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     {% else %}

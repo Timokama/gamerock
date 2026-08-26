@@ -1,0 +1,159 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Treasurer Records{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    /* Ensure row-actions dropdowns aren't clipped by the card on mobile */
+    .mg-card .table-responsive,
+    .mg-card .row-actions {
+        overflow: visible !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mg-page-header">
+    <h2>Treasurer Records</h2>
+    <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary">➕ New Transaction</a>
+</div>
+
+<div class="mg-summary-cards mb-4">
+    <div class="mg-summary-card income">
+        <div class="summary-label">Total Income</div>
+        <div class="summary-value">Ksh. {{ '{:,}'.format(total_income) }}</div>
+    </div>
+    <div class="mg-summary-card expenses">
+        <div class="summary-label">Total Expenses</div>
+        <div class="summary-value">Ksh. {{ '{:,}'.format(total_expenses) }}</div>
+    </div>
+    <div class="mg-summary-card balance">
+        <div class="summary-label">Balance</div>
+        <div class="summary-value">Ksh. {{ '{:,}'.format(balance) }}</div>
+    </div>
+</div>
+
+<div class="mg-card mb-4">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('treasurer.index') }}" class="filter-row">
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search records...">
+            </div>
+            <div class="filter-group">
+                <label>Type</label>
+                <select name="record_type">
+                    <option value="">All</option>
+                    <option value="Income" {{ 'selected' if record_type == 'Income' }}>Income</option>
+                    <option value="Expense" {{ 'selected' if record_type == 'Expense' }}>Expense</option>
+                    <option value="Transaction" {{ 'selected' if record_type == 'Transaction' }}>Transaction</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Category</label>
+                <input type="text" name="category" value="{{ category or '' }}" placeholder="e.g. Tithes">
+            </div>
+            <div class="filter-group">
+                <label>Date From</label>
+                <input type="date" name="date_from" value="{{ date_from or '' }}">
+            </div>
+            <div class="filter-group">
+                <label>Date To</label>
+                <input type="date" name="date_to" value="{{ date_to or '' }}">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mg-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Reference</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.transaction_date.strftime('%b %d, %Y') if record.transaction_date else 'N/A' }}</td>
+                        <td><strong>{{ record.category or 'General' }}</strong></td>
+                        <td>
+                            <span class="mg-badge mg-badge-{{ 'success' if record.record_type == 'Income' else 'danger' if record.record_type == 'Expense' else 'info' }}">
+                                {{ record.record_type }}
+                            </span>
+                        </td>
+                        <td>Ksh. {{ '{:,}'.format(record.amount) }}</td>
+                        <td>{{ record.reference or '—' }}</td>
+                        <td>{{ record.description[:50] + '...' if record.description and record.description|length > 50 else record.description or '—' }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ record.category or record.id }}">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">{{ record.category or 'Record' }}</span>
+                                        <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(record.amount) }}</span>
+                                    </div>
+                                    <a href="{{ url_for('treasurer.view', record_id=record.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">View Record</span>
+                                            <span class="row-action-hint">See full details</span>
+                                        </span>
+                                    </a>
+                                    <a href="{{ url_for('treasurer.edit', record_id=record.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit Record</span>
+                                            <span class="row-action-hint">Update transaction details</span>
+                                        </span>
+                                    </a>
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                    <form method="post" action="{{ url_for('treasurer.delete', record_id=record.id) }}" class="row-action-form" onsubmit="return confirm('Delete this record? This cannot be undone.');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove record</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🏦</div>
+                                <h3>No Transactions Yet</h3>
+                                <p>Record your first income or expense to start tracking treasury activity.</p>
+                                <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary">Add Record</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

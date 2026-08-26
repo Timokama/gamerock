@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(500))
     phone_num = db.Column(db.String(20))
-    role = db.Column(db.Enum(AccessLevel))
+    role = db.Column(db.Enum(AccessLevel, values_callable=lambda e: [m.value for m in e]))
 
     event = db.relationship('CommunityEvent', backref='user')
     contribution = db.relationship('Contribution', backref='user')

@@ -72,6 +72,27 @@
                     <span class="sidebar-nav-icon">📊</span> Reports
                 </a>
             </li>
+            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+            <li>
+                <a href="{{ url_for('budget.index') }}" class="{% if request.endpoint and request.endpoint.startswith('budget') %}active{% endif %}">
+                    <span class="sidebar-nav-icon">📒</span> Budgets
+                </a>
+            </li>
+            {% endif %}
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
+            <li>
+                <a href="{{ url_for('treasurer.index') }}" class="{% if request.endpoint and request.endpoint.startswith('treasurer') %}active{% endif %}">
+                    <span class="sidebar-nav-icon">🏦</span> Treasurer
+                </a>
+            </li>
+            {% endif %}
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
+            <li>
+                <a href="{{ url_for('minutes.index') }}" class="{% if request.endpoint and request.endpoint.startswith('minutes') %}active{% endif %}">
+                    <span class="sidebar-nav-icon">📝</span> Minutes
+                </a>
+            </li>
+            {% endif %}
             {% set faq_endpoint = request.endpoint or '' %}
             {% set faq_section_active = 'faq' in faq_endpoint %}
             {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
@@ -153,6 +174,37 @@
                         <span class="sidebar-nav-icon">👨‍👩‍👦</span> Add Family
                     </a>
                 </li>
+                {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                <li>
+                    <a href="{{ url_for('budget.create') }}" title="Create New Budget">
+                        <span class="sidebar-nav-icon">📒</span> New Budget
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('treasurer.create') }}" title="Record Transaction">
+                        <span class="sidebar-nav-icon">🏦</span> New Transaction
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('minutes.create') }}" title="Record Meeting Minutes">
+                        <span class="sidebar-nav-icon">📝</span> New Minutes
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
+                <li>
+                    <a href="{{ url_for('treasurer.create') }}" title="Record Transaction">
+                        <span class="sidebar-nav-icon">🏦</span> New Transaction
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
+                <li>
+                    <a href="{{ url_for('minutes.create') }}" title="Record Meeting Minutes">
+                        <span class="sidebar-nav-icon">📝</span> New Minutes
+                    </a>
+                </li>
+                {% endif %}
             </ul>
             <select class="sidebar-member-select" id="sidebarMemberSelect">
                 <option value="">Select Member...</option>

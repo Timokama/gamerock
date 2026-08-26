@@ -21,12 +21,15 @@
   /* ---------- Hero ---------- */
   .ov-hero {
     position: relative;
-    border-radius: 20px;
+    border-radius: var(--radius-2xl, 20px);
     padding: clamp(24px, 4vw, 40px);
     color: #fff;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
-    box-shadow: 0 20px 50px -20px rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, var(--primary-600, #667eea) 0%, var(--primary-700, #764ba2) 50%, #8b5cf6 100%);
+    box-shadow: var(--shadow-xl, 0 20px 50px -20px rgba(102, 126, 234, 0.5));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .ov-hero::before {
@@ -36,9 +39,10 @@
     right: -8%;
     width: 420px;
     height: 420px;
-    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
+    animation: heroPulse 8s ease-in-out infinite;
   }
 
   .ov-hero::after {
@@ -48,9 +52,15 @@
     left: -6%;
     width: 280px;
     height: 280px;
-    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
+    animation: heroPulse 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes heroPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
   }
 
   .ov-hero-inner {
@@ -144,18 +154,20 @@
   }
 
   .ov-stat {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 1.25rem 1.5rem;
-    box-shadow: var(--shadow);
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: var(--space-4, 1rem);
+    transition: all var(--transition-base, 0.35s cubic-bezier(0.4, 0, 0.2, 1));
     position: relative;
     overflow: hidden;
     cursor: default;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .ov-stat::before {
@@ -165,18 +177,24 @@
     left: 0;
     width: 4px;
     height: 100%;
-    border-radius: 16px 0 0 16px;
+    border-radius: var(--radius-xl, 16px) 0 0 var(--radius-xl, 16px);
+    transition: width var(--transition-fast, 150ms);
   }
 
-  .ov-stat.primary::before { background: linear-gradient(180deg, #667eea, #764ba2); }
-  .ov-stat.success::before { background: linear-gradient(180deg, #10b981, #059669); }
-  .ov-stat.warning::before { background: linear-gradient(180deg, #f59e0b, #d97706); }
-  .ov-stat.info::before { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+  .ov-stat:hover::before {
+    width: 6px;
+  }
+
+  .ov-stat.primary::before { background: linear-gradient(180deg, var(--primary-500, #667eea), var(--primary-600, #764ba2)); }
+  .ov-stat.success::before { background: linear-gradient(180deg, var(--success-500, #10b981), var(--success-600, #059669)); }
+  .ov-stat.warning::before { background: linear-gradient(180deg, var(--warning-500, #f59e0b), var(--warning-600, #d97706)); }
+  .ov-stat.info::before { background: linear-gradient(180deg, var(--info-500, #3b82f6), var(--info-600, #2563eb)); }
+  .ov-stat.danger::before { background: linear-gradient(180deg, var(--danger-500, #ef4444), var(--danger-600, #dc2626)); }
 
   .ov-stat:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, var(--primary-500));
   }
 
   .ov-stat-icon {
@@ -193,13 +211,14 @@
   .ov-stat.success .ov-stat-icon { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08)); }
   .ov-stat.warning .ov-stat-icon { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08)); }
   .ov-stat.info .ov-stat-icon { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.08)); }
+  .ov-stat.danger .ov-stat-icon { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.08)); }
 
   .ov-stat-body { flex: 1; min-width: 0; }
 
   .ov-stat-value {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--dark-color);
+    color: var(--dark-color, var(--text-primary));
     line-height: 1.15;
     margin-bottom: 0.15rem;
     letter-spacing: -0.02em;
@@ -207,7 +226,7 @@
 
   .ov-stat-label {
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--text-muted, var(--text-tertiary));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -227,28 +246,89 @@
   .ov-stat-trend.up { background: rgba(16,185,129,0.1); color: #059669; }
   .ov-stat-trend.down { background: rgba(239,68,68,0.1); color: #dc2626; }
 
+  /* ---------- Summary Cards (Budget/Treasury) ---------- */
+  .ov-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4, 1rem);
+    margin-bottom: var(--space-5, 1.25rem);
+  }
+
+  .ov-summary-card {
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 14px);
+    padding: var(--space-4, 1.1rem) var(--space-5, 1.25rem);
+    box-shadow: var(--shadow-xs);
+    text-align: center;
+    transition: all var(--transition-base, 0.25s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .ov-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color, var(--primary-500));
+  }
+
+  .ov-summary-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ov-summary-card-icon.primary { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.06)); color: var(--primary-600, #764ba2); }
+  .ov-summary-card-icon.success { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.06)); color: var(--success-600, #059669); }
+  .ov-summary-card-icon.warning { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.06)); color: var(--warning-600, #d97706); }
+  .ov-summary-card-icon.info { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.06)); color: var(--info-600, #2563eb); }
+
+  .ov-summary-card-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark-color, var(--text-primary));
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .ov-summary-card-label {
+    font-size: 0.7rem;
+    color: var(--text-muted, var(--text-tertiary));
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.2rem;
+  }
+
   /* ---------- Sections ---------- */
   .ov-section {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-2xl, 20px);
     padding: clamp(18px, 3vw, 28px);
-    box-shadow: var(--shadow);
-    transition: box-shadow 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base, 0.3s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .ov-section:hover {
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-medium);
   }
 
   .ov-section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.85rem;
-    border-bottom: 1px solid var(--border-color);
+    gap: var(--space-3, 0.75rem);
+    margin-bottom: var(--space-5, 1.25rem);
+    padding-bottom: var(--space-4, 0.85rem);
+    border-bottom: 1px solid var(--border-color, var(--border-light));
   }
 
   .ov-section-header-left {
@@ -260,61 +340,78 @@
   .ov-section-icon {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg, 10px);
     display: grid;
     place-items: center;
     font-size: 1.1rem;
-    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
+    background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
     color: var(--prof-primary, #764ba2);
+    transition: all var(--transition-fast, 150ms);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+  }
+
+  .ov-section:hover .ov-section-icon {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
   }
 
   .ov-section-title {
     margin: 0;
     font-weight: 800;
-    color: var(--dark-color);
-    font-size: 1.05rem;
+    color: var(--dark-color, var(--text-primary));
+    font-size: var(--text-lg, 1.05rem);
     letter-spacing: -0.01em;
+    transition: color var(--transition-fast, 150ms);
   }
 
   .ov-section-action {
-    font-size: 0.8rem;
+    font-size: var(--text-sm, 0.8rem);
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-600));
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    transition: opacity 0.2s ease;
+    transition: all var(--transition-fast, 0.2s ease);
+    padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+    border-radius: var(--radius-lg, 8px);
+    background: rgba(102, 126, 234, 0.06);
   }
 
-  .ov-section-action:hover { opacity: 0.8; text-decoration: none; }
+  .ov-section-action:hover {
+    background: rgba(102, 126, 234, 0.12);
+    transform: translateX(2px);
+    text-decoration: none;
+    color: var(--primary-color, var(--primary-600));
+  }
 
   /* ---------- Profile ---------- */
   .ov-profile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem;
+    gap: var(--space-3, 0.75rem);
   }
 
   .ov-profile-item {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.85rem 1rem;
-    border-radius: 12px;
-    background: var(--input-bg, #f7f6fc);
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    gap: var(--space-1, 0.25rem);
+    padding: var(--space-3, 0.85rem) var(--space-4, 1rem);
+    border-radius: var(--radius-lg, 12px);
+    background: var(--input-bg, var(--bg-tertiary));
+    border: 1px solid var(--border-color, var(--border-light));
+    transition: all var(--transition-fast, 0.2s ease);
   }
 
   .ov-profile-item:hover {
-    border-color: var(--primary-color);
-    transform: translateY(-1px);
+    border-color: var(--primary-color, var(--primary-500));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
   }
 
   .ov-profile-key {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--text-muted, var(--text-tertiary));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -322,7 +419,7 @@
 
   .ov-profile-value {
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--dark-color, var(--text-primary));
     font-size: 0.95rem;
     word-break: break-word;
   }
@@ -331,23 +428,25 @@
   .ov-family-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    gap: var(--space-3, 0.75rem);
+    margin-bottom: var(--space-5, 1.25rem);
   }
 
   .ov-family-stat {
     text-align: center;
-    padding: 1rem;
-    border-radius: 14px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    transition: all 0.25s ease;
+    padding: var(--space-4, 1rem);
+    border-radius: var(--radius-xl, 14px);
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    transition: all var(--transition-base, 0.25s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .ov-family-stat:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-    border-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color, var(--primary-500));
   }
 
   .ov-family-stat-icon {
@@ -367,13 +466,13 @@
   .ov-family-stat-value {
     font-size: 1.4rem;
     font-weight: 800;
-    color: var(--dark-color);
+    color: var(--dark-color, var(--text-primary));
     line-height: 1.1;
   }
 
   .ov-family-stat-label {
     font-size: 0.72rem;
-    color: var(--text-muted);
+    color: var(--text-muted, var(--text-tertiary));
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -384,7 +483,7 @@
   .ov-quick-links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.85rem;
+    gap: var(--space-4, 0.85rem);
   }
 
   .ov-quick-link {
@@ -392,32 +491,34 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.65rem;
-    padding: 1.25rem 0.85rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    gap: var(--space-2, 0.65rem);
+    padding: var(--space-5, 1.25rem) var(--space-4, 0.85rem);
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 16px);
     text-decoration: none;
     color: inherit;
     text-align: center;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--transition-base, 0.35s cubic-bezier(0.4, 0, 0.2, 1));
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .ov-quick-link::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.04));
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.05));
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity var(--transition-base, 0.35s ease);
   }
 
   .ov-quick-link:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, var(--primary-500));
     text-decoration: none;
     color: inherit;
   }
@@ -427,25 +528,27 @@
   .ov-quick-link-icon {
     width: 44px;
     height: 44px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl, 12px);
     display: grid;
     place-items: center;
     font-size: 1.25rem;
-    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
-    transition: all 0.35s ease;
+    background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
+    transition: all var(--transition-base, 0.35s ease);
     position: relative;
     z-index: 1;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
   }
 
   .ov-quick-link:hover .ov-quick-link-icon {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--primary-500, #667eea), var(--primary-600, #764ba2));
     color: #fff;
-    transform: scale(1.08);
+    transform: scale(1.08) rotate(-5deg);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
   }
 
   .ov-quick-link-text {
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--dark-color, var(--text-primary));
     font-size: 0.85rem;
     position: relative;
     z-index: 1;
@@ -454,37 +557,184 @@
   /* ---------- Empty state ---------- */
   .ov-empty {
     text-align: center;
-    padding: 2.5rem 1.5rem;
-    color: var(--text-muted);
-    border: 1px dashed var(--border-color);
-    border-radius: 16px;
+    padding: var(--space-16, 2.5rem) var(--space-6, 1.5rem);
+    color: var(--text-muted, var(--text-tertiary));
+    border: 2px dashed var(--border-color, var(--border-light));
+    border-radius: var(--radius-2xl, 16px);
+    background: linear-gradient(135deg, rgba(102,126,234,0.02), rgba(118,75,162,0.01));
+    transition: all var(--transition-base, 0.3s ease);
   }
 
-  .ov-empty .bi { font-size: 2rem; display: block; margin-bottom: 0.75rem; opacity: 0.5; }
+  .ov-empty:hover {
+    border-color: var(--primary-color, var(--primary-500));
+    background: linear-gradient(135deg, rgba(102,126,234,0.04), rgba(118,75,162,0.02));
+  }
+
+  .ov-empty .bi { 
+    font-size: var(--text-4xl, 2rem); 
+    display: block; 
+    margin-bottom: var(--space-4, 0.75rem); 
+    opacity: 0.6;
+    transition: transform var(--transition-base, 0.3s ease);
+  }
+
+  .ov-empty:hover .bi {
+    transform: scale(1.1);
+  }
+
+  /* ---------- Budget/Treasury Tables ---------- */
+  .ov-data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--border-light);
+  }
+
+  .ov-data-table th,
+  .ov-data-table td {
+    padding: var(--space-4) var(--space-5);
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .ov-data-table th {
+    background: var(--bg-tertiary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .ov-data-table tbody tr {
+    transition: all var(--transition-fast);
+  }
+
+  .ov-data-table tbody tr:hover {
+    background-color: rgba(20, 184, 166, 0.06);
+    transform: translateX(2px);
+  }
+
+  .ov-data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ov-data-table .text-end { text-align: right; }
+  .ov-data-table .text-center { text-align: center; }
+
+  /* Status badges */
+  .ov-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+    padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+    font-size: var(--text-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    border-radius: var(--radius-full, 9999px);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+
+  .ov-status-badge.approved { background: var(--success-50, #f0fdf4); color: var(--success-700, #15803d); }
+  .ov-status-badge.active { background: var(--primary-100, #ccfbf1); color: var(--primary-700, #0f766e); }
+  .ov-status-badge.draft { background: var(--bg-tertiary); color: var(--text-secondary); }
+  .ov-status-badge.closed { background: var(--danger-50, #fef2f2); color: var(--danger-700, #b91c1c); }
+
+  .ov-type-badge.income { background: rgba(16,185,129,0.1); color: #059669; }
+  .ov-type-badge.expense { background: rgba(239,68,68,0.1); color: #dc2626; }
 
   /* ---------- Dark mode ---------- */
   [data-theme="dark"] .ov-hero {
     background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #7c3aed 100%);
+    border-color: rgba(255, 255, 255, 0.05);
   }
 
-  [data-theme="dark"] .ov-stat { background: var(--card-bg); }
-  [data-theme="dark"] .ov-section { background: var(--card-bg); }
-  [data-theme="dark"] .ov-profile-item { background: var(--input-bg); border-color: var(--border-color); }
-  [data-theme="dark"] .ov-family-stat { background: var(--card-bg); border-color: var(--border-color); }
-  [data-theme="dark"] .ov-quick-link { background: var(--card-bg); border-color: var(--border-color); }
+  [data-theme="dark"] .ov-hero::before {
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  }
+
+  [data-theme="dark"] .ov-hero::after {
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  }
+
+  [data-theme="dark"] .ov-stat { 
+    background: var(--card-bg, var(--bg-secondary)); 
+    border-color: var(--border-color, var(--border-light));
+  }
+  [data-theme="dark"] .ov-section { 
+    background: var(--card-bg, var(--bg-secondary)); 
+    border-color: var(--border-color, var(--border-light));
+  }
+  [data-theme="dark"] .ov-profile-item { 
+    background: var(--input-bg, var(--bg-tertiary)); 
+    border-color: var(--border-color, var(--border-light)); 
+  }
+  [data-theme="dark"] .ov-family-stat { 
+    background: var(--card-bg, var(--bg-secondary)); 
+    border-color: var(--border-color, var(--border-light)); 
+  }
+  [data-theme="dark"] .ov-quick-link { 
+    background: var(--card-bg, var(--bg-secondary)); 
+    border-color: var(--border-color, var(--border-light)); 
+  }
+  [data-theme="dark"] .ov-summary-card { 
+    background: var(--card-bg, var(--bg-secondary)); 
+    border-color: var(--border-color, var(--border-light)); 
+  }
+  [data-theme="dark"] .ov-data-table { 
+    background: var(--bg-secondary); 
+    border-color: var(--border-light); 
+  }
+  [data-theme="dark"] .ov-data-table th { 
+    background: var(--bg-tertiary); 
+  }
+  [data-theme="dark"] .ov-empty {
+    background: linear-gradient(135deg, rgba(102,126,234,0.04), rgba(118,75,162,0.02));
+  }
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 768px) {
-    .ov-hero-inner { flex-direction: column; align-items: flex-start; }
+  @media (max-width: 1024px) {
+    .ov-hero-inner { 
+      flex-direction: column; 
+      align-items: flex-start; 
+    }
     .ov-hero-left { width: 100%; }
+    .ov-stats { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .ov-profile-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .ov-quick-links { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .ov-summary-cards { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 768px) {
     .ov-stats { grid-template-columns: repeat(2, 1fr); }
     .ov-profile-grid { grid-template-columns: 1fr; }
     .ov-quick-links { grid-template-columns: repeat(2, 1fr); }
+    .ov-summary-cards { grid-template-columns: repeat(2, 1fr); }
+    .ov-family-stats { grid-template-columns: repeat(2, 1fr); }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 576px) {
     .ov-stats { grid-template-columns: 1fr; }
     .ov-quick-links { grid-template-columns: 1fr; }
+    .ov-summary-cards { grid-template-columns: 1fr; }
+    .ov-family-stats { grid-template-columns: 1fr; }
+    .ov-data-table { 
+      font-size: var(--text-xs);
+    }
+    .ov-data-table th,
+    .ov-data-table td {
+      padding: var(--space-2) var(--space-3);
+    }
   }
 </style>
 {% endblock %}
@@ -516,6 +766,72 @@
 
   <!-- Stats -->
   <section class="ov-stats" aria-label="Key metrics">
+    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+    <div class="ov-stat primary">
+      <div class="ov-stat-icon">👥</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ total_members }}</div>
+        <div class="ov-stat-label">Total Members</div>
+      </div>
+    </div>
+    <div class="ov-stat success">
+      <div class="ov-stat-icon">💰</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
+        <div class="ov-stat-label">Total Contributions</div>
+      </div>
+    </div>
+    <div class="ov-stat warning">
+      <div class="ov-stat-icon">🎉</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ total_events }}</div>
+        <div class="ov-stat-label">Community Events</div>
+      </div>
+    </div>
+    <div class="ov-stat info">
+      <div class="ov-stat-icon">📒</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ budget_stats.total_budgets if budget_stats else 0 }}</div>
+        <div class="ov-stat-label">Total Budgets</div>
+      </div>
+    </div>
+    <div class="ov-stat warning">
+      <div class="ov-stat-icon">🏦</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
+        <div class="ov-stat-label">Treasurer Balance</div>
+      </div>
+    </div>
+    {% elif current_user.role.name == 'TREASURER' %}
+    <div class="ov-stat success">
+      <div class="ov-stat-icon">📈</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_income) if treasurer_stats else '0' }}</div>
+        <div class="ov-stat-label">Total Income</div>
+      </div>
+    </div>
+    <div class="ov-stat danger">
+      <div class="ov-stat-icon">📉</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_expenses) if treasurer_stats else '0' }}</div>
+        <div class="ov-stat-label">Total Expenses</div>
+      </div>
+    </div>
+    <div class="ov-stat warning">
+      <div class="ov-stat-icon">⚖️</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
+        <div class="ov-stat-label">Balance</div>
+      </div>
+    </div>
+    <div class="ov-stat info">
+      <div class="ov-stat-icon">📋</div>
+      <div class="ov-stat-body">
+        <div class="ov-stat-value">{{ treasurer_stats.total_records if treasurer_stats else 0 }}</div>
+        <div class="ov-stat-label">Total Records</div>
+      </div>
+    </div>
+    {% else %}
     <div class="ov-stat primary">
       <div class="ov-stat-icon">👥</div>
       <div class="ov-stat-body">
@@ -544,7 +860,162 @@
         <div class="ov-stat-label">Contact</div>
       </div>
     </div>
+    {% endif %}
   </section>
+
+  {% if current_user.role.name in ['DEVEL', 'ADMIN'] and budget_stats %}
+  <!-- Budget Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">📒</div>
+        <h4 class="ov-section-title">Budget Overview</h4>
+      </div>
+      <a href="{{ url_for('budget.index') }}" class="ov-section-action">View Budgets <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-folder"></i></div>
+        <div class="ov-summary-card-value">{{ budget_stats.total_budgets }}</div>
+        <div class="ov-summary-card-label">Total Budgets</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-currency-dollar"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(budget_stats.total_amount) }}</div>
+        <div class="ov-summary-card-label">Total Amount</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-check-circle"></i></div>
+        <div class="ov-summary-card-value">{{ budget_stats.approved }}</div>
+        <div class="ov-summary-card-label">Approved</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-play-circle"></i></div>
+        <div class="ov-summary-card-value">{{ budget_stats.active }}</div>
+        <div class="ov-summary-card-label">Active</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon warning"><i class="bi bi-pencil"></i></div>
+        <div class="ov-summary-card-value">{{ budget_stats.draft }}</div>
+        <div class="ov-summary-card-label">Draft</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-x-circle"></i></div>
+        <div class="ov-summary-card-value">{{ budget_stats.closed }}</div>
+        <div class="ov-summary-card-label">Closed</div>
+      </div>
+    </div>
+
+    {% if recent_budgets %}
+    <div class="table-responsive">
+      <table class="ov-data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Fiscal Year</th>
+            <th class="text-end">Amount</th>
+            <th class="text-center">Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for budget in recent_budgets %}
+          <tr>
+            <td><strong>{{ budget.name }}</strong></td>
+            <td>{{ budget.fiscal_year or 'N/A' }}</td>
+            <td class="text-end">Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
+            <td class="text-center">
+              <span class="ov-status-badge {{ budget.status.lower() }}">{{ budget.status }}</span>
+            </td>
+            <td>{{ budget.created_at.strftime('%B %d, %Y') if budget.created_at else 'N/A' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="ov-empty">
+      <div class="bi bi-folder-x"></div>
+      <h3>No Budgets Yet</h3>
+      <p class="mb-3">Create your first budget to start tracking community finances.</p>
+      <a href="{{ url_for('budget.create') }}" class="btn btn-primary btn-sm">Create Budget</a>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] and treasurer_stats %}
+  <!-- Treasury Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">🏦</div>
+        <h4 class="ov-section-title">Treasury Overview</h4>
+      </div>
+      <a href="{{ url_for('treasurer.index') }}" class="ov-section-action">View Treasury <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-arrow-down-circle"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_income) }}</div>
+        <div class="ov-summary-card-label">Total Income</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon danger"><i class="bi bi-arrow-up-circle"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_expenses) }}</div>
+        <div class="ov-summary-card-label">Total Expenses</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-wallet2"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) }}</div>
+        <div class="ov-summary-card-label">Balance</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-receipt"></i></div>
+        <div class="ov-summary-card-value">{{ treasurer_stats.total_records }}</div>
+        <div class="ov-summary-card-label">Total Records</div>
+      </div>
+    </div>
+
+    {% if recent_treasurer_records %}
+    <div class="table-responsive">
+      <table class="ov-data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="text-center">Type</th>
+            <th class="text-end">Amount</th>
+            <th>Date</th>
+            <th>Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in recent_treasurer_records %}
+          <tr>
+            <td><strong>{{ record.category or 'General' }}</strong></td>
+            <td class="text-center">
+              <span class="ov-type-badge {{ record.record_type.lower() }}">{{ record.record_type }}</span>
+            </td>
+            <td class="text-end">Ksh. {{ '{:,}'.format(record.amount) }}</td>
+            <td>{{ record.transaction_date.strftime('%B %d, %Y') if record.transaction_date else 'N/A' }}</td>
+            <td>{{ record.reference or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="ov-empty">
+      <div class="bi bi-receipt"></div>
+      <h3>No Transactions Yet</h3>
+      <p class="mb-3">Record your first income or expense to start tracking treasury activity.</p>
+      <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary btn-sm">Add Record</a>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
 
   {% if member_details %}
   <div class="row">
@@ -695,6 +1166,24 @@
         <span class="ov-quick-link-icon">📊</span>
         <span class="ov-quick-link-text">Reports</span>
       </a>
+      {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+      <a href="{{ url_for('budget.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">📒</span>
+        <span class="ov-quick-link-text">Budgets</span>
+      </a>
+      {% endif %}
+      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
+      <a href="{{ url_for('treasurer.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">🏦</span>
+        <span class="ov-quick-link-text">Treasurer</span>
+      </a>
+      {% endif %}
+      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
+      <a href="{{ url_for('minutes.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">📝</span>
+        <span class="ov-quick-link-text">Minutes</span>
+      </a>
+      {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
       <a href="{{ url_for('register.create') }}" class="ov-quick-link">
         <span class="ov-quick-link-icon">➕</span>

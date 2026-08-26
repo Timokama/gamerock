@@ -2,53 +2,455 @@
 
 {% block page_title %}Add Spouse{% endblock %}
 
+{% block styles %}
+{{ super() }}
+<style>
+    .spouse-form-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-6) var(--space-4);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, var(--bg-secondary) 50%, rgba(118, 75, 162, 0.03) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .spouse-form-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .spouse-form-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: -150px;
+        left: -150px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(118, 75, 162, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .spouse-form-card {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-2xl);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-2xl);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        position: relative;
+        z-index: 1;
+        transition: box-shadow var(--transition-base), transform var(--transition-base);
+    }
+
+    .spouse-form-card:hover {
+        box-shadow: var(--shadow-2xl), 0 0 0 1px var(--border-light);
+        transform: translateY(-2px);
+    }
+
+    .spouse-form-brand {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: var(--space-10) var(--space-8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .spouse-form-brand::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .spouse-form-brand::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+
+    .spouse-form-brand-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .spouse-form-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xl);
+        margin-bottom: var(--space-5);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform var(--transition-base);
+    }
+
+    .spouse-form-card:hover .spouse-form-logo {
+        transform: scale(1.05);
+    }
+
+    .spouse-form-brand h2 {
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--space-4);
+        line-height: var(--leading-tight);
+        letter-spacing: -0.01em;
+    }
+
+    .spouse-form-brand p {
+        font-size: var(--text-sm);
+        opacity: 0.9;
+        line-height: var(--leading-relaxed);
+        margin-bottom: 0;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .spouse-form-section {
+        padding: var(--space-10) var(--space-8);
+    }
+
+    .spouse-form-header {
+        margin-bottom: var(--space-8);
+    }
+
+    .spouse-form-header h3 {
+        font-size: var(--text-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        margin-bottom: var(--space-2);
+    }
+
+    .spouse-form-header p {
+        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+    }
+
+    .form-group {
+        margin-bottom: var(--space-5);
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        margin-bottom: var(--space-2);
+        font-size: var(--text-sm);
+        letter-spacing: 0.01em;
+        transition: color var(--transition-fast);
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        border: 1.5px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        font-size: var(--text-sm);
+        transition: all var(--transition-fast);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: inherit;
+        min-height: 44px;
+        box-shadow: var(--shadow-xs);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1), var(--shadow-xs);
+        background: var(--bg-secondary);
+    }
+
+    .form-group input::placeholder {
+        color: var(--text-tertiary);
+    }
+
+    .btn-save-spouse {
+        width: 100%;
+        padding: var(--space-4);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: var(--radius-lg);
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-md);
+        margin-top: var(--space-2);
+        font-family: inherit;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-save-spouse:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg), 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .btn-save-spouse:active {
+        transform: translateY(0);
+    }
+
+    .btn-save-spouse:focus-visible {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+    }
+
+    .spouse-form-footer {
+        text-align: center;
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--border-light);
+        color: var(--text-secondary);
+        font-size: var(--text-sm);
+    }
+
+    .spouse-form-footer a {
+        color: var(--primary-700);
+        text-decoration: none;
+        font-weight: var(--font-weight-semibold);
+        transition: color var(--transition-fast);
+    }
+
+    .spouse-form-footer a:hover {
+        color: var(--primary-800);
+        text-decoration: underline;
+    }
+
+    .spouse-form-footer a:focus-visible {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
+    }
+
+    .alert {
+        border-radius: var(--radius-lg);
+        border: none;
+        padding: var(--space-4) var(--space-5);
+        font-weight: var(--font-weight-medium);
+        font-size: var(--text-sm);
+        margin-bottom: var(--space-5);
+        animation: alertSlideIn 0.3s ease-out;
+    }
+
+    .alert-danger {
+        background: var(--danger-50);
+        color: var(--danger-700);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    @keyframes alertSlideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) {
+        .spouse-form-card {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .spouse-form-brand {
+            padding: var(--space-6);
+            text-align: center;
+        }
+
+        .spouse-form-brand h2 {
+            font-size: var(--text-xl);
+        }
+
+        .spouse-form-section {
+            padding: var(--space-6);
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .spouse-form-wrapper {
+            padding: var(--space-4);
+        }
+
+        .spouse-form-brand {
+            padding: var(--space-5);
+        }
+
+        .spouse-form-brand h2 {
+            font-size: var(--text-lg);
+        }
+
+        .spouse-form-section {
+            padding: var(--space-5);
+        }
+
+        .spouse-form-header h3 {
+            font-size: var(--text-xl);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .spouse-form-card {
+            max-width: 960px;
+        }
+    }
+
+    [data-theme="dark"] .spouse-form-wrapper {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, var(--secondary-800) 50%, rgba(118, 75, 162, 0.03) 100%);
+    }
+
+    [data-theme="dark"] .spouse-form-card {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+        box-shadow: var(--shadow-2xl), 0 0 0 1px var(--secondary-700);
+    }
+
+    [data-theme="dark"] .spouse-form-header h3 {
+        color: var(--secondary-100);
+    }
+
+    [data-theme="dark"] .spouse-form-header p {
+        color: var(--text-tertiary);
+    }
+
+    [data-theme="dark"] .form-group label {
+        color: var(--border-light);
+    }
+
+    [data-theme="dark"] .form-group input {
+        background: var(--secondary-900);
+        border-color: var(--secondary-700);
+        color: var(--border-light);
+    }
+
+    [data-theme="dark"] .form-group input:focus {
+        background: var(--secondary-800);
+        border-color: var(--primary-500);
+    }
+
+    [data-theme="dark"] .form-group input::placeholder {
+        color: var(--text-tertiary);
+    }
+
+    [data-theme="dark"] .btn-save-spouse {
+        box-shadow: var(--shadow-md), 0 0 0 0 rgba(102, 126, 234, 0.2);
+    }
+
+    [data-theme="dark"] .btn-save-spouse:hover {
+        box-shadow: var(--shadow-lg), 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    [data-theme="dark"] .spouse-form-footer {
+        border-top-color: var(--secondary-700);
+        color: var(--text-tertiary);
+    }
+
+    [data-theme="dark"] .spouse-form-footer a {
+        color: var(--primary-400);
+    }
+
+    [data-theme="dark"] .spouse-form-footer a:hover {
+        color: var(--primary-300);
+    }
+
+    [data-theme="dark"] .alert-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger-500);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-lg">
-            <div class="card-header bg-transparent border-0 pt-4">
-                <h4>Add Spouse</h4>
-                <p class="text-muted mt-2">Add spouse information for {{ register.firstname }} {{ register.lastname }}</p>
+<div class="spouse-form-wrapper">
+    <div class="spouse-form-card">
+        <div class="spouse-form-brand">
+            <div class="spouse-form-brand-content">
+                <div class="spouse-form-logo">💍</div>
+                <h2>Add Spouse</h2>
+                <p>Add a new spouse for {{ register.firstname }} {{ register.lastname }}</p>
             </div>
-            <div class="card-body px-4 pb-4">
-                <form method="post">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="firstname" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="lastname" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" required>
-                        </div>
-                    </div>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="surname" class="form-label">Surname</label>
-                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter surname" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="date_of_birth" class="form-label">Date of Birth</label>
-                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="phone_num" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="id_number" class="form-label">ID Number</label>
-                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" required>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Save Spouse</button>
-                        <a href="{{ url_for('family.family', depo_id=register.id) }}" class="action-btn outline">Cancel</a>
-                    </div>
-                </form>
+        <div class="spouse-form-section">
+            <div class="spouse-form-header">
+                <h3>Spouse Details</h3>
+                <p>Fill in the spouse information below</p>
             </div>
+
+            <form method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter surname" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_num">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_number">ID Number</label>
+                    <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" required>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn-save-spouse">Save Spouse</button>
+                </div>
+
+                <div class="spouse-form-footer">
+                    <p class="mb-0"><a href="{{ url_for('family.family', depo_id=register.id) }}">Cancel</a></p>
+                </div>
+            </form>
         </div>
     </div>
 </div>

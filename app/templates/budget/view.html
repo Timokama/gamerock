@@ -1,0 +1,143 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}{{ budget.name }}{% endblock %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+<div class="mg-detail-container">
+    <div class="mg-page-header mb-6">
+        <h2>{{ budget.name }}</h2>
+            <div class="row-actions">
+                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                    <span aria-hidden="true">⚙</span>
+                    <span>Actions</span>
+                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                </button>
+                <div class="row-actions-menu" role="menu">
+                <a href="{{ url_for('budget.edit', budget_id=budget.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Edit Budget</span>
+                        <span class="row-action-hint">Update details and items</span>
+                    </span>
+                </a>
+                <form method="post" action="{{ url_for('budget.delete', budget_id=budget.id) }}" class="row-action-form" onsubmit="return confirm('Delete this budget? This cannot be undone.');">
+                    <button type="submit" class="row-action-item danger" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Delete</span>
+                            <span class="row-action-hint">Permanently remove budget</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Budget Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Name</span>
+                <span class="mg-detail-value">{{ budget.name }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Fiscal Year</span>
+                <span class="mg-detail-value">{{ budget.fiscal_year }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Total Amount</span>
+                <span class="mg-detail-value">Ksh. {{ '{:,}'.format(budget.total_amount) }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Status</span>
+                <span class="mg-detail-value">
+                    {% if budget.status == 'Approved' %}
+                    <span class="mg-badge mg-badge-success">{{ budget.status }}</span>
+                    {% elif budget.status == 'Draft' %}
+                    <span class="mg-badge mg-badge-warning">{{ budget.status }}</span>
+                    {% elif budget.status == 'Active' %}
+                    <span class="mg-badge mg-badge-info">{{ budget.status }}</span>
+                    {% else %}
+                    <span class="mg-badge mg-badge-danger">{{ budget.status }}</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created By</span>
+                <span class="mg-detail-value">{{ budget.creator.first_name if budget.creator else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created At</span>
+                <span class="mg-detail-value">{{ budget.created_at.strftime('%B %d, %Y %I:%M %p') if budget.created_at else 'N/A' }}</span>
+            </div>
+            {% if budget.approved_by %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Approved By</span>
+                <span class="mg-detail-value">{{ budget.approver.first_name if budget.approver else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Approved At</span>
+                <span class="mg-detail-value">{{ budget.approved_at.strftime('%B %d, %Y %I:%M %p') if budget.approved_at else 'N/A' }}</span>
+            </div>
+            {% endif %}
+            {% if budget.description %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Description</span>
+                <span class="mg-detail-value">{{ budget.description }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Budget Items</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mg-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in budget.items %}
+                        <tr>
+                            <td>{{ item.category }}</td>
+                            <td>{{ item.description or 'N/A' }}</td>
+                            <td>
+                                {% if item.item_type == 'Income' %}
+                                <span class="mg-badge mg-badge-success">{{ item.item_type }}</span>
+                                {% else %}
+                                <span class="mg-badge mg-badge-danger">{{ item.item_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>Ksh. {{ '{:,}'.format(item.amount) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <p>No budget items yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('budget.index') }}" class="btn btn-outline">← Back to Budgets</a>
+    </div>
+</div>
+{% endblock %}

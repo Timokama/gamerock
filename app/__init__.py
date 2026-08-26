@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -88,6 +88,15 @@ def create_app():
     from app.reports import bp as reports_bp
     app.register_blueprint(reports_bp, url_prefix='/reports')
 
+    from app.budget import bp as budget_bp
+    app.register_blueprint(budget_bp, url_prefix='/budget')
+
+    from app.minutes import bp as minutes_bp
+    app.register_blueprint(minutes_bp, url_prefix='/minutes')
+
+    from app.treasurer import bp as treasurer_bp
+    app.register_blueprint(treasurer_bp, url_prefix='/treasurer')
+
     from app.models.register import Member
     from app.models.faq import FAQ
     from app.models.community_event import CommunityEvent
@@ -99,6 +108,7 @@ def create_app():
         faq_count = 0
         faq_categories = []
         pending_deposits_count = 0
+        recent_updates = []
         try:
             if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
                 if current_user.role.name in ['DEVEL', 'ADMIN']:
@@ -124,6 +134,61 @@ def create_app():
                     except Exception:
                         db.session.rollback()
                         pending_deposits_count = 0
+                    try:
+                        recent_members = Member.query.order_by(Member.created_at.desc()).limit(5).all()
+                        recent_contributions = Contribution.query.order_by(Contribution.trans_date.desc()).limit(5).all()
+                        recent_events = CommunityEvent.query.order_by(CommunityEvent.created_at.desc()).limit(5).all()
+                        recent_faqs = FAQ.query.order_by(FAQ.created_at.desc()).limit(5).all()
+                        
+                        for m in recent_members:
+                            recent_updates.append({
+                                'type': 'member',
+                                'icon': '👤',
+                                'text': f'<strong>{m.firstname} {m.lastname}</strong> joined',
+                                'time': m.created_at.strftime('%b %d, %I:%M %p') if m.created_at else 'Unknown',
+                                'timestamp': m.created_at,
+                                'url': url_for('register.edit', depo_id=m.id)
+                            })
+                        
+                        for c in recent_contributions:
+                            member = c.member
+                            member_name = f'{member.firstname} {member.lastname}' if member else 'Unknown'
+                            recent_updates.append({
+                                'type': 'contribution',
+                                'icon': '💰',
+                                'text': f'<strong>{member_name}</strong> contributed Ksh. {c.amount:,}',
+                                'time': c.trans_date.strftime('%b %d, %I:%M %p') if c.trans_date else 'Unknown',
+                                'timestamp': c.trans_date,
+                                'url': url_for('deposit.deposit', depo_id=c.member_id) if member else '#'
+                            })
+                        
+                        for e in recent_events:
+                            recent_updates.append({
+                                'type': 'event',
+                                'icon': '🎉',
+                                'text': f'Event <strong>{e.name}</strong> created',
+                                'time': e.created_at.strftime('%b %d, %I:%M %p') if e.created_at else 'Unknown',
+                                'timestamp': e.created_at,
+                                'url': url_for('community.index')
+                            })
+                        
+                        for f in recent_faqs:
+                            recent_updates.append({
+                                'type': 'faq',
+                                'icon': '💬',
+                                'text': f'FAQ: <strong>{f.question[:40]}...</strong>',
+                                'time': f.created_at.strftime('%b %d, %I:%M %p') if f.created_at else 'Unknown',
+                                'timestamp': f.created_at,
+                                'url': url_for('register.faq_list')
+                            })
+                        
+                        recent_updates.sort(key=lambda x: x.get('timestamp') or datetime(1900, 1, 1), reverse=True)
+                        recent_updates = recent_updates[:8]
+                    except Exception as e:
+                        import traceback
+                        traceback.print_exc()
+                        db.session.rollback()
+                        recent_updates = []
                 elif current_user.member_profile:
                     try:
                         member_contribution_events = db.session.query(Contribution.propose).where(
@@ -137,12 +202,15 @@ def create_app():
                         pending_deposits_count = 0
         except Exception:
             pending_deposits_count = 0
+            recent_updates = []
+        
         return dict(
             all_members=members,
             now=datetime.now,
             faq_count=faq_count,
             faq_categories=faq_categories,
             pending_deposits_count=pending_deposits_count,
+            recent_updates=recent_updates,
         )
 
     def mask_phone(value):
@@ -161,8 +229,22 @@ def create_app():
             return s
         return s[:3] + '****' + s[-3:]
 
+    @app.template_global()
     def is_admin_or_dev():
         return hasattr(current_user, 'is_authenticated') and current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
+
+    @app.template_global()
+    def can_manage_minutes():
+        return hasattr(current_user, 'is_authenticated') and current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY']
+
+    @app.template_global()
+    def can_manage_treasurer():
+        return hasattr(current_user, 'is_authenticated') and current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER']
+
+    @app.template_global()
+    def access_level_global():
+        from .level import AccessLevel
+        return AccessLevel
 
     @app.template_filter('mask_phone')
     def mask_phone_filter(value):
