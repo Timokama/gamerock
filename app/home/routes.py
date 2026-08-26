@@ -7,6 +7,8 @@ from app.models.contribute import Contribution
 from app.models.community_event import CommunityEvent
 from app.models.spouse import Spouse
 from app.models.child import Child
+from app.models.budget import Budget, BudgetItem
+from app.models.treasurer import TreasurerRecord
 from app.level import AccessLevel
 from datetime import datetime
 
@@ -20,10 +22,30 @@ def home():
     family_stats = None
     avatar_url = None
 
+    budget_stats = None
+    treasurer_stats = None
+    recent_budgets = []
+    recent_treasurer_records = []
+
     if current_user.role.name in ['DEVEL', 'ADMIN']:
         total_members = Member.query.count()
         total_contributions = db.session.query(db.func.sum(Contribution.amount)).scalar() or 0
         total_events = CommunityEvent.query.count()
+
+        budgets = Budget.query.all()
+        budget_stats = {
+            'total_budgets': len(budgets),
+            'total_amount': sum(b.total_amount for b in budgets),
+            'approved': sum(1 for b in budgets if b.status == 'Approved'),
+            'active': sum(1 for b in budgets if b.status == 'Active'),
+            'draft': sum(1 for b in budgets if b.status == 'Draft'),
+            'closed': sum(1 for b in budgets if b.status == 'Closed'),
+        }
+        recent_budgets = Budget.query.order_by(Budget.created_at.desc()).limit(5).all()
+
+    elif current_user.role.name == 'TREASURER':
+        pass
+
     else:
         member = current_user.member_profile
         if member:
@@ -57,6 +79,23 @@ def home():
             if member.user_account and member.user_account.image:
                 avatar_url = url_for('main.member_image', member_id=member.id)
 
+    if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER']:
+        total_income = db.session.query(db.func.sum(TreasurerRecord.amount)).filter(
+            TreasurerRecord.record_type == 'Income'
+        ).scalar() or 0
+        total_expenses = db.session.query(db.func.sum(TreasurerRecord.amount)).filter(
+            TreasurerRecord.record_type == 'Expense'
+        ).scalar() or 0
+        treasurer_stats = {
+            'total_income': total_income,
+            'total_expenses': total_expenses,
+            'balance': total_income - total_expenses,
+            'total_records': TreasurerRecord.query.count(),
+        }
+        recent_treasurer_records = TreasurerRecord.query.order_by(
+            TreasurerRecord.transaction_date.desc()
+        ).limit(5).all()
+
     if not avatar_url:
         avatar_url = url_for('main.avatar')
 
@@ -71,6 +110,10 @@ def home():
         total_events=total_events,
         member_details=member_details,
         family_stats=family_stats,
+        budget_stats=budget_stats,
+        treasurer_stats=treasurer_stats,
+        recent_budgets=recent_budgets,
+        recent_treasurer_records=recent_treasurer_records,
         now=datetime.now,
         avatar_url=avatar_url,
     )

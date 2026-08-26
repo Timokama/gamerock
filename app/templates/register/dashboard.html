@@ -30,6 +30,11 @@
     box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
+.event-card .event-card-footer,
+.event-card .row-actions {
+    overflow: visible !important;
+}
+
 .event-card-image {
     width: 260px;
     min-height: 200px;
@@ -1314,10 +1319,35 @@
                                 </div>
                             </div>
                             <div class="event-card-footer">
-                                {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                                <a href="{{ url_for('community.edit_event', event_id=item.event.id) }}" class="action-btn outline btn-sm">Edit</a>
-                                {% endif %}
-                                <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="action-btn primary btn-sm">View</a>
+                                <div class="row-actions">
+                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <div class="row-actions-menu-header">
+                                            <span class="row-actions-menu-title">{{ item.event.name }}</span>
+                                            <span class="row-actions-menu-sub">Ksh. {{ "{:,}".format(balance.contributed) }}</span>
+                                        </div>
+                                        {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                        <a href="{{ url_for('community.edit_event', event_id=item.event.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Edit Event</span>
+                                                <span class="row-action-hint">Update event details</span>
+                                            </span>
+                                        </a>
+                                        {% endif %}
+                                        <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">View Event</span>
+                                                <span class="row-action-hint">See event details</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -1355,10 +1385,35 @@
                                 </div>
                             </div>
                             <div class="event-card-footer">
-                                {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                                <a href="{{ url_for('community.edit_event', event_id=item.event.id) }}" class="action-btn outline btn-sm">Edit</a>
-                                {% endif %}
-                                <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="action-btn outline btn-sm">Contribute</a>
+                                <div class="row-actions">
+                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <div class="row-actions-menu-header">
+                                            <span class="row-actions-menu-title">{{ item.event.name }}</span>
+                                            <span class="row-actions-menu-sub">Pending</span>
+                                        </div>
+                                        {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                        <a href="{{ url_for('community.edit_event', event_id=item.event.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Edit Event</span>
+                                                <span class="row-action-hint">Update event details</span>
+                                            </span>
+                                        </a>
+                                        {% endif %}
+                                        <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Contribute</span>
+                                                <span class="row-action-hint">Make a contribution</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}

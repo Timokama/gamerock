@@ -1,0 +1,142 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Meeting Minutes{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    /* Ensure row-actions dropdowns aren't clipped by the card on mobile */
+    .mg-card .table-responsive,
+    .mg-card .row-actions {
+        overflow: visible !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mg-page-header">
+    <h2>Meeting Minutes</h2>
+    <a href="{{ url_for('minutes.create') }}" class="btn btn-primary">➕ New Minutes</a>
+</div>
+
+<div class="mg-card mb-4">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('minutes.index') }}" class="filter-row">
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search minutes...">
+            </div>
+            <div class="filter-group">
+                <label>Meeting Type</label>
+                <select name="meeting_type">
+                    <option value="">All</option>
+                    <option value="General" {{ 'selected' if meeting_type == 'General' }}>General</option>
+                    <option value="Committee" {{ 'selected' if meeting_type == 'Committee' }}>Committee</option>
+                    <option value="Annual" {{ 'selected' if meeting_type == 'Annual' }}>Annual</option>
+                    <option value="Emergency" {{ 'selected' if meeting_type == 'Emergency' }}>Emergency</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">All</option>
+                    <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
+                    <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
+                    <option value="Archived" {{ 'selected' if status == 'Archived' }}>Archived</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ url_for('minutes.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mg-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Meeting Type</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in minutes_list %}
+                    <tr>
+                        <td><strong>{{ entry.title }}</strong></td>
+                        <td>{{ entry.meeting_type }}</td>
+                        <td>{{ entry.meeting_date.strftime('%b %d, %Y') if entry.meeting_date else 'N/A' }}</td>
+                        <td>{{ entry.location or 'N/A' }}</td>
+                        <td>
+                            <span class="mg-badge mg-badge-{{ 'success' if entry.status == 'Approved' else 'warning' if entry.status == 'Draft' else 'info' }}">
+                                {{ entry.status }}
+                            </span>
+                        </td>
+                        <td>{{ entry.created_at.strftime('%b %d, %Y') if entry.created_at else 'N/A' }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ entry.title }}">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">{{ entry.title }}</span>
+                                        <span class="row-actions-menu-sub">{{ entry.meeting_type }}</span>
+                                    </div>
+                                    <a href="{{ url_for('minutes.view', minutes_id=entry.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">View Minutes</span>
+                                            <span class="row-action-hint">See full details</span>
+                                        </span>
+                                    </a>
+                                    <a href="{{ url_for('minutes.edit', minutes_id=entry.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit Minutes</span>
+                                            <span class="row-action-hint">Update agenda, decisions, action items</span>
+                                        </span>
+                                    </a>
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                    <form method="post" action="{{ url_for('minutes.delete', minutes_id=entry.id) }}" class="row-action-form" onsubmit="return confirm('Delete these minutes? This cannot be undone.');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove minutes</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📝</div>
+                                <h3>No Minutes Yet</h3>
+                                <p>Record your first meeting minutes to keep track of decisions and action items.</p>
+                                <a href="{{ url_for('minutes.create') }}" class="btn btn-primary">Create Minutes</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

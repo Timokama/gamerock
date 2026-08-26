@@ -1,0 +1,62 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}Edit Treasurer Record{% endblock %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+<div class="mg-form-container">
+    <div class="mg-page-header">
+        <h2>Edit Treasurer Record</h2>
+        <a href="{{ url_for('treasurer.view', record_id=record.id) }}" class="btn btn-outline">← Back</a>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Record Details</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="record_type">Record Type</label>
+                        <select id="record_type" name="record_type">
+                            <option value="Transaction" {% if record.record_type == 'Transaction' %}selected{% endif %}>Transaction</option>
+                            <option value="Income" {% if record.record_type == 'Income' %}selected{% endif %}>Income</option>
+                            <option value="Expense" {% if record.record_type == 'Expense' %}selected{% endif %}>Expense</option>
+                            <option value="Transfer" {% if record.record_type == 'Transfer' %}selected{% endif %}>Transfer</option>
+                        </select>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="category">Category *</label>
+                        <input type="text" id="category" name="category" value="{{ record.category }}" required>
+                    </div>
+                </div>
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="amount">Amount (Ksh) *</label>
+                        <input type="number" id="amount" name="amount" value="{{ record.amount }}" min="0" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="transaction_date">Transaction Date *</label>
+                        <input type="date" id="transaction_date" name="transaction_date" value="{{ record.transaction_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                </div>
+                <div class="mg-form-group">
+                    <label for="reference">Reference</label>
+                    <input type="text" id="reference" name="reference" value="{{ record.reference or '' }}" placeholder="Reference number or code">
+                </div>
+                <div class="mg-form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description">{{ record.description or '' }}</textarea>
+                </div>
+
+                <div class="mg-form-actions">
+                    <button type="submit" class="btn btn-primary">Update Record</button>
+                    <a href="{{ url_for('treasurer.view', record_id=record.id) }}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

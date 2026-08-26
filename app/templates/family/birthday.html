@@ -2,7 +2,223 @@
 
 {% block page_title %}Fetha Members{% endblock %}
 
+{% block styles %}
+{{ super() }}
+<style>
+    .birthday-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .birthday-page-header h2 {
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-2xl);
+    }
+
+    .birthday-page-header .header-meta {
+        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        margin-top: var(--space-1);
+    }
+
+    .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-5);
+    }
+
+    .member-card {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-sm);
+        padding: var(--space-6);
+        text-align: center;
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .member-card:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-medium);
+        transform: translateY(-4px);
+    }
+
+    .member-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-400) 100%);
+        opacity: 0;
+        transition: opacity var(--transition-base);
+    }
+
+    .member-card:hover::before {
+        opacity: 1;
+    }
+
+    .member-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xl);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--space-4);
+        box-shadow: var(--shadow-md);
+        transition: transform var(--transition-base), box-shadow var(--transition-base);
+        flex-shrink: 0;
+    }
+
+    .member-card:hover .member-avatar {
+        transform: scale(1.08);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .member-name {
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+        font-size: var(--text-base);
+        margin-bottom: var(--space-2);
+    }
+
+    .member-details {
+        color: var(--text-secondary);
+        font-size: var(--text-sm);
+        line-height: var(--leading-relaxed);
+    }
+
+    .member-details p {
+        margin-bottom: var(--space-2);
+        color: var(--text-secondary);
+    }
+
+    .member-details p:last-child {
+        margin-bottom: 0;
+    }
+
+    .member-details strong {
+        color: var(--text-primary);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: var(--space-16) var(--space-6);
+        color: var(--text-tertiary);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-sm);
+        grid-column: 1 / -1;
+    }
+
+    .empty-state-icon {
+        font-size: var(--text-4xl);
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+        display: block;
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        margin-bottom: var(--space-2);
+        font-size: var(--text-xl);
+    }
+
+    .empty-state p {
+        max-width: 480px;
+        margin: 0 auto;
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 1024px) {
+        .member-grid {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: var(--space-4);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .member-grid {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .member-card {
+            padding: var(--space-5);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .member-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-4);
+        }
+
+        .member-card {
+            padding: var(--space-5);
+        }
+    }
+
+    [data-theme="dark"] .member-card {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .member-card:hover {
+        border-color: var(--secondary-600);
+    }
+
+    [data-theme="dark"] .member-name {
+        color: var(--secondary-100);
+    }
+
+    [data-theme="dark"] .member-details {
+        color: var(--text-tertiary);
+    }
+
+    [data-theme="dark"] .member-details strong {
+        color: var(--secondary-200);
+    }
+
+    [data-theme="dark"] .empty-state {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .empty-state h3 {
+        color: var(--secondary-100);
+    }
+
+    [data-theme="dark"] .empty-state p {
+        color: var(--text-tertiary);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="birthday-page-header">
+    <div>
+        <h2>Fetha Members</h2>
+        <p class="header-meta">View member birthdays and ages</p>
+    </div>
+</div>
+
 <div class="row justify-content-center">
     <div class="col-lg-10">
         <div class="card border-0 shadow-sm">

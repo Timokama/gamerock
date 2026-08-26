@@ -539,12 +539,34 @@
                     <span>· {{ faq.answer|length }} characters</span>
                 </div>
             </div>
-            <div class="faq-row-actions">
-                <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
-                <form method="post" action="{{ url_for('register.faq_delete', faq_id=faq.id) }}"
-                      onsubmit="return confirm('Delete this FAQ?\n\n{{ faq.question|truncate(80)|replace("'", "") }}');">
-                    <button type="submit" class="action-btn danger btn-sm">🗑 Delete</button>
-                </form>
+            <div class="row-actions">
+                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for FAQ">
+                    <span aria-hidden="true">⚙</span>
+                    <span>Actions</span>
+                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                </button>
+                <div class="row-actions-menu" role="menu">
+                    <div class="row-actions-menu-header">
+                        <span class="row-actions-menu-title">{{ faq.question|truncate(40) }}</span>
+                        <span class="row-actions-menu-sub">{{ faq.category or 'Uncategorised' }}</span>
+                    </div>
+                    <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="row-action-item" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Edit FAQ</span>
+                            <span class="row-action-hint">Update question or answer</span>
+                        </span>
+                    </a>
+                    <form method="post" action="{{ url_for('register.faq_delete', faq_id=faq.id) }}" class="row-action-form" onsubmit="return confirm('Delete this FAQ?\n\n{{ faq.question|truncate(80)|replace("'", "") }}');">
+                        <button type="submit" class="row-action-item danger" role="menuitem">
+                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                            <span class="row-action-copy">
+                                <span class="row-action-label">Delete</span>
+                                <span class="row-action-hint">Permanently remove FAQ</span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endfor %}

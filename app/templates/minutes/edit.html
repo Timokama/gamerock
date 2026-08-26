@@ -1,0 +1,85 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Edit Meeting Minutes{% endblock %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+<div class="mg-form-container">
+    <div class="mg-page-header mb-6">
+        <h2>Edit Meeting Minutes</h2>
+        <a href="{{ url_for('minutes.view', minutes_id=minutes_entry.id) }}" class="btn btn-outline">← Back</a>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Meeting Details</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" name="title" value="{{ minutes_entry.title }}" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="meeting_type">Meeting Type</label>
+                        <select id="meeting_type" name="meeting_type">
+                            <option value="General" {% if minutes_entry.meeting_type == 'General' %}selected{% endif %}>General</option>
+                            <option value="Committee" {% if minutes_entry.meeting_type == 'Committee' %}selected{% endif %}>Committee</option>
+                            <option value="Annual" {% if minutes_entry.meeting_type == 'Annual' %}selected{% endif %}>Annual</option>
+                            <option value="Emergency" {% if minutes_entry.meeting_type == 'Emergency' %}selected{% endif %}>Emergency</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="meeting_date">Meeting Date *</label>
+                        <input type="date" id="meeting_date" name="meeting_date" value="{{ minutes_entry.meeting_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="next_meeting_date">Next Meeting Date</label>
+                        <input type="date" id="next_meeting_date" name="next_meeting_date" value="{{ minutes_entry.next_meeting_date.strftime('%Y-%m-%d') if minutes_entry.next_meeting_date else '' }}">
+                    </div>
+                </div>
+                <div class="mg-form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" value="{{ minutes_entry.location or '' }}" placeholder="Meeting location or platform">
+                </div>
+                <div class="mg-form-group">
+                    <label for="attendees">Attendees</label>
+                    <input type="text" id="attendees" name="attendees" value="{{ minutes_entry.attendees or '' }}" placeholder="List of attendees">
+                </div>
+                <div class="mg-form-group">
+                    <label for="agenda">Agenda</label>
+                    <textarea id="agenda" name="agenda" placeholder="Meeting agenda items...">{{ minutes_entry.agenda or '' }}</textarea>
+                </div>
+                <div class="mg-form-group">
+                    <label for="discussion">Discussion</label>
+                    <textarea id="discussion" name="discussion" placeholder="Key discussion points...">{{ minutes_entry.discussion or '' }}</textarea>
+                </div>
+                <div class="mg-form-group">
+                    <label for="decisions">Decisions</label>
+                    <textarea id="decisions" name="decisions" placeholder="Decisions made...">{{ minutes_entry.decisions or '' }}</textarea>
+                </div>
+                <div class="mg-form-group">
+                    <label for="action_items">Action Items</label>
+                    <textarea id="action_items" name="action_items" placeholder="Action items and responsible persons...">{{ minutes_entry.action_items or '' }}</textarea>
+                </div>
+                <div class="mg-form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="Draft" {% if minutes_entry.status == 'Draft' %}selected{% endif %}>Draft</option>
+                        <option value="Approved" {% if minutes_entry.status == 'Approved' %}selected{% endif %}>Approved</option>
+                        <option value="Archived" {% if minutes_entry.status == 'Archived' %}selected{% endif %}>Archived</option>
+                    </select>
+                </div>
+                <div class="mg-form-actions">
+                    <a href="{{ url_for('minutes.view', minutes_id=minutes_entry.id) }}" class="btn btn-outline">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

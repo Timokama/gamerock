@@ -1,0 +1,62 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}New Treasurer Record{% endblock %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+<div class="mg-form-container">
+    <div class="mg-page-header">
+        <h2>New Treasurer Record</h2>
+        <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline">← Back</a>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Record Details</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="record_type">Record Type</label>
+                        <select id="record_type" name="record_type">
+                            <option value="Transaction">Transaction</option>
+                            <option value="Income">Income</option>
+                            <option value="Expense">Expense</option>
+                            <option value="Transfer">Transfer</option>
+                        </select>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="category">Category *</label>
+                        <input type="text" id="category" name="category" placeholder="e.g. Contributions, Rent" required>
+                    </div>
+                </div>
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="amount">Amount (Ksh) *</label>
+                        <input type="number" id="amount" name="amount" min="0" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="transaction_date">Transaction Date *</label>
+                        <input type="date" id="transaction_date" name="transaction_date" required>
+                    </div>
+                </div>
+                <div class="mg-form-group">
+                    <label for="reference">Reference</label>
+                    <input type="text" id="reference" name="reference" placeholder="Reference number or code">
+                </div>
+                <div class="mg-form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Record details..."></textarea>
+                </div>
+
+                <div class="mg-form-actions">
+                    <button type="submit" class="btn btn-primary">Create Record</button>
+                    <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

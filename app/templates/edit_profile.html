@@ -10,8 +10,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1rem;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+        padding: var(--space-8, 2rem) var(--space-4, 1rem);
+        background: linear-gradient(135deg, var(--primary-50, #f0fdfa) 0%, var(--bg-secondary, #ffffff) 50%, var(--warning-50, #fffbeb) 100%);
         position: relative;
         overflow: hidden;
     }
@@ -39,21 +39,26 @@
     }
 
     .edit-profile-card {
-        background: #ffffff;
-        border-radius: 24px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        background: var(--bg-secondary, #ffffff);
+        border-radius: var(--radius-2xl, 24px);
+        border: 1px solid var(--border-light, #e2e8f0);
+        box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
         overflow: hidden;
         width: 100%;
         max-width: 900px;
         position: relative;
         z-index: 1;
+        transition: all var(--transition-base, 0.3s ease);
+    }
+
+    .edit-profile-card:hover {
+        box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.3));
     }
 
     .edit-profile-brand {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-600, #667eea) 0%, var(--primary-700, #764ba2) 100%);
         color: white;
-        padding: 2.5rem 2rem;
+        padding: var(--space-10, 2.5rem) var(--space-6, 2rem);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -126,15 +131,15 @@
     }
 
     .edit-profile-form-header h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.35rem;
+        font-size: var(--text-2xl, 1.5rem);
+        font-weight: var(--font-weight-bold, 700);
+        color: var(--text-primary, #0f172a);
+        margin-bottom: var(--space-1, 0.35rem);
     }
 
     .edit-profile-form-header p {
-        color: #475569;
-        font-size: 0.9rem;
+        color: var(--text-secondary, #475569);
+        font-size: var(--text-sm, 0.9rem);
         margin-bottom: 0;
     }
 
@@ -150,55 +155,55 @@
 
     .form-group label {
         display: block;
-        font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--text-primary, #0f172a);
+        margin-bottom: var(--space-2, 0.5rem);
+        font-size: var(--text-sm, 0.875rem);
         letter-spacing: 0.01em;
     }
 
     .form-group input {
         width: 100%;
-        padding: 0.875rem 1rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        background: #f8fafc;
-        color: #0f172a;
+        padding: var(--space-2, 0.875rem) var(--space-3, 1rem);
+        border: 2px solid var(--border-light, #e2e8f0);
+        border-radius: var(--radius-xl, 12px);
+        font-size: var(--text-sm, 0.95rem);
+        transition: all var(--transition-fast, 0.2s ease);
+        background: var(--bg-tertiary, #f8fafc);
+        color: var(--text-primary, #0f172a);
         font-family: inherit;
         height: 2.75rem;
     }
 
     .form-group input:focus {
         outline: none;
-        border-color: #14b8a6;
+        border-color: var(--primary-500, #14b8a6);
         box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
-        background: #ffffff;
+        background: var(--bg-secondary, #ffffff);
     }
 
     .form-group input::placeholder {
-        color: #94a3b8;
+        color: var(--text-tertiary, #94a3b8);
     }
 
     .btn-save-profile {
         width: 100%;
-        padding: 0.875rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: var(--space-2, 0.875rem);
+        background: linear-gradient(135deg, var(--primary-600, #667eea) 0%, var(--primary-700, #764ba2) 100%);
         color: white;
         border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: 600;
+        border-radius: var(--radius-xl, 12px);
+        font-size: var(--text-base, 1rem);
+        font-weight: var(--font-weight-semibold, 600);
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
-        margin-top: 0.5rem;
+        transition: all var(--transition-base, 0.3s ease);
+        box-shadow: var(--shadow-md, 0 4px 14px rgba(102, 126, 234, 0.35));
+        margin-top: var(--space-2, 0.5rem);
     }
 
     .btn-save-profile:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+        box-shadow: var(--shadow-lg, 0 6px 20px rgba(102, 126, 234, 0.45));
     }
 
     .btn-save-profile:active {
@@ -207,43 +212,43 @@
 
     .edit-profile-footer {
         text-align: center;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #e2e8f0;
-        color: #475569;
-        font-size: 0.9rem;
+        margin-top: var(--space-6, 1.5rem);
+        padding-top: var(--space-6, 1.5rem);
+        border-top: 1px solid var(--border-light, #e2e8f0);
+        color: var(--text-secondary, #475569);
+        font-size: var(--text-sm, 0.9rem);
     }
 
     .edit-profile-footer a {
-        color: #667eea;
+        color: var(--primary-600, #667eea);
         text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s ease;
+        font-weight: var(--font-weight-semibold, 600);
+        transition: color var(--transition-fast, 0.2s ease);
     }
 
     .edit-profile-footer a:hover {
-        color: #764ba2;
+        color: var(--primary-700, #764ba2);
         text-decoration: underline;
     }
 
     .alert {
-        border-radius: 12px;
+        border-radius: var(--radius-xl, 12px);
         border: none;
-        padding: 0.85rem 1.1rem;
-        font-weight: 500;
-        font-size: 0.875rem;
-        margin-bottom: 1.25rem;
+        padding: var(--space-3, 0.85rem) var(--space-4, 1.1rem);
+        font-weight: var(--font-weight-medium, 500);
+        font-size: var(--text-sm, 0.875rem);
+        margin-bottom: var(--space-5, 1.25rem);
     }
 
     .alert-danger {
-        background: #fef2f2;
-        color: #991b1b;
+        background: var(--danger-50, #fef2f2);
+        color: var(--danger-700, #991b1b);
         border: 1px solid #fecaca;
     }
 
     .alert-success {
-        background: #f0fdf4;
-        color: #166534;
+        background: var(--success-50, #f0fdf4);
+        color: var(--success-700, #166534);
         border: 1px solid #bbf7d0;
     }
 
@@ -272,61 +277,61 @@
     }
 
     [data-theme="dark"] .edit-profile-wrapper {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        background: linear-gradient(135deg, var(--secondary-900, #0f172a) 0%, var(--secondary-800, #1e293b) 50%, var(--secondary-900, #0f172a) 100%);
     }
 
     [data-theme="dark"] .edit-profile-card {
-        background: #1e293b;
-        border-color: #334155;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        background: var(--secondary-800, #1e293b);
+        border-color: var(--secondary-700, #334155);
+        box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
     }
 
     [data-theme="dark"] .edit-profile-form-header h3 {
-        color: #f1f5f9;
+        color: var(--secondary-100, #f1f5f9);
     }
 
     [data-theme="dark"] .edit-profile-form-header p {
-        color: #94a3b8;
+        color: var(--secondary-400, #94a3b8);
     }
 
     [data-theme="dark"] .form-group label {
-        color: #e2e8f0;
+        color: var(--secondary-200, #e2e8f0);
     }
 
     [data-theme="dark"] .form-group input {
-        background: #0f172a;
-        border-color: #334155;
-        color: #e2e8f0;
+        background: var(--secondary-900, #0f172a);
+        border-color: var(--secondary-700, #334155);
+        color: var(--secondary-200, #e2e8f0);
     }
 
     [data-theme="dark"] .form-group input:focus {
-        background: #1e293b;
-        border-color: #14b8a6;
+        background: var(--secondary-800, #1e293b);
+        border-color: var(--primary-500, #14b8a6);
     }
 
     [data-theme="dark"] .form-group input::placeholder {
-        color: #64748b;
+        color: var(--secondary-500, #64748b);
     }
 
     [data-theme="dark"] .btn-save-profile {
-        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+        box-shadow: var(--shadow-md, 0 4px 14px rgba(102, 126, 234, 0.4));
     }
 
     [data-theme="dark"] .btn-save-profile:hover {
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        box-shadow: var(--shadow-lg, 0 6px 20px rgba(102, 126, 234, 0.5));
     }
 
     [data-theme="dark"] .edit-profile-footer {
-        border-top-color: #334155;
-        color: #94a3b8;
+        border-top-color: var(--secondary-700, #334155);
+        color: var(--secondary-400, #94a3b8);
     }
 
     [data-theme="dark"] .edit-profile-footer a {
-        color: #667eea;
+        color: var(--primary-600, #667eea);
     }
 
     [data-theme="dark"] .edit-profile-footer a:hover {
-        color: #764ba2;
+        color: var(--primary-700, #764ba2);
     }
 
     [data-theme="dark"] .alert-danger {
@@ -342,61 +347,61 @@
     }
 
     [data-theme="light"] .edit-profile-wrapper {
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
+        background: linear-gradient(135deg, var(--primary-50, #f0fdfa) 0%, var(--bg-secondary, #ffffff) 50%, var(--warning-50, #fffbeb) 100%);
     }
 
     [data-theme="light"] .edit-profile-card {
-        background: #ffffff;
-        border-color: #e2e8f0;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        background: var(--bg-secondary, #ffffff);
+        border-color: var(--border-light, #e2e8f0);
+        box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
     }
 
     [data-theme="light"] .edit-profile-form-header h3 {
-        color: #0f172a;
+        color: var(--text-primary, #0f172a);
     }
 
     [data-theme="light"] .edit-profile-form-header p {
-        color: #475569;
+        color: var(--text-secondary, #475569);
     }
 
     [data-theme="light"] .form-group label {
-        color: #0f172a;
+        color: var(--text-primary, #0f172a);
     }
 
     [data-theme="light"] .form-group input {
-        background: #f8fafc;
-        border-color: #e2e8f0;
-        color: #0f172a;
+        background: var(--bg-tertiary, #f8fafc);
+        border-color: var(--border-light, #e2e8f0);
+        color: var(--text-primary, #0f172a);
     }
 
     [data-theme="light"] .form-group input:focus {
-        background: #ffffff;
-        border-color: #14b8a6;
+        background: var(--bg-secondary, #ffffff);
+        border-color: var(--primary-500, #14b8a6);
     }
 
     [data-theme="light"] .form-group input::placeholder {
-        color: #94a3b8;
+        color: var(--text-tertiary, #94a3b8);
     }
 
     [data-theme="light"] .btn-save-profile {
-        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+        box-shadow: var(--shadow-md, 0 4px 14px rgba(102, 126, 234, 0.35));
     }
 
     [data-theme="light"] .btn-save-profile:hover {
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+        box-shadow: var(--shadow-lg, 0 6px 20px rgba(102, 126, 234, 0.45));
     }
 
     [data-theme="light"] .edit-profile-footer {
-        border-top-color: #e2e8f0;
-        color: #475569;
+        border-top-color: var(--border-light, #e2e8f0);
+        color: var(--text-secondary, #475569);
     }
 
     [data-theme="light"] .edit-profile-footer a {
-        color: #667eea;
+        color: var(--primary-600, #667eea);
     }
 
     [data-theme="light"] .edit-profile-footer a:hover {
-        color: #764ba2;
+        color: var(--primary-700, #764ba2);
     }
 
     [data-theme="light"] .alert-danger {

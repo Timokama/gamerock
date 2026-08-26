@@ -8,31 +8,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: var(--space-3);
 }
 
 .deposit-page-header h2 {
     margin: 0;
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
 .deposit-page-header p {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin: 0.25rem 0 0;
     font-size: 0.9rem;
 }
 
 .deposit-profile-section {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    padding: 2rem;
-    margin-bottom: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+    padding: var(--space-8);
+    margin-bottom: var(--space-6);
     position: relative;
     overflow: hidden;
 }
@@ -50,15 +50,15 @@
 .deposit-profile-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: var(--space-6);
     flex-wrap: wrap;
 }
 
 .deposit-profile-avatar {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 100%);
     color: white;
     display: inline-flex;
     align-items: center;
@@ -75,7 +75,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
 }
 
 .deposit-profile-info {
@@ -86,41 +86,41 @@
 .deposit-profile-name {
     margin: 0;
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
 .deposit-profile-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 0.75rem;
-    color: var(--text-muted);
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
 .deposit-profile-meta span {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    background: var(--bg-color);
+    gap: var(--space-1);
+    background: var(--bg-primary);
     padding: 0.35rem 0.75rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
 }
 
 .deposit-profile-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--space-3);
     flex-wrap: wrap;
 }
 
 .contribution-section-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    margin-bottom: 1rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+    margin-bottom: var(--space-4);
     overflow: visible;
     transition: var(--transition);
 }
@@ -133,18 +133,18 @@
 .contribution-card-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 1.25rem 1.5rem;
+    padding: var(--space-5) 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
     position: relative;
-    border-radius: var(--radius) var(--radius) 0 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 .contribution-card-header .contribution-icon {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     background: rgba(255, 255, 255, 0.2);
     color: white;
     display: inline-flex;
@@ -183,8 +183,8 @@
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-2) 0.75rem;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -202,37 +202,37 @@
 }
 
 .contribution-card-body {
-    padding: 1.5rem;
+    padding: var(--space-6);
 }
 
 .contribution-details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
 }
 
 .contribution-detail-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--space-3);
     padding: 0.85rem;
-    background: var(--bg-color);
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
     transition: var(--transition);
 }
 
 .contribution-detail-item:hover {
-    border-color: var(--primary-color);
-    background: var(--card-bg);
+    border-color: var(--primary-700);
+    background: var(--bg-secondary);
     transform: translateY(-1px);
 }
 
 .contribution-detail-item .detail-icon {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
     color: #667eea;
     display: inline-flex;
@@ -248,16 +248,16 @@
 
 .contribution-detail-item .detail-label {
     font-size: 0.7rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     font-weight: 600;
-    margin-bottom: 0.15rem;
+    margin-bottom: var(--space-1);
 }
 
 .contribution-detail-item .detail-value {
     font-weight: 600;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
     word-break: break-word;
 }
@@ -267,9 +267,9 @@
 }
 
 .pending-contributions-table thead th {
-    background: var(--bg-color);
-    border-bottom: 2px solid var(--border-color);
-    color: var(--text-muted);
+    background: var(--bg-primary);
+    border-bottom: 2px solid var(--border-light);
+    color: var(--text-secondary);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -281,7 +281,7 @@
 .pending-contributions-table tbody td {
     padding: 0.85rem 1rem;
     vertical-align: middle;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .pending-contributions-table tbody tr:hover {
@@ -295,12 +295,12 @@
 
 .pending-contributions-table .pending-event-name {
     font-weight: 600;
-    color: var(--dark-color);
+    color: var(--text-primary);
 }
 
 .pending-contributions-table .pending-event-date {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
@@ -332,7 +332,7 @@
     padding: 0.35rem 0.75rem;
     font-size: 0.8rem;
     font-weight: 600;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
@@ -359,28 +359,28 @@
 
 .empty-state {
     text-align: center;
-    padding: 3rem 1.5rem;
-    color: var(--text-muted);
-    background: var(--bg-color);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    padding: var(--space-12) 1.5rem;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
 }
 
 .empty-state-icon {
     font-size: 3rem;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     opacity: 0.6;
 }
 
 .empty-state h3 {
-    color: var(--dark-color);
-    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
     font-size: 1.25rem;
 }
 
 .empty-state p {
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
+    margin-bottom: var(--space-6);
+    color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
@@ -395,7 +395,7 @@
 
     .deposit-profile-meta {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--space-2);
     }
 
     .deposit-profile-actions {
@@ -419,8 +419,7 @@
 
 @media (max-width: 576px) {
     .deposit-profile-section {
-        padding: 1.5rem;
-        width: 100%;
+        padding: var(--space-6);
     }
 
     .deposit-profile-name {
@@ -434,21 +433,21 @@
     }
 
     .contribution-card-header {
-        padding: 1rem;
+        padding: var(--space-4);
     }
 
     .contribution-card-body {
-        padding: 1rem;
+        padding: var(--space-4);
     }
 }
 
 [data-theme="dark"] .contribution-detail-item {
-    background: var(--light-color);
+    background: var(--bg-primary);
 }
 
 [data-theme="dark"] .pending-contribution-card {
-    background: var(--card-bg);
-    border-color: var(--border-color);
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
 }
 
 /* ==========================================================
@@ -463,11 +462,11 @@
 .row-actions-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: var(--space-1);
     min-height: 36px;
     padding: 0.45rem 0.8rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: rgba(255, 255, 255, 0.2);
     color: white;
     font-size: 0.8rem;
@@ -503,10 +502,10 @@
     top: calc(100% + 8px);
     min-width: 268px;
     padding: 0.4rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
     z-index: 1200;
     opacity: 0;
     visibility: hidden;
@@ -537,15 +536,15 @@
 
 .row-actions-menu-header {
     padding: 0.55rem 0.7rem 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 0.35rem;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: var(--space-1);
 }
 
 .row-actions-menu-title {
     display: block;
     font-size: 0.85rem;
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -554,7 +553,7 @@
 .row-actions-menu-sub {
     display: block;
     font-size: 0.72rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin-top: 0.1rem;
 }
 
@@ -565,9 +564,9 @@
     width: 100%;
     padding: 0.55rem 0.65rem;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     background: transparent;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.85rem;
     font-weight: 600;
     font-family: inherit;
@@ -579,8 +578,8 @@
 
 .row-action-item:hover,
 .row-action-item:focus-visible {
-    background: var(--light-color);
-    color: var(--primary-color);
+    background: var(--bg-primary);
+    color: var(--primary-700);
     text-decoration: none;
     transform: translateX(2px);
     outline: none;
@@ -589,12 +588,12 @@
 .row-action-icon {
     width: 30px;
     height: 30px;
-    border-radius: 9px;
+    border-radius: var(--radius-lg);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: rgba(15, 118, 110, 0.1);
-    color: var(--primary-color);
+    color: var(--primary-700);
     font-size: 0.9rem;
     flex-shrink: 0;
 }
@@ -612,17 +611,17 @@
 .row-action-hint {
     font-size: 0.72rem;
     font-weight: 500;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .row-action-item:hover .row-action-hint {
-    color: var(--primary-color);
+    color: var(--primary-700);
     opacity: 0.85;
 }
 
 .row-actions-divider {
     height: 1px;
-    background: var(--border-color);
+    background: var(--border-light);
     margin: 0.35rem 0.4rem;
 }
 
@@ -631,34 +630,34 @@
 }
 
 .row-action-item.danger {
-    color: var(--danger-color);
+    color: var(--danger-600);
 }
 
 .row-action-item.danger .row-action-icon {
     background: rgba(239, 68, 68, 0.12);
-    color: var(--danger-color);
+    color: var(--danger-600);
 }
 
 .row-action-item.danger:hover,
 .row-action-item.danger:focus-visible {
     background: rgba(239, 68, 68, 0.1);
-    color: var(--danger-color);
+    color: var(--danger-600);
 }
 
 .row-action-item.danger:hover .row-action-hint {
-    color: var(--danger-color);
+    color: var(--danger-600);
 }
 
 .dropdown-menu {
     top: calc(100% + 6px) !important;
     bottom: auto !important;
-    margin-top: 0.5rem !important;
+    margin-top: var(--space-2) !important;
     margin-bottom: 0 !important;
     z-index: 1070 !important;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
     box-shadow: var(--shadow-lg);
-    padding: 0.5rem 0;
+    padding: var(--space-2) 0;
     min-width: 200px;
 }
 
@@ -668,28 +667,28 @@
     transition: all 0.15s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
 }
 
 .dropdown-item:hover {
-    background: var(--light-color);
-    color: var(--primary-color);
+    background: var(--bg-primary);
+    color: var(--primary-700);
     padding-left: 1.25rem;
 }
 
 .report-filters {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--border-light);
 }
 
 .report-filters .filter-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: var(--space-4);
     align-items: flex-end;
 }
 
@@ -702,7 +701,7 @@
     display: block;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin-bottom: 0.3rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -711,31 +710,31 @@
 .report-filters .filter-group input,
 .report-filters .filter-group select {
     width: 100%;
-    padding: 0.5rem 0.65rem;
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
+    padding: var(--space-2) 0.65rem;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
     font-size: 0.85rem;
-    background: var(--bg-color);
-    color: var(--text-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     transition: border-color 0.2s ease;
 }
 
 .report-filters .filter-group input:focus,
 .report-filters .filter-group select:focus {
-    border-color: var(--primary-color);
+    border-color: var(--primary-700);
     outline: none;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
 }
 
 .report-filters .filter-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-2);
     align-items: flex-end;
 }
 
 .report-filters .filter-actions .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: var(--space-2) 1rem;
+    border-radius: var(--radius-lg);
     font-weight: 600;
     font-size: 0.8rem;
     border: none;
@@ -744,7 +743,7 @@
 }
 
 .report-filters .filter-actions .btn-primary {
-    background: var(--primary-color);
+    background: var(--primary-700);
     color: white;
 }
 
@@ -755,13 +754,13 @@
 
 .report-filters .filter-actions .btn-outline {
     background: transparent;
-    color: var(--text-color);
-    border: 1.5px solid var(--border-color);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-light);
 }
 
 .report-filters .filter-actions .btn-outline:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: var(--primary-700);
+    color: var(--primary-700);
 }
 
 .family-table-card,
@@ -775,7 +774,7 @@
 <div class="deposit-page-header">
     <div>
         <h2>{{ register.firstname }} {{ register.lastname }}'s Contributions</h2>
-        <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.9rem;">Manage contribution records and payment history</p>
+        <p style="color: var(--text-secondary); margin: 0.25rem 0 0; font-size: 0.9rem;">Manage contribution records and payment history</p>
     </div>
     <div class="d-flex gap-2">
         <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary btn-sm">💰 Add Contribution</a>
@@ -856,8 +855,7 @@
         <div class="row-actions">
             <button class="row-actions-toggle" type="button"
                     aria-haspopup="true" aria-expanded="false"
-                    aria-label="Actions for contribution on {{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}"
-                    onclick="toggleRowActions(this)">
+                    aria-label="Actions for contribution on {{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}">
                 <span aria-hidden="true">⚙</span>
                 <span>Actions</span>
                 <span class="row-actions-caret" aria-hidden="true">▾</span>
@@ -916,7 +914,7 @@
                         {% elif depo.payment_type.value == 'BANK DEPOSIT' %}
                         <span class="payment-badge bank">{{ depo.payment_type.value }}</span>
                         {% else %}
-                        <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ depo.payment_type.value if depo.payment_type else 'N/A' }}</span>
+                        <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: var(--text-secondary);">{{ depo.payment_type.value if depo.payment_type else 'N/A' }}</span>
                         {% endif %}
                     </div>
                 </div>
@@ -966,13 +964,13 @@
                     {% for event in pending_contributions %}
                     <tr>
                         <td style="text-align: center;">
-                            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+                            <div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
                         </td>
                         <td>
-                            <span style="font-weight: 600; color: var(--dark-color);">{{ event.name }}</span>
+                            <span style="font-weight: 600; color: var(--text-primary);">{{ event.name }}</span>
                         </td>
                         <td style="white-space: nowrap;">
-                            <i class="bi bi-calendar-event me-1" style="color: var(--text-muted);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
+                            <i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
                         </td>
                         <td style="color: #475569;">{{ event.details[:120] if event.details else 'No details provided' }}{% if event.details and event.details|length > 120 %}...{% endif %}</td>
                         <td style="text-align: center; white-space: nowrap;">
@@ -1076,14 +1074,15 @@ function toggleRowActions(button) {
     var willOpen = !wrapper.classList.contains('open');
     closeAllRowActions(wrapper);
 
-    wrapper.classList.toggle('open', willOpen);
-    button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-
     if (!willOpen) {
         restoreRowActionsMenu(wrapper);
-        wrapper.classList.remove('drop-up');
+        wrapper.classList.remove('open', 'drop-up');
+        button.setAttribute('aria-expanded', 'false');
         return;
     }
+
+    wrapper.classList.add('open');
+    button.setAttribute('aria-expanded', 'true');
 
     var menu = wrapper.querySelector('.row-actions-menu');
     if (!menu) return;

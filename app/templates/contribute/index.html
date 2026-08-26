@@ -18,25 +18,25 @@
 }
 
 .accounts-header h2 {
-    font-weight: 700;
-    color: #0f172a;
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--text-primary, #0f172a);
     margin: 0;
 }
 
 .account-card {
-    background: #0f172a;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #f1f5f9;
+    background: var(--bg-inverse, #0f172a);
+    border-radius: var(--radius-lg, 12px);
+    border: 1px solid var(--secondary-800, #1e293b);
+    box-shadow: var(--shadow-sm, 0 1px 3px 0 rgba(0,0,0,0.08));
+    padding: var(--space-5, 1.25rem);
+    margin-bottom: var(--space-4, 1rem);
+    transition: transform var(--transition-fast, 0.2s ease), box-shadow var(--transition-fast, 0.2s ease);
+    color: var(--secondary-100, #f1f5f9);
 }
 
 .account-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-md, 0 12px 30px rgba(0,0,0,0.25));
 }
 
 .account-card-header {
@@ -48,102 +48,102 @@
 }
 
 .account-card-title {
-    font-weight: 700;
-    color: #fff;
-    font-size: 1.1rem;
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--text-inverse, #fff);
+    font-size: var(--text-lg, 1.1rem);
     margin: 0;
 }
 
 .account-card-meta {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
+    font-size: var(--text-sm, 0.85rem);
+    color: var(--secondary-400, #94a3b8);
+    margin-top: var(--space-1, 0.25rem);
 }
 
 .account-card-amount {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
+    font-size: var(--text-2xl, 1.5rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--text-inverse, #fff);
     white-space: nowrap;
 }
 
 .account-card-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.9rem;
-    color: #cbd5e1;
+    gap: var(--space-4, 1rem);
+    font-size: var(--text-sm, 0.9rem);
+    color: var(--secondary-300, #cbd5e1);
 }
 
 .account-card-detail {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: var(--space-1, 0.35rem);
 }
 
 .account-card-footer {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #1e293b;
+    margin-top: var(--space-4, 1rem);
+    padding-top: var(--space-4, 1rem);
+    border-top: 1px solid var(--secondary-800, #1e293b);
     display: flex;
     justify-content: flex-end;
 }
 
 .account-card-footer .action-btn.outline {
-    border-color: #334155;
-    color: #cbd5e1;
+    border-color: var(--secondary-700, #334155);
+    color: var(--secondary-300, #cbd5e1);
     background: transparent;
 }
 
 .account-card-footer .action-btn.outline:hover {
-    border-color: #667eea;
-    color: #fff;
+    border-color: var(--primary-600, #667eea);
+    color: var(--text-inverse, #fff);
 }
 
 .empty-state {
     text-align: center;
-    padding: 3rem 1rem;
-    background: #0f172a;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    color: #f1f5f9;
+    padding: var(--space-12, 3rem) var(--space-6, 1rem);
+    background: var(--bg-inverse, #0f172a);
+    border-radius: var(--radius-lg, 12px);
+    border: 1px solid var(--secondary-800, #1e293b);
+    color: var(--secondary-100, #f1f5f9);
 }
 
 .empty-state-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: var(--text-4xl, 3rem);
+    margin-bottom: var(--space-4, 1rem);
 }
 
 .empty-state h3 {
-    color: #fff;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    color: var(--text-inverse, #fff);
+    font-weight: var(--font-weight-bold, 700);
+    margin-bottom: var(--space-2, 0.5rem);
 }
 
 .empty-state p {
-    color: #94a3b8;
-    margin-bottom: 1.5rem;
+    color: var(--secondary-400, #94a3b8);
+    margin-bottom: var(--space-6, 1.5rem);
 }
 
 .accounts-footer {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: #0f172a;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
+    margin-top: var(--space-8, 2rem);
+    padding: var(--space-6, 1.5rem);
+    background: var(--bg-inverse, #0f172a);
+    border-radius: var(--radius-lg, 12px);
+    border: 1px solid var(--secondary-800, #1e293b);
     text-align: center;
-    color: #64748b;
-    font-size: 0.85rem;
+    color: var(--secondary-500, #64748b);
+    font-size: var(--text-sm, 0.85rem);
 }
 
 .accounts-footer a {
-    color: #667eea;
+    color: var(--primary-600, #667eea);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold, 600);
 }
 
 .accounts-footer a:hover {
-    color: #764ba2;
+    color: var(--primary-700, #764ba2);
     text-decoration: underline;
 }
 </style>
@@ -179,7 +179,26 @@
                 </div>
             </div>
             <div class="account-card-footer">
-                <a href="{{ url_for('reports.reports', depo_id=account.id) }}" class="action-btn outline btn-sm">View Report</a>
+                <div class="row-actions">
+                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ account.name or 'Contribution' }}">
+                        <span aria-hidden="true">⚙</span>
+                        <span>Actions</span>
+                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="row-actions-menu" role="menu">
+                        <div class="row-actions-menu-header">
+                            <span class="row-actions-menu-title">{{ account.name or 'Contribution' }}</span>
+                            <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(account.amount) }}</span>
+                        </div>
+                        <a href="{{ url_for('reports.reports', depo_id=account.id) }}" class="row-action-item" role="menuitem">
+                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                            <span class="row-action-copy">
+                                <span class="row-action-label">View Report</span>
+                                <span class="row-action-hint">See contribution details</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         {% else %}
