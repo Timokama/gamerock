@@ -3,3 +3,5 @@ __pycache__
 **/__pycache__/
 venv/
 env/
+__pychar__/*
+app/* __pychar__/*
