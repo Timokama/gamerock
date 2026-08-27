@@ -26,6 +26,110 @@
         align-items: center;
     }
 
+    /* ===== Expand Button ===== */
+    .expand-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-lg);
+        border: 1.5px solid var(--border-light);
+        background: var(--bg-secondary);
+        color: var(--primary-500);
+        font-size: 1.25rem;
+        font-weight: var(--font-weight-bold);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast);
+        padding: 0;
+        line-height: 1;
+        box-shadow: var(--shadow-xs);
+        touch-action: manipulation;
+    }
+
+    .expand-btn:hover {
+        border-color: var(--primary-500);
+        background: rgba(20, 184, 166, 0.05);
+        box-shadow: var(--shadow-sm);
+        transform: translateY(-1px);
+    }
+
+    .expand-btn:focus-visible {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+    }
+
+    .expand-btn.expanded {
+        background: var(--primary-500);
+        border-color: var(--primary-500);
+        color: #fff;
+        box-shadow: var(--shadow-md);
+    }
+
+    @media (max-width: 768px) {
+        .expand-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 1.25rem;
+            touch-action: manipulation;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .expand-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.15rem;
+            touch-action: manipulation;
+        }
+    }
+
+    /* ===== Family Detail Row Redesign ===== */
+    .family-detail-row {
+        display: none;
+    }
+
+    .family-detail-row.open {
+        display: table-row;
+    }
+
+    .family-detail-cell {
+        padding: 0 !important;
+        background: var(--bg-primary);
+    }
+
+    .family-detail-card {
+        margin: var(--space-4);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow var(--transition-base);
+        will-change: transform, opacity;
+        contain: layout style paint;
+    }
+
+    .family-detail-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    @media (max-width: 768px) {
+        .family-detail-card {
+            margin: var(--space-3) 0 var(--space-3) 0;
+            padding: var(--space-4);
+            box-shadow: var(--shadow-lg);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .family-detail-card {
+            margin: var(--space-2) 0 var(--space-3) 0;
+            padding: var(--space-3);
+            box-shadow: var(--shadow-lg);
+        }
+    }
+
     .family-summary {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -221,46 +325,6 @@
         border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
-    .expand-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: var(--radius-lg);
-        border: 1.5px solid var(--border-light);
-        background: var(--bg-secondary);
-        color: var(--primary-500);
-        font-size: 1.25rem;
-        font-weight: var(--font-weight-bold);
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all var(--transition-fast);
-        padding: 0;
-        line-height: 1;
-        box-shadow: var(--shadow-xs);
-        font-family: inherit;
-    }
-
-    .expand-btn:hover {
-        background: var(--primary-500);
-        color: white;
-        border-color: var(--primary-500);
-        transform: scale(1.05);
-        box-shadow: var(--shadow-md);
-    }
-
-    .expand-btn:focus-visible {
-        outline: 2px solid var(--primary-500);
-        outline-offset: 2px;
-    }
-
-    .expand-btn.expanded {
-        background: var(--primary-500);
-        color: white;
-        border-color: var(--primary-500);
-        box-shadow: var(--shadow-md);
-    }
-
     .family-detail-row {
         display: none;
     }
@@ -282,6 +346,8 @@
         border: 1px solid var(--border-light);
         box-shadow: var(--shadow-sm);
         transition: box-shadow var(--transition-base);
+        will-change: transform, opacity;
+        contain: layout style paint;
     }
 
     .family-detail-card:hover {
@@ -524,7 +590,7 @@
     }
 
     .family-filter-select {
-        padding: var(--space-2) var(--space-9) var(--space-2) var(--space-3);
+        padding: var(--space-3) var(--space-4);
         border: 1.5px solid var(--border-light);
         border-radius: var(--radius-lg);
         font-size: var(--text-sm);
@@ -666,9 +732,8 @@
             flex-wrap: wrap;
         }
 
-        .family-filter-bar {
-            flex-direction: column;
-            align-items: stretch;
+        .family-filter-panel {
+            width: 100%;
         }
 
         .family-search-box {
@@ -683,22 +748,27 @@
 
         .family-filter-actions {
             width: 100%;
+            flex-direction: column;
+            gap: var(--space-3);
         }
 
-        .family-clear-filters {
-            flex: 1;
+        .family-clear-filters,
+        .family-filter-actions .action-btn {
+            width: 100%;
             justify-content: center;
+            min-height: 48px;
+            font-size: var(--text-base);
         }
     }
 
     @media (max-width: 576px) {
         .family-search-box input {
-            padding: var(--space-2) var(--space-2) var(--space-2) var(--space-9);
+            padding: var(--space-2) var(--space-3) var(--space-2) var(--space-10);
             font-size: var(--text-sm);
         }
 
         .family-filter-select {
-            padding: var(--space-2) var(--space-7) var(--space-2) var(--space-2);
+            padding: var(--space-2) var(--space-3);
             font-size: var(--text-sm);
         }
 
@@ -1314,9 +1384,15 @@ function clearFamilyFilters() {
 }
 
 function toggleSpouse(btn, memberId) {
+    if (!btn || !memberId) return;
+
     var row = document.getElementById('spouse-row-' + memberId);
     if (!row) return;
+
     var isOpen = row.classList.contains('open');
+    var card = row.querySelector('.family-detail-card');
+
+    // Close other open rows first
     document.querySelectorAll('.family-detail-row.open').forEach(function(r) {
         if (r === row) return;
         r.classList.remove('open');
@@ -1326,14 +1402,32 @@ function toggleSpouse(btn, memberId) {
             if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
         }
     });
+
     if (!isOpen) {
         row.classList.add('open');
         btn.classList.add('expanded');
         btn.textContent = '−';
+
+        if (window.innerWidth <= 768 && card) {
+            if (window.animateReveal) {
+                window.animateReveal(card, 220);
+            }
+        }
     } else {
-        row.classList.remove('open');
         btn.classList.remove('expanded');
         btn.textContent = '+';
+
+        if (window.innerWidth <= 768 && card) {
+            if (window.fastHide) {
+                window.fastHide(card, function() {
+                    row.classList.remove('open');
+                });
+            } else {
+                row.classList.remove('open');
+            }
+        } else {
+            row.classList.remove('open');
+        }
     }
 }
 

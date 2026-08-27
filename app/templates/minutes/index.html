@@ -10,13 +10,18 @@
     .mg-card .row-actions {
         overflow: visible !important;
     }
+    .mg-table {
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="mg-page-header">
     <h2>Meeting Minutes</h2>
+    {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
     <a href="{{ url_for('minutes.create') }}" class="btn btn-primary">➕ New Minutes</a>
+    {% endif %}
 </div>
 
 <div class="mg-card mb-4">
@@ -71,17 +76,17 @@
                 <tbody>
                     {% for entry in minutes_list %}
                     <tr>
-                        <td><strong>{{ entry.title }}</strong></td>
-                        <td>{{ entry.meeting_type }}</td>
-                        <td>{{ entry.meeting_date.strftime('%b %d, %Y') if entry.meeting_date else 'N/A' }}</td>
-                        <td>{{ entry.location or 'N/A' }}</td>
-                        <td>
+                        <td data-label="Title"><strong>{{ entry.title }}</strong></td>
+                        <td data-label="Meeting Type">{{ entry.meeting_type }}</td>
+                        <td data-label="Date">{{ entry.meeting_date.strftime('%b %d, %Y') if entry.meeting_date else 'N/A' }}</td>
+                        <td data-label="Location">{{ entry.location or 'N/A' }}</td>
+                        <td data-label="Status">
                             <span class="mg-badge mg-badge-{{ 'success' if entry.status == 'Approved' else 'warning' if entry.status == 'Draft' else 'info' }}">
                                 {{ entry.status }}
                             </span>
                         </td>
-                        <td>{{ entry.created_at.strftime('%b %d, %Y') if entry.created_at else 'N/A' }}</td>
-                        <td>
+                        <td data-label="Created">{{ entry.created_at.strftime('%b %d, %Y') if entry.created_at else 'N/A' }}</td>
+                        <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ entry.title }}">
                                     <span aria-hidden="true">⚙</span>
@@ -100,6 +105,7 @@
                                             <span class="row-action-hint">See full details</span>
                                         </span>
                                     </a>
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
                                     <a href="{{ url_for('minutes.edit', minutes_id=entry.id) }}" class="row-action-item" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                         <span class="row-action-copy">
@@ -107,6 +113,7 @@
                                             <span class="row-action-hint">Update agenda, decisions, action items</span>
                                         </span>
                                     </a>
+                                    {% endif %}
                                     {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                                     <form method="post" action="{{ url_for('minutes.delete', minutes_id=entry.id) }}" class="row-action-form" onsubmit="return confirm('Delete these minutes? This cannot be undone.');">
                                         <button type="submit" class="row-action-item danger" role="menuitem">
@@ -129,7 +136,9 @@
                                 <div class="empty-state-icon">📝</div>
                                 <h3>No Minutes Yet</h3>
                                 <p>Record your first meeting minutes to keep track of decisions and action items.</p>
+                                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
                                 <a href="{{ url_for('minutes.create') }}" class="btn btn-primary">Create Minutes</a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

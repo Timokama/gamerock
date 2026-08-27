@@ -10,13 +10,18 @@
     .mg-card .row-actions {
         overflow: visible !important;
     }
+    .mg-table {
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="mg-page-header">
     <h2>Budgets</h2>
+    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
     <a href="{{ url_for('budget.create') }}" class="btn btn-primary">➕ New Budget</a>
+    {% endif %}
 </div>
 
 <div class="mg-card mb-4">
@@ -66,17 +71,17 @@
                 <tbody>
                     {% for budget in budgets %}
                     <tr>
-                        <td><strong>{{ budget.name }}</strong></td>
-                        <td>{{ budget.fiscal_year or 'N/A' }}</td>
-                        <td>Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
-                        <td>
+                        <td data-label="Name"><strong>{{ budget.name }}</strong></td>
+                        <td data-label="Fiscal Year">{{ budget.fiscal_year or 'N/A' }}</td>
+                        <td data-label="Total Amount">Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
+                        <td data-label="Status">
                             <span class="mg-badge mg-badge-{{ 'success' if budget.status == 'Approved' else 'warning' if budget.status == 'Draft' else 'info' if budget.status == 'Active' else 'danger' }}">
                                 {{ budget.status }}
                             </span>
                         </td>
-                        <td>{{ budget.items.count() }}</td>
-                        <td>{{ budget.created_at.strftime('%b %d, %Y') if budget.created_at else 'N/A' }}</td>
-                        <td>
+                        <td data-label="Items">{{ budget.items.count() }}</td>
+                        <td data-label="Created">{{ budget.created_at.strftime('%b %d, %Y') if budget.created_at else 'N/A' }}</td>
+                        <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ budget.name }}">
                                     <span aria-hidden="true">⚙</span>
@@ -95,6 +100,7 @@
                                             <span class="row-action-hint">See full details</span>
                                         </span>
                                     </a>
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                                     <a href="{{ url_for('budget.edit', budget_id=budget.id) }}" class="row-action-item" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                         <span class="row-action-copy">
@@ -111,6 +117,7 @@
                                             </span>
                                         </button>
                                     </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         </td>
@@ -122,7 +129,9 @@
                                 <div class="empty-state-icon">📒</div>
                                 <h3>No Budgets Yet</h3>
                                 <p>Create your first budget to start tracking community finances.</p>
+                                {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                                 <a href="{{ url_for('budget.create') }}" class="btn btn-primary">Create Budget</a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

@@ -525,6 +525,17 @@
             flex-wrap: wrap;
         }
 
+        .spouse-card-header .dropdown {
+            width: 100%;
+            margin-top: var(--space-3);
+        }
+
+        .spouse-card-header .dropdown-toggle {
+            width: 100%;
+            justify-content: center;
+            min-height: 44px;
+        }
+
         .spouse-details-grid {
             grid-template-columns: 1fr;
         }
@@ -541,6 +552,51 @@
             width: 100%;
             justify-content: flex-end;
             margin-top: var(--space-2);
+        }
+
+        .row-actions {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+
+        .row-actions-toggle {
+            width: 100%;
+            justify-content: center;
+            min-height: 44px;
+            font-size: var(--text-base);
+            touch-action: manipulation;
+        }
+
+        .row-actions-menu {
+            position: static;
+            width: 100%;
+            min-width: 0;
+            right: auto;
+            left: auto;
+            top: auto;
+            margin-top: var(--space-2);
+            transform: none;
+            box-shadow: var(--shadow-lg);
+            transition: opacity 0.12s ease-out, visibility 0.12s ease-out;
+            will-change: opacity, visibility;
+            contain: layout style paint;
+        }
+
+        .row-actions:not(.open) .row-actions-menu {
+            display: none;
+        }
+
+        .row-actions.open .row-actions-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            position: static;
+        }
+
+        .row-actions.drop-up .row-actions-menu {
+            top: auto;
+            bottom: auto;
         }
     }
 
@@ -1296,6 +1352,68 @@ function filterFamilyPage() {
 function clearFamilyFilters() {
     document.getElementById('family-search').value = '';
     document.getElementById('family-type').value = '';
+}
+
+// ===== Mobile Row Actions Optimization =====
+const familyMobileBreakpoint = 768;
+
+const optimizeFamilyRowActions = () => {
+    if (window.innerWidth > familyMobileBreakpoint) return;
+    document.querySelectorAll('.row-actions-toggle').forEach(toggle => {
+        if (toggle.dataset.familyMobileOptimized) return;
+        toggle.dataset.familyMobileOptimized = 'true';
+        toggle.style.touchAction = 'manipulation';
+        toggle.addEventListener('click', function(e) {
+            if (window.innerWidth <= familyMobileBreakpoint) {
+                const wrapper = this.closest('.row-actions');
+                const menu = wrapper?.querySelector('.row-actions-menu');
+                if (!wrapper || !menu) return;
+                const isOpen = wrapper.classList.contains('open');
+                document.querySelectorAll('.row-actions.open').forEach(other => {
+                    if (other !== wrapper) {
+                        other.classList.remove('open');
+                        const otherToggle = other.querySelector('.row-actions-toggle');
+                        if (otherToggle) otherToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                if (isOpen) {
+                    wrapper.classList.remove('open');
+                    this.setAttribute('aria-expanded', 'false');
+                } else {
+                    wrapper.classList.add('open');
+                    this.setAttribute('aria-expanded', 'true');
+                    const firstItem = menu.querySelector('.row-action-item');
+                    if (firstItem) firstItem.focus({ preventScroll: true });
+                }
+            }
+        });
+    });
+};
+
+const cleanupFamilyRowActions = () => {
+    if (window.innerWidth > familyMobileBreakpoint) return;
+    document.querySelectorAll('.row-actions-toggle').forEach(toggle => {
+        if (toggle.dataset.familyMobileOptimized) {
+            delete toggle.dataset.familyMobileOptimized;
+            toggle.style.touchAction = '';
+        }
+    });
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        optimizeFamilyRowActions();
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= familyMobileBreakpoint) optimizeFamilyRowActions();
+            else cleanupFamilyRowActions();
+        });
+    });
+} else {
+    optimizeFamilyRowActions();
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= familyMobileBreakpoint) optimizeFamilyRowActions();
+        else cleanupFamilyRowActions();
+    });
 }
 </script>
 {% endblock %}

@@ -10,13 +10,16 @@ from app.models.minutes import Minutes
 def can_manage_minutes():
     return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY']
 
+def can_view_minutes():
+    return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY', 'CHAIRPERSON']
+
 def is_admin_or_dev():
     return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
 
 @bp.route('/')
 @login_required
 def index():
-    if not can_manage_minutes():
+    if not can_view_minutes():
         flash('You do not have permission to view minutes.', 'danger')
         return redirect(url_for('home.home'))
     
@@ -100,7 +103,7 @@ def create():
 @bp.route('/<int:minutes_id>')
 @login_required
 def view(minutes_id):
-    if not can_manage_minutes():
+    if not can_view_minutes():
         flash('You do not have permission to view minutes.', 'danger')
         return redirect(url_for('minutes.index'))
     

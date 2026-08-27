@@ -645,6 +645,12 @@
 {% endblock %}
 
 {% block content %}
+{% set add_contrib_disallowed = False %}
+{% for category, message in get_flashed_messages(with_categories=true) %}
+  {% if "You do not have permission to add contributions" in message %}
+    {% set add_contrib_disallowed = True %}
+  {% endif %}
+{% endfor %}
 <div class="report-filters mb-5">
     <form method="get" action="{{ url_for('register.index') }}">
         <div class="filter-row">
@@ -747,7 +753,7 @@
                                         </span>
                                     </a>
 
-                                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
                                     <div class="row-actions-divider"></div>
 
                                     <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">

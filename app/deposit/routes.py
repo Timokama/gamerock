@@ -23,7 +23,7 @@ def index():
     user = User.query.get_or_404(current_user.id)
     export_csv = request.args.get('export', '')
 
-    if user.role in (AccessLevel.ADMIN, AccessLevel.DEVEL):
+    if user.role in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.WELFARE_OFFICER):
         search = request.args.get('search', '')
         payment_type = request.args.get('payment_type')
         date_from = request.args.get('date_from')
@@ -114,10 +114,10 @@ def index():
             for m in members
         ]
         
-        return render_template("deposit/index.html", user=user, members=members, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'search': search, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, members_dropdown=members_dropdown)
+        return render_template("deposit/index.html", user=user, members=members, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'search': search, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, members_dropdown=members_dropdown, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
     member = user.member_profile
     if not member:
-        return render_template("deposit/index.html", user=user)
+        return render_template("deposit/index.html", user=user, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
     
     event_id = request.args.get('event', type=int)
     payment_type = request.args.get('payment_type')
@@ -154,7 +154,7 @@ def index():
     for c in contributions:
         contributions_by_member[c.member_id].append(c)
     
-    return render_template("deposit/index.html", user=user, register=member, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'event': event_id, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to})
+    return render_template("deposit/index.html", user=user, register=member, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'event': event_id, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
 
 @bp.route('/<int:depo_id>/')
 def deposit(depo_id):
@@ -192,7 +192,7 @@ def edit_contribution(depo_id):
     user = User.query.get_or_404(current_user.id)
     contribution = Contribution.query.get_or_404(depo_id)
     register = contribution.member
-    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL) and contribution.added_by != user.id:
+    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.TREASURER, AccessLevel.WELFARE_OFFICER):
         flash("You do not have permission to edit this contribution.", "danger")
         return redirect(url_for('deposit.index'))
     events = CommunityEvent.query.all()
@@ -227,7 +227,7 @@ def delete_contribution(depo_id):
 @login_required
 def amount(depo_id):
     user = User.query.get_or_404(current_user.id)
-    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL):
+    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.TREASURER, AccessLevel.WELFARE_OFFICER):
         flash("You do not have permission to add contributions.", "danger")
         return redirect(url_for('deposit.index'))
     level = Payment
@@ -268,7 +268,7 @@ def amount(depo_id):
 def api_member_pending_contributions(member_id):
     """API endpoint to fetch pending contributions for a member."""
     user = User.query.get_or_404(current_user.id)
-    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL):
+    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.WELFARE_OFFICER):
         return jsonify({'error': 'Unauthorized'}), 403
 
     member = Member.query.get_or_404(member_id)

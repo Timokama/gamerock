@@ -94,6 +94,11 @@
     flex-shrink: 0;
     box-shadow: 0 8px 20px -6px rgba(0,0,0,0.25);
     overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .ov-hero:hover .ov-hero-avatar {
+    transform: scale(1.05);
   }
 
   .ov-hero-avatar img {
@@ -109,7 +114,7 @@
     font-size: clamp(1.3rem, 3.5vw, 1.75rem);
     font-weight: 800;
     line-height: 1.2;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
   .ov-hero-sub {
@@ -222,6 +227,7 @@
     line-height: 1.15;
     margin-bottom: 0.15rem;
     letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
   }
 
   .ov-stat-label {
@@ -246,6 +252,145 @@
   .ov-stat-trend.up { background: rgba(16,185,129,0.1); color: #059669; }
   .ov-stat-trend.down { background: rgba(239,68,68,0.1); color: #dc2626; }
 
+  /* ---------- Tiered KPI System ---------- */
+  .ov-kpi-tier {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ov-kpi-tier-1 {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ov-kpi-tier-2 {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ov-kpi-card {
+    flex: 1 1 240px;
+    max-width: 100%;
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3, 0.75rem);
+    transition: all var(--transition-base, 0.25s ease);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    min-width: 200px;
+  }
+
+  .ov-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: var(--radius-xl, 16px) 0 0 var(--radius-xl, 16px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ov-kpi-card:hover::before { opacity: 1; }
+
+  .ov-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color, var(--primary-500));
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ov-kpi-card.primary::before { background: var(--primary-500); }
+  .ov-kpi-card.success::before { background: var(--success-500); }
+  .ov-kpi-card.warning::before { background: var(--warning-500); }
+  .ov-kpi-card.info::before { background: var(--info-500); }
+  .ov-kpi-card.danger::before { background: var(--danger-500); }
+
+  .ov-kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg, 12px);
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
+    color: var(--primary-600, #764ba2);
+    transition: transform var(--transition-fast, 150ms);
+  }
+
+  .ov-kpi-card:hover .ov-kpi-icon {
+    transform: scale(1.08);
+  }
+
+  .ov-kpi-icon.primary { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08)); color: var(--primary-600, #764ba2); }
+  .ov-kpi-icon.success { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08)); color: #059669; }
+  .ov-kpi-icon.warning { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08)); color: #d97706; }
+  .ov-kpi-icon.info { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.08)); color: #2563eb; }
+  .ov-kpi-icon.danger { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.08)); color: #dc2626; }
+
+  .ov-kpi-body { flex: 1; min-width: 0; }
+
+  .ov-kpi-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--dark-color, var(--text-primary));
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ov-kpi-label {
+    font-size: 0.72rem;
+    color: var(--text-muted, var(--text-tertiary));
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.15rem;
+  }
+
+  .ov-kpi-tier-2 .ov-kpi-value {
+    font-size: 1.15rem;
+  }
+
+  .ov-kpi-tier-2 .ov-kpi-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  /* ---------- Unified Card Component ---------- */
+  .ov-card {
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base, 0.25s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .ov-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-medium);
+  }
+
   /* ---------- Summary Cards (Budget/Treasury) ---------- */
   .ov-summary-cards {
     display: grid;
@@ -264,7 +409,23 @@
     transition: all var(--transition-base, 0.25s ease);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
   }
+
+  .ov-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ov-summary-card:hover::before { opacity: 1; }
 
   .ov-summary-card:hover {
     transform: translateY(-3px);
@@ -321,6 +482,7 @@
     border-color: var(--border-medium);
   }
 
+  /* ---------- Section Headers ---------- */
   .ov-section-header {
     display: flex;
     align-items: center;
@@ -338,29 +500,29 @@
   }
 
   .ov-section-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-lg, 10px);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md, 8px);
     display: grid;
     place-items: center;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
+    font-size: 1rem;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
     color: var(--prof-primary, #764ba2);
     transition: all var(--transition-fast, 150ms);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 1px 4px rgba(102, 126, 234, 0.12);
   }
 
   .ov-section:hover .ov-section-icon {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    transform: scale(1.08);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
   }
 
   .ov-section-title {
     margin: 0;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--dark-color, var(--text-primary));
-    font-size: var(--text-lg, 1.05rem);
-    letter-spacing: -0.01em;
+    font-size: var(--text-base, 0.95rem);
+    letter-spacing: -0.005em;
     transition: color var(--transition-fast, 150ms);
   }
 
@@ -374,12 +536,12 @@
     gap: 0.35rem;
     transition: all var(--transition-fast, 0.2s ease);
     padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-    border-radius: var(--radius-lg, 8px);
-    background: rgba(102, 126, 234, 0.06);
+    border-radius: var(--radius-md, 8px);
+    background: rgba(102, 126, 234, 0.05);
   }
 
   .ov-section-action:hover {
-    background: rgba(102, 126, 234, 0.12);
+    background: rgba(102, 126, 234, 0.1);
     transform: translateX(2px);
     text-decoration: none;
     color: var(--primary-color, var(--primary-600));
@@ -387,12 +549,13 @@
 
   /* ---------- Profile ---------- */
   .ov-profile-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-3, 0.75rem);
   }
 
   .ov-profile-item {
+    flex: 1 1 200px;
     display: flex;
     flex-direction: column;
     gap: var(--space-1, 0.25rem);
@@ -401,7 +564,23 @@
     background: var(--input-bg, var(--bg-tertiary));
     border: 1px solid var(--border-color, var(--border-light));
     transition: all var(--transition-fast, 0.2s ease);
+    position: relative;
+    overflow: hidden;
   }
+
+  .ov-profile-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .ov-profile-item:hover::before { opacity: 1; }
 
   .ov-profile-item:hover {
     border-color: var(--primary-color, var(--primary-500));
@@ -410,11 +589,11 @@
   }
 
   .ov-profile-key {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted, var(--text-tertiary));
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
 
   .ov-profile-value {
@@ -424,15 +603,119 @@
     word-break: break-word;
   }
 
+  .ov-profile-family-row {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-4, 1rem);
+    width: 100%;
+  }
+
+  .ov-profile-family-col {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ov-profile-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3, 0.75rem);
+  }
+
+  .ov-profile-item {
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1, 0.25rem);
+    padding: var(--space-3, 0.85rem) var(--space-4, 1rem);
+    border-radius: var(--radius-lg, 12px);
+    background: var(--input-bg, var(--bg-tertiary));
+    border: 1px solid var(--border-color, var(--border-light));
+    transition: all var(--transition-fast, 0.2s ease);
+    position: relative;
+    overflow: hidden;
+  }
+  .ov-welfare-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-3, 0.75rem);
+  }
+
+  .ov-welfare-card {
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 14px);
+    padding: var(--space-4, 1.1rem) var(--space-5, 1.25rem);
+    box-shadow: var(--shadow-xs);
+    text-align: center;
+    transition: all var(--transition-base, 0.25s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ov-welfare-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ov-welfare-card:hover::before { opacity: 1; }
+
+  .ov-welfare-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color, var(--primary-500));
+  }
+
+  .ov-welfare-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ov-welfare-card-icon.primary { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.06)); color: var(--primary-600, #764ba2); }
+  .ov-welfare-card-icon.success { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.06)); color: #059669; }
+  .ov-welfare-card-icon.warning { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.06)); color: #d97706; }
+  .ov-welfare-card-icon.info { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.06)); color: #2563eb; }
+
+  .ov-welfare-card-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark-color, var(--text-primary));
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .ov-welfare-card-label {
+    font-size: 0.7rem;
+    color: var(--text-muted, var(--text-tertiary));
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.2rem;
+  }
+
   /* ---------- Family ---------- */
   .ov-family-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-3, 0.75rem);
     margin-bottom: var(--space-5, 1.25rem);
   }
 
   .ov-family-stat {
+    flex: 1 1 140px;
     text-align: center;
     padding: var(--space-4, 1rem);
     border-radius: var(--radius-xl, 14px);
@@ -441,7 +724,23 @@
     transition: all var(--transition-base, 0.25s ease);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
   }
+
+  .ov-family-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ov-family-stat:hover::before { opacity: 1; }
 
   .ov-family-stat:hover {
     transform: translateY(-3px);
@@ -457,6 +756,11 @@
     place-items: center;
     font-size: 1.1rem;
     margin: 0 auto 0.5rem;
+    transition: transform 0.25s ease;
+  }
+
+  .ov-family-stat:hover .ov-family-stat-icon {
+    transform: scale(1.1);
   }
 
   .ov-family-stat-icon.spouse { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(102,126,234,0.05)); }
@@ -510,7 +814,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.05));
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.06));
     opacity: 0;
     transition: opacity var(--transition-base, 0.35s ease);
   }
@@ -554,6 +858,21 @@
     z-index: 1;
   }
 
+  /* ---------- Animations ---------- */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ov-section {
+    animation: fadeInUp 0.5s ease forwards;
+  }
+
+  .ov-section:nth-child(1) { animation-delay: 0.05s; }
+  .ov-section:nth-child(2) { animation-delay: 0.1s; }
+  .ov-section:nth-child(3) { animation-delay: 0.15s; }
+  .ov-section:nth-child(4) { animation-delay: 0.2s; }
+
   /* ---------- Empty state ---------- */
   .ov-empty {
     text-align: center;
@@ -596,7 +915,7 @@
 
   .ov-data-table th,
   .ov-data-table td {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-3) var(--space-4);
     text-align: left;
     border-bottom: 1px solid var(--border-light);
     font-size: var(--text-sm);
@@ -605,7 +924,7 @@
 
   .ov-data-table th {
     background: var(--bg-tertiary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
     font-size: var(--text-xs);
@@ -620,8 +939,16 @@
   }
 
   .ov-data-table tbody tr:hover {
-    background-color: rgba(20, 184, 166, 0.06);
+    background-color: rgba(102, 126, 234, 0.04);
     transform: translateX(2px);
+  }
+
+  .ov-data-table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.01);
+  }
+
+  .ov-data-table tbody tr:nth-child(even):hover {
+    background-color: rgba(102, 126, 234, 0.06);
   }
 
   .ov-data-table tbody tr:last-child td {
@@ -638,20 +965,30 @@
     gap: var(--space-1, 0.25rem);
     padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
     font-size: var(--text-xs, 0.75rem);
-    font-weight: var(--font-weight-semibold, 600);
+    font-weight: 600;
     border-radius: var(--radius-full, 9999px);
     text-transform: uppercase;
     letter-spacing: 0.025em;
     white-space: nowrap;
+    border: 1px solid transparent;
   }
 
-  .ov-status-badge.approved { background: var(--success-50, #f0fdf4); color: var(--success-700, #15803d); }
-  .ov-status-badge.active { background: var(--primary-100, #ccfbf1); color: var(--primary-700, #0f766e); }
-  .ov-status-badge.draft { background: var(--bg-tertiary); color: var(--text-secondary); }
-  .ov-status-badge.closed { background: var(--danger-50, #fef2f2); color: var(--danger-700, #b91c1c); }
+  .ov-status-badge.approved { background: rgba(34, 197, 94, 0.08); color: #15803d; border-color: rgba(34, 197, 94, 0.2); }
+  .ov-status-badge.active { background: rgba(20, 184, 166, 0.08); color: #0f766e; border-color: rgba(20, 184, 166, 0.2); }
+  .ov-status-badge.draft { background: rgba(148, 163, 184, 0.08); color: #475569; border-color: rgba(148, 163, 184, 0.2); }
+  .ov-status-badge.closed { background: rgba(239, 68, 68, 0.08); color: #b91c1c; border-color: rgba(239, 68, 68, 0.2); }
 
-  .ov-type-badge.income { background: rgba(16,185,129,0.1); color: #059669; }
-  .ov-type-badge.expense { background: rgba(239,68,68,0.1); color: #dc2626; }
+  .ov-type-badge.income { background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.2); }
+  .ov-type-badge.expense { background: rgba(239,68,68,0.08); color: #dc2626; border-color: rgba(239,68,68,0.2); }
+
+  /* ---------- Mobile Table Cards ---------- */
+  @media (max-width: 768px) {
+    .ov-data-table thead { display: none; }
+    .ov-data-table tbody tr { display: block; margin-bottom: var(--space-4); border: 1px solid var(--border-light); border-radius: var(--radius-lg); background: var(--bg-secondary); box-shadow: var(--shadow-xs); }
+    .ov-data-table tbody td { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-light); }
+    .ov-data-table tbody td::before { content: attr(data-label); font-weight: 600; color: var(--text-secondary); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; }
+    .ov-data-table tbody td:last-child { border-bottom: none; }
+  }
 
   /* ---------- Dark mode ---------- */
   [data-theme="dark"] .ov-hero {
@@ -703,37 +1040,107 @@
   }
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 1024px) {
-    .ov-hero-inner { 
-      flex-direction: column; 
-      align-items: flex-start; 
+  @media (max-width: 1200px) {
+    .ov-kpi-card {
+      flex: 1 1 220px;
+      min-width: 180px;
+    }
+    .ov-hero-inner {
+      flex-direction: column;
+      align-items: flex-start;
     }
     .ov-hero-left { width: 100%; }
-    .ov-stats { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-    .ov-profile-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-    .ov-quick-links { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-    .ov-summary-cards { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width: 1024px) {
+    .ov-kpi-card {
+      flex: 1 1 200px;
+      min-width: 160px;
+    }
+    .ov-profile-item {
+      flex: 1 1 calc(50% - 0.375rem);
+    }
+    .ov-summary-cards {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .ov-welfare-section {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .ov-profile-family-row {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 768px) {
-    .ov-stats { grid-template-columns: repeat(2, 1fr); }
-    .ov-profile-grid { grid-template-columns: 1fr; }
-    .ov-quick-links { grid-template-columns: repeat(2, 1fr); }
-    .ov-summary-cards { grid-template-columns: repeat(2, 1fr); }
-    .ov-family-stats { grid-template-columns: repeat(2, 1fr); }
+    .ov-kpi-tier-1,
+    .ov-kpi-tier-2 {
+      flex-direction: column;
+    }
+    .ov-kpi-card {
+      flex: 1 1 auto;
+      min-width: 100%;
+    }
+    .ov-profile-item {
+      flex: 1 1 100%;
+    }
+    .ov-quick-links {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ov-summary-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ov-family-stat {
+      flex: 1 1 calc(50% - 0.375rem);
+    }
+    .ov-section {
+      padding: var(--space-4);
+    }
+    .ov-section-header {
+      flex-wrap: wrap;
+    }
+    .ov-section-title {
+      font-size: var(--text-sm);
+    }
+    .ov-welfare-section {
+      grid-template-columns: 1fr;
+    }
+    .ov-profile-family-row {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 576px) {
-    .ov-stats { grid-template-columns: 1fr; }
-    .ov-quick-links { grid-template-columns: 1fr; }
-    .ov-summary-cards { grid-template-columns: 1fr; }
-    .ov-family-stats { grid-template-columns: 1fr; }
-    .ov-data-table { 
+    .ov-kpi-card {
+      min-width: 100%;
+      padding: var(--space-3) var(--space-4);
+    }
+    .ov-quick-links {
+      grid-template-columns: 1fr;
+    }
+    .ov-summary-cards {
+      grid-template-columns: 1fr;
+    }
+    .ov-family-stat {
+      flex: 1 1 100%;
+    }
+    .ov-data-table {
       font-size: var(--text-xs);
     }
     .ov-data-table th,
     .ov-data-table td {
       padding: var(--space-2) var(--space-3);
+    }
+    .ov-hero-title {
+      font-size: 1.25rem;
+    }
+    .ov-hero-sub {
+      font-size: 0.85rem;
+    }
+    .ov-welfare-section {
+      grid-template-columns: 1fr;
+    }
+    .ov-profile-family-row {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -765,105 +1172,547 @@
   </section>
 
   <!-- Stats -->
-  <section class="ov-stats" aria-label="Key metrics">
+  <section class="ov-kpi-tier" aria-label="Key metrics">
     {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-    <div class="ov-stat primary">
-      <div class="ov-stat-icon">👥</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ total_members }}</div>
-        <div class="ov-stat-label">Total Members</div>
-      </div>
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
+        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_members }}</div>
+          <div class="ov-kpi-label">Total Members</div>
+        </div>
+      </a>
+      <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
+          <div class="ov-kpi-label">Total Contributions</div>
+        </div>
+      </a>
+      <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_events }}</div>
+          <div class="ov-kpi-label">Community Events</div>
+        </div>
+      </a>
+      <a href="{{ url_for('budget.index') }}" class="ov-kpi-card info">
+        <div class="ov-kpi-icon info">📒</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ budget_stats.total_budgets if budget_stats else 0 }}</div>
+          <div class="ov-kpi-label">Total Budgets</div>
+        </div>
+      </a>
     </div>
-    <div class="ov-stat success">
-      <div class="ov-stat-icon">💰</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
-        <div class="ov-stat-label">Total Contributions</div>
-      </div>
-    </div>
-    <div class="ov-stat warning">
-      <div class="ov-stat-icon">🎉</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ total_events }}</div>
-        <div class="ov-stat-label">Community Events</div>
-      </div>
-    </div>
-    <div class="ov-stat info">
-      <div class="ov-stat-icon">📒</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ budget_stats.total_budgets if budget_stats else 0 }}</div>
-        <div class="ov-stat-label">Total Budgets</div>
-      </div>
-    </div>
-    <div class="ov-stat warning">
-      <div class="ov-stat-icon">🏦</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
-        <div class="ov-stat-label">Treasurer Balance</div>
-      </div>
+    <div class="ov-kpi-tier-2">
+      <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">🏦</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
+          <div class="ov-kpi-label">Treasurer Balance</div>
+        </div>
+      </a>
     </div>
     {% elif current_user.role.name == 'TREASURER' %}
-    <div class="ov-stat success">
-      <div class="ov-stat-icon">📈</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_income) if treasurer_stats else '0' }}</div>
-        <div class="ov-stat-label">Total Income</div>
-      </div>
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">📈</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_income) if treasurer_stats else '0' }}</div>
+          <div class="ov-kpi-label">Total Income</div>
+        </div>
+      </a>
+      <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card danger">
+        <div class="ov-kpi-icon danger">📉</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_expenses) if treasurer_stats else '0' }}</div>
+          <div class="ov-kpi-label">Total Expenses</div>
+        </div>
+      </a>
+      <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">⚖️</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
+          <div class="ov-kpi-label">Balance</div>
+        </div>
+      </a>
+      <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card info">
+        <div class="ov-kpi-icon info">📋</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ treasurer_stats.total_records if treasurer_stats else 0 }}</div>
+          <div class="ov-kpi-label">Total Records</div>
+        </div>
+      </a>
     </div>
-    <div class="ov-stat danger">
-      <div class="ov-stat-icon">📉</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_expenses) if treasurer_stats else '0' }}</div>
-        <div class="ov-stat-label">Total Expenses</div>
-      </div>
+    {% elif current_user.role.name == 'WELFARE_OFFICER' %}
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
+          <div class="ov-kpi-label">Total Contributions</div>
+        </div>
+      </a>
+      <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
+        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_members }}</div>
+          <div class="ov-kpi-label">Total Members</div>
+        </div>
+      </a>
+      <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_events }}</div>
+          <div class="ov-kpi-label">Community Events</div>
+        </div>
+      </a>
     </div>
-    <div class="ov-stat warning">
-      <div class="ov-stat-icon">⚖️</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
-        <div class="ov-stat-label">Balance</div>
-      </div>
+    {% elif current_user.role.name == 'SECRETARY' %}
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card primary">
+        <div class="ov-kpi-icon primary">📝</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ secretary_stats.total_minutes if secretary_stats else 0 }}</div>
+          <div class="ov-kpi-label">Total Minutes</div>
+        </div>
+      </a>
+      <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">📋</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ secretary_stats.draft if secretary_stats else 0 }}</div>
+          <div class="ov-kpi-label">Draft Minutes</div>
+        </div>
+      </a>
+      <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">✅</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ secretary_stats.approved if secretary_stats else 0 }}</div>
+          <div class="ov-kpi-label">Approved Minutes</div>
+        </div>
+      </a>
+      <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card info">
+        <div class="ov-kpi-icon info">🗄️</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ secretary_stats.archived if secretary_stats else 0 }}</div>
+          <div class="ov-kpi-label">Archived Minutes</div>
+        </div>
+      </a>
     </div>
-    <div class="ov-stat info">
-      <div class="ov-stat-icon">📋</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ treasurer_stats.total_records if treasurer_stats else 0 }}</div>
-        <div class="ov-stat-label">Total Records</div>
-      </div>
+    {% elif current_user.role.name == 'USER' %}
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(user_stats.total_contributions if user_stats else 0) }}</div>
+          <div class="ov-kpi-label">My Contributions</div>
+        </div>
+      </a>
+      <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card primary">
+        <div class="ov-kpi-icon primary">📊</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ user_stats.transaction_count if user_stats else 0 }}</div>
+          <div class="ov-kpi-label">Transactions</div>
+        </div>
+      </a>
+      <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">⏳</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ user_stats.pending_events if user_stats else 0 }}</div>
+          <div class="ov-kpi-label">Pending Events</div>
+        </div>
+      </a>
+      <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('register.index') }}" class="ov-kpi-card info">
+        <div class="ov-kpi-icon info">👨‍👩‍👧‍👦</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ user_stats.family_count if user_stats else 0 }}</div>
+          <div class="ov-kpi-label">Family Members</div>
+        </div>
+      </a>
     </div>
     {% else %}
-    <div class="ov-stat primary">
-      <div class="ov-stat-icon">👥</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ total_members }}</div>
-        <div class="ov-stat-label">Total Members</div>
-      </div>
-    </div>
-    <div class="ov-stat success">
-      <div class="ov-stat-icon">💰</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
-        <div class="ov-stat-label">Total Contributions</div>
-      </div>
-    </div>
-    <div class="ov-stat warning">
-      <div class="ov-stat-icon">🎉</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ total_events }}</div>
-        <div class="ov-stat-label">Community Events</div>
-      </div>
-    </div>
-    <div class="ov-stat info">
-      <div class="ov-stat-icon">📞</div>
-      <div class="ov-stat-body">
-        <div class="ov-stat-value">{{ contact or 'N/A' }}</div>
-        <div class="ov-stat-label">Contact</div>
-      </div>
+    <div class="ov-kpi-tier-1">
+      <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
+        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_members }}</div>
+          <div class="ov-kpi-label">Total Members</div>
+        </div>
+      </a>
+      <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
+        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
+          <div class="ov-kpi-label">Total Contributions</div>
+        </div>
+      </a>
+      <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
+        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ total_events }}</div>
+          <div class="ov-kpi-label">Community Events</div>
+        </div>
+      </a>
+      <a href="{{ url_for('main.profile') }}" class="ov-kpi-card info">
+        <div class="ov-kpi-icon info">📞</div>
+        <div class="ov-kpi-body">
+          <div class="ov-kpi-value">{{ contact or 'N/A' }}</div>
+          <div class="ov-kpi-label">Contact</div>
+        </div>
+      </a>
     </div>
     {% endif %}
   </section>
 
-  {% if current_user.role.name in ['DEVEL', 'ADMIN'] and budget_stats %}
+  {% if current_user.role.name == 'SECRETARY' and secretary_stats %}
+  <!-- Secretary Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">📝</div>
+        <h4 class="ov-section-title">Recent Minutes</h4>
+      </div>
+      <a href="{{ url_for('minutes.index') }}" class="ov-section-action">View Minutes <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-file-text"></i></div>
+        <div class="ov-summary-card-value">{{ secretary_stats.total_minutes }}</div>
+        <div class="ov-summary-card-label">Total Minutes</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon warning"><i class="bi bi-pencil"></i></div>
+        <div class="ov-summary-card-value">{{ secretary_stats.draft }}</div>
+        <div class="ov-summary-card-label">Draft</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-check-circle"></i></div>
+        <div class="ov-summary-card-value">{{ secretary_stats.approved }}</div>
+        <div class="ov-summary-card-label">Approved</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-archive"></i></div>
+        <div class="ov-summary-card-value">{{ secretary_stats.archived }}</div>
+        <div class="ov-summary-card-label">Archived</div>
+      </div>
+    </div>
+
+    {% if secretary_stats.recent_minutes %}
+    <div class="table-responsive">
+      <table class="ov-data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Meeting Type</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in secretary_stats.recent_minutes %}
+          <tr>
+            <td data-label="Title"><strong>{{ entry.title }}</strong></td>
+            <td data-label="Meeting Type">{{ entry.meeting_type }}</td>
+            <td data-label="Date">{{ entry.meeting_date.strftime('%B %d, %Y') if entry.meeting_date else 'N/A' }}</td>
+            <td data-label="Status" class="text-center">
+              <span class="ov-status-badge {{ entry.status.lower() }}">{{ entry.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if member_details %}
+    <div class="ov-profile-family-row">
+      <div class="ov-profile-family-col">
+        <div class="ov-section">
+          <div class="ov-section-header">
+            <div class="ov-section-header-left">
+              <div class="ov-section-icon">👤</div>
+              <h4 class="ov-section-title">My Profile</h4>
+            </div>
+            <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
+          </div>
+          <div class="ov-profile-grid">
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Full Name</span>
+              <span class="ov-profile-value">{{ member_details.firstname }} {{ member_details.lastname }} {{ member_details.surname }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">ID Number</span>
+              <span class="ov-profile-value">{{ member_details.id_number|member_id }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Phone</span>
+              <span class="ov-profile-value">{{ member_details.phone_num|member_phone or 'Not provided' }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Member Since</span>
+              <span class="ov-profile-value">{{ member_details.created_at.strftime('%B %d, %Y') if member_details.created_at else 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ov-profile-family-col">
+        <div class="ov-section">
+          <div class="ov-section-header">
+            <div class="ov-section-header-left">
+              <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
+              <h4 class="ov-section-title">Family Network</h4>
+            </div>
+            {% if current_user.member_profile %}
+            <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) }}" class="ov-section-action">View Family <i class="bi bi-arrow-right"></i></a>
+            {% endif %}
+          </div>
+          {% if family_stats %}
+          <div class="ov-family-stats">
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon spouse">💍</div>
+              <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
+              <div class="ov-family-stat-label">Spouses</div>
+            </div>
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon child">👶</div>
+              <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
+              <div class="ov-family-stat-label">Children</div>
+            </div>
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
+              <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
+              <div class="ov-family-stat-label">Total Family</div>
+            </div>
+          </div>
+          {% endif %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Relationship</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for spouse in member_details.spouses %}
+                <tr>
+                  <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
+                  <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                  <td>{{ spouse.phone_num|member_phone }}</td>
+                </tr>
+                {% endfor %}
+                {% for child in member_details.all_children %}
+                <tr>
+                  <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
+                  <td><span class="family-badge child-badge">👶 Child</span></td>
+                  <td>{{ child.phone_num|member_phone }}</td>
+                </tr>
+                {% endfor %}
+                {% if not member_details.spouses and not member_details.all_children %}
+                <tr>
+                  <td colspan="3">
+                    <div class="ov-empty">
+                      <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
+                      <h3>No Family Members Yet</h3>
+                      <p class="mb-3">Start building your family network.</p>
+                      {% if current_user.member_profile %}
+                      <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if current_user.role.name == 'USER' and user_stats %}
+  <!-- User Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">👤</div>
+        <h4 class="ov-section-title">My Dashboard</h4>
+      </div>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-cash-stack"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(user_stats.total_contributions) }}</div>
+        <div class="ov-summary-card-label">My Contributions</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-receipt"></i></div>
+        <div class="ov-summary-card-value">{{ user_stats.transaction_count }}</div>
+        <div class="ov-summary-card-label">Transactions</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon warning"><i class="bi bi-hourglass-split"></i></div>
+        <div class="ov-summary-card-value">{{ user_stats.pending_events }}</div>
+        <div class="ov-summary-card-label">Pending Events</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-people"></i></div>
+        <div class="ov-summary-card-value">{{ user_stats.family_count }}</div>
+        <div class="ov-summary-card-label">Family Members</div>
+      </div>
+    </div>
+
+    {% if user_stats.recent_contributions %}
+    <div class="table-responsive">
+      <table class="ov-data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Payment Type</th>
+            <th>Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contrib in user_stats.recent_contributions %}
+          <tr>
+            <td data-label="Date">{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
+            <td data-label="Amount" class="text-end">Ksh. {{ '{:,}'.format(contrib.amount or 0) }}</td>
+            <td data-label="Payment Type">
+              {% set pt = contrib.payment_type.value if contrib.payment_type else '' %}
+              {% if pt == 'Ksh' %}
+              <span class="ov-status-badge success">{{ pt }}</span>
+              {% elif pt == 'MPESA' %}
+              <span class="ov-status-badge info">{{ pt }}</span>
+              {% elif pt == 'BANK DEPOSIT' %}
+              <span class="ov-status-badge primary">{{ pt }}</span>
+              {% else %}
+              <span class="ov-status-badge">{{ pt if pt else 'N/A' }}</span>
+              {% endif %}
+            </td>
+            <td data-label="Event">{{ contrib.community_event.name if contrib.community_event else 'N/A' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if member_details %}
+    <div class="ov-profile-family-row">
+      <div class="ov-profile-family-col">
+        <div class="ov-section">
+          <div class="ov-section-header">
+            <div class="ov-section-header-left">
+              <div class="ov-section-icon">👤</div>
+              <h4 class="ov-section-title">My Profile</h4>
+            </div>
+            <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
+          </div>
+          <div class="ov-profile-grid">
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Full Name</span>
+              <span class="ov-profile-value">{{ member_details.firstname }} {{ member_details.lastname }} {{ member_details.surname }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">ID Number</span>
+              <span class="ov-profile-value">{{ member_details.id_number|member_id }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Phone</span>
+              <span class="ov-profile-value">{{ member_details.phone_num|member_phone or 'Not provided' }}</span>
+            </div>
+            <div class="ov-profile-item">
+              <span class="ov-profile-key">Member Since</span>
+              <span class="ov-profile-value">{{ member_details.created_at.strftime('%B %d, %Y') if member_details.created_at else 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ov-profile-family-col">
+        <div class="ov-section">
+          <div class="ov-section-header">
+            <div class="ov-section-header-left">
+              <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
+              <h4 class="ov-section-title">Family Network</h4>
+            </div>
+            {% if current_user.member_profile %}
+            <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) }}" class="ov-section-action">View Family <i class="bi bi-arrow-right"></i></a>
+            {% endif %}
+          </div>
+          {% if family_stats %}
+          <div class="ov-family-stats">
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon spouse">💍</div>
+              <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
+              <div class="ov-family-stat-label">Spouses</div>
+            </div>
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon child">👶</div>
+              <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
+              <div class="ov-family-stat-label">Children</div>
+            </div>
+            <div class="ov-family-stat">
+              <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
+              <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
+              <div class="ov-family-stat-label">Total Family</div>
+            </div>
+          </div>
+          {% endif %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Relationship</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for spouse in member_details.spouses %}
+                <tr>
+                  <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
+                  <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                  <td>{{ spouse.phone_num|member_phone }}</td>
+                </tr>
+                {% endfor %}
+                {% for child in member_details.all_children %}
+                <tr>
+                  <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
+                  <td><span class="family-badge child-badge">👶 Child</span></td>
+                  <td>{{ child.phone_num|member_phone }}</td>
+                </tr>
+                {% endfor %}
+                {% if not member_details.spouses and not member_details.all_children %}
+                <tr>
+                  <td colspan="3">
+                    <div class="ov-empty">
+                      <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
+                      <h3>No Family Members Yet</h3>
+                      <p class="mb-3">Start building your family network.</p>
+                      {% if current_user.member_profile %}
+                      <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] and budget_stats %}
   <!-- Budget Overview -->
   <section class="ov-section">
     <div class="ov-section-header">
@@ -922,13 +1771,13 @@
         <tbody>
           {% for budget in recent_budgets %}
           <tr>
-            <td><strong>{{ budget.name }}</strong></td>
-            <td>{{ budget.fiscal_year or 'N/A' }}</td>
-            <td class="text-end">Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
-            <td class="text-center">
+            <td data-label="Name"><strong>{{ budget.name }}</strong></td>
+            <td data-label="Fiscal Year">{{ budget.fiscal_year or 'N/A' }}</td>
+            <td data-label="Amount" class="text-end">Ksh. {{ '{:,}'.format(budget.total_amount) }}</td>
+            <td data-label="Status" class="text-center">
               <span class="ov-status-badge {{ budget.status.lower() }}">{{ budget.status }}</span>
             </td>
-            <td>{{ budget.created_at.strftime('%B %d, %Y') if budget.created_at else 'N/A' }}</td>
+            <td data-label="Created">{{ budget.created_at.strftime('%B %d, %Y') if budget.created_at else 'N/A' }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -939,7 +1788,72 @@
       <div class="bi bi-folder-x"></div>
       <h3>No Budgets Yet</h3>
       <p class="mb-3">Create your first budget to start tracking community finances.</p>
+      {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
       <a href="{{ url_for('budget.create') }}" class="btn btn-primary btn-sm">Create Budget</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON', 'SECRETARY'] and minutes_stats %}
+  <!-- Minutes Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">📝</div>
+        <h4 class="ov-section-title">Minutes Overview</h4>
+      </div>
+      <a href="{{ url_for('minutes.index') }}" class="ov-section-action">View Minutes <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon primary"><i class="bi bi-file-text"></i></div>
+        <div class="ov-summary-card-value">{{ minutes_stats.total_minutes }}</div>
+        <div class="ov-summary-card-label">Total Minutes</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon warning"><i class="bi bi-pencil"></i></div>
+        <div class="ov-summary-card-value">{{ minutes_stats.draft }}</div>
+        <div class="ov-summary-card-label">Draft</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-check-circle"></i></div>
+        <div class="ov-summary-card-value">{{ minutes_stats.approved }}</div>
+        <div class="ov-summary-card-label">Approved</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-archive"></i></div>
+        <div class="ov-summary-card-value">{{ minutes_stats.archived }}</div>
+        <div class="ov-summary-card-label">Archived</div>
+      </div>
+    </div>
+
+    {% if minutes_stats.recent_minutes %}
+    <div class="table-responsive">
+      <table class="ov-data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Meeting Type</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in minutes_stats.recent_minutes %}
+          <tr>
+            <td data-label="Title"><strong>{{ entry.title }}</strong></td>
+            <td data-label="Meeting Type">{{ entry.meeting_type }}</td>
+            <td data-label="Date">{{ entry.meeting_date.strftime('%B %d, %Y') if entry.meeting_date else 'N/A' }}</td>
+            <td data-label="Status" class="text-center">
+              <span class="ov-status-badge {{ entry.status.lower() }}">{{ entry.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     {% endif %}
   </section>
@@ -994,13 +1908,13 @@
         <tbody>
           {% for record in recent_treasurer_records %}
           <tr>
-            <td><strong>{{ record.category or 'General' }}</strong></td>
-            <td class="text-center">
+            <td data-label="Category"><strong>{{ record.category or 'General' }}</strong></td>
+            <td data-label="Type" class="text-center">
               <span class="ov-type-badge {{ record.record_type.lower() }}">{{ record.record_type }}</span>
             </td>
-            <td class="text-end">Ksh. {{ '{:,}'.format(record.amount) }}</td>
-            <td>{{ record.transaction_date.strftime('%B %d, %Y') if record.transaction_date else 'N/A' }}</td>
-            <td>{{ record.reference or '—' }}</td>
+            <td data-label="Amount" class="text-end">Ksh. {{ '{:,}'.format(record.amount) }}</td>
+            <td data-label="Date">{{ record.transaction_date.strftime('%B %d, %Y') if record.transaction_date else 'N/A' }}</td>
+            <td data-label="Reference">{{ record.reference or '—' }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -1017,135 +1931,116 @@
   </section>
   {% endif %}
 
-  {% if member_details %}
-  <div class="row">
-    <!-- Profile -->
-    <div class="col-lg-5 mb-4">
-      <div class="ov-section">
-        <div class="ov-section-header">
-          <div class="ov-section-header-left">
-            <div class="ov-section-icon">👤</div>
-            <h4 class="ov-section-title">My Profile</h4>
-          </div>
-          <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
-        </div>
-        <div class="ov-profile-grid">
-          <div class="ov-profile-item">
-            <span class="ov-profile-key">Full Name</span>
-            <span class="ov-profile-value">{{ member_details.firstname }} {{ member_details.lastname }} {{ member_details.surname }}</span>
-          </div>
-          <div class="ov-profile-item">
-            <span class="ov-profile-key">ID Number</span>
-            <span class="ov-profile-value">{{ member_details.id_number|member_id }}</span>
-          </div>
-          <div class="ov-profile-item">
-            <span class="ov-profile-key">Phone</span>
-            <span class="ov-profile-value">{{ member_details.phone_num|member_phone or 'Not provided' }}</span>
-          </div>
-          <div class="ov-profile-item">
-            <span class="ov-profile-key">Date of Birth</span>
-            <span class="ov-profile-value">{{ member_details.date_of_birth or 'Not set' }}</span>
-          </div>
-          <div class="ov-profile-item">
-            <span class="ov-profile-key">Member Since</span>
-            <span class="ov-profile-value">{{ member_details.created_at.strftime('%B %d, %Y') if member_details.created_at else 'N/A' }}</span>
-          </div>
-        </div>
+  {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER'] and welfare_stats %}
+  <!-- Welfare Officer Overview -->
+  <section class="ov-section">
+    <div class="ov-section-header">
+      <div class="ov-section-header-left">
+        <div class="ov-section-icon">🤝</div>
+        <h4 class="ov-section-title">Welfare Overview</h4>
+      </div>
+      <a href="{{ url_for('deposit.index') }}" class="ov-section-action">View Deposits <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="ov-summary-cards">
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon success"><i class="bi bi-cash-stack"></i></div>
+        <div class="ov-summary-card-value">Ksh. {{ '{:,}'.format(welfare_stats.total_contributions) }}</div>
+        <div class="ov-summary-card-label">Total Contributions</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon info"><i class="bi bi-people"></i></div>
+        <div class="ov-summary-card-value">{{ welfare_stats.total_members }}</div>
+        <div class="ov-summary-card-label">Active Members</div>
+      </div>
+      <div class="ov-summary-card">
+        <div class="ov-summary-card-icon warning"><i class="bi bi-calendar-event"></i></div>
+        <div class="ov-summary-card-value">{{ welfare_stats.total_events }}</div>
+        <div class="ov-summary-card-label">Community Events</div>
       </div>
     </div>
 
-    <!-- Family -->
-    <div class="col-lg-7 mb-4">
-      <div class="ov-section">
-        <div class="ov-section-header">
-          <div class="ov-section-header-left">
-            <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
-            <h4 class="ov-section-title">Family Network</h4>
-          </div>
-          {% if current_user.member_profile %}
-          <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) }}" class="ov-section-action">View Family <i class="bi bi-arrow-right"></i></a>
-          {% endif %}
-        </div>
-
-        {% if family_stats %}
-        <div class="ov-family-stats">
-          <div class="ov-family-stat">
-            <div class="ov-family-stat-icon spouse">💍</div>
-            <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
-            <div class="ov-family-stat-label">Spouses</div>
-          </div>
-          <div class="ov-family-stat">
-            <div class="ov-family-stat-icon child">👶</div>
-            <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
-            <div class="ov-family-stat-label">Children</div>
-          </div>
-          <div class="ov-family-stat">
-            <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
-            <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
-            <div class="ov-family-stat-label">Total Family</div>
-          </div>
-        </div>
-        {% endif %}
-
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Relationship</th>
-                <th>Phone</th>
-                <th>ID Number</th>
-                <th>Date of Birth</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for spouse in member_details.spouses %}
-              <tr>
-                <td>
-                  <span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span>
-                  <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong>
-                </td>
-                <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
-                <td>{{ spouse.phone_num|member_phone }}</td>
-                <td>{{ spouse.id_number|member_id }}</td>
-                <td>{{ spouse.date_of_birth }}</td>
-              </tr>
-              {% endfor %}
-              {% for child in member_details.all_children %}
-              <tr>
-                <td>
-                  <span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span>
-                  <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
-                </td>
-                <td><span class="family-badge child-badge">👶 Child</span></td>
-                <td>{{ child.phone_num|member_phone }}</td>
-                <td>{{ child.id_number|member_id }}</td>
-                <td>{{ child.date_of_birth }}</td>
-              </tr>
-              {% endfor %}
-              {% if not member_details.spouses and not member_details.all_children %}
-              <tr>
-                <td colspan="5">
-                  <div class="ov-empty">
-                    <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
-                    <h3>No Family Members Yet</h3>
-                    <p class="mb-3">Start building your family network by adding spouses and children.</p>
-                    {% if current_user.member_profile %}
-                    <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>
+    {% if welfare_stats.recent_contributions %}
+    <div class="table-responsive">
+        <table class="ov-data-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th class="text-end">Amount</th>
+              <th>Payment Type</th>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contrib in welfare_stats.recent_contributions %}
+            <tr>
+              <td data-label="Member"><strong>{{ contrib.member.firstname }} {{ contrib.member.lastname }} {{ contrib.member.surname }}</strong></td>
+              <td data-label="Amount" class="text-end">Ksh. {{ '{:,}'.format(contrib.amount) }}</td>
+              <td data-label="Payment Type">
+                {% if contrib.payment_type.value == 'Ksh' %}
+                <span class="payment-badge cash">{{ contrib.payment_type.value }}</span>
+                {% elif contrib.payment_type.value == 'MPESA' %}
+                <span class="payment-badge mpesa">{{ contrib.payment_type.value }}</span>
+                {% elif contrib.payment_type.value == 'BANK DEPOSIT' %}
+                <span class="payment-badge bank">{{ contrib.payment_type.value }}</span>
+                {% else %}
+                <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ contrib.payment_type.value if contrib.payment_type else 'N/A' }}</span>
+                {% endif %}
+              </td>
+              <td data-label="Event">{{ contrib.community_event.name if contrib.community_event else 'N/A' }}</td>
+              <td data-label="Date">{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
+              <td data-label="Actions">
+                <div class="row-actions">
+                  <button class="row-actions-toggle" type="button"
+                          aria-haspopup="true" aria-expanded="false"
+                          aria-label="Actions for contribution by {{ contrib.member.firstname }} {{ contrib.member.lastname }}">
+                    <span aria-hidden="true">⚙</span>
+                    <span>Actions</span>
+                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                  </button>
+                  <div class="row-actions-menu" role="menu">
+                    <div class="row-actions-menu-header">
+                      <span class="row-actions-menu-title">{{ contrib.member.firstname }} {{ contrib.member.lastname }} {{ contrib.member.surname }}</span>
+                      <span class="row-actions-menu-sub">💳 Contribution</span>
+                    </div>
+                    <a href="{{ url_for('deposit.deposit', depo_id=contrib.member.id) }}" class="row-action-item" role="menuitem">
+                      <span class="row-action-icon" aria-hidden="true">📄</span>
+                      <span class="row-action-copy">
+                        <span class="row-action-label">View Deposits</span>
+                        <span class="row-action-hint">View contribution history</span>
+                      </span>
+                    </a>
+                    {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER'] %}
+                    <a href="{{ url_for('deposit.edit_contribution', depo_id=contrib.id) }}" class="row-action-item" role="menuitem">
+                      <span class="row-action-icon" aria-hidden="true">✏️</span>
+                      <span class="row-action-copy">
+                        <span class="row-action-label">Edit Contribution</span>
+                        <span class="row-action-hint">Update amount or type</span>
+                      </span>
+                    </a>
                     {% endif %}
                   </div>
-                </td>
-              </tr>
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
     </div>
-  </div>
+    {% else %}
+    <div class="ov-empty">
+      <div class="bi bi-cash-coin"></div>
+      <h3>No Contributions Yet</h3>
+      <p class="mb-3">Start recording contributions to see them here.</p>
+      <a href="{{ url_for('deposit.index') }}" class="btn btn-primary btn-sm">View Deposits</a>
+    </div>
+    {% endif %}
+  </section>
   {% endif %}
 
-  <!-- Quick Links -->
+<!-- Quick Links -->
   <div class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
@@ -1166,7 +2061,7 @@
         <span class="ov-quick-link-icon">📊</span>
         <span class="ov-quick-link-text">Reports</span>
       </a>
-      {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
       <a href="{{ url_for('budget.index') }}" class="ov-quick-link">
         <span class="ov-quick-link-icon">📒</span>
         <span class="ov-quick-link-text">Budgets</span>
@@ -1178,10 +2073,16 @@
         <span class="ov-quick-link-text">Treasurer</span>
       </a>
       {% endif %}
-      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
+      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY', 'CHAIRPERSON'] %}
       <a href="{{ url_for('minutes.index') }}" class="ov-quick-link">
         <span class="ov-quick-link-icon">📝</span>
         <span class="ov-quick-link-text">Minutes</span>
+      </a>
+      {% endif %}
+      {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER'] %}
+      <a href="{{ url_for('deposit.index') }}" class="ov-quick-link">
+        <span class="ov-quick-link-icon">💳</span>
+        <span class="ov-quick-link-text">Deposits</span>
       </a>
       {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}

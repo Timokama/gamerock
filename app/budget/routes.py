@@ -10,10 +10,13 @@ from app.models.budget import Budget, BudgetItem
 def is_admin_or_dev():
     return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
 
+def can_view_budget():
+    return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON']
+
 @bp.route('/')
 @login_required
 def index():
-    if not is_admin_or_dev():
+    if not can_view_budget():
         flash('You do not have permission to manage budgets.', 'danger')
         return redirect(url_for('home.home'))
     
@@ -96,7 +99,7 @@ def create():
 @bp.route('/<int:budget_id>')
 @login_required
 def view(budget_id):
-    if not is_admin_or_dev():
+    if not can_view_budget():
         flash('You do not have permission to view budgets.', 'danger')
         return redirect(url_for('budget.index'))
     

@@ -31,9 +31,9 @@ def create_app():
     #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    app.config['DEBUG'] = True
     app.config['USE_RELOADER'] = False
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    app.config['DEBUG'] = False
 
     @app.after_request
     def set_no_cache(response):
@@ -42,7 +42,6 @@ def create_app():
         response.headers['Expires'] = '0'
         return response
 
-    ui = FlaskUI(app, width=800, height=1000)
     db.init_app(app)
     migrate.init_app(app, db)
     
@@ -265,5 +264,14 @@ def create_app():
         if is_admin_or_dev():
             return value
         return mask_id(value)
+
+    @app.template_global()
+    def static_version(filename):
+        import os
+        filepath = os.path.join(app.root_path, 'static', filename.replace('/', os.sep))
+        try:
+            return f"{url_for('static', filename=filename)}?v={int(os.path.getmtime(filepath))}"
+        except OSError:
+            return url_for('static', filename=filename)
 
     return app

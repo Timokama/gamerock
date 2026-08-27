@@ -10,6 +10,9 @@
     .mg-card .row-actions {
         overflow: visible !important;
     }
+    .mg-table {
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
@@ -17,6 +20,7 @@
 <div class="mg-page-header">
     <h2>Treasurer Records</h2>
     <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary">➕ New Transaction</a>
+    <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">💳 View Deposits</a>
 </div>
 
 <div class="mg-summary-cards mb-4">
@@ -88,17 +92,17 @@
                 <tbody>
                     {% for record in records %}
                     <tr>
-                        <td>{{ record.transaction_date.strftime('%b %d, %Y') if record.transaction_date else 'N/A' }}</td>
-                        <td><strong>{{ record.category or 'General' }}</strong></td>
-                        <td>
+                        <td data-label="Date">{{ record.transaction_date.strftime('%b %d, %Y') if record.transaction_date else 'N/A' }}</td>
+                        <td data-label="Category"><strong>{{ record.category or 'General' }}</strong></td>
+                        <td data-label="Type">
                             <span class="mg-badge mg-badge-{{ 'success' if record.record_type == 'Income' else 'danger' if record.record_type == 'Expense' else 'info' }}">
                                 {{ record.record_type }}
                             </span>
                         </td>
-                        <td>Ksh. {{ '{:,}'.format(record.amount) }}</td>
-                        <td>{{ record.reference or '—' }}</td>
-                        <td>{{ record.description[:50] + '...' if record.description and record.description|length > 50 else record.description or '—' }}</td>
-                        <td>
+                        <td data-label="Amount">Ksh. {{ '{:,}'.format(record.amount) }}</td>
+                        <td data-label="Reference">{{ record.reference or '—' }}</td>
+                        <td data-label="Description">{{ record.description[:50] + '...' if record.description and record.description|length > 50 else record.description or '—' }}</td>
+                        <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ record.category or record.id }}">
                                     <span aria-hidden="true">⚙</span>
@@ -117,6 +121,7 @@
                                             <span class="row-action-hint">See full details</span>
                                         </span>
                                     </a>
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                                     <a href="{{ url_for('treasurer.edit', record_id=record.id) }}" class="row-action-item" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                         <span class="row-action-copy">
@@ -124,6 +129,7 @@
                                             <span class="row-action-hint">Update transaction details</span>
                                         </span>
                                     </a>
+                                    {% endif %}
                                     {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                                     <form method="post" action="{{ url_for('treasurer.delete', record_id=record.id) }}" class="row-action-form" onsubmit="return confirm('Delete this record? This cannot be undone.');">
                                         <button type="submit" class="row-action-item danger" role="menuitem">

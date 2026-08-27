@@ -8,6 +8,7 @@
 <div class="mg-detail-container">
     <div class="mg-page-header mb-6">
         <h2>{{ minutes_entry.title }}</h2>
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY'] %}
             <div class="row-actions">
                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
                     <span aria-hidden="true">⚙</span>
@@ -35,6 +36,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
     </div>
 
     <div class="mg-card">

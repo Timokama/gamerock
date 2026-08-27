@@ -125,6 +125,31 @@
 .about-value-card h5 { font-weight: 700; margin-bottom: 0.4rem; }
 .about-value-card p { font-size: 0.88rem; color: var(--text-muted); margin: 0; }
 
+/* ---------- Features ---------- */
+.about-features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem; margin-top: 1.25rem;
+}
+.about-feature-card {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px; padding: 1.4rem 1.2rem;
+  transition: var(--transition);
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.about-feature-card:hover {
+  border-color: var(--about-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -14px rgba(15, 118, 110, 0.7);
+}
+.about-feature-icon {
+  width: 48px; height: 48px; flex: 0 0 auto;
+  border-radius: 12px; display: grid; place-items: center;
+  background: var(--about-gradient); color: #fff; font-size: 1.25rem;
+}
+.about-feature-card h5 { margin: 0 0 0.35rem; font-weight: 700; }
+.about-feature-card p { margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
 /* ---------- Stats ---------- */
 .about-stats {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -270,6 +295,45 @@ html[data-theme="dark"] .about-team-card { background: #1e293b; }
     </div>
   </section>
 
+  <!-- What We Do -->
+  <section class="about-section" id="whatwedo">
+    <div class="about-section-header">
+      <div class="about-section-icon"><i class="bi bi-gear"></i></div>
+      <h3>What We Do</h3>
+    </div>
+    <p>We run practical programs that touch every stage of community life — from onboarding new members to sustaining long-term welfare support.</p>
+    <div class="about-features-grid">
+      <div class="about-feature-card">
+        <div class="about-feature-icon"><i class="bi bi-person-plus"></i></div>
+        <div>
+          <h5>Member Registration</h5>
+          <p>Verified onboarding with family linking so every member is accounted for and connected.</p>
+        </div>
+      </div>
+      <div class="about-feature-card">
+        <div class="about-feature-icon"><i class="bi bi-cash-stack"></i></div>
+        <div>
+          <h5>Contribution Tracking</h5>
+          <p>Receipted deposits tied to community events, with full transparency and real-time reporting.</p>
+        </div>
+      </div>
+      <div class="about-feature-card">
+        <div class="about-feature-icon"><i class="bi bi-calendar-event"></i></div>
+        <div>
+          <h5>Community Events</h5>
+          <p>Regular gatherings, fundraisers, and welfare drives that bring members together.</p>
+        </div>
+      </div>
+      <div class="about-feature-card">
+        <div class="about-feature-icon"><i class="bi bi-heart"></i></div>
+        <div>
+          <h5>Welfare Support</h5>
+          <p>Targeted assistance for members and families through structured welfare programs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Impact -->
   <section class="about-section" id="impact">
     <div class="about-section-header">
@@ -345,6 +409,7 @@ html[data-theme="dark"] .about-team-card { background: #1e293b; }
     <div class="about-cta-actions">
       <a class="btn btn-light" href="mailto:gamerock2026@gmail.com"><i class="bi bi-envelope me-1"></i> Email us</a>
       <a class="btn btn-outline-light" href="tel:0745908682"><i class="bi bi-telephone me-1"></i> Call</a>
+      <a class="btn btn-outline-light" href="https://wa.me/254745908682" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a>
     </div>
   </section>
 

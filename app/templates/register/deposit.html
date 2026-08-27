@@ -4,198 +4,301 @@
 
 {% block styles %}
 <style>
-.deposit-profile-shell {
-    padding-bottom: 2.5rem;
-}
+  .prof-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 28px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.deposit-profile-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: var(--radius);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    color: white;
+  .prof-hero {
     position: relative;
+    border-radius: var(--radius-2xl, 20px);
+    padding: clamp(24px, 4vw, 40px);
+    color: #fff;
     overflow: hidden;
-}
+    background: linear-gradient(135deg, var(--primary-600, #667eea) 0%, var(--primary-700, #764ba2) 50%, #8b5cf6 100%);
+    box-shadow: var(--shadow-xl, 0 20px 50px -20px rgba(102, 126, 234, 0.5));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-.deposit-profile-header::before {
+  .prof-hero::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 300px;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.08);
+    top: -40%;
+    right: -8%;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
     border-radius: 50%;
-}
+    pointer-events: none;
+    animation: heroPulse 8s ease-in-out infinite;
+  }
 
-.deposit-profile-header::after {
+  .prof-hero::after {
     content: '';
     position: absolute;
-    bottom: -30%;
-    left: -5%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.05);
+    bottom: -35%;
+    left: -6%;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
     border-radius: 50%;
-}
+    pointer-events: none;
+    animation: heroPulse 10s ease-in-out infinite reverse;
+  }
 
-.deposit-profile-header-content {
+  @keyframes heroPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+  }
+
+  .prof-hero-inner {
     position: relative;
     z-index: 1;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-}
+    gap: clamp(16px, 3vw, 28px);
+    flex-wrap: wrap;
+  }
 
-.deposit-profile-avatar {
+  .prof-hero-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(255,255,255,0.18);
+    display: grid;
+    place-items: center;
     font-size: 2rem;
-    font-weight: 700;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    font-weight: 800;
+    border: 3px solid rgba(255,255,255,0.35);
     flex-shrink: 0;
+    box-shadow: 0 8px 20px -6px rgba(0,0,0,0.25);
     overflow: hidden;
-}
+    transition: transform 0.3s ease;
+  }
 
-.deposit-profile-avatar img {
+  .prof-hero:hover .prof-hero-avatar {
+    transform: scale(1.05);
+  }
+
+  .prof-hero-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
     display: block;
-}
+  }
 
-.deposit-profile-info h3 {
+  .prof-hero-info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .prof-hero-name {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-}
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
 
-.deposit-profile-info p {
+  .prof-hero-sub {
     margin: 0.35rem 0 0;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.9rem;
-}
+    color: rgba(255,255,255,0.85);
+    font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+    font-weight: 500;
+  }
 
-.deposit-profile-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.35rem 0.85rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-top: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Stats Cards */
-.deposit-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-}
-
-.deposit-stat-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+  .prof-hero-meta {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .prof-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255,255,255,0.14);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .prof-hero-time {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .prof-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .prof-hero-actions .btn {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+  }
+
+  .prof-hero-actions .btn-light {
+    background: #fff;
+    color: var(--primary-700, #764ba2);
+    border-color: #fff;
+  }
+
+  .prof-hero-actions .btn-light:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .prof-hero-actions .btn-outline-light {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .prof-hero-actions .btn-outline-light:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.6);
+  }
+
+  /* Stats Row */
+  .prof-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .prof-stat {
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3, 0.75rem);
+    transition: all var(--transition-base, 0.25s ease);
     position: relative;
     overflow: hidden;
-}
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
 
-.deposit-stat-card::before {
+  .prof-stat::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 4px;
     height: 100%;
-}
+    border-radius: var(--radius-xl, 16px) 0 0 var(--radius-xl, 16px);
+    transition: width var(--transition-fast, 150ms);
+  }
 
-.deposit-stat-card.primary::before { background: linear-gradient(180deg, #667eea, #764ba2); }
-.deposit-stat-card.success::before { background: linear-gradient(180deg, #10b981, #059669); }
-.deposit-stat-card.warning::before { background: linear-gradient(180deg, #f59e0b, #d97706); }
-.deposit-stat-card.info::before { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+  .prof-stat:hover::before {
+    width: 6px;
+  }
 
-.deposit-stat-card:hover {
+  .prof-stat.primary::before { background: linear-gradient(180deg, var(--primary-500, #667eea), var(--primary-600, #764ba2)); }
+  .prof-stat.success::before { background: linear-gradient(180deg, var(--success-500, #10b981), var(--success-600, #059669)); }
+  .prof-stat.warning::before { background: linear-gradient(180deg, var(--warning-500, #f59e0b), var(--warning-600, #d97706)); }
+  .prof-stat.info::before { background: linear-gradient(180deg, var(--info-500, #3b82f6), var(--info-600, #2563eb)); }
+
+  .prof-stat:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-}
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color, var(--primary-500));
+  }
 
-.deposit-stat-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
+  .prof-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.35rem;
     flex-shrink: 0;
-}
+    transition: transform 0.2s ease;
+  }
 
-.deposit-stat-card.primary .deposit-stat-icon { background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08)); }
-.deposit-stat-card.success .deposit-stat-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08)); }
-.deposit-stat-card.warning .deposit-stat-icon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08)); }
-.deposit-stat-card.info .deposit-stat-icon { background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.08)); }
+  .prof-stat:hover .prof-stat-icon {
+    transform: scale(1.08);
+  }
 
-.deposit-stat-content {
+  .prof-stat.primary .prof-stat-icon { background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08)); color: var(--primary-600, #764ba2); }
+  .prof-stat.success .prof-stat-icon { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08)); color: #059669; }
+  .prof-stat.warning .prof-stat-icon { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08)); color: #d97706; }
+  .prof-stat.info .prof-stat-icon { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.08)); color: #2563eb; }
+
+  .prof-stat-body {
     flex: 1;
     min-width: 0;
-}
+  }
 
-.deposit-stat-value {
-    font-size: 1.65rem;
+  .prof-stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--dark-color, var(--text-primary));
+    line-height: 1.15;
+    margin-bottom: 0.15rem;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prof-stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted, var(--text-tertiary));
     font-weight: 700;
-    color: var(--dark-color);
-    line-height: 1.2;
-    margin-bottom: 0.2rem;
-}
-
-.deposit-stat-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
+    letter-spacing: 0.06em;
+  }
 
-/* Profile Card */
-.professional-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+  /* Cards */
+  .prof-card {
+    background: var(--card-bg, var(--bg-secondary));
+    border: 1px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-2xl, 20px);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
-    margin-bottom: 1.75rem;
-    width:100%
-}
+    transition: all var(--transition-base, 0.25s ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
 
-.professional-card .card-header {
+  .prof-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-medium);
+  }
+
+  .prof-card-header {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
     padding: 1.1rem 1.5rem;
     border: none;
     position: relative;
     overflow: hidden;
-}
+  }
 
-.professional-card .card-header::after {
+  .prof-card-header::after {
     content: '';
     position: absolute;
     top: -30%;
@@ -205,135 +308,333 @@
     background: rgba(255, 255, 255, 0.06);
     border-radius: 50%;
     pointer-events: none;
-}
+  }
 
-.professional-card .card-header h4 {
+  .prof-card-header h4 {
     margin: 0;
     font-weight: 700;
     font-size: 1.1rem;
     position: relative;
     z-index: 1;
-}
+  }
 
-.professional-card .card-body {
-    padding: 1.75rem;
-}
+  .prof-card-body {
+    padding: 1.5rem;
+  }
 
-.member-avatar-lg {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    color: white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
-    flex-shrink: 0;
-}
-
-.member-detail-item {
+  /* Info Items */
+  .prof-info-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.85rem;
-    background: var(--bg-color);
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    transition: var(--transition);
-}
+    padding: 0.9rem 1rem;
+    background: var(--input-bg, var(--bg-tertiary));
+    border-radius: 12px;
+    border: 1px solid var(--border-color, var(--border-light));
+    transition: all var(--transition-fast, 0.2s ease);
+    margin-bottom: 0.75rem;
+  }
 
-.member-detail-item:hover {
-    border-color: var(--primary-color);
-    background: var(--card-bg);
+  .prof-info-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .prof-info-item:hover {
+    border-color: var(--primary-color, var(--primary-500));
+    background: var(--card-bg, var(--bg-secondary));
     transform: translateY(-1px);
-}
+    box-shadow: var(--shadow-xs);
+  }
 
-.member-detail-item .detail-icon {
+  .prof-info-icon {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.08) 100%);
     color: #667eea;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
     flex-shrink: 0;
-}
+    transition: all 0.2s ease;
+  }
 
-.member-detail-item .detail-content {
+  .prof-info-item:hover .prof-info-icon {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.12) 100%);
+    transform: scale(1.05);
+  }
+
+  .prof-info-content {
+    flex: 1;
     min-width: 0;
-}
+  }
 
-.member-detail-item .detail-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
+  .prof-info-label {
+    font-size: 0.72rem;
+    color: var(--text-muted, var(--text-tertiary));
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.15rem;
-}
+  }
 
-.member-detail-item .detail-value {
-    font-weight: 600;
-    color: var(--dark-color);
+  .prof-info-value {
+    font-weight: 700;
+    color: var(--dark-color, var(--text-primary));
     font-size: 0.95rem;
     word-break: break-word;
-}
+  }
 
-/* Table Card */
-.report-table-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-}
+  /* Summary Card */
+  .prof-summary {
+    text-align: center;
+    padding: 1.5rem;
+  }
 
-.report-table-card .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 1.5rem;
-    border: none;
-}
+  .prof-summary-amount {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color, var(--primary-700));
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
 
-.report-table-card .card-header h4 {
-    margin: 0;
+  .prof-summary-label {
+    font-size: 0.85rem;
+    color: var(--text-muted, var(--text-tertiary));
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .prof-summary-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, var(--border-light));
+  }
+
+  .prof-summary-stat-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark-color, var(--text-primary));
+  }
+
+  .prof-summary-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted, var(--text-tertiary));
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Pending Contributions */
+  .prof-pending-table {
+    width: 100%;
+  }
+
+  .prof-pending-table thead th {
+    background: var(--bg-color, var(--bg-tertiary));
+    border-bottom: 2px solid var(--border-color, var(--border-light));
+    color: var(--text-muted, var(--text-tertiary));
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 1.1rem;
-}
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+  }
 
-.report-table-card .table {
+  .prof-pending-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color, var(--border-light));
+    font-size: 0.85rem;
+  }
+
+  .prof-pending-table tbody tr:hover {
+    background: rgba(245, 158, 11, 0.04);
+  }
+
+  .prof-pending-table .pending-icon-cell {
+    width: 40px;
+    text-align: center;
+  }
+
+  .prof-pending-table .pending-name {
+    font-weight: 600;
+    color: var(--dark-color, var(--text-primary));
+  }
+
+  .prof-pending-table .pending-date {
+    font-size: 0.85rem;
+    color: var(--text-muted, var(--text-tertiary));
+    white-space: nowrap;
+  }
+
+  .prof-pending-table .pending-details {
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .prof-pending-table .pending-actions {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Contribution History */
+  .prof-history-filters {
+    background: var(--card-bg, var(--bg-secondary));
+    border-radius: var(--radius-lg, 12px);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color, var(--border-light));
+  }
+
+  .prof-history-filters .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .prof-history-filters .filter-group {
+    flex: 1 1 200px;
+    min-width: 180px;
+  }
+
+  .prof-history-filters .filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary, var(--dark-color));
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .prof-history-filters .filter-group input,
+  .prof-history-filters .filter-group select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1.5px solid var(--border-color, var(--border-light));
+    border-radius: var(--radius-lg, 10px);
+    font-size: 0.9rem;
+    background: var(--card-bg, var(--bg-secondary));
+    color: var(--text-primary, var(--dark-color));
+    transition: all var(--transition-fast, 0.2s ease);
+    min-height: 44px;
+  }
+
+  .prof-history-filters .filter-group input:focus,
+  .prof-history-filters .filter-group select:focus {
+    border-color: var(--primary-500, #667eea);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+  }
+
+  .prof-history-filters .filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .prof-history-filters .btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-lg, 10px);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .prof-history-filters .btn-primary {
+    background: var(--primary-700, #764ba2);
+    color: white;
+  }
+
+  .prof-history-filters .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .prof-history-filters .btn-outline {
+    background: transparent;
+    color: var(--text-primary, var(--dark-color));
+    border: 1.5px solid var(--border-color, var(--border-light));
+  }
+
+  .prof-history-filters .btn-outline:hover {
+    border-color: var(--primary-700, #764ba2);
+    color: var(--primary-700, #764ba2);
+  }
+
+  .prof-result-count {
+    font-size: 0.85rem;
+    color: var(--text-muted, var(--text-tertiary));
+    padding: 0.75rem 1rem 0;
     margin-bottom: 0;
-}
+  }
 
-.report-table-card .table th {
-    background: #f8fafc;
-    border-bottom: 2px solid var(--border-color);
+  .prof-table-card {
+    background: var(--card-bg, var(--bg-secondary));
+    border-radius: var(--radius-xl, 16px);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color, var(--border-light));
+    overflow: hidden;
+  }
+
+  .prof-table-card .table {
+    margin-bottom: 0;
+  }
+
+  .prof-table-card .table th {
+    background: var(--bg-primary, var(--bg-tertiary));
+    border-bottom: 2px solid var(--border-color, var(--border-light));
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--text-muted);
+    color: var(--text-secondary, var(--text-muted));
     font-weight: 700;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     white-space: nowrap;
-}
+    text-align: left;
+  }
 
-.report-table-card .table td {
-    padding: 0.75rem 1rem;
+  .prof-table-card .table td {
+    padding: 0.85rem 1rem;
     vertical-align: middle;
     font-size: 0.9rem;
-}
+    border-bottom: 1px solid var(--border-color, var(--border-light));
+  }
 
-.report-table-card .table tbody tr:hover {
-    background: #f8fafc;
-}
+  .prof-table-card .table tbody tr:hover {
+    background: var(--bg-primary, var(--bg-tertiary));
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+  }
 
-/* Payment Badges */
-.payment-badge {
+  .prof-table-card .table tbody tr:hover td {
+    background: transparent;
+  }
+
+  .prof-amount {
+    font-weight: 700;
+    color: var(--dark-color, var(--text-primary));
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  /* Payment Badges */
+  .prof-payment-badge {
     display: inline-flex;
     align-items: center;
     padding: 0.35rem 0.75rem;
@@ -342,389 +643,428 @@
     border-radius: 20px;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-}
+  }
 
-.payment-badge.cash {
+  .prof-payment-badge.cash {
     background: rgba(37, 99, 235, 0.1);
     color: #2563eb;
-}
+  }
 
-.payment-badge.mpesa {
+  .prof-payment-badge.mpesa {
     background: rgba(16, 185, 129, 0.1);
     color: #059669;
-}
+  }
 
-.payment-badge.bank {
+  .prof-payment-badge.bank {
     background: rgba(245, 158, 11, 0.1);
     color: #d97706;
-}
+  }
 
-.payment-badge.cheque {
+  .prof-payment-badge.cheque {
     background: rgba(239, 68, 68, 0.1);
     color: #dc2626;
-}
+  }
 
-/* Result Count */
-.result-count {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    padding: 0.5rem 1rem;
-    margin-bottom: 0;
-}
-
-/* Empty State */
-.empty-state {
+  /* Empty State */
+  .prof-empty {
     text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-muted);
-}
+    padding: 3rem 1.5rem;
+    color: var(--text-muted, var(--text-tertiary));
+  }
 
-.empty-state-icon {
+  .prof-empty-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
-}
+  }
 
-.empty-state h3 {
-    color: var(--dark-color);
+  .prof-empty h3 {
+    color: var(--dark-color, var(--text-primary));
     margin-bottom: 0.5rem;
-}
+  }
 
-/* Profile Section Title */
-.profile-section-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--border-color);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .deposit-profile-header {
-        padding: 1.5rem;
+  /* Responsive */
+  @media (max-width: 768px) {
+    .prof-hero-inner {
+      flex-direction: column;
+      text-align: center;
     }
 
-    .deposit-profile-header-content {
-        flex-direction: column;
-        text-align: center;
+    .prof-hero-avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 1.5rem;
     }
 
-    .deposit-profile-info h3 {
-        font-size: 1.25rem;
+    .prof-hero-name {
+      font-size: 1.25rem;
     }
 
-    .deposit-stats {
-        grid-template-columns: repeat(2, 1fr);
+    .prof-hero-meta {
+      justify-content: center;
     }
 
-    .report-table-card .table {
-        font-size: 0.8rem;
+    .prof-hero-actions {
+      justify-content: center;
     }
 
-    .report-table-card .table th,
-    .report-table-card .table td {
-        padding: 0.5rem 0.5rem;
-    }
-}
-
-[data-theme="dark"] .report-table-card .table th {
-    background: var(--light-color);
-}
-
-[data-theme="dark"] .report-table-card .table tbody tr:hover {
-    background: var(--light-color);
-}
-
-/* Pending Contributions */
-.pending-contributions-table {
-    width: 100%;
-}
-
-.pending-contributions-table thead th {
-    background: var(--bg-color);
-    border-bottom: 2px solid var(--border-color);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.85rem 1rem;
-    white-space: nowrap;
-}
-
-.pending-contributions-table tbody td {
-    padding: 0.85rem 1rem;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.pending-contributions-table tbody tr:hover {
-    background: rgba(245, 158, 11, 0.04);
-}
-
-.pending-contributions-table .pending-event-icon-cell {
-    width: 40px;
-    text-align: center;
-}
-
-.pending-contributions-table .pending-event-name {
-    font-weight: 600;
-    color: var(--dark-color);
-}
-
-.pending-contributions-table .pending-event-date {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
-.pending-contributions-table .pending-event-details {
-    font-size: 0.85rem;
-    color: #475569;
-}
-
-.pending-contributions-table .pending-event-actions {
-    text-align: center;
-    white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-    .pending-contributions-table thead th,
-    .pending-contributions-table tbody td {
-        padding: 0.65rem 0.75rem;
-        font-size: 0.85rem;
+    .prof-stats {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .pending-contributions-table .pending-event-icon-cell {
-        width: 32px;
+    .prof-card-body {
+      padding: 1rem;
     }
-}
+
+    .prof-history-filters .filter-row {
+      flex-direction: column;
+    }
+
+    .prof-history-filters .filter-group {
+      min-width: 100%;
+    }
+
+    .prof-history-filters .filter-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .prof-history-filters .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .prof-table-card .table {
+      font-size: 0.8rem;
+    }
+
+    .prof-table-card .table th,
+    .prof-table-card .table td {
+      padding: 0.6rem 0.75rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .prof-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .prof-summary-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .prof-hero {
+      padding: 1.5rem;
+    }
+
+    .prof-hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Dark mode */
+  [data-theme="dark"] .prof-card-header {
+    background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+  }
+
+  [data-theme="dark"] .prof-table-card .table th {
+    background: var(--light-color, var(--bg-tertiary));
+  }
+
+  [data-theme="dark"] .prof-table-card .table tbody tr:hover {
+    background: var(--light-color, var(--bg-tertiary));
+  }
+
+  [data-theme="dark"] .prof-info-item:hover {
+    background: var(--light-color, var(--bg-tertiary));
+  }
+
+  [data-theme="dark"] .prof-history-filters {
+    background: var(--light-color, var(--bg-tertiary));
+  }
+
+  [data-theme="dark"] .prof-history-filters .filter-group input,
+  [data-theme="dark"] .prof-history-filters .filter-group select {
+    background: var(--card-bg, var(--bg-secondary));
+    border-color: var(--border-color, var(--border-light));
+    color: var(--text-primary, var(--dark-color));
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="deposit-profile-shell">
-    <div class="deposit-profile-header">
-        <div class="deposit-profile-header-content">
-            <div class="deposit-profile-avatar">
-                {% if member_profile_image %}
-                <img src="data:{{ member_profile_mime_type }};base64,{{ member_profile_image }}" alt="{{ register.firstname }} {{ register.lastname }} {{ register.surname }}">
+{% set add_contrib_disallowed = False %}
+{% for category, message in get_flashed_messages(with_categories=true) %}
+  {% if "You do not have permission to add contributions" in message %}
+    {% set add_contrib_disallowed = True %}
+  {% endif %}
+{% endfor %}
+<div class="prof-shell">
+  <!-- Hero Header -->
+  <section class="prof-hero">
+    <div class="prof-hero-inner">
+      <div class="prof-hero-avatar">
+        {% if member_profile_image %}
+        <img src="data:{{ member_profile_mime_type }};base64,{{ member_profile_image }}" alt="{{ register.firstname }} {{ register.lastname }} {{ register.surname }}">
+        {% else %}
+        {{ register.firstname[0] }}{{ register.lastname[0] }}
+        {% endif %}
+      </div>
+      <div class="prof-hero-info">
+        <h1 class="prof-hero-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h1>
+        <p class="prof-hero-sub">Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</p>
+        <div class="prof-hero-meta">
+          <span class="prof-hero-badge"><span>👤</span> Registered Member</span>
+        </div>
+        <div class="prof-hero-actions">
+          {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+          <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="btn btn-light">
+            <i class="bi bi-plus-circle me-1"></i>Add Contribution
+          </a>
+          {% endif %}
+          <a href="{{ url_for('family.family', depo_id=register.id) }}" class="btn btn-outline-light">
+            <i class="bi bi-people me-1"></i>View Family
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="prof-stats" aria-label="Member statistics">
+    <div class="prof-stat success">
+      <div class="prof-stat-icon success">💰</div>
+      <div class="prof-stat-body">
+        <div class="prof-stat-value">Ksh. {{ '{:,}'.format(contributions|sum(attribute='amount') if contributions else 0) }}</div>
+        <div class="prof-stat-label">Total Contributions</div>
+      </div>
+    </div>
+    <div class="prof-stat primary">
+      <div class="prof-stat-icon primary">📊</div>
+      <div class="prof-stat-body">
+        <div class="prof-stat-value">{{ contributions|length }}</div>
+        <div class="prof-stat-label">Transactions</div>
+      </div>
+    </div>
+    <div class="prof-stat warning">
+      <div class="prof-stat-icon warning">⏳</div>
+      <div class="prof-stat-body">
+        <div class="prof-stat-value">{{ pending_contributions|length }}</div>
+        <div class="prof-stat-label">Pending Events</div>
+      </div>
+    </div>
+    <div class="prof-stat info">
+      <div class="prof-stat-icon info">💳</div>
+      <div class="prof-stat-body">
+        <div class="prof-stat-value">
+          {% set payment_types = contributions | map(attribute='payment_type') | map(attribute='value') | unique | list %}
+          {{ payment_types|length }}
+        </div>
+        <div class="prof-stat-label">Payment Methods</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contribution History (Primary Section) -->
+  <div class="prof-card">
+    <div class="prof-card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <h4><i class="bi bi-table me-2"></i>Contribution History</h4>
+    </div>
+    <div class="prof-card-body" style="padding: 0;">
+      <div class="prof-history-filters" style="margin-bottom: 0; box-shadow: none; border: none; border-radius: 0;">
+        <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
+          <div class="filter-row" id="deposit-history-filters">
+            <div class="filter-group">
+              <label for="deposit-history-search">Search</label>
+              <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
+            </div>
+            <div class="filter-group">
+              <label for="deposit-history-payment-type">Payment Type</label>
+              <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
+                <option value="">All</option>
+                <option value="CASH">Cash</option>
+                <option value="MOBILE_MONEY">M-Pesa</option>
+                <option value="BANK">Bank</option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-primary" onclick="filterDepositHistory()">
+                <i class="bi bi-search me-1"></i>Filter
+              </button>
+              <button type="button" class="btn btn-outline" onclick="clearDepositHistoryFilters()">
+                <i class="bi bi-x-circle me-1"></i>Clear
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="prof-result-count">
+        Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)
+      </div>
+      {% if contributions %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0" id="deposit-history-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Payment Type</th>
+              <th>Event</th>
+              <th style="width: 120px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for deposit in contributions %}
+            <tr>
+              <td>{{ deposit.trans_date.strftime('%B %d, %Y') if deposit.trans_date else 'N/A' }}</td>
+              <td class="prof-amount">Ksh. {{ '{:,}'.format(deposit.amount or 0) }}</td>
+              <td class="payment-type-cell" data-payment-type="{{ deposit.payment_type.name if deposit.payment_type else '' }}">
+                {% if deposit.payment_type.value == 'Ksh' %}
+                <span class="prof-payment-badge cash">{{ deposit.payment_type.value }}</span>
+                {% elif deposit.payment_type.value == 'MPESA' %}
+                <span class="prof-payment-badge mpesa">{{ deposit.payment_type.value }}</span>
+                {% elif deposit.payment_type.value == 'BANK DEPOSIT' %}
+                <span class="prof-payment-badge bank">{{ deposit.payment_type.value }}</span>
                 {% else %}
-                {{ register.firstname[0] }}{{ register.lastname[0] }}
+                <span class="prof-payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ deposit.payment_type.value if deposit.payment_type else 'N/A' }}</span>
                 {% endif %}
-            </div>
-            <div class="deposit-profile-info">
-                <h3>{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h3>
-                <p>Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</p>
-                <span class="deposit-profile-badge">
-                    <span>👤</span> Registered Member
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-4 mb-4">
-            <div class="professional-card mb-3">
-                <div class="card-header">
-                    <h4>Member Information</h4>
-                </div>
-                <div class="card-body">
-                    <div class="member-detail-item">
-                        <span class="detail-icon">📱</span>
-                        <span>{{ register.phone_num|member_phone if register.phone_num else 'N/A' }}</span>
+              </td>
+              <td>{{ deposit.community_event.name if deposit.community_event else 'N/A' }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="row-actions-toggle" type="button"
+                          aria-haspopup="true" aria-expanded="false"
+                          aria-label="Actions for contribution by {{ deposit.member.firstname }} {{ deposit.member.lastname }}">
+                    <span aria-hidden="true">⚙</span>
+                    <span>Actions</span>
+                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                  </button>
+                  <div class="row-actions-menu" role="menu">
+                    <div class="row-actions-menu-header">
+                      <span class="row-actions-menu-title">{{ deposit.member.firstname }} {{ deposit.member.lastname }} {{ deposit.member.surname }}</span>
+                      <span class="row-actions-menu-sub">💳 Contribution</span>
                     </div>
-                    <div class="member-detail-item">
-                        <span class="detail-icon">🆔</span>
-                        <span>{{ register.id_number|member_id if register.id_number else 'N/A' }}</span>
-                    </div>
-                    <div class="member-detail-item">
-                        <span class="detail-icon">🎂</span>
-                        <span>{{ register.date_of_birth if register.date_of_birth else 'N/A' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="professional-card mb-3">
-                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h4><i class="bi bi-cash-stack me-2"></i>Contribution Summary</h4>
-                </div>
-                <div class="card-body text-center">
-                    <h2 class="mb-0 fw-bold" style="color: var(--primary-color);">Ksh. {{ '{:,}'.format(contributions|sum(attribute='amount') if contributions else 0) }}</h2>
-                    <p class="text-muted mb-0 mt-1">{{ contributions|length }} transaction{{ 's' if contributions|length != 1 else '' }}</p>
-                    <hr style="margin: 1rem 0; border-color: var(--border-color);">
-                    <div class="row text-center">
-                        <div class="col-6">
-                            <div class="fw-bold" style="font-size: 1.1rem; color: var(--dark-color);">
-                                {% set last = contributions[-1] if contributions else None %}
-                                {{ last.trans_date.strftime('%b %d') if last and last.trans_date else 'N/A' }}
-                            </div>
-                            <small class="text-muted">Last Contribution</small>
-                        </div>
-                        <div class="col-6">
-                            <div class="fw-bold" style="font-size: 1.1rem; color: var(--dark-color);">
-                                {% set payment_types = contributions | map(attribute='payment_type') | map(attribute='value') | unique | list %}
-                                {{ payment_types|length }}
-                            </div>
-                            <small class="text-muted">Payment Methods</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {% if pending_contributions %}
-            <div class="professional-card">
-                <div class="card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
-                    <h4><i class="bi bi-hourglass-split me-2"></i>Pending Contributions</h4>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 pending-contributions-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 40px;"></th>
-                                    <th>Event</th>
-                                    <th>Date</th>
-                                    <th>Details</th>
-                                    <th style="width: 120px;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for event in pending_contributions %}
-                                <tr>
-                                    <td style="text-align: center;">
-                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
-                                    </td>
-                                    <td>
-                                        <span style="font-weight: 600; color: var(--dark-color);">{{ event.name }}</span>
-                                    </td>
-                                    <td style="white-space: nowrap;">
-                                        <i class="bi bi-calendar-event me-1" style="color: var(--text-muted);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'Date TBD' }}
-                                    </td>
-                                    <td style="color: #475569;">{{ event.details[:150] if event.details else 'No details provided' }}{% if event.details and event.details|length > 150 %}...{% endif %}</td>
-                                    <td style="text-align: center; white-space: nowrap;">
-                                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                                        <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="action-btn primary btn-sm">
-                                            <i class="bi bi-plus-circle me-1"></i>Contribute
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="col-lg-8 mb-4">
-            <div class="report-table-card">
-                <div class="card-header">
-                    <h4>Contribution History</h4>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    <div class="report-filters" style="margin-bottom: 0; box-shadow: none; border: none; padding: 1rem;">
-                        <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
-                            <div class="filter-row" id="deposit-history-filters">
-                                <div class="filter-group">
-                                    <label for="deposit-history-search">Search</label>
-                                    <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
-                                </div>
-                                <div class="filter-group">
-                                    <label for="deposit-history-payment-type">Payment Type</label>
-                                    <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
-                                        <option value="">All</option>
-                                        <option value="CASH">Cash</option>
-                                        <option value="MOBILE_MONEY">M-Pesa</option>
-                                        <option value="BANK">Bank</option>
-                                    </select>
-                                </div>
-                                <div class="filter-actions">
-                                    <button type="button" class="action-btn primary" onclick="filterDepositHistory()">🔍 Filter</button>
-                                    <button type="button" class="action-btn outline" onclick="clearDepositHistoryFilters()">✕ Clear</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="result-count" style="padding: 0.75rem 1rem 0;">
-                        Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)
-                    </div>
-                    {% if contributions %}
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="deposit-history-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Payment Type</th>
-                                    <th>Event</th>
-                                    <th style="width: 120px;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for deposit in contributions %}
-                                <tr>
-                                    <td>{{ deposit.trans_date.strftime('%B %d, %Y') if deposit.trans_date else 'N/A' }}</td>
-                                    <td class="fw-semibold">Ksh. {{ '{:,}'.format(deposit.amount or 0) }}</td>
-                                    <td class="payment-type-cell" data-payment-type="{{ deposit.payment_type.name if deposit.payment_type else '' }}">
-                                        {% if deposit.payment_type.value == 'Ksh' %}
-                                        <span class="payment-badge cash">{{ deposit.payment_type.value }}</span>
-                                        {% elif deposit.payment_type.value == 'MPESA' %}
-                                        <span class="payment-badge mpesa">{{ deposit.payment_type.value }}</span>
-                                        {% elif deposit.payment_type.value == 'BANK DEPOSIT' %}
-                                        <span class="payment-badge bank">{{ deposit.payment_type.value }}</span>
-                                        {% else %}
-                                        <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ deposit.payment_type.value if deposit.payment_type else 'N/A' }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ deposit.community_event.name if deposit.community_event else 'N/A' }}</td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="row-actions-toggle" type="button"
-                                                    aria-haspopup="true" aria-expanded="false"
-                                                    aria-label="Actions for contribution by {{ deposit.member.firstname }} {{ deposit.member.lastname }}">
-                                                <span aria-hidden="true">⚙</span>
-                                                <span>Actions</span>
-                                                <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                            </button>
-                                            <div class="row-actions-menu" role="menu">
-                                                <div class="row-actions-menu-header">
-                                                    <span class="row-actions-menu-title">{{ deposit.member.firstname }} {{ deposit.member.lastname }} {{ deposit.member.surname }}</span>
-                                                    <span class="row-actions-menu-sub">💳 Contribution</span>
-                                                </div>
-                                                <a href="{{ url_for('deposit.deposit', depo_id=deposit.member.id) }}" class="row-action-item" role="menuitem">
-                                                    <span class="row-action-icon" aria-hidden="true">📄</span>
-                                                    <span class="row-action-copy">
-                                                        <span class="row-action-label">View Deposits</span>
-                                                        <span class="row-action-hint">View contribution history</span>
-                                                    </span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                    <div class="empty-state">
-                        <div class="empty-state-icon"><i class="bi bi-cash-coin"></i></div>
-                        <h3>No Contributions Yet</h3>
-                        <p>This member hasn't made any contributions yet.</p>
-                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary"><i class="bi bi-plus-circle me-1"></i>Add First Contribution</a>
-                        {% endif %}
-                    </div>
+                    <a href="{{ url_for('deposit.deposit', depo_id=deposit.member.id) }}" class="row-action-item" role="menuitem">
+                      <span class="row-action-icon" aria-hidden="true">📄</span>
+                      <span class="row-action-copy">
+                        <span class="row-action-label">View Deposits</span>
+                        <span class="row-action-hint">View contribution history</span>
+                      </span>
+                    </a>
+                    {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
+                    <a href="{{ url_for('deposit.edit_contribution', depo_id=deposit.id) }}" class="row-action-item" role="menuitem">
+                      <span class="row-action-icon" aria-hidden="true">✏️</span>
+                      <span class="row-action-copy">
+                        <span class="row-action-label">Edit Contribution</span>
+                        <span class="row-action-hint">Update amount or type</span>
+                      </span>
+                    </a>
                     {% endif %}
+                  </div>
                 </div>
-            </div>
-        </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="prof-empty">
+        <div class="prof-empty-icon"><i class="bi bi-cash-coin"></i></div>
+        <h3>No Contributions Yet</h3>
+        <p>This member hasn't made any contributions yet.</p>
+        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="btn btn-primary" style="margin-top: 1rem;">
+          <i class="bi bi-plus-circle me-1"></i>Add First Contribution
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
+  </div>
+
+  <!-- Pending Contributions (Secondary Section) -->
+  {% if pending_contributions %}
+  <div class="prof-card" style="margin-top: 1.5rem;">
+    <div class="prof-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+      <h4><i class="bi bi-hourglass-split me-2"></i>Pending Contributions</h4>
+    </div>
+    <div class="prof-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 prof-pending-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="width: 40px;"></th>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Details</th>
+              <th style="width: 120px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in pending_contributions %}
+            <tr>
+              <td class="pending-icon-cell" style="text-align: center;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+              </td>
+              <td><span class="pending-name">{{ event.name }}</span></td>
+              <td class="pending-date">
+                <i class="bi bi-calendar-event me-1" style="color: var(--text-muted, var(--text-secondary));"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'Date TBD' }}
+              </td>
+              <td class="pending-details">{{ event.details[:150] if event.details else 'No details provided' }}{% if event.details and event.details|length > 150 %}...{% endif %}</td>
+              <td class="pending-actions" style="text-align: center; white-space: nowrap;">
+                {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+                <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="btn btn-primary btn-sm" style="border-radius: 999px; font-weight: 600; padding: 0.35rem 0.85rem; font-size: 0.8rem;">
+                  <i class="bi bi-plus-circle me-1"></i>Contribute
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Member Information (Tertiary Section) -->
+  <div class="prof-card" style="margin-top: 1.5rem;">
+    <div class="prof-card-header">
+      <h4><i class="bi bi-person-circle me-2"></i>Member Information</h4>
+    </div>
+    <div class="prof-card-body">
+      <div class="prof-info-item">
+        <span class="prof-info-icon">📱</span>
+        <div class="prof-info-content">
+          <div class="prof-info-label">Phone</div>
+          <div class="prof-info-value">{{ register.phone_num|member_phone if register.phone_num else 'N/A' }}</div>
+        </div>
+      </div>
+      <div class="prof-info-item">
+        <span class="prof-info-icon">🆔</span>
+        <div class="prof-info-content">
+          <div class="prof-info-label">ID Number</div>
+          <div class="prof-info-value">{{ register.id_number|member_id if register.id_number else 'N/A' }}</div>
+        </div>
+      </div>
+      <div class="prof-info-item">
+        <span class="prof-info-icon">🎂</span>
+        <div class="prof-info-content">
+          <div class="prof-info-label">Date of Birth</div>
+          <div class="prof-info-value">{{ register.date_of_birth if register.date_of_birth else 'N/A' }}</div>
+        </div>
+      </div>
+      <div class="prof-info-item">
+        <span class="prof-info-icon">📧</span>
+        <div class="prof-info-content">
+          <div class="prof-info-label">Email</div>
+          <div class="prof-info-value">{{ register.user_account.email if register.user_account else 'N/A' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

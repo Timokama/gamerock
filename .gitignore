@@ -1,7 +1,5 @@
+.env
 __pycache__
+**/__pycache__/
 venv/
 env/
-__pychar__/*
-project/* __pychar__/*
-.aider*
-.env
