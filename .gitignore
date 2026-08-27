@@ -1,7 +1,107 @@
-.env
-__pycache__
+# Python
 **/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyo
+*.pyd
+
+# Virtual environments
 venv/
 env/
-__pychar__/*
-app/* __pychar__/*
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Flask / Application
+instance/
+instance/**/*.sqlite
+instance/**/*.db
+instance/**/*.mwb
+instance/**/*.exe
+app/static/photos/user_uploads/
+uploads/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+.flaskenv
+*.env.local
+*.env.development
+*.env.production
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS / File system
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+._*
+
+# Build / Distribution
+dist/
+build/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+wheels/
+share/python-wheels/
+.installed.cfg
+*.manifest
+
+# Logs / Temp / Cache
+*.log
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.eggs/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.mwb
+
+# Personal / OS launchers
+Gamerock.bat
+Gamerock.vbs
+Gamerock.lnk
+*.lnk
+*.bat
+*.cmd
+
+# Misc
+*.xlsx
+*.xls
+*.docx
+*.doc
+*.pdf
+*.mp4
+*.mp3
+*.wav
+*.zip
+*.tar.gz
+*.rar
+*.7z
