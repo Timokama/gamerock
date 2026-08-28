@@ -86,28 +86,38 @@
 
     /* ===== Family Detail Row Redesign ===== */
     .family-detail-row {
-        display: none;
+        display: table-row;
     }
 
-    .family-detail-row.open {
-        display: table-row;
+    .family-detail-wrapper {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: max-height 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                    opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .family-detail-row.open .family-detail-wrapper {
+        max-height: 1200px;
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .family-detail-cell {
         padding: 0 !important;
         background: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color, var(--border-light));
     }
 
     .family-detail-card {
-        margin: var(--space-4);
+        margin: var(--space-4) var(--space-5);
         background: var(--bg-secondary);
-        border-radius: var(--radius-xl);
-        padding: var(--space-5);
         border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
         box-shadow: var(--shadow-sm);
-        transition: box-shadow var(--transition-base);
-        will-change: transform, opacity;
-        contain: layout style paint;
+        overflow: hidden;
     }
 
     .family-detail-card:hover {
@@ -759,6 +769,47 @@
             min-height: 48px;
             font-size: var(--text-base);
         }
+
+        .family-detail-row {
+            display: none;
+        }
+
+        .family-detail-row.open {
+            display: block;
+        }
+
+        .family-detail-wrapper {
+            display: none;
+            max-height: none;
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+
+        .family-detail-row.open .family-detail-wrapper {
+            display: block;
+        }
+
+        .family-detail-card {
+            margin: var(--space-3) var(--space-3);
+            border-radius: var(--radius-lg);
+        }
+
+        .detail-header {
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .detail-header h5 {
+            font-size: 0.85rem;
+        }
+
+        .detail-grid {
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .detail-actions {
+            padding: var(--space-3) var(--space-4);
+        }
     }
 
     @media (max-width: 576px) {
@@ -1092,7 +1143,8 @@
                     {% if member.spouse or (member_children and member.id in member_children and member_children[member.id]|length > 0) %}
                     <tr class="family-detail-row" id="spouse-row-{{ member.id }}">
                         <td colspan="8" class="family-detail-cell">
-                            <div class="family-detail-card">
+                            <div class="family-detail-wrapper">
+                                <div class="family-detail-card">
                                 {% if member.spouse %}
                                 <div class="detail-header">
                                     <div class="detail-avatar">💍</div>
@@ -1210,6 +1262,7 @@
                                     {% endif %}
                                     <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">➕ Add Child</a>
                                 </div>
+                            </div>
                             </div>
                         </td>
                     </tr>
@@ -1390,7 +1443,6 @@ function toggleSpouse(btn, memberId) {
     if (!row) return;
 
     var isOpen = row.classList.contains('open');
-    var card = row.querySelector('.family-detail-card');
 
     // Close other open rows first
     document.querySelectorAll('.family-detail-row.open').forEach(function(r) {
@@ -1407,27 +1459,10 @@ function toggleSpouse(btn, memberId) {
         row.classList.add('open');
         btn.classList.add('expanded');
         btn.textContent = '−';
-
-        if (window.innerWidth <= 768 && card) {
-            if (window.animateReveal) {
-                window.animateReveal(card, 220);
-            }
-        }
     } else {
         btn.classList.remove('expanded');
         btn.textContent = '+';
-
-        if (window.innerWidth <= 768 && card) {
-            if (window.fastHide) {
-                window.fastHide(card, function() {
-                    row.classList.remove('open');
-                });
-            } else {
-                row.classList.remove('open');
-            }
-        } else {
-            row.classList.remove('open');
-        }
+        row.classList.remove('open');
     }
 }
 

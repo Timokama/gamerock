@@ -156,16 +156,29 @@
 }
 
 .family-detail-row {
-    display: none;
+    display: table-row;
 }
 
-.family-detail-row.open {
-    display: table-row;
+.family-detail-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: max-height 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.family-detail-row.open .family-detail-wrapper {
+    max-height: 1200px;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .family-detail-cell {
     padding: 0 !important;
     background: #f8fafc;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .children-detail-card {
@@ -295,6 +308,32 @@
 
     .family-detail-card .detail-grid {
         grid-template-columns: 1fr;
+    }
+
+    .family-detail-row {
+        display: none;
+    }
+
+    .family-detail-row.open {
+        display: block;
+    }
+
+    .family-detail-wrapper {
+        display: none;
+        max-height: none;
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .family-detail-row.open .family-detail-wrapper {
+        display: block;
+    }
+
+    .children-detail-card {
+        margin: 0.75rem;
+        border-radius: 10px;
+        padding: 1rem;
     }
 }
 
@@ -1111,7 +1150,8 @@
                             {% if spouse.child %}
                             <tr class="family-detail-row" id="spouse-{{ spouse.id }}">
                                 <td colspan="6" class="family-detail-cell">
-                                    <div class="children-detail-card">
+                                    <div class="family-detail-wrapper">
+                                        <div class="children-detail-card">
                                         <div class="children-header">
                                             <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;">👶</div>
                                             <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
@@ -1152,6 +1192,7 @@
                                                 {% endfor %}
                                             </tbody>
                                         </table>
+                                    </div>
                                     </div>
                                 </td>
                             </tr>
