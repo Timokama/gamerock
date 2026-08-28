@@ -1692,19 +1692,18 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     <td data-label="Last Contribution">{{ deposits[0].trans_date.strftime('%b %d, %Y') if deposits[0].trans_date else 'N/A' }}</td>
                                     <td data-label="Actions" style="text-align: center;">
                                         <div class="row-actions">
-                                            <button class="row-actions-toggle" type="button"
-                                                    aria-haspopup="true" aria-expanded="false"
-                                                    aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
-                                                    onclick="toggleRowActions(this)">
-                                                <span aria-hidden="true">⚙</span>
-                                                <span>Actions</span>
-                                                <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                            </button>
-                                            <div class="row-actions-menu" role="menu">
-                                                <div class="row-actions-menu-header">
-                                                    <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
-                                                    <span class="row-actions-menu-sub">💳 Member</span>
-                                                </div>
+                                    <button class="row-actions-toggle" type="button"
+                                            aria-haspopup="true" aria-expanded="false"
+                                            aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <div class="row-actions-menu-header">
+                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                            <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
+                                        </div>
                                                 <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                                                     <span class="row-action-icon" aria-hidden="true">📄</span>
                                                     <span class="row-action-copy">
@@ -1905,18 +1904,17 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                 </div>
                                             </div>
                                             <div class="row-actions">
-                                                <button class="row-actions-toggle" type="button"
-                                                        aria-haspopup="true" aria-expanded="false"
-                                                        aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
-                                                        onclick="toggleRowActions(this)">
-                                                    <span aria-hidden="true">⚙</span>
-                                                    <span>Actions</span>
-                                            <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                        </button>
-                                        <div class="row-actions-menu" role="menu">
+                                    <button class="row-actions-toggle" type="button"
+                                            aria-haspopup="true" aria-expanded="false"
+                                            aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
                                         <div class="row-actions-menu-header">
-                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
-                                            <span class="row-actions-menu-sub">💳 Member</span>
+                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                            <span class="row-actions-menu-sub">No family records</span>
                                         </div>
                                         <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true">📄</span>
@@ -2031,7 +2029,13 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
             </div>
         </div>
     </div>
-    {% endif %}
+    <div class="family-no-results" id="familyNoResults" style="display: none;">
+        <div class="family-no-results-icon">🔍</div>
+        <h3>No Matching Members</h3>
+        <p>Try a different name, ID number or relationship filter.</p>
+    </div>
+</div>
+{% endif %}
     {% else %}
     <div class="empty-state">
         <div class="empty-state-icon">💰</div>
@@ -2092,8 +2096,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     </button>
                                     <div class="row-actions-menu" role="menu">
                                         <div class="row-actions-menu-header">
-                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
-                                            <span class="row-actions-menu-sub">💳 Member</span>
+                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                            <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
                                         </div>
                                         <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true">📄</span>
@@ -2151,121 +2155,333 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
 {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
 <!-- Family Section -->
 <div class="profile-section">
-    <div class="profile-section-header">
-        <h4>Family Directory</h4>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <a href="{{ url_for('family.index') }}" class="section-badge" style="text-decoration: none; color: inherit;">View All</a>
+    <div class="family-page-header">
+        <div>
+            <h4>Family Directory</h4>
+            <p style="color: var(--text-secondary); margin: var(--space-1) 0 0; font-size: var(--text-sm);">Manage and view all family relationships</p>
+        </div>
+        <div class="header-actions family-filter-bar">
+            <div class="family-search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" id="familySearch" placeholder="Search by member name...">
+            </div>
+            <div class="family-search-box">
+                <i class="bi bi-card-list search-icon"></i>
+                <input type="text" id="familyIdSearch" placeholder="ID Number...">
+            </div>
+            <div class="family-search-box">
+                <i class="bi bi-telephone search-icon"></i>
+                <input type="text" id="familyPhoneSearch" placeholder="Phone...">
+            </div>
+             <select id="familyStatus" class="family-filter-select">
+                  <option value="" hidden>Filter by relationship…</option>
+                  <option value="spouse">Has Spouse</option>
+                  <option value="children">Has Children</option>
+              </select>
+              <div class="family-filter-actions">
+                  <button type="button" class="family-clear-filters" onclick="clearAdminFamilyFilters()">✕ Clear</button>
+                  <button type="button" class="action-btn primary btn-sm" onclick="filterAdminFamilyTable()">🔍 Filter</button>
+              </div>
         </div>
     </div>
-    <div class="deposit-stats" style="margin-bottom: 1rem;">
-        <div class="deposit-stat-card">
-            <div class="deposit-stat-icon primary"><i class="bi bi-people"></i></div>
+
+    {% if all_members %}
+    <div class="family-summary">
+        <div class="family-summary-card members">
+            <div class="family-summary-icon members">👥</div>
             <div>
-                <div class="deposit-stat-value" id="fam-stat-members">{{ total_members }}</div>
-                <div class="deposit-stat-label">Total Members</div>
+                <div class="family-summary-value" id="fam-stat-members">{{ total_members }}</div>
+                <div class="family-summary-label">Total Members</div>
             </div>
         </div>
-        <div class="deposit-stat-card">
-            <div class="deposit-stat-icon info"><i class="bi bi-heart"></i></div>
+        <div class="family-summary-card spouses">
+            <div class="family-summary-icon spouses">💍</div>
             <div>
-                <div class="deposit-stat-value" id="fam-stat-spouses">{{ total_spouses }}</div>
-                <div class="deposit-stat-label">Spouses</div>
+                <div class="family-summary-value" id="fam-stat-spouses">{{ total_spouses }}</div>
+                <div class="family-summary-label">Spouses</div>
             </div>
         </div>
-        <div class="deposit-stat-card">
-            <div class="deposit-stat-icon warning"><i class="bi bi-baby"></i></div>
+        <div class="family-summary-card children">
+            <div class="family-summary-icon children">👶</div>
             <div>
-                <div class="deposit-stat-value" id="fam-stat-children">{{ total_children }}</div>
-                <div class="deposit-stat-label">Children</div>
+                <div class="family-summary-value" id="fam-stat-children">{{ total_children }}</div>
+                <div class="family-summary-label">Children</div>
             </div>
         </div>
     </div>
-    <div class="deposit-table-card">
-        <div class="card-body" style="padding: 1rem;">
-            <div class="report-filters" style="margin-bottom: 0; box-shadow: none; border: none; padding: 0;">
-                <form method="get" action="{{ url_for('main.index') }}" onsubmit="return false;">
-                    <div class="filter-row" id="family-basic-filters">
-                        <div class="filter-group">
-                            <label for="family-search">Search Family</label>
-                            <input type="text" id="family-search" placeholder="Search by name or ID..." oninput="filterAdminFamilyTable()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="family-type">Relationship</label>
-                            <select id="family-type" onchange="filterAdminFamilyTable()">
-                                <option value="">All</option>
-                                <option value="spouse">Spouse</option>
-                                <option value="child">Child</option>
-                            </select>
-                        </div>
-                        <div class="filter-actions">
-                            <button type="button" class="action-btn primary" onclick="filterAdminFamilyTable()">🔍 Filter</button>
-                            <button type="button" class="action-btn outline" onclick="clearAdminFamilyFilters()">✕ Clear</button>
-                            <button type="button" class="action-btn outline" id="add-filter-btn" onclick="toggleAdvancedFamilyFilters()">➕ Add Filter</button>
-                        </div>
-                    </div>
-                    <div class="filter-row" id="family-advanced-filters" style="display: none; margin-top: 0.75rem;">
-                        <div class="filter-group">
-                            <label for="family-date-from">Member Since (From)</label>
-                            <input type="date" id="family-date-from" onchange="filterAdminFamilyTable()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="family-date-to">Member Since (To)</label>
-                            <input type="date" id="family-date-to" onchange="filterAdminFamilyTable()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="family-has-spouse">Has Spouse</label>
-                            <select id="family-has-spouse" onchange="filterAdminFamilyTable()">
-                                <option value="">Any</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="family-has-children">Has Children</label>
-                            <select id="family-has-children" onchange="filterAdminFamilyTable()">
-                                <option value="">Any</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
-                        <div class="filter-actions">
-                            <button type="button" class="action-btn outline" onclick="toggleAdvancedFamilyFilters()">✕ Remove Filter</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    {% endif %}
+
+    <div class="family-table-card">
+        <div class="card-header">
+            <h4>All Members</h4>
         </div>
         <div class="card-body" style="padding: 0;">
             <div class="table-responsive">
                 <table class="table table-hover mb-0" id="admin-family-table">
                     <thead>
                         <tr>
+                            <th style="width: 40px;"></th>
                             <th>Member</th>
+                            <th>ID Number</th>
+                            <th>Phone</th>
                             <th>Spouses</th>
                             <th>Children</th>
                             <th>Member Since</th>
+                            <th style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                         {% for member in all_members[:10] %}
-                         <tr class="searchable-item" data-has-spouse="{{ '1' if member.spouse|length > 0 else '0' }}" data-has-children="{{ '1' if member.child|length > 0 else '0' }}" data-member-since="{{ member.created_at.strftime('%Y-%m-%d') if member.created_at else '' }}">
-                             <td data-label="Member">
-                                 {% if member.member_image_url %}
-                                 <img src="{{ member.member_image_url }}" alt="{{ member.firstname }} {{ member.lastname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                                 {% else %}
-                                 <span class="family-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
-                                 {% endif %}
-                                 <strong>{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
-                             </td>
-                            <td data-label="Spouses">{{ member.spouse|length }}</td>
-                            <td data-label="Children">{{ member.child|length }}</td>
+                        {% for member in all_members %}
+                        {% set children_count = member_stats[member.id].total_children if member_stats and member.id in member_stats else member.child|length %}
+                        {% set spouse_count = member.spouse|length %}
+                        {% if member.spouse or (member_stats and member.id in member_stats and member_stats[member.id].total_children > 0) %}
+                        <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="{{ '1' if member.spouse else '0' }}" data-has-children="{{ '1' if children_count > 0 else '0' }}" data-spouse-count="{{ spouse_count }}" data-children-count="{{ children_count }}">
+                            <td style="text-align: center;">
+                                <button type="button" class="expand-btn" onclick="toggleSpouse(this, {{ member.id }})" title="Toggle Family Details">+</button>
+                            </td>
+                            <td data-label="Member">
+                                {% if member.user_account and member.user_account.image %}
+                                <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                                {% else %}
+                                <span class="family-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
+                                {% endif %}
+                                <strong>{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
+                            </td>
+                            <td data-label="ID Number">{{ member.id_number|member_id }}</td>
+                            <td data-label="Phone">{{ member.phone_num|member_phone }}</td>
+                            <td data-label="Spouses">{{ spouse_count }}</td>
+                            <td data-label="Children">{{ children_count }}</td>
                             <td data-label="Member Since">{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
+                            <td data-label="Actions" style="text-align: center;">
+                                <div class="row-actions">
+                                    <button class="row-actions-toggle" type="button"
+                                            aria-haspopup="true" aria-expanded="false"
+                                            aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
+                                            onclick="toggleRowActions(this)">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <div class="row-actions-menu-header">
+                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                            <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
+                                        </div>
+                                        <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">View Family</span>
+                                                <span class="row-action-hint">Spouse & children</span>
+                                            </span>
+                                        </a>
+                                        <a href="{{ url_for('family.edit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Edit Member</span>
+                                                <span class="row-action-hint">Update personal details</span>
+                                            </span>
+                                        </a>
+                                        <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-table"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">View Deposits</span>
+                                                <span class="row-action-hint">Contribution history</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
+                        <tr class="family-detail-row" id="spouse-row-{{ member.id }}">
+                            <td colspan="8" class="family-detail-cell">
+                                <div class="family-detail-card">
+                                    {% if member.spouse %}
+                                    <div class="detail-header">
+                                        <div class="detail-avatar">💍</div>
+                                        <h5>Spouse Details</h5>
+                                        <span class="detail-badge family-badge spouse-badge">{{ member.spouse|length }} Spouse{{ 's' if member.spouse|length != 1 else '' }}</span>
+                                    </div>
+                                    {% for spouse in member.spouse %}
+                                    <div class="spouse-section">
+                                        <div class="spouse-section-header">
+                                            <span class="family-avatar spouse" style="width: 32px; height: 32px; font-size: 0.8rem;">👤</span>
+                                            <strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong>
+                                            <span class="family-badge spouse-badge" style="margin-left: auto;">Spouse</span>
+                                        </div>
+                                        <div class="detail-grid">
+                                            <div class="family-detail-item">
+                                                <span class="detail-icon">📱</span>
+                                                <span>{{ spouse.phone_num|member_phone }}</span>
+                                            </div>
+                                            <div class="family-detail-item">
+                                                <span class="detail-icon">🆔</span>
+                                                <span>{{ spouse.id_number|member_id }}</span>
+                                            </div>
+                                            <div class="family-detail-item">
+                                                <span class="detail-icon">🎂</span>
+                                                <span>{{ spouse.date_of_birth }}</span>
+                                            </div>
+                                        </div>
+                                        {% if spouse.child %}
+                                        <div class="children-section">
+                                            <div class="children-section-header">
+                                                <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                                <strong>Children of {{ spouse.firstname }} {{ spouse.lastname }}</strong>
+                                                <span class="family-badge child-badge" style="margin-left: auto;">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="children-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Phone</th>
+                                                            <th>ID Number</th>
+                                                            <th>Date of Birth</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for child in spouse.child %}
+                                                        <tr>
+                                                            <td>
+                                                                <span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                                                <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                                                            </td>
+                                                            <td>{{ child.phone_num|member_phone }}</td>
+                                                            <td>{{ child.id_number|member_id }}</td>
+                                                            <td>{{ child.date_of_birth }}</td>
+                                                            <td>
+                                                                 <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% if member_children and member.id in member_children and member_children[member.id]|length > 0 %}
+                                    <div class="children-section{% if not member.spouse %} children-section--standalone{% endif %}">
+                                        <div class="children-section-header">
+                                            <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                            <strong>Children Details</strong>
+                                            <span class="family-badge child-badge" style="margin-left: auto;">{{ member_children[member.id]|length }} Child{{ 'ren' if member_children[member.id]|length != 1 else '' }}</span>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="children-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Phone</th>
+                                                        <th>ID Number</th>
+                                                        <th>Date of Birth</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for child in member_children[member.id] %}
+                                                    <tr>
+                                                        <td>
+                                                            <span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                                            <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                                                        </td>
+                                                        <td>{{ child.phone_num|member_phone }}</td>
+                                                        <td>{{ child.id_number|member_id }}</td>
+                                                        <td>{{ child.date_of_birth }}</td>
+                                                        <td>
+                                                            {% if child in member.child %}
+                                                            <a href="{{ url_for('family.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            {% else %}
+                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="detail-actions">
+                                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm">➕ Add Spouse</a>
+                                        {% if member.spouse %}
+                                        <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=member.spouse[0].id) }}" class="action-btn outline btn-sm">✏️ Edit Spouse</a>
+                                        {% endif %}
+                                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">➕ Add Child</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="0" data-has-children="0" data-spouse-count="0" data-children-count="{{ children_count }}">
+                            <td style="text-align: center; color: var(--text-tertiary);">—</td>
+                            <td>
+                                {% if member.user_account and member.user_account.image %}
+                                <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                                {% else %}
+                                <span class="family-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
+                                {% endif %}
+                                <strong>{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
+                            </td>
+                            <td data-label="ID Number">{{ member.id_number|member_id }}</td>
+                            <td data-label="Phone">{{ member.phone_num|member_phone }}</td>
+                            <td data-label="Spouses">0</td>
+                            <td data-label="Children">{{ children_count }}</td>
+                            <td data-label="Member Since">{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
+                            <td data-label="Actions" style="text-align: center;">
+                                <div class="row-actions">
+                                    <button class="row-actions-toggle" type="button"
+                                            aria-haspopup="true" aria-expanded="false"
+                                            aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
+                                            onclick="toggleRowActions(this)">
+                                        <span aria-hidden="true">⚙</span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <div class="row-actions-menu-header">
+                                            <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                            <span class="row-actions-menu-sub">No family records</span>
+                                        </div>
+                                        <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">View Family</span>
+                                                <span class="row-action-hint">Family details</span>
+                                            </span>
+                                        </a>
+                                        <a href="{{ url_for('family.edit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Edit Member</span>
+                                                <span class="row-action-hint">Update personal details</span>
+                                            </span>
+                                        </a>
+                                        <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-table"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">View Deposits</span>
+                                                <span class="row-action-hint">Contribution history</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+    <div class="family-no-results" id="familyNoResults" style="display: none;">
+        <div class="family-no-results-icon">🔍</div>
+        <h3>No Matching Members</h3>
+        <p>Try a different name, ID number or relationship filter.</p>
     </div>
 </div>
 {% endif %}
@@ -2455,61 +2671,84 @@ document.addEventListener('click', function(e) {
 });
 
 function filterAdminFamilyTable() {
-    var search = document.getElementById('family-search').value.toLowerCase();
-    var type = document.getElementById('family-type').value.toLowerCase();
-    var dateFrom = document.getElementById('family-date-from').value;
-    var dateTo = document.getElementById('family-date-to').value;
-    var hasSpouseFilter = document.getElementById('family-has-spouse').value;
-    var hasChildrenFilter = document.getElementById('family-has-children').value;
+    var searchInput = document.getElementById('familySearch');
+    var idSearchInput = document.getElementById('familyIdSearch');
+    var phoneSearchInput = document.getElementById('familyPhoneSearch');
+    var statusSelect = document.getElementById('familyStatus');
+    var noResults = document.getElementById('familyNoResults');
+    if (!searchInput || !statusSelect) return;
 
+    var term = searchInput.value.trim().toLowerCase();
+    var idTerm = idSearchInput ? idSearchInput.value.trim().toLowerCase() : '';
+    var phoneTerm = phoneSearchInput ? phoneSearchInput.value.trim().toLowerCase() : '';
+    var status = statusSelect.value;
     var rows = document.querySelectorAll('#admin-family-table .searchable-item');
-    var visibleMembers = 0;
+    var visible = 0;
     var visibleSpouses = 0;
     var visibleChildren = 0;
 
-    rows.forEach(function(row) {
-        var text = row.textContent.toLowerCase();
-        var rowSpouse = row.getAttribute('data-has-spouse') || '0';
-        var rowChildren = row.getAttribute('data-has-children') || '0';
-        var memberSince = row.getAttribute('data-member-since') || '';
-
-        var matchesSearch = text.includes(search);
-        var matchesType = !type || (type === 'spouse' && rowSpouse === '1') || (type === 'child' && rowChildren === '1');
-        var matchesSpouse = !hasSpouseFilter || rowSpouse === hasSpouseFilter;
-        var matchesChildren = !hasChildrenFilter || rowChildren === hasChildrenFilter;
-        var matchesDate = true;
-        if (dateFrom && memberSince) {
-            matchesDate = matchesDate && (memberSince >= dateFrom);
+    rows.forEach(function (row) {
+        var text = (row.textContent || '').toLowerCase();
+        var matchesText = true;
+        if (term) {
+            matchesText = text.indexOf(term) > -1;
         }
-        if (dateTo && memberSince) {
-            matchesDate = matchesDate && (memberSince <= dateTo);
+        var matchesId = true;
+        if (idTerm) {
+            matchesId = text.indexOf(idTerm) > -1;
         }
-
-        var show = matchesSearch && matchesType && matchesSpouse && matchesChildren && matchesDate;
+        var matchesPhone = true;
+        if (phoneTerm) {
+            matchesPhone = text.indexOf(phoneTerm) > -1;
+        }
+        var matchesStatus = true;
+        if (status === 'spouse') {
+            matchesStatus = row.getAttribute('data-has-spouse') === '1';
+        } else if (status === 'children') {
+            matchesStatus = row.getAttribute('data-has-children') === '1';
+        }
+        var show = matchesText && matchesId && matchesPhone && matchesStatus;
         row.style.display = show ? '' : 'none';
 
+        var detailRow = row.nextElementSibling;
+        if (detailRow && detailRow.classList.contains('family-detail-row')) {
+            detailRow.style.display = show ? '' : 'none';
+        }
+
         if (show) {
-            visibleMembers++;
-            visibleSpouses += parseInt(rowSpouse, 10);
-            visibleChildren += parseInt(rowChildren, 10);
+            visible++;
+            visibleSpouses += parseInt(row.getAttribute('data-spouse-count') || '0', 10);
+            visibleChildren += parseInt(row.getAttribute('data-children-count') || '0', 10);
         }
     });
 
-    document.getElementById('fam-stat-members').textContent = visibleMembers;
+    document.querySelectorAll('#admin-family-table tr.family-detail-row').forEach(function (row) {
+        row.classList.remove('open');
+        var prevRow = row.previousElementSibling;
+        if (prevRow) {
+            var btn = prevRow.querySelector('.expand-btn');
+            if (btn) { btn.classList.remove('expanded'); btn.textContent = '+'; }
+        }
+    });
+
+    if (noResults) {
+        noResults.style.display = visible === 0 ? '' : 'none';
+    }
+
+    document.getElementById('fam-stat-members').textContent = visible;
     document.getElementById('fam-stat-spouses').textContent = visibleSpouses;
     document.getElementById('fam-stat-children').textContent = visibleChildren;
 }
 
 function clearAdminFamilyFilters() {
-    document.getElementById('family-search').value = '';
-    document.getElementById('family-type').value = '';
-    document.getElementById('family-date-from').value = '';
-    document.getElementById('family-date-to').value = '';
-    document.getElementById('family-has-spouse').value = '';
-    document.getElementById('family-has-children').value = '';
-    document.getElementById('family-advanced-filters').style.display = 'none';
-    document.getElementById('add-filter-btn').textContent = '➕ Add Filter';
-    filterAdminFamilyTable();
+    var searchInput = document.getElementById('familySearch');
+    var idSearchInput = document.getElementById('familyIdSearch');
+    var phoneSearchInput = document.getElementById('familyPhoneSearch');
+    var statusSelect = document.getElementById('familyStatus');
+    if (searchInput) searchInput.value = '';
+    if (idSearchInput) idSearchInput.value = '';
+    if (phoneSearchInput) phoneSearchInput.value = '';
+    if (statusSelect) statusSelect.value = '';
 }
 
 function toggleAdvancedFamilyFilters() {
@@ -2550,6 +2789,31 @@ function toggleDepositMember(btn, memberId) {
         btn.textContent = '−';
     } else {
         nextRow.classList.remove('open');
+        btn.classList.remove('expanded');
+        btn.textContent = '+';
+    }
+}
+
+function toggleSpouse(btn, memberId) {
+    if (!btn || !memberId) return;
+    var row = document.getElementById('spouse-row-' + memberId);
+    if (!row) return;
+    var isOpen = row.classList.contains('open');
+    document.querySelectorAll('.family-detail-row.open').forEach(function(r) {
+        if (r === row) return;
+        r.classList.remove('open');
+        var prevRow = r.previousElementSibling;
+        if (prevRow) {
+            var b = prevRow.querySelector('.expand-btn');
+            if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
+        }
+    });
+    if (!isOpen) {
+        row.classList.add('open');
+        btn.classList.add('expanded');
+        btn.textContent = '−';
+    } else {
+        row.classList.remove('open');
         btn.classList.remove('expanded');
         btn.textContent = '+';
     }
@@ -2745,7 +3009,7 @@ function clearDepositFilters() {
 // Shared member data for dropdowns (populated once)
 const membersData = [
     {% for m in all_members %}
-    { id: {{ m[0] }}, name: "{{ m[1] }} {{ m[2] }} {{ m[3] }}" }{% if not loop.last %},{% endif %}
+    { id: {{ m.id }}, name: "{{ m.firstname }} {{ m.lastname }} {{ m.surname }}" }{% if not loop.last %},{% endif %}
     {% endfor %}
 ];
 

@@ -388,11 +388,23 @@
 
 /* Pending Contributions Detail Row */
 .pending-detail-row {
-    display: none;
+    display: table-row;
 }
 
-.pending-detail-row.open {
-    display: table-row;
+.pending-detail-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: max-height 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.pending-detail-row.open .pending-detail-wrapper {
+    max-height: 600px;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .pending-detail-cell {
@@ -402,19 +414,27 @@
 }
 
 .pending-detail-card {
-    padding: var(--space-4) 1.25rem;
+    margin: var(--space-4) var(--space-5);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
 }
 
 .pending-detail-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color, var(--border-light));
+    gap: var(--space-3);
 }
 
 .pending-detail-header h5 {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--dark-color, var(--text-primary));
     display: flex;
@@ -423,13 +443,14 @@
 }
 
 .pending-detail-total {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     color: var(--text-muted, var(--text-secondary));
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .pending-contributions-list {
-    max-height: 200px;
+    max-height: 280px;
     overflow-y: auto;
 }
 
@@ -456,15 +477,23 @@
     font-size: 0.85rem;
 }
 
+.pending-contributions-table tbody tr {
+    transition: background 0.15s ease;
+}
+
 .pending-contributions-table tbody tr:hover {
-    background: rgba(245, 158, 11, 0.04);
+    background: rgba(245, 158, 11, 0.06);
+}
+
+.pending-contributions-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .pending-contribution-empty {
-    padding: var(--space-4);
+    padding: var(--space-5);
     text-align: center;
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
 }
 
 .pending-contributions-badge {
@@ -484,10 +513,142 @@
 
 .pending-loading {
     display: block;
-    padding: var(--space-3);
+    padding: var(--space-4);
     text-align: center;
     color: var(--text-muted, var(--text-secondary));
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .pending-detail-row {
+        display: none;
+    }
+
+    .pending-detail-row.open {
+        display: block;
+    }
+
+    .pending-detail-wrapper {
+        display: none;
+        max-height: none;
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .pending-detail-row.open .pending-detail-wrapper {
+        display: block;
+    }
+
+    .pending-detail-card {
+        margin: var(--space-3) var(--space-3);
+        border-radius: var(--radius-lg);
+    }
+
+    .pending-detail-header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .pending-detail-header h5 {
+        font-size: 0.85rem;
+    }
+
+    .pending-detail-total {
+        font-size: 0.72rem;
+    }
+
+    .pending-contributions-table thead {
+        display: none;
+    }
+
+    .pending-contributions-table,
+    .pending-contributions-table tbody,
+    .pending-contributions-table tr,
+    .pending-contributions-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .pending-contributions-table tr {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+
+    .pending-contributions-table td {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-2) 0;
+        border-bottom: 1px solid var(--border-light);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+    }
+
+    .pending-contributions-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .pending-contributions-table td[data-label]:before {
+        content: attr(data-label);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        line-height: var(--leading-tight);
+    }
+
+    .pending-contributions-table td:empty {
+        display: none;
+    }
+
+    .pending-contributions-table .contribute-btn {
+        width: 100%;
+        justify-content: center;
+        font-size: var(--text-sm);
+        padding: var(--space-2) var(--space-3);
+        min-height: 44px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pending-detail-card {
+        margin: var(--space-2) var(--space-2);
+    }
+
+    .pending-detail-header {
+        padding: var(--space-3);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .pending-contributions-table tr {
+        padding: var(--space-3);
+        margin-bottom: var(--space-3);
+        border-radius: var(--radius-md);
+    }
+
+    .pending-contributions-table td {
+        padding: var(--space-2) 0;
+        font-size: var(--text-xs);
+    }
+
+    .pending-contributions-table td[data-label]:before {
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+    }
+
+    .pending-contributions-table .contribute-btn {
+        font-size: var(--text-xs);
+        padding: var(--space-2) var(--space-3);
+        min-height: 40px;
+    }
 }
 
 /* Family avatar with image */
@@ -605,6 +766,104 @@
     }
 }
 
+/* Pending contributions toggle + card layout */
+.pending-toggle-cell {
+    text-align: center;
+    vertical-align: middle;
+    width: 56px;
+}
+
+.pending-toggle-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border-color, var(--border-light));
+    background: var(--card-bg, #fff);
+    color: var(--text-muted, var(--text-secondary));
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    line-height: 1;
+    padding: 0;
+}
+
+.pending-toggle-btn:hover {
+    border-color: var(--primary-color, #14b8a6);
+    color: var(--primary-color, #14b8a6);
+    background: rgba(20, 184, 166, 0.05);
+}
+
+.pending-toggle-btn.expanded {
+    background: var(--primary-color, #14b8a6);
+    border-color: var(--primary-color, #14b8a6);
+    color: #fff;
+}
+
+.member-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.member-name {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.member-id {
+    font-size: 0.78rem;
+    color: var(--text-muted, var(--text-secondary));
+}
+
+.pending-header-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+    border-width: 1.5px;
+}
+
+/* Dropdown menu polish */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.dropdown-item-primary {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dropdown-item-secondary {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.dropdown-item--muted {
+    color: var(--text-secondary);
+    justify-content: flex-start;
+}
+
+.dropdown-item--action {
+    justify-content: flex-start;
+    color: var(--primary-700);
+    font-weight: 600;
+}
+
 @media (max-width: 480px) {
     .deposit-page-header h2 {
         font-size: 1.25rem;
@@ -624,13 +883,186 @@
         padding: 0.55rem 0.75rem;
         font-size: 0.82rem;
     }
-    .pending-detail-total {
-        display: none;
-    }
-    .pending-contributions-list {
+
+    /* Deposit table mobile card layout */
+    .deposit-table-card .table thead {
         display: none;
     }
 
+    .deposit-table-card .table,
+    .deposit-table-card .table tbody,
+    .deposit-table-card .table tr,
+    .deposit-table-card .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .deposit-table-card .table tr {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        padding: var(--space-4);
+        margin-bottom: var(--space-4);
+    }
+
+    .deposit-table-card .table td {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-3) 0;
+        border-bottom: 1px solid var(--border-light);
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+    }
+
+    .deposit-table-card .table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .deposit-table-card .table td[data-label]:before {
+        content: attr(data-label);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        line-height: var(--leading-tight);
+    }
+
+    .deposit-table-card .table td:empty {
+        display: none;
+    }
+
+    /* Expand button cell on mobile */
+    .deposit-table-card .table td:first-child[data-label=""] {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        padding-bottom: var(--space-2);
+    }
+
+    /* Row actions on mobile - prevent overflow */
+    .deposit-table-card .table td .row-actions {
+        width: 100%;
+    }
+
+    .deposit-table-card .table td .row-actions-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Pending contributions on mobile */
+    .pending-detail-card {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .pending-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .pending-detail-header h5 {
+        font-size: 0.85rem;
+    }
+
+    .pending-detail-total {
+        font-size: 0.72rem;
+    }
+
+    .pending-contributions-table thead th {
+        font-size: 0.7rem;
+        padding: 0.75rem 0.85rem;
+    }
+
+    .pending-contributions-table tbody td {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.8rem;
+    }
+
+    .contribute-btn {
+        font-size: 0.68rem;
+        padding: 0.3rem 0.55rem;
+    }
+
+    /* Deposit page header on mobile */
+    .deposit-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-4);
+    }
+
+    .deposit-page-header .deposit-header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .deposit-page-header .action-btn {
+        flex: 1;
+        justify-content: center;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .deposit-page-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .deposit-page-header .action-btn {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.75rem;
+        gap: 0.25rem;
+    }
+
+    .deposit-filters {
+        padding: var(--space-3);
+    }
+
+    .deposit-filters .filter-group label {
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+    }
+
+    .deposit-filters .filter-group input,
+    .deposit-filters .filter-group select {
+        font-size: var(--text-sm);
+        padding: var(--space-2) var(--space-3);
+        min-height: 42px;
+    }
+
+    .deposit-filters .filter-actions .btn {
+        font-size: var(--text-sm);
+        min-height: 42px;
+    }
+
+    .deposit-table-card .table td {
+        padding: var(--space-2) 0;
+        font-size: var(--text-xs);
+    }
+
+    .deposit-table-card .table td[data-label]:before {
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+    }
+
+    .pending-contributions-table thead th {
+        font-size: 0.65rem;
+        padding: 0.6rem 0.7rem;
+    }
+
+    .pending-contributions-table tbody td {
+        padding: 0.6rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .contribute-btn {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
 }
 
 /* Section sub-header (matching admin_dashboard.html pattern) */
@@ -866,6 +1298,84 @@
 .row-action-item.danger:hover .row-action-hint {
     color: var(--danger-600);
 }
+
+/* Deposit admin dropdown */
+.admin-action-dropdown {
+    position: relative;
+}
+
+.admin-action-dropdown .dropdown-toggle {
+    background: var(--primary-700);
+    color: white;
+    border: 1px solid var(--primary-700);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2) 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+}
+
+.admin-action-dropdown .dropdown-toggle:hover {
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+    transform: translateY(-1px);
+}
+
+.admin-action-dropdown .dropdown-menu {
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 280px;
+    padding: var(--space-2) 0;
+    z-index: 1070;
+}
+
+.admin-action-dropdown .dropdown-menu-label {
+    padding: 0.55rem 0.7rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: var(--space-1);
+}
+
+.admin-action-dropdown .dropdown-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 0.35rem 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .admin-action-dropdown {
+        width: 100%;
+    }
+
+    .admin-action-dropdown .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-action-dropdown .dropdown-menu {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        margin-top: var(--space-2);
+        box-shadow: none;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+    }
+
+    .admin-action-dropdown .dropdown-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
 </style>
 {% endblock %}
 
@@ -927,25 +1437,24 @@
         <div style="display: flex; gap: var(--space-2); align-items: center;">
             {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
             <div class="dropdown admin-action-dropdown">
-                <button class="dropdown-toggle action-btn primary btn-sm" type="button" onclick="toggleDropdown(this)" aria-label="Deposit Actions" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                <button class="dropdown-toggle action-btn primary btn-sm" type="button" onclick="toggleDropdown(this)" aria-label="Deposit Actions">
                     +
                 </button>
-                <div class="dropdown-menu" style="top: 100%; right: 0; min-width: 280px;">
+                <div class="dropdown-menu">
                     {% if contributions %}
                     <div class="dropdown-menu-label">Recent Contributions</div>
                     {% for c in contributions[:5] %}
-                    <div class="dropdown-item" role="menuitem" style="display: flex; justify-content: space-between;">
-                        <span style="font-size: 0.8rem;">
-                            {{ c.member.firstname }} {{ c.member.lastname }} — {{ c.trans_date.strftime('%b %d, %Y') if c.trans_date else 'N/A' }}
-                        </span>
-                        <span class="deposit-amount" style="font-weight: 600;">Ksh. {{ '{:,}'.format(c.amount or 0) }}</span>
+                    <div class="dropdown-item" role="menuitem">
+                        <span class="dropdown-item-primary">{{ c.member.firstname }} {{ c.member.lastname }}</span>
+                        <span class="dropdown-item-secondary">{{ c.trans_date.strftime('%b %d, %Y') if c.trans_date else 'N/A' }}</span>
+                        <span class="deposit-amount">Ksh. {{ '{:,}'.format(c.amount or 0) }}</span>
                     </div>
                     {% endfor %}
                     <div class="dropdown-divider"></div>
                     {% else %}
-                    <div class="dropdown-item" style="color: var(--text-secondary);">No recent contributions</div>
+                    <div class="dropdown-item dropdown-item--muted">No recent contributions</div>
                     {% endif %}
-                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item" role="menuitem">📄 View All Contributions</a>
+                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item dropdown-item--action" role="menuitem">📄 View All Contributions</a>
                 </div>
             </div>
             {% endif %}
@@ -978,11 +1487,11 @@
                 {% for member in members %}
                 {% set member_contributions = contributions_by_member.get(member.id, []) %}
                 <tr class="searchable-item" data-member-name="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" data-member-id="{{ member.id_number|member_id if member.id_number else '' }}">
-                    <td style="text-align: center;">
-                        <button class="expand-btn" onclick="togglePendingContributions(this, '{{ member.id }}')" title="Toggle Pending Contributions">+</button>
+                    <td class="pending-toggle-cell">
+                        <button class="expand-btn pending-toggle-btn" onclick="togglePendingContributions(this, '{{ member.id }}')" title="Toggle Pending Contributions" aria-label="Toggle pending contributions">+</button>
                     </td>
                     <td data-label="Member">
-                        <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <div class="member-cell">
                             {% if member.user_account and member.user_account.image %}
                             <span class="family-avatar">
                                 <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }}">
@@ -990,9 +1499,9 @@
                             {% else %}
                             <span class="family-avatar">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
                             {% endif %}
-                            <div>
-                                <strong style="display: block; font-weight: 600;">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
-                                <span style="font-size: 0.78rem; color: var(--text-muted, var(--text-secondary));">{{ member.id_number|member_id if member.id_number else '' }}</span>
+                            <div class="member-info">
+                                <strong class="member-name">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
+                                <span class="member-id">{{ member.id_number|member_id if member.id_number else '' }}</span>
                             </div>
                         </div>
                     </td>
@@ -1050,24 +1559,26 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="pending-detail-row" id="pending-row-{{ member.id }}">
+                <tr class="pending-detail-row" id="pending-row-{{ member.id }}" data-member-id="{{ member.id }}">
                     <td colspan="6" class="pending-detail-cell">
-                        <div class="pending-detail-card">
-                            <div class="pending-detail-header">
-                                <h5>
-                                    {% if member.user_account and member.user_account.image %}
-                                    <span class="family-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
-                                        <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }}">
-                                    </span>
-                                    {% else %}
-                                    <span class="family-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
-                                    {% endif %}
-                                    Pending Contributions
-                                </h5>
-                                <span class="pending-detail-total" id="pending-count-{{ member.id }}">Loading...</span>
-                            </div>
-                            <div class="pending-contributions-list" id="pending-list-{{ member.id }}">
-                                <span class="pending-loading">Loading...</span>
+                        <div class="pending-detail-wrapper">
+                            <div class="pending-detail-card">
+                                <div class="pending-detail-header">
+                                    <h5>
+                                        {% if member.user_account and member.user_account.image %}
+                                        <span class="family-avatar pending-header-avatar">
+                                            <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }}">
+                                        </span>
+                                        {% else %}
+                                        <span class="family-avatar pending-header-avatar">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
+                                        {% endif %}
+                                        Pending Contributions
+                                    </h5>
+                                    <span class="pending-detail-total" id="pending-count-{{ member.id }}">Loading...</span>
+                                </div>
+                                <div class="pending-contributions-list" id="pending-list-{{ member.id }}">
+                                    <span class="pending-loading">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -1240,18 +1751,28 @@ var canContribute = false;
 {% else %}
 var canContribute = {{ 'true' if can_contribute else 'false' }};
 {% endif %}
-</script>
 function toggleDropdown(button) {
-    var dropdown = button.nextElementSibling;
-    if (dropdown && dropdown.classList.contains('dropdown-menu')) {
-        dropdown.classList.toggle('show');
+    var dropdown = button.closest('.dropdown');
+    if (!dropdown) return;
+    var menu = dropdown.querySelector('.dropdown-menu');
+    if (!menu) return;
+
+    var isOpen = dropdown.classList.contains('open');
+    if (isOpen) {
+        dropdown.classList.remove('open');
+        menu.classList.remove('show');
+    } else {
+        dropdown.classList.add('open');
+        menu.classList.add('show');
     }
 }
 
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
-            menu.classList.remove('show');
+        document.querySelectorAll('.dropdown.open').forEach(function(dropdown) {
+            dropdown.classList.remove('open');
+            var menu = dropdown.querySelector('.dropdown-menu');
+            if (menu) menu.classList.remove('show');
         });
     }
 });
@@ -1263,46 +1784,62 @@ const pendingContributionsLoading = {};
 /**
  * Toggle pending contributions row - collapsible dropdown functionality
  */
+const TOGGLE_ANIMATION_DURATION = 200;
+const pendingToggleState = {};
+
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
 function togglePendingContributions(btn, memberId) {
+    if (!btn || !memberId) return;
+
+    if (pendingToggleState[memberId] === 'animating') return;
+    pendingToggleState[memberId] = 'animating';
+
     var row = document.getElementById('pending-row-' + memberId);
-    if (!row) return;
-    
+    if (!row) {
+        pendingToggleState[memberId] = 'idle';
+        return;
+    }
+
     var isOpen = row.classList.contains('open');
-    
-    // Close all other open pending rows and reset their buttons
+
     document.querySelectorAll('.pending-detail-row.open').forEach(function(r) {
         if (r !== row) {
+            var otherMemberId = r.getAttribute('data-member-id');
             r.classList.remove('open');
             var prevRow = r.previousElementSibling;
             if (prevRow) {
                 var b = prevRow.querySelector('.expand-btn');
-                if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
+                if (b) {
+                    b.classList.remove('expanded');
+                    b.textContent = '+';
+                }
+            }
+            if (otherMemberId) {
+                delete pendingToggleState[otherMemberId];
             }
         }
     });
-    
+
     if (!isOpen) {
         row.classList.add('open');
         btn.classList.add('expanded');
         btn.textContent = '−';
-        // Load pending contributions for this member
+
         loadPendingContributions(memberId);
-        if (window.innerWidth <= 768) {
-            var card = row.querySelector('.pending-detail-card');
-            if (card && window.animateReveal) {
-                window.animateReveal(card, 220);
-            }
-        }
+
+        setTimeout(function() {
+            pendingToggleState[memberId] = 'idle';
+        }, TOGGLE_ANIMATION_DURATION);
     } else {
-        row.classList.remove('open');
         btn.classList.remove('expanded');
         btn.textContent = '+';
-        if (window.innerWidth <= 768) {
-            var card = row.querySelector('.pending-detail-card');
-            if (card && window.fastHide) {
-                window.fastHide(card);
-            }
-        }
+
+        row.classList.remove('open');
+
+        pendingToggleState[memberId] = 'idle';
     }
 }
 
@@ -1371,7 +1908,7 @@ function renderPendingContributions(listEl, data, countEl, memberId) {
 
     // Render pending items with contribute button
     pending.forEach(function(event) {
-        var actionCell = '<td style="text-align: center; white-space: nowrap;">';
+        var actionCell = '<td data-label="Action" style="text-align: center; white-space: nowrap;">';
         if (canContribute) {
             actionCell += '<a href="/contribution/' + memberId + '/amount?event_id=' + event.id + '" class="contribute-btn" title="Contribute to this event">💰 Contribute</a>';
         } else {
@@ -1379,10 +1916,10 @@ function renderPendingContributions(listEl, data, countEl, memberId) {
         }
         actionCell += '</td>';
         html += '<tr>' +
-            '<td style="text-align: center;"><div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div></td>' +
-            '<td><span style="font-weight: 600; color: var(--text-primary);">' + event.name + '</span></td>' +
-            '<td style="white-space: nowrap;"><i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>' + event.event_date + '</td>' +
-            '<td style="color: #475569;">' + (event.details || 'No details provided') + '</td>' +
+            '<td data-label="" style="text-align: center;"><div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div></td>' +
+            '<td data-label="Event"><span style="font-weight: 600; color: var(--text-primary);">' + event.name + '</span></td>' +
+            '<td data-label="Date" style="white-space: nowrap;"><i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>' + event.event_date + '</td>' +
+            '<td data-label="Details" style="color: #475569;">' + (event.details || 'No details provided') + '</td>' +
             actionCell +
             '</tr>';
     });
@@ -1434,12 +1971,6 @@ const optimizeDepositExpand = () => {
         if (!btn.dataset.mobileOptimized) {
             btn.dataset.mobileOptimized = 'true';
             btn.style.touchAction = 'manipulation';
-            btn.addEventListener('touchstart', function(e) {
-                if (e.target.closest('.expand-btn, .dashboard-expand-btn')) {
-                    e.preventDefault();
-                    this.click();
-                }
-            }, { passive: false });
         }
     });
 };

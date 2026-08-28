@@ -8,11 +8,14 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
+    host = os.environ.get("HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", 5000))
     FlaskUI(
         app=app,
-        port=port,
         server="flask",
-        width=800,
-        height=600,
+        port=port,
+        server_kwargs={"app": app, "host": host},
+        width=1024,
+        height=768,
+        fullscreen=False,
     ).run()
