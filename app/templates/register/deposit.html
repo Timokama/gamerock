@@ -961,6 +961,17 @@
                       </span>
                     </a>
                     {% endif %}
+                    {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
+                        <form method="POST" action="{{ url_for('deposit.delete_contribution', depo_id=deposit.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this contribution?');">
+                          <button type="submit" class="row-action-item danger" role="menuitem">
+                           <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                           <span class="row-action-copy">
+                           <span class="row-action-label">Delete</span>
+                           <span class="row-action-hint">Permanently remove contribution</span>
+                            </span>
+                          </button>
+                        </form>
+                    {% endif %}
                   </div>
                 </div>
               </td>

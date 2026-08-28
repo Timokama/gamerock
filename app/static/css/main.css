@@ -1018,7 +1018,7 @@ textarea.form-control {
     max-width: 560px;
     width: calc(100% - var(--space-8));
     max-height: calc(100vh - var(--space-16));
-    overflow-y: auto;
+    overflow-y: hidden;
     z-index: var(--z-modal);
     opacity: 0;
     visibility: hidden;

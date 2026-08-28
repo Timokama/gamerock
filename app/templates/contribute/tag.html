@@ -369,7 +369,7 @@
                         </td>
                         <td class="fw-semibold">Ksh. {{ contrib.amount }}</td>
                         <td>{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
-                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                         <td>
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for contribution">
