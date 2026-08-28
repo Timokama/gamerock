@@ -1,0 +1,183 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Requisitions{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .mg-badge-pending { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+    .mg-badge-approved { background: rgba(34, 197, 94, 0.12); color: #16a34a; }
+    .mg-badge-cancelled { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
+    .mg-table { width:100% }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mg-page-header">
+    <h2>Items Requisition</h2>
+    <a href="{{ url_for('requisition.create') }}" class="btn btn-primary">➕ New Requisition</a>
+</div>
+
+<div class="mg-card mb-4">
+    <div class="card-body">
+        <form method="get" action="{{ url_for('requisition.index') }}" class="filter-row">
+            {% if can_manage %}
+            <div class="filter-group">
+                <label>Member</label>
+                <select name="member_id">
+                    <option value="">All Members</option>
+                    {% for m in members %}
+                    <option value="{{ m.id }}" {{ 'selected' if member_filter == m.id }}>{{ m.firstname }} {{ m.lastname }} {{ m.surname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="filter-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">All Statuses</option>
+                    {% for s in statuses %}
+                            <option value="{{ s }}" {{ 'selected' if status_filter == s }}>{{ s }}</option>
+                            {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search items, members...">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ url_for('requisition.index') }}" class="btn btn-outline">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mg-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Date Taken</th>
+                        <th>Expected Return</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requisitions %}
+                    <tr>
+                        <td data-label="Member">
+                            {% if can_manage %}
+                            <a href="{{ url_for('register.deposit', depo_id=req.member.id) if req.member else '#' }}" style="text-decoration:none;color:inherit;">
+                                <strong>{{ req.member.firstname }} {{ req.member.lastname }} {{ req.member.surname }}</strong>
+                            </a>
+                            {% else %}
+                            <strong>{{ req.member.firstname }} {{ req.member.lastname }} {{ req.member.surname }}</strong>
+                            {% endif %}
+                        </td>
+                        <td data-label="Items">
+                            <strong>
+                                {% set items = req.items %}
+                                {% if items %}
+                                    {{ items[0].item_name }}{% if items|length > 1 %} +{{ items|length - 1 }} more{% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td data-label="Qty">
+                            {% set items = req.items %}
+                            {% if items %}
+                                {{ items[0].quantity }}{% if items|length > 1 %} +{{ items|length - 1 }} more{% endif %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td data-label="Date Taken">{{ req.date_taken.strftime('%b %d, %Y') if req.date_taken else 'N/A' }}</td>
+                        <td data-label="Expected Return">{{ req.expected_return_date.strftime('%b %d, %Y') if req.expected_return_date else 'N/A' }}</td>
+                        <td data-label="Status">
+                            <span class="mg-badge mg-badge-{{ req.status.lower() }}">
+                                {{ req.status }}
+                            </span>
+                        </td>
+                        <td data-label="Created">{{ req.created_at.strftime('%b %d, %Y') if req.created_at else 'N/A' }}</td>
+                        <td data-label="Actions">
+                            <div class="row-actions">
+                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for requisition #{{ req.id }}">
+                                    <span aria-hidden="true">⚙</span>
+                                    <span>Actions</span>
+                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                </button>
+                                <div class="row-actions-menu" role="menu">
+                                    <div class="row-actions-menu-header">
+                                        <span class="row-actions-menu-title">Requisition #{{ req.id }}</span>
+                                        <span class="row-actions-menu-sub">{{ req.member.firstname }} {{ req.member.lastname }}</span>
+                                    </div>
+                                    <a href="{{ url_for('requisition.edit', req_id=req.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">Edit</span>
+                                            <span class="row-action-hint">Update details</span>
+                                        </span>
+                                    </a>
+                                    {% if can_manage %}
+                                    <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
+                                        <input type="hidden" name="status" value="Approved">
+                                        <button type="submit" class="row-action-item success" role="menuitem" onclick="return confirm('Approve this requisition?')">
+                                            <span class="row-action-icon" aria-hidden="true">✅</span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Approve</span>
+                                                <span class="row-action-hint">Mark as approved</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
+                                        <input type="hidden" name="status" value="Cancelled">
+                                        <button type="submit" class="row-action-item danger" role="menuitem" onclick="return confirm('Cancel this requisition?')">
+                                            <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Cancel</span>
+                                                <span class="row-action-hint">Mark as cancelled</span>
+                                            </span>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <form method="post" action="{{ url_for('requisition.delete', req_id=req.id) }}" class="row-action-form" onsubmit="return confirm('Delete this requisition? This cannot be undone.');">
+                                        {% if can_manage %}
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove</span>
+                                            </span>
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <h3>No Requisitions Yet</h3>
+                                <p>Create your first requisition to start tracking inventory borrowing.</p>
+                                <a href="{{ url_for('requisition.create') }}" class="btn btn-primary">New Requisition</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

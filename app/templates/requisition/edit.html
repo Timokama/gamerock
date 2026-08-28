@@ -1,0 +1,241 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}Edit Requisition{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .item-row {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    .item-row .mg-form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    .item-row .quantity-group {
+        max-width: 120px;
+    }
+    .remove-item-btn {
+        margin-top: 1.85rem;
+    }
+    .other-item-group {
+        flex: 1;
+    }
+    .other-item-group input {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid #cbd5e1;
+        border-radius: 0;
+        padding-left: 0;
+        background: transparent;
+    }
+    .other-item-group input:focus {
+        outline: none;
+        border-bottom-color: #14b8a6;
+        box-shadow: none;
+    }
+    .form-error {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mg-form-container">
+    <div class="mg-page-header">
+        <h2>Edit Requisition</h2>
+        <a href="{{ url_for('requisition.index') }}" class="btn btn-outline">← Back</a>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Requisition Details</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% if error %}
+                <div class="form-error" style="margin-bottom: 1rem;">{{ error }}</div>
+                {% endif %}
+                {% if can_manage %}
+                <div class="mg-form-group">
+                    <label for="member_id">Member *</label>
+                    <select id="member_id" name="member_id" required>
+                        <option value="">Select member...</option>
+                        {% for m in members %}
+                        <option value="{{ m.id }}" {{ 'selected' if (form_data and form_data.get('member_id')|string == m.id|string) or (not form_data and requisition.member_id == m.id) }}>{{ m.firstname }} {{ m.lastname }} {{ m.surname }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <div class="mg-form-group">
+                    <label>Items *</label>
+                    <div id="items-container">
+                        {% if form_data %}
+                            {% set item_names = form_data.getlist('item_name[]') %}
+                            {% set quantities = form_data.getlist('quantity[]') %}
+                            {% set other_names = form_data.getlist('item_name_other[]') %}
+                            {% for i in range(item_names|length) %}
+                            <div class="item-row">
+                                <div class="mg-form-group">
+                                    <select name="item_name[]" class="item-select" required onchange="toggleOtherInput(this)">
+                                        <option value="">Select item...</option>
+                                        <option value="Plastic chairs" {{ 'selected' if item_names[i] == 'Plastic chairs' }}>Plastic chairs</option>
+                                        <option value="Cups" {{ 'selected' if item_names[i] == 'Cups' }}>Cups</option>
+                                        <option value="Plates" {{ 'selected' if item_names[i] == 'Plates' }}>Plates</option>
+                                        <option value="Sufuria" {{ 'selected' if item_names[i] == 'Sufuria' }}>Sufuria</option>
+                                        <option value="Lids" {{ 'selected' if item_names[i] == 'Lids' }}>Lids</option>
+                                        <option value="Turners" {{ 'selected' if item_names[i] == 'Turners' }}>Turners</option>
+                                        <option value="Mwikos" {{ 'selected' if item_names[i] == 'Mwikos' }}>Mwikos</option>
+                                        <option value="Jugs" {{ 'selected' if item_names[i] == 'Jugs' }}>Jugs</option>
+                                        <option value="Spoons" {{ 'selected' if item_names[i] == 'Spoons' }}>Spoons</option>
+                                        <option value="Tents" {{ 'selected' if item_names[i] == 'Tents' }}>Tents</option>
+                                        <option value="Other" {{ 'selected' if item_names[i] == 'Other' }}>Other</option>
+                                    </select>
+                                    {% if item_names[i] == 'Other' %}
+                                    <div class="mg-form-group other-item-group">
+                                        <input type="text" name="item_name_other[]" value="{{ other_names[i] if i < other_names|length else '' }}" placeholder="Specify item..." class="form-control">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mg-form-group quantity-group">
+                                    <input type="number" name="quantity[]" min="1" value="{{ quantities[i] if i < quantities|length else 1 }}" placeholder="Qty" required>
+                                </div>
+                                <button type="button" class="btn btn-outline remove-item-btn" onclick="removeItemRow(this)">Remove</button>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            {% for item in requisition.items %}
+                            <div class="item-row">
+                                <div class="mg-form-group">
+                                    <select name="item_name[]" class="item-select" required onchange="toggleOtherInput(this)">
+                                        <option value="">Select item...</option>
+                                        <option value="Plastic chairs" {{ 'selected' if item.item_name == 'Plastic chairs' }}>Plastic chairs</option>
+                                        <option value="Cups" {{ 'selected' if item.item_name == 'Cups' }}>Cups</option>
+                                        <option value="Plates" {{ 'selected' if item.item_name == 'Plates' }}>Plates</option>
+                                        <option value="Sufuria" {{ 'selected' if item.item_name == 'Sufuria' }}>Sufuria</option>
+                                        <option value="Lids" {{ 'selected' if item.item_name == 'Lids' }}>Lids</option>
+                                        <option value="Turners" {{ 'selected' if item.item_name == 'Turners' }}>Turners</option>
+                                        <option value="Mwikos" {{ 'selected' if item.item_name == 'Mwikos' }}>Mwikos</option>
+                                        <option value="Jugs" {{ 'selected' if item.item_name == 'Jugs' }}>Jugs</option>
+                                        <option value="Spoons" {{ 'selected' if item.item_name == 'Spoons' }}>Spoons</option>
+                                        <option value="Tents" {{ 'selected' if item.item_name == 'Tents' }}>Tents</option>
+                                        <option value="Other" {{ 'selected' if item.item_name not in ['Plastic chairs', 'Cups', 'Plates', 'Sufuria', 'Lids', 'Turners', 'Mwikos', 'Jugs', 'Spoons', 'Tents'] }}>Other</option>
+                                    </select>
+                                    {% if item.item_name not in ['Plastic chairs', 'Cups', 'Plates', 'Sufuria', 'Lids', 'Turners', 'Mwikos', 'Jugs', 'Spoons', 'Tents'] %}
+                                    <div class="mg-form-group other-item-group">
+                                        <input type="text" name="item_name_other[]" value="{{ item.item_name }}" placeholder="Specify item..." class="form-control">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mg-form-group quantity-group">
+                                    <input type="number" name="quantity[]" min="1" value="{{ item.quantity }}" placeholder="Qty" required>
+                                </div>
+                                <button type="button" class="btn btn-outline remove-item-btn" onclick="removeItemRow(this)">Remove</button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <button type="button" class="mg-btn-secondary" onclick="addItemRow()">+ Add Another Item</button>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mg-form-group">
+                            <label for="date_taken">Date Taken *</label>
+                            <input type="date" id="date_taken" name="date_taken" value="{{ form_data.date_taken if form_data else (requisition.date_taken.strftime('%Y-%m-%d') if requisition.date_taken else '') }}" required>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mg-form-group">
+                            <label for="expected_return_date">Expected Return Date</label>
+                            <input type="date" id="expected_return_date" name="expected_return_date" value="{{ form_data.expected_return_date if form_data else (requisition.expected_return_date.strftime('%Y-%m-%d') if requisition.expected_return_date else '') }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="mg-form-actions">
+                    <button type="submit" class="btn btn-primary">Update Requisition</button>
+                    <a href="{{ url_for('requisition.index') }}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleOtherInput(select) {
+    const row = select.closest('.item-row');
+    const otherGroup = row.querySelector('.other-item-group');
+    if (select.value === 'Other') {
+        if (!otherGroup) {
+            const div = document.createElement('div');
+            div.className = 'mg-form-group other-item-group';
+            div.innerHTML = '<input type="text" name="item_name_other[]" placeholder="Specify item..." class="form-control">';
+            select.parentElement.style.display = 'none';
+            select.parentElement.insertAdjacentElement('afterend', div);
+        }
+    } else {
+        if (otherGroup) {
+            otherGroup.remove();
+        }
+        const otherInputs = row.querySelectorAll('input[name="item_name_other[]"]');
+        otherInputs.forEach(input => input.remove());
+        select.parentElement.style.display = '';
+    }
+}
+
+function addItemRow() {
+    const container = document.getElementById('items-container');
+    const div = document.createElement('div');
+    div.className = 'item-row';
+    div.innerHTML = `
+        <div class="mg-form-group">
+            <select name="item_name[]" class="item-select" required onchange="toggleOtherInput(this)">
+                <option value="">Select item...</option>
+                <option value="Plastic chairs">Plastic chairs</option>
+                <option value="Cups">Cups</option>
+                <option value="Plates">Plates</option>
+                <option value="Sufuria">Sufuria</option>
+                <option value="Lids">Lids</option>
+                <option value="Turners">Turners</option>
+                <option value="Mwikos">Mwikos</option>
+                <option value="Jugs">Jugs</option>
+                <option value="Spoons">Spoons</option>
+                <option value="Tents">Tents</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="mg-form-group quantity-group">
+            <input type="number" name="quantity[]" min="1" value="1" placeholder="Qty" required>
+        </div>
+        <button type="button" class="btn btn-outline remove-item-btn" onclick="removeItemRow(this)">Remove</button>
+    `;
+    container.appendChild(div);
+    updateRemoveButtons();
+}
+
+function removeItemRow(button) {
+    const container = document.getElementById('items-container');
+    const rows = container.querySelectorAll('.item-row');
+    if (rows.length > 1) {
+        button.closest('.item-row').remove();
+        updateRemoveButtons();
+    }
+}
+
+function updateRemoveButtons() {
+    const container = document.getElementById('items-container');
+    const rows = container.querySelectorAll('.item-row');
+    const buttons = container.querySelectorAll('.remove-item-btn');
+    buttons.forEach(btn => {
+        btn.disabled = rows.length <= 1;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', updateRemoveButtons);
+</script>
+{% endblock %}
