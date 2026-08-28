@@ -19,8 +19,8 @@
 {% block content %}
 <div class="mg-page-header">
     <h2>Treasurer Records</h2>
-    <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary">➕ New Transaction</a>
-    <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">💳 View Deposits</a>
+    <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary"><i class="bi bi-plus"></i> New Transaction</a>
+    <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-credit-card"></i> View Deposits</a>
 </div>
 
 <div class="mg-summary-cards mb-4">
@@ -105,7 +105,7 @@
                         <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ record.category or record.id }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -149,7 +149,7 @@
                     <tr>
                         <td colspan="7">
                             <div class="empty-state">
-                                <div class="empty-state-icon">🏦</div>
+                                <div class="empty-state-icon"><i class="bi bi-bank"></i></div>
                                 <h3>No Transactions Yet</h3>
                                 <p>Record your first income or expense to start tracking treasury activity.</p>
                                 <a href="{{ url_for('treasurer.create') }}" class="btn btn-primary">Add Record</a>

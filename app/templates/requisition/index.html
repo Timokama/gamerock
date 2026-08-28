@@ -15,7 +15,7 @@
 {% block content %}
 <div class="mg-page-header">
     <h2>Items Requisition</h2>
-    <a href="{{ url_for('requisition.create') }}" class="btn btn-primary">➕ New Requisition</a>
+    <a href="{{ url_for('requisition.create') }}" class="btn btn-primary"><i class="bi bi-plus"></i> New Requisition</a>
 </div>
 
 <div class="mg-card mb-4">
@@ -110,7 +110,7 @@
                         <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for requisition #{{ req.id }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -130,7 +130,7 @@
                                     <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
                                         <input type="hidden" name="status" value="Approved">
                                         <button type="submit" class="row-action-item success" role="menuitem" onclick="return confirm('Approve this requisition?')">
-                                            <span class="row-action-icon" aria-hidden="true">✅</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-check-circle"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Approve</span>
                                                 <span class="row-action-hint">Mark as approved</span>
@@ -140,7 +140,7 @@
                                     <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
                                         <input type="hidden" name="status" value="Cancelled">
                                         <button type="submit" class="row-action-item danger" role="menuitem" onclick="return confirm('Cancel this requisition?')">
-                                            <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Cancel</span>
                                                 <span class="row-action-hint">Mark as cancelled</span>
@@ -151,7 +151,7 @@
                                     <form method="post" action="{{ url_for('requisition.delete', req_id=req.id) }}" class="row-action-form" onsubmit="return confirm('Delete this requisition? This cannot be undone.');">
                                         {% if can_manage %}
                                         <button type="submit" class="row-action-item danger" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Delete</span>
                                                 <span class="row-action-hint">Permanently remove</span>
@@ -167,7 +167,7 @@
                     <tr>
                         <td colspan="8">
                             <div class="empty-state">
-                                <div class="empty-state-icon">📦</div>
+                                <div class="empty-state-icon"><i class="bi bi-box"></i></div>
                                 <h3>No Requisitions Yet</h3>
                                 <p>Create your first requisition to start tracking inventory borrowing.</p>
                                 <a href="{{ url_for('requisition.create') }}" class="btn btn-primary">New Requisition</a>

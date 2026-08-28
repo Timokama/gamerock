@@ -454,8 +454,8 @@
                 New Event
             </a>
             {% endif %}
-            <a href="{{ url_for('community.index') }}" class="btn btn-outline">🔄 Refresh</a>
-            <a href="{{ url_for('community.export_csv', search=search, date_from=date_from, date_to=date_to) }}" class="btn btn-export">📥 Export CSV</a>
+            <a href="{{ url_for('community.index') }}" class="btn btn-outline"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
+            <a href="{{ url_for('community.export_csv', search=search, date_from=date_from, date_to=date_to) }}" class="btn btn-export"><i class="bi bi-download"></i> Export CSV</a>
         </div>
     </div>
 </div>
@@ -476,8 +476,8 @@
                 <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                <a href="{{ url_for('community.index') }}" class="btn btn-outline">✕ Clear</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('community.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
             </div>
         </div>
     </form>
@@ -535,7 +535,7 @@
                 <div class="event-card-footer">
                     <div class="row-actions">
                         <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
-                            <span aria-hidden="true">⚙</span>
+                            <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                             <span>Actions</span>
                             <span class="row-actions-caret" aria-hidden="true">▾</span>
                         </button>
@@ -605,7 +605,7 @@
                 <div class="event-card-footer">
                     <div class="row-actions">
                         <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
-                            <span aria-hidden="true">⚙</span>
+                            <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                             <span>Actions</span>
                             <span class="row-actions-caret" aria-hidden="true">▾</span>
                         </button>

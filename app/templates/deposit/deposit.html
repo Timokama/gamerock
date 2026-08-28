@@ -784,10 +784,10 @@
     </div>
     <div class="d-flex gap-2">
         {% if not add_contrib_disallowed %}
-        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary btn-sm">💰 Add Contribution</a>
+        <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary btn-sm"><i class="bi bi-cash-stack"></i> Add Contribution</a>
         {% endif %}
         {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
-        <a href="{{ url_for('register.edit', depo_id=register.id) }}" class="action-btn outline btn-sm">✏️ Edit Member</a>
+        <a href="{{ url_for('register.edit', depo_id=register.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit Member</a>
         {% endif %}
     </div>
 </div>
@@ -818,8 +818,8 @@
                 </select>
             </div>
             <div class="filter-actions">
-                <button type="button" class="btn btn-primary" onclick="filterContributions()">🔍 Filter</button>
-                <button type="button" class="btn btn-outline" onclick="clearContributionsFilters()">✕ Clear</button>
+                <button type="button" class="btn btn-primary" onclick="filterContributions()"><i class="bi bi-search"></i> Filter</button>
+                <button type="button" class="btn btn-outline" onclick="clearContributionsFilters()"><i class="bi bi-x"></i> Clear</button>
             </div>
         </div>
     </form>
@@ -837,15 +837,15 @@
         <div class="deposit-profile-info">
             <h3 class="deposit-profile-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h3>
             <div class="deposit-profile-meta">
-                <span>🆔 {{ register.id_number|member_id }}</span>
-                <span>📱 {{ register.phone_num|member_phone }}</span>
-                <span>🎂 {{ register.date_of_birth }}</span>
-                <span>📅 Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</span>
+                <span><i class="bi bi-person-badge"></i> {{ register.id_number|member_id }}</span>
+                <span><i class="bi bi-phone"></i> {{ register.phone_num|member_phone }}</span>
+                <span><i class="bi bi-calendar"></i> {{ register.date_of_birth }}</span>
+                <span><i class="bi bi-calendar"></i> Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</span>
             </div>
         </div>
         <div class="deposit-profile-actions">
-            <a href="{{ url_for('family.family', depo_id=register.id) }}" class="action-btn outline btn-sm">👨‍👩‍👧‍👦 Family</a>
-            <a href="{{ url_for('reports.reports', depo_id=register.id) }}" class="action-btn primary btn-sm">📊 Reports</a>
+            <a href="{{ url_for('family.family', depo_id=register.id) }}" class="action-btn outline btn-sm"><i class="bi bi-people"></i> Family</a>
+            <a href="{{ url_for('reports.reports', depo_id=register.id) }}" class="action-btn primary btn-sm"><i class="bi bi-bar-chart"></i> Reports</a>
         </div>
     </div>
 </div>
@@ -854,7 +854,7 @@
 {% for depo in deposit %}
 <div class="contribution-section-card" data-contrib-type="{{ depo.payment_type.value if depo.payment_type else '' }}" data-contrib-event-id="{{ depo.community_event.id if depo.community_event else '' }}">
     <div class="contribution-card-header">
-        <div class="contribution-icon">💰</div>
+        <div class="contribution-icon"><i class="bi bi-cash-stack"></i></div>
         <div class="contribution-info">
             <div class="contribution-title">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</div>
             <div class="contribution-subtitle">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }} · {{ depo.payment_type.value if depo.payment_type else 'N/A' }}</div>
@@ -864,7 +864,7 @@
             <button class="row-actions-toggle" type="button"
                     aria-haspopup="true" aria-expanded="false"
                     aria-label="Actions for contribution on {{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}">
-                <span aria-hidden="true">⚙</span>
+                <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                 <span>Actions</span>
                 <span class="row-actions-caret" aria-hidden="true">▾</span>
             </button>
@@ -874,7 +874,7 @@
                     <span class="row-actions-menu-sub">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}</span>
                 </div>
                 <a href="{{ url_for('deposit.edit_contribution', depo_id=depo.id) }}" class="row-action-item" role="menuitem">
-                    <span class="row-action-icon" aria-hidden="true">✏️</span>
+                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                     <span class="row-action-copy">
                         <span class="row-action-label">Edit Contribution</span>
                         <span class="row-action-hint">Update amount or type</span>
@@ -884,7 +884,7 @@
                 <div class="row-actions-divider"></div>
                 <form method="POST" action="{{ url_for('deposit.delete_contribution', depo_id=depo.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this contribution?')">
                     <button type="submit" class="row-action-item danger" role="menuitem">
-                        <span class="row-action-icon" aria-hidden="true">🗑</span>
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                         <span class="row-action-copy">
                             <span class="row-action-label">Delete Contribution</span>
                             <span class="row-action-hint">Cannot be undone</span>
@@ -899,21 +899,21 @@
     <div class="contribution-card-body">
         <div class="contribution-details-grid">
             <div class="contribution-detail-item">
-                <span class="detail-icon">📅</span>
+                <span class="detail-icon"><i class="bi bi-calendar"></i></span>
                 <div class="detail-content">
                     <div class="detail-label">Date</div>
                     <div class="detail-value">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }}</div>
                 </div>
             </div>
             <div class="contribution-detail-item">
-                <span class="detail-icon">💰</span>
+                <span class="detail-icon"><i class="bi bi-cash-stack"></i></span>
                 <div class="detail-content">
                     <div class="detail-label">Amount</div>
                     <div class="detail-value">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</div>
                 </div>
             </div>
             <div class="contribution-detail-item">
-                <span class="detail-icon">💳</span>
+                <span class="detail-icon"><i class="bi bi-credit-card"></i></span>
                 <div class="detail-content">
                     <div class="detail-label">Payment Type</div>
                     <div class="detail-value">
@@ -930,7 +930,7 @@
                 </div>
             </div>
             <div class="contribution-detail-item">
-                <span class="detail-icon">🎉</span>
+                <span class="detail-icon"><i class="bi bi-calendar-event"></i></span>
                 <div class="detail-content">
                     <div class="detail-label">Event</div>
                     <div class="detail-value">{{ depo.community_event.name if depo.community_event else 'N/A' }}</div>
@@ -942,17 +942,17 @@
 {% endfor %}
 {% else %}
 <div class="empty-state">
-    <div class="empty-state-icon">💰</div>
+    <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
     <h3>No Contributions Yet</h3>
     <p>This member hasn't made any contributions. Start recording payments to see them here.</p>
-    <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary">➕ Add First Contribution</a>
+    <a href="{{ url_for('deposit.amount', depo_id=register.id) }}" class="action-btn primary"><i class="bi bi-plus"></i> Add First Contribution</a>
 </div>
 {% endif %}
 
 {% if pending_contributions %}
 <div class="contribution-section-card mt-4">
     <div class="contribution-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
-        <div class="contribution-icon">⏳</div>
+        <div class="contribution-icon"><i class="bi bi-hourglass-split"></i></div>
         <div class="contribution-info">
             <div class="contribution-title">Pending Contributions</div>
             <div class="contribution-subtitle">{{ pending_contributions|length }} event{{ 's' if pending_contributions|length != 1 else '' }} awaiting payment</div>
@@ -974,7 +974,7 @@
                     {% for event in pending_contributions %}
                     <tr>
                         <td style="text-align: center;">
-                            <div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+                            <div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
                         </td>
                         <td>
                             <span style="font-weight: 600; color: var(--text-primary);">{{ event.name }}</span>

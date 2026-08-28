@@ -2754,7 +2754,7 @@ textarea.form-control {
     color: var(--primary-600);
 }
 
-.user-menu-item span:first-child {
+.user-menu-item > :first-child {
     width: var(--space-5);
     text-align: center;
     font-size: var(--text-base);

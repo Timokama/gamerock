@@ -1425,8 +1425,8 @@
             </div>
 
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">✕ Clear</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
             </div>
         </div>
     </form>
@@ -1454,7 +1454,7 @@
                     {% else %}
                     <div class="dropdown-item dropdown-item--muted">No recent contributions</div>
                     {% endif %}
-                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item dropdown-item--action" role="menuitem">📄 View All Contributions</a>
+                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item dropdown-item--action" role="menuitem"><i class="bi bi-file-earmark-text"></i> View All Contributions</a>
                 </div>
             </div>
             {% endif %}
@@ -1530,17 +1530,17 @@
                             <button class="row-actions-toggle" type="button"
                                     aria-haspopup="true" aria-expanded="false"
                                     aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                <span aria-hidden="true">⚙</span>
+                                <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                 <span>Actions</span>
                                 <span class="row-actions-caret" aria-hidden="true">▾</span>
                             </button>
                             <div class="row-actions-menu" role="menu">
                                 <div class="row-actions-menu-header">
                                     <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
-                                    <span class="row-actions-menu-sub">💳 Member</span>
+                                    <span class="row-actions-menu-sub"><i class="bi bi-credit-card"></i> Member</span>
                                 </div>
                                 <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true">📄</span>
+                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
                                     <span class="row-action-copy">
                                         <span class="row-action-label">View Contributions</span>
                                         <span class="row-action-hint">View contribution history</span>
@@ -1548,7 +1548,7 @@
                                 </a>
                                 {% if not add_contrib_disallowed %}
                                 <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true">💰</span>
+                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                     <span class="row-action-copy">
                                         <span class="row-action-label">Add Contribution</span>
                                         <span class="row-action-hint">Record new deposit</span>
@@ -1589,7 +1589,7 @@
             </div>
         {% else %}
         <div class="empty-state">
-            <div class="empty-state-icon">💰</div>
+            <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
             <h3>No Contributions Found</h3>
             <p class="text-muted mb-0">No contributions match your current filters. Try adjusting your search.</p>
         </div>
@@ -1601,7 +1601,7 @@
 <div class="row justify-content-center mt-5">
     <div class="col-12 text-center">
         <div class="empty-state">
-            <div class="empty-state-icon">👤</div>
+            <div class="empty-state-icon"><i class="bi bi-person"></i></div>
             <h3>No Member Profile</h3>
             <p class="text-muted">You don't have a member profile yet. Please contact an administrator to create one.</p>
         </div>
@@ -1651,8 +1651,8 @@
             </div>
 
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline">✕ Clear</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
             </div>
         </div>
     </form>
@@ -1707,7 +1707,7 @@
                                 <button class="row-actions-toggle" type="button"
                                         aria-haspopup="true" aria-expanded="false"
                                         aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -1718,7 +1718,7 @@
                                     </div>
                                     {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
                                     <a href="{{ url_for('deposit.edit_contribution', depo_id=contrib.id) }}" class="row-action-item" role="menuitem">
-                                        <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                         <span class="row-action-copy">
                                             <span class="row-action-label">Edit Contribution</span>
                                             <span class="row-action-hint">Update amount or type</span>
@@ -1736,7 +1736,7 @@
         </div>
         {% else %}
         <div class="empty-state">
-            <div class="empty-state-icon">💰</div>
+            <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
             <h3>No Contributions Found</h3>
             <p class="text-muted mb-0">No contributions match your current filters. Try adjusting your search.</p>
         </div>
@@ -1881,9 +1881,9 @@ function loadPendingContributions(memberId) {
         .catch(function(error) {
             pendingContributionsLoading[memberId] = false;
             if (error.message && error.message.includes('403')) {
-                listEl.innerHTML = '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;color:#ef4444;">⚠️ You do not have permission to add contributions.</div>';
+                listEl.innerHTML = '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;color:#ef4444;"><i class="bi bi-exclamation-triangle"></i> You do not have permission to add contributions.</div>';
             } else {
-                listEl.innerHTML = '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;">⚠️ Error loading data</div>';
+                listEl.innerHTML = '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;"><i class="bi bi-exclamation-triangle"></i> Error loading data</div>';
             }
             if (countEl) countEl.textContent = 'Error';
             console.error('Pending contributions error:', error);
@@ -1904,7 +1904,7 @@ function renderPendingContributions(listEl, data, countEl, memberId) {
 
     var html = '';
     if (count === 0) {
-        html += '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;"><div style="font-size:1.5rem;margin-bottom:0.25rem;">✓</div><div style="font-weight:600;color:#10b981;">All caught up!</div><div style="font-size:0.72rem;margin-top:0.25rem;">No pending contributions</div></div>';
+        html += '<div class="pending-contribution-empty" style="text-align:center;padding:1rem;"><div style="font-size:1.5rem;margin-bottom:0.25rem;"><i class="bi bi-check"></i></div><div style="font-weight:600;color:#10b981;">All caught up!</div><div style="font-size:0.72rem;margin-top:0.25rem;">No pending contributions</div></div>';
         listEl.innerHTML = html;
         return;
     }
@@ -1913,13 +1913,13 @@ function renderPendingContributions(listEl, data, countEl, memberId) {
     pending.forEach(function(event) {
         var actionCell = '<td data-label="Action" style="text-align: center; white-space: nowrap;">';
         if (canContribute) {
-            actionCell += '<a href="/contribution/' + memberId + '/amount?event_id=' + event.id + '" class="contribute-btn" title="Contribute to this event">💰 Contribute</a>';
+            actionCell += '<a href="/contribution/' + memberId + '/amount?event_id=' + event.id + '" class="contribute-btn" title="Contribute to this event"><i class="bi bi-cash-stack"></i> Contribute</a>';
         } else {
             actionCell += '<span class="text-muted">—</span>';
         }
         actionCell += '</td>';
         html += '<tr>' +
-            '<td data-label="" style="text-align: center;"><div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div></td>' +
+            '<td data-label="" style="text-align: center;"><div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div></td>' +
             '<td data-label="Event"><span style="font-weight: 600; color: var(--text-primary);">' + event.name + '</span></td>' +
             '<td data-label="Date" style="white-space: nowrap;"><i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>' + event.event_date + '</td>' +
             '<td data-label="Details" style="color: #475569;">' + (event.details || 'No details provided') + '</td>' +

@@ -154,7 +154,7 @@
     <div class="accounts-header">
         <h2>Contribution Accounts</h2>
         <a href="{{ url_for('account.cont') }}" class="action-btn primary" style="padding: 0.6rem 1.5rem; font-weight: 600; border-radius: 10px; box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);">
-            ➕ New Account
+            <i class="bi bi-plus"></i> New Account
         </a>
     </div>
 
@@ -164,24 +164,24 @@
             <div class="account-card-header">
                 <div>
                     <div class="account-card-title">{{ account.name if account.name else 'Contribution' }}</div>
-                    <div class="account-card-meta">📅 {{ account.trans_date.strftime('%B %d, %Y') if account.trans_date else 'N/A' }}</div>
+                    <div class="account-card-meta"><i class="bi bi-calendar"></i> {{ account.trans_date.strftime('%B %d, %Y') if account.trans_date else 'N/A' }}</div>
                 </div>
                 <div class="account-card-amount">Ksh. {{ account.amount }}</div>
             </div>
             <div class="account-card-details">
                 <div class="account-card-detail">
-                    <span>💳</span>
+                    <span><i class="bi bi-credit-card"></i></span>
                     <span>{{ account.payment_type.value if account.payment_type else 'N/A' }}</span>
                 </div>
                 <div class="account-card-detail">
-                    <span>🔗</span>
+                    <span><i class="bi bi-link"></i></span>
                     <span>{{ account.transaction_ref }}</span>
                 </div>
             </div>
             <div class="account-card-footer">
                 <div class="row-actions">
                     <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ account.name or 'Contribution' }}">
-                        <span aria-hidden="true">⚙</span>
+                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                         <span>Actions</span>
                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                     </button>
@@ -203,7 +203,7 @@
         </div>
         {% else %}
         <div class="empty-state">
-            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
             <h3>No Contributions Yet</h3>
             <p>Contributions will appear here once deposits are made.</p>
             <a href="{{ url_for('account.cont') }}" class="action-btn primary">Create Your First Account</a>

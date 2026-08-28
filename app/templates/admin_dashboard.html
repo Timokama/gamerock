@@ -1649,14 +1649,14 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                     <span class="meta-label">ID Number</span>
                     <span class="meta-value">
                         <span class="dev-secret-value" data-full="{{ member.id_number }}">{{ member.id_number|member_id }}</span>
-                        <button type="button" class="dev-secret-toggle" onclick="toggleDevSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                        <button type="button" class="dev-secret-toggle" onclick="toggleDevSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                     </span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Phone</span>
                     <span class="meta-value">
                         <span class="dev-secret-value" data-full="{{ member.phone_num }}">{{ member.phone_num|member_phone }}</span>
-                        <button type="button" class="dev-secret-toggle" onclick="toggleDevSecret(this)" aria-label="Show phone number" title="Show / hide">👁</button>
+                        <button type="button" class="dev-secret-toggle" onclick="toggleDevSecret(this)" aria-label="Show phone number" title="Show / hide"><i class="bi bi-eye"></i></button>
                     </span>
                 </div>
                 <div class="meta-item">
@@ -1672,12 +1672,12 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
     </div>
     {% else %}
     <div class="not-registered" style="flex-direction: column; align-items: stretch; text-align: center; padding: 2rem;">
-        <div class="not-registered-icon" style="margin: 0 auto 1rem;">⚠️</div>
+        <div class="not-registered-icon" style="margin: 0 auto 1rem;"><i class="bi bi-exclamation-triangle"></i></div>
         <div class="not-registered-body" style="text-align: center;">
             <h5>Developer is not a registered member</h5>
             <p>Your developer account does not have a linked member profile yet. Create one to appear in the family directory and contribution reports.</p>
         </div>
-        <a href="{{ url_for('register.create') }}" class="action-btn primary" style="margin-top: 1rem; padding: 0.65rem 1.5rem; font-size: 0.95rem; border-radius: 10px;">➕ Create Member Profile</a>
+        <a href="{{ url_for('register.create') }}" class="action-btn primary" style="margin-top: 1rem; padding: 0.65rem 1.5rem; font-size: 0.95rem; border-radius: 10px;"><i class="bi bi-plus"></i> Create Member Profile</a>
     </div>
     {% endif %}
 </div>
@@ -1758,8 +1758,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                             </select>
                         </div>
                         <div class="filter-actions">
-                            <button type="button" class="action-btn primary" onclick="filterDepositTable()">🔍 Filter</button>
-                            <button type="button" class="action-btn outline" onclick="clearDepositFilters()">✕ Clear</button>
+                            <button type="button" class="action-btn primary" onclick="filterDepositTable()"><i class="bi bi-search"></i> Filter</button>
+                            <button type="button" class="action-btn outline" onclick="clearDepositFilters()"><i class="bi bi-x"></i> Clear</button>
                         </div>
                     </div>
                 </form>
@@ -1850,7 +1850,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     <button class="row-actions-toggle" type="button"
                                             aria-haspopup="true" aria-expanded="false"
                                             aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -1860,28 +1860,28 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
                                         </div>
                                                 <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                                    <span class="row-action-icon" aria-hidden="true">📄</span>
+                                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
                                                     <span class="row-action-copy">
                                                         <span class="row-action-label">View Deposits</span>
                                                         <span class="row-action-hint">View contribution history</span>
                                                     </span>
                                                 </a>
                                                 <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                                    <span class="row-action-icon" aria-hidden="true">💰</span>
+                                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                                     <span class="row-action-copy">
                                                         <span class="row-action-label">Add Contribution</span>
                                                         <span class="row-action-hint">Record new deposit</span>
                                                     </span>
                                                 </a>
                                                 <a href="{{ url_for('register.edit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                                    <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                                     <span class="row-action-copy">
                                                         <span class="row-action-label">Edit Member</span>
                                                         <span class="row-action-hint">Update personal details</span>
                                                     </span>
                                                 </a>
                                                 <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                                    <span class="row-action-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+                                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
                                                     <span class="row-action-copy">
                                                         <span class="row-action-label">View Family</span>
                                                         <span class="row-action-hint">Manage relationships</span>
@@ -1891,7 +1891,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                 <div class="row-actions-divider"></div>
                                                 <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
                                                     <button type="submit" class="row-action-item danger" role="menuitem">
-                                                        <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                                         <span class="row-action-copy">
                                                             <span class="row-action-label">Delete Member</span>
                                                             <span class="row-action-hint">Cannot be undone</span>
@@ -1990,7 +1990,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                     +
                 </button>
                 <div class="dropdown-menu" style="top: 100%; right: 0;">
-                    <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="dropdown-item" role="menuitem">💰 Add Contribution</a>
+                    <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="dropdown-item" role="menuitem"><i class="bi bi-cash-stack"></i> Add Contribution</a>
                 </div>
             </div>
             {% endif %}
@@ -2006,8 +2006,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                             <input type="text" id="members-search" placeholder="Search by name or ID..." oninput="filterMembersTable()">
                         </div>
                         <div class="filter-actions">
-                            <button type="button" class="action-btn primary" onclick="filterMembersTable()">🔍 Filter</button>
-                            <button type="button" class="action-btn outline" onclick="clearMembersFilters()">✕ Clear</button>
+                            <button type="button" class="action-btn primary" onclick="filterMembersTable()"><i class="bi bi-search"></i> Filter</button>
+                            <button type="button" class="action-btn outline" onclick="clearMembersFilters()"><i class="bi bi-x"></i> Clear</button>
                         </div>
                     </div>
                 </form>
@@ -2056,15 +2056,15 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                     +
                                                 </button>
                                                 <div class="dropdown-menu" style="min-width: 200px;">
-                                                    <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="dropdown-item" role="menuitem">💰 Add Contribution</a>
-                                                    <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="dropdown-item" role="menuitem">📄 View Deposits</a>
+                                                    <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="dropdown-item" role="menuitem"><i class="bi bi-cash-stack"></i> Add Contribution</a>
+                                                    <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="dropdown-item" role="menuitem"><i class="bi bi-file-earmark-text"></i> View Deposits</a>
                                                 </div>
                                             </div>
                                             <div class="row-actions">
                                     <button class="row-actions-toggle" type="button"
                                             aria-haspopup="true" aria-expanded="false"
                                             aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -2074,28 +2074,28 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             <span class="row-actions-menu-sub">No family records</span>
                                         </div>
                                         <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">📄</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">View Deposits</span>
                                                 <span class="row-action-hint">View contribution history</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">💰</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Add Contribution</span>
                                                 <span class="row-action-hint">Record new deposit</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('register.edit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Edit Member</span>
                                                 <span class="row-action-hint">Update personal details</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">View Family</span>
                                                 <span class="row-action-hint">Manage relationships</span>
@@ -2105,7 +2105,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                         <div class="row-actions-divider"></div>
                                         <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
                                             <button type="submit" class="row-action-item danger" role="menuitem">
-                                                <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                                 <span class="row-action-copy">
                                                     <span class="row-action-label">Delete Member</span>
                                                     <span class="row-action-hint">Cannot be undone</span>
@@ -2189,7 +2189,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
         </div>
     </div>
     <div class="family-no-results" id="familyNoResults" style="display: none;">
-        <div class="family-no-results-icon">🔍</div>
+        <div class="family-no-results-icon"><i class="bi bi-search"></i></div>
         <h3>No Matching Members</h3>
         <p>Try a different name, ID number or relationship filter.</p>
     </div>
@@ -2197,7 +2197,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
 {% endif %}
     {% else %}
     <div class="empty-state">
-        <div class="empty-state-icon">💰</div>
+        <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
         <h3>No Deposits Yet</h3>
         <p>No contributions have been recorded yet.</p>
         {% if member %}
@@ -2239,7 +2239,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                             </td>
                             <td data-label="ID Number">
                                 <span class="member-secret-value" data-full="{{ member.id_number }}">{{ member.id_number|member_id }}</span>
-                                <button type="button" class="dev-secret-toggle" onclick="toggleMemberSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                                <button type="button" class="dev-secret-toggle" onclick="toggleMemberSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                             </td>
                             <td data-label="Joined">{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
                             <td class="deposit-amount" data-label="Deposits">Ksh. {{ '{:,}'.format(member.contribute|sum(attribute='amount')) }}</td>
@@ -2249,7 +2249,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             aria-haspopup="true" aria-expanded="false"
                                             aria-label="Column Actions for {{ member.firstname }} {{ member.lastname }}"
                                             onclick="toggleRowActions(this)">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -2259,28 +2259,28 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
                                         </div>
                                         <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">📄</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">View Deposits</span>
                                                 <span class="row-action-hint">View contribution history</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">💰</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Add Contribution</span>
                                                 <span class="row-action-hint">Record new deposit</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('register.edit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">✏️</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Edit Member</span>
                                                 <span class="row-action-hint">Update personal details</span>
                                             </span>
                                         </a>
                                         <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">View Family</span>
                                                 <span class="row-action-hint">Manage relationships</span>
@@ -2290,7 +2290,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                         <div class="row-actions-divider"></div>
                                         <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
                                             <button type="submit" class="row-action-item danger" role="menuitem">
-                                                <span class="row-action-icon" aria-hidden="true">🗑</span>
+                                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                                 <span class="row-action-copy">
                                                     <span class="row-action-label">Delete Member</span>
                                                     <span class="row-action-hint">Cannot be undone</span>
@@ -2338,8 +2338,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                   <option value="children">Has Children</option>
               </select>
               <div class="family-filter-actions">
-                  <button type="button" class="family-clear-filters" onclick="clearAdminFamilyFilters()">✕ Clear</button>
-                  <button type="button" class="action-btn primary btn-sm" onclick="filterAdminFamilyTable()">🔍 Filter</button>
+                  <button type="button" class="family-clear-filters" onclick="clearAdminFamilyFilters()"><i class="bi bi-x"></i> Clear</button>
+                  <button type="button" class="action-btn primary btn-sm" onclick="filterAdminFamilyTable()"><i class="bi bi-search"></i> Filter</button>
               </div>
         </div>
     </div>
@@ -2347,21 +2347,21 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
     {% if all_members %}
     <div class="family-summary">
         <div class="family-summary-card members">
-            <div class="family-summary-icon members">👥</div>
+            <div class="family-summary-icon members"><i class="bi bi-people"></i></div>
             <div>
                 <div class="family-summary-value" id="fam-stat-members">{{ total_members }}</div>
                 <div class="family-summary-label">Total Members</div>
             </div>
         </div>
         <div class="family-summary-card spouses">
-            <div class="family-summary-icon spouses">💍</div>
+            <div class="family-summary-icon spouses"><i class="bi bi-ring"></i></div>
             <div>
                 <div class="family-summary-value" id="fam-stat-spouses">{{ total_spouses }}</div>
                 <div class="family-summary-label">Spouses</div>
             </div>
         </div>
         <div class="family-summary-card children">
-            <div class="family-summary-icon children">👶</div>
+            <div class="family-summary-icon children"><i class="bi bi-baby"></i></div>
             <div>
                 <div class="family-summary-value" id="fam-stat-children">{{ total_children }}</div>
                 <div class="family-summary-label">Children</div>
@@ -2417,7 +2417,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             aria-haspopup="true" aria-expanded="false"
                                             aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
                                             onclick="toggleRowActions(this)">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -2457,20 +2457,20 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     <div class="children-detail-card">
                                     {% if member.spouse %}
                                     <div class="children-header">
-                                        <div class="detail-avatar">💍</div>
+                                        <div class="detail-avatar"><i class="bi bi-ring"></i></div>
                                         <h5>Spouse Details</h5>
                                         <span class="children-badge family-badge spouse-badge">{{ member.spouse|length }} Spouse{{ 's' if member.spouse|length != 1 else '' }}</span>
                                     </div>
                                     {% for spouse in member.spouse %}
                                     <div class="spouse-section">
                                         <div class="spouse-section-header">
-                                            <span class="family-avatar spouse" style="width: 32px; height: 32px; font-size: 0.8rem;">👤</span>
+                                            <span class="family-avatar spouse" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-person"></i></span>
                                             <strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong>
                                             <span class="family-badge spouse-badge" style="margin-left: auto;">Spouse</span>
                                         </div>
                                         <div class="detail-grid">
                                             <div class="family-detail-item">
-                                                <span class="detail-icon">📱</span>
+                                                <span class="detail-icon"><i class="bi bi-phone"></i></span>
                                                 <span>{{ spouse.phone_num|member_phone }}</span>
                                             </div>
                                             <div class="family-detail-item">
@@ -2478,14 +2478,14 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                 <span>{{ spouse.id_number|member_id }}</span>
                                             </div>
                                             <div class="family-detail-item">
-                                                <span class="detail-icon">🎂</span>
+                                                <span class="detail-icon"><i class="bi bi-calendar"></i></span>
                                                 <span>{{ spouse.date_of_birth }}</span>
                                             </div>
                                         </div>
                                         {% if spouse.child %}
                                         <div class="children-section">
                                             <div class="children-section-header">
-                                                <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                                <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;"><i class="bi bi-baby"></i></span>
                                                 <strong>Children of {{ spouse.firstname }} {{ spouse.lastname }}</strong>
                                                 <span class="family-badge child-badge" style="margin-left: auto;">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
                                             </div>
@@ -2511,7 +2511,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                             <td>{{ child.id_number|member_id }}</td>
                                                             <td>{{ child.date_of_birth }}</td>
                                                             <td>
-                                                                 <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                                 <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                             </td>
                                                         </tr>
                                                         {% endfor %}
@@ -2526,7 +2526,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     {% if member_children and member.id in member_children and member_children[member.id]|length > 0 %}
                                     <div class="children-section{% if not member.spouse %} children-section--standalone{% endif %}">
                                         <div class="children-section-header">
-                                            <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                            <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;"><i class="bi bi-baby"></i></span>
                                             <strong>Children Details</strong>
                                             <span class="family-badge child-badge" style="margin-left: auto;">{{ member_children[member.id]|length }} Child{{ 'ren' if member_children[member.id]|length != 1 else '' }}</span>
                                         </div>
@@ -2553,9 +2553,9 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                         <td>{{ child.date_of_birth }}</td>
                                                         <td>
                                                             {% if child in member.child %}
-                                                            <a href="{{ url_for('family.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            <a href="{{ url_for('family.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                             {% else %}
-                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                             {% endif %}
                                                         </td>
                                                     </tr>
@@ -2566,11 +2566,11 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     </div>
                                     {% endif %}
                                     <div class="detail-actions">
-                                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm">➕ Add Spouse</a>
+                                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Spouse</a>
                                         {% if member.spouse %}
-                                        <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=member.spouse[0].id) }}" class="action-btn outline btn-sm">✏️ Edit Spouse</a>
+                                        <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=member.spouse[0].id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit Spouse</a>
                                         {% endif %}
-                                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">➕ Add Child</a>
+                                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm"><i class="bi bi-plus"></i> Add Child</a>
                                     </div>
                                 </div>
                             </div>
@@ -2598,7 +2598,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             aria-haspopup="true" aria-expanded="false"
                                             aria-label="Actions for {{ member.firstname }} {{ member.lastname }}"
                                             onclick="toggleRowActions(this)">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -2640,7 +2640,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
         </div>
     </div>
     <div class="family-no-results" id="familyNoResults" style="display: none;">
-        <div class="family-no-results-icon">🔍</div>
+        <div class="family-no-results-icon"><i class="bi bi-search"></i></div>
         <h3>No Matching Members</h3>
         <p>Try a different name, ID number or relationship filter.</p>
     </div>
@@ -2649,22 +2649,22 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
 
 <div class="dashboard-grid">
     <div class="dashboard-card">
-        <div class="card-icon primary">👤</div>
+        <div class="card-icon primary"><i class="bi bi-person"></i></div>
         <div class="card-value">{{ name }}</div>
         <div class="card-label">Welcome, {{ name }}!</div>
     </div>
     <div class="dashboard-card">
-        <div class="card-icon success">👥</div>
+        <div class="card-icon success"><i class="bi bi-people"></i></div>
         <div class="card-value">{{ total_members }}</div>
         <div class="card-label">Total Members</div>
     </div>
     <div class="dashboard-card">
-        <div class="card-icon warning">💰</div>
+        <div class="card-icon warning"><i class="bi bi-cash-stack"></i></div>
         <div class="card-value">Ksh. {{ total_contributions }}</div>
         <div class="card-label">Total Contributions</div>
     </div>
     <div class="dashboard-card">
-        <div class="card-icon info">📊</div>
+        <div class="card-icon info"><i class="bi bi-bar-chart"></i></div>
         <div class="card-value">{{ total_events }}</div>
         <div class="card-label">Community Events</div>
     </div>
@@ -2680,12 +2680,12 @@ function toggleDevSecret(btn) {
     if (btn.getAttribute('data-revealed') === '1') {
         span.textContent = span.getAttribute('data-masked') || span.textContent;
         btn.setAttribute('data-revealed', '0');
-        btn.textContent = '👁';
+        btn.innerHTML = '<i class="bi bi-eye"></i>';
     } else {
         span.setAttribute('data-masked', span.textContent);
         span.textContent = full;
         btn.setAttribute('data-revealed', '1');
-        btn.textContent = '🙈';
+        btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
     }
 }
 
@@ -2807,12 +2807,12 @@ function toggleMemberSecret(btn) {
     if (btn.getAttribute('data-revealed') === '1') {
         span.textContent = span.getAttribute('data-masked') || span.textContent;
         btn.setAttribute('data-revealed', '0');
-        btn.textContent = '👁';
+        btn.innerHTML = '<i class="bi bi-eye"></i>';
     } else {
         span.setAttribute('data-masked', span.textContent);
         span.textContent = full;
         btn.setAttribute('data-revealed', '1');
-        btn.textContent = '🙈';
+        btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
     }
 }
 
@@ -2917,10 +2917,10 @@ function toggleAdvancedFamilyFilters() {
     var btn = document.getElementById('add-filter-btn');
     if (advanced.style.display === 'none') {
         advanced.style.display = '';
-        btn.textContent = '✕ Remove Filter';
+        btn.innerHTML = '<i class="bi bi-x"></i> Remove Filter';
     } else {
         advanced.style.display = 'none';
-        btn.textContent = '➕ Add Filter';
+        btn.innerHTML = '<i class="bi bi-plus"></i> Add Filter';
     }
 }
 
@@ -3270,7 +3270,7 @@ function loadPendingContributions(select, rowMemberId) {
             select.classList.remove('loading');
             listEl.setAttribute('aria-busy', 'false');
             listEl.innerHTML = '<div class="pending-contribution-empty">' +
-                '⚠️ Error loading data<br>' +
+                '<i class="bi bi-exclamation-triangle"></i> Error loading data<br>' +
                 '<button onclick="retryPendingContributions(' + selectedMemberId + ', ' + rowMemberId + ')" ' +
                 'style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); cursor: pointer; font-size: 0.75rem;">' +
                 'Retry</button>' +
@@ -3330,7 +3330,7 @@ function renderPendingContributions(listEl, data, rowMemberId) {
 
     if (count === 0) {
         html += '<div class="pending-contribution-empty" style="padding: 0.75rem; text-align: center;">' +
-            '<div style="font-size: 1.5rem; margin-bottom: 0.25rem;">✓</div>' +
+            '<div style="font-size: 1.5rem; margin-bottom: 0.25rem;"><i class="bi bi-check"></i></div>' +
             <div style="font-weight: 600; color: #10b981;">All caught up!</div>' +
             '<div style="font-size: 0.7rem; margin-top: 0.25rem;">No pending contributions</div>' +
             '</div>';
@@ -3343,7 +3343,7 @@ function renderPendingContributions(listEl, data, rowMemberId) {
 
     pending.forEach(function(event) {
         html += '<div class="pending-contribution-item">' +
-            '<div class="pending-event-icon">📅</div>' +
+            '<div class="pending-event-icon"><i class="bi bi-calendar"></i></div>' +
             '<div class="pending-event-info">' +
             '<div class="pending-event-name" title="' + event.name + '">' + event.name + '</div>' +
             '<div class="pending-event-date">' + event.event_date + '</div>' +

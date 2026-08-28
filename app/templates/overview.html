@@ -1163,7 +1163,7 @@
           <h1 class="ov-hero-title">Welcome back, {{ name }}!</h1>
           <p class="ov-hero-sub">Here's what's happening in your community today.</p>
           <div class="ov-hero-meta">
-            <span class="ov-hero-badge"><span>🛡</span> {{ role }}</span>
+            <span class="ov-hero-badge"><i class="bi bi-shield-check"></i> {{ role }}</span>
             <span class="ov-hero-time">{{ now().strftime('%A, %d %B %Y — %I:%M %p') }}</span>
           </div>
         </div>
@@ -1176,28 +1176,28 @@
     {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
-        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-icon primary"><i class="bi bi-people"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_members }}</div>
           <div class="ov-kpi-label">Total Members</div>
         </div>
       </a>
       <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-cash-stack"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
           <div class="ov-kpi-label">Total Contributions</div>
         </div>
       </a>
       <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-calendar-event"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_events }}</div>
           <div class="ov-kpi-label">Community Events</div>
         </div>
       </a>
       <a href="{{ url_for('budget.index') }}" class="ov-kpi-card info">
-        <div class="ov-kpi-icon info">📒</div>
+        <div class="ov-kpi-icon info"><i class="bi bi-journal-text"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ budget_stats.total_budgets if budget_stats else 0 }}</div>
           <div class="ov-kpi-label">Total Budgets</div>
@@ -1206,7 +1206,7 @@
     </div>
     <div class="ov-kpi-tier-2">
       <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">🏦</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-bank"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
           <div class="ov-kpi-label">Treasurer Balance</div>
@@ -1216,28 +1216,28 @@
     {% elif current_user.role.name == 'TREASURER' %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">📈</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-graph-up"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_income) if treasurer_stats else '0' }}</div>
           <div class="ov-kpi-label">Total Income</div>
         </div>
       </a>
       <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card danger">
-        <div class="ov-kpi-icon danger">📉</div>
+        <div class="ov-kpi-icon danger"><i class="bi bi-graph-down"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.total_expenses) if treasurer_stats else '0' }}</div>
           <div class="ov-kpi-label">Total Expenses</div>
         </div>
       </a>
       <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">⚖️</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-scales"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(treasurer_stats.balance) if treasurer_stats else '0' }}</div>
           <div class="ov-kpi-label">Balance</div>
         </div>
       </a>
       <a href="{{ url_for('treasurer.index') }}" class="ov-kpi-card info">
-        <div class="ov-kpi-icon info">📋</div>
+        <div class="ov-kpi-icon info"><i class="bi bi-clipboard"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ treasurer_stats.total_records if treasurer_stats else 0 }}</div>
           <div class="ov-kpi-label">Total Records</div>
@@ -1247,21 +1247,21 @@
     {% elif current_user.role.name == 'WELFARE_OFFICER' %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-cash-stack"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
           <div class="ov-kpi-label">Total Contributions</div>
         </div>
       </a>
       <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
-        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-icon primary"><i class="bi bi-people"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_members }}</div>
           <div class="ov-kpi-label">Total Members</div>
         </div>
       </a>
       <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-calendar-event"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_events }}</div>
           <div class="ov-kpi-label">Community Events</div>
@@ -1271,28 +1271,28 @@
     {% elif current_user.role.name == 'SECRETARY' %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card primary">
-        <div class="ov-kpi-icon primary">📝</div>
+        <div class="ov-kpi-icon primary"><i class="bi bi-file-text"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ secretary_stats.total_minutes if secretary_stats else 0 }}</div>
           <div class="ov-kpi-label">Total Minutes</div>
         </div>
       </a>
       <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">📋</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-clipboard"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ secretary_stats.draft if secretary_stats else 0 }}</div>
           <div class="ov-kpi-label">Draft Minutes</div>
         </div>
       </a>
       <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">✅</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-check-circle"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ secretary_stats.approved if secretary_stats else 0 }}</div>
           <div class="ov-kpi-label">Approved Minutes</div>
         </div>
       </a>
       <a href="{{ url_for('minutes.index') }}" class="ov-kpi-card info">
-        <div class="ov-kpi-icon info">🗄️</div>
+        <div class="ov-kpi-icon info"><i class="bi bi-database"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ secretary_stats.archived if secretary_stats else 0 }}</div>
           <div class="ov-kpi-label">Archived Minutes</div>
@@ -1302,28 +1302,28 @@
     {% elif current_user.role.name == 'USER' %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-cash-stack"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(user_stats.total_contributions if user_stats else 0) }}</div>
           <div class="ov-kpi-label">My Contributions</div>
         </div>
       </a>
       <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card primary">
-        <div class="ov-kpi-icon primary">📊</div>
+        <div class="ov-kpi-icon primary"><i class="bi bi-bar-chart"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ user_stats.transaction_count if user_stats else 0 }}</div>
           <div class="ov-kpi-label">Transactions</div>
         </div>
       </a>
       <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">⏳</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-hourglass-split"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ user_stats.pending_events if user_stats else 0 }}</div>
           <div class="ov-kpi-label">Pending Events</div>
         </div>
       </a>
       <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('register.index') }}" class="ov-kpi-card info">
-        <div class="ov-kpi-icon info">👨‍👩‍👧‍👦</div>
+        <div class="ov-kpi-icon info"><i class="bi bi-people"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ user_stats.family_count if user_stats else 0 }}</div>
           <div class="ov-kpi-label">Family Members</div>
@@ -1333,28 +1333,28 @@
     {% else %}
     <div class="ov-kpi-tier-1">
       <a href="{{ url_for('register.index') }}" class="ov-kpi-card primary">
-        <div class="ov-kpi-icon primary">👥</div>
+        <div class="ov-kpi-icon primary"><i class="bi bi-people"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_members }}</div>
           <div class="ov-kpi-label">Total Members</div>
         </div>
       </a>
       <a href="{{ url_for('deposit.index') }}" class="ov-kpi-card success">
-        <div class="ov-kpi-icon success">💰</div>
+        <div class="ov-kpi-icon success"><i class="bi bi-cash-stack"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">Ksh. {{ '{:,}'.format(total_contributions) }}</div>
           <div class="ov-kpi-label">Total Contributions</div>
         </div>
       </a>
       <a href="{{ url_for('community.index') }}" class="ov-kpi-card warning">
-        <div class="ov-kpi-icon warning">🎉</div>
+        <div class="ov-kpi-icon warning"><i class="bi bi-calendar-event"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ total_events }}</div>
           <div class="ov-kpi-label">Community Events</div>
         </div>
       </a>
       <a href="{{ url_for('main.profile') }}" class="ov-kpi-card info">
-        <div class="ov-kpi-icon info">📞</div>
+        <div class="ov-kpi-icon info"><i class="bi bi-telephone"></i></div>
         <div class="ov-kpi-body">
           <div class="ov-kpi-value">{{ contact or 'N/A' }}</div>
           <div class="ov-kpi-label">Contact</div>
@@ -1369,7 +1369,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">📝</div>
+        <div class="ov-section-icon"><i class="bi bi-file-text"></i></div>
         <h4 class="ov-section-title">Recent Minutes</h4>
       </div>
       <a href="{{ url_for('minutes.index') }}" class="ov-section-action">View Minutes <i class="bi bi-arrow-right"></i></a>
@@ -1431,7 +1431,7 @@
         <div class="ov-section">
           <div class="ov-section-header">
             <div class="ov-section-header-left">
-              <div class="ov-section-icon">👤</div>
+              <div class="ov-section-icon"><i class="bi bi-person"></i></div>
               <h4 class="ov-section-title">My Profile</h4>
             </div>
             <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
@@ -1460,7 +1460,7 @@
         <div class="ov-section">
           <div class="ov-section-header">
             <div class="ov-section-header-left">
-              <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
+              <div class="ov-section-icon"><i class="bi bi-people"></i></div>
               <h4 class="ov-section-title">Family Network</h4>
             </div>
             {% if current_user.member_profile %}
@@ -1470,17 +1470,17 @@
           {% if family_stats %}
           <div class="ov-family-stats">
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon spouse">💍</div>
+              <div class="ov-family-stat-icon spouse"><i class="bi bi-heart"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
               <div class="ov-family-stat-label">Spouses</div>
             </div>
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon child">👶</div>
+              <div class="ov-family-stat-icon child"><i class="bi bi-baby"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
               <div class="ov-family-stat-label">Children</div>
             </div>
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
+              <div class="ov-family-stat-icon total"><i class="bi bi-people"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
               <div class="ov-family-stat-label">Total Family</div>
             </div>
@@ -1499,14 +1499,14 @@
                 {% for spouse in member_details.spouses %}
                 <tr>
                   <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
-                  <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                  <td><span class="family-badge spouse-badge"><i class="bi bi-heart me-1"></i> Spouse</span></td>
                   <td>{{ spouse.phone_num|member_phone }}</td>
                 </tr>
                 {% endfor %}
                 {% for child in member_details.all_children %}
                 <tr>
                   <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
-                  <td><span class="family-badge child-badge">👶 Child</span></td>
+                  <td><span class="family-badge child-badge"><i class="bi bi-baby me-1"></i> Child</span></td>
                   <td>{{ child.phone_num|member_phone }}</td>
                 </tr>
                 {% endfor %}
@@ -1514,7 +1514,7 @@
                 <tr>
                   <td colspan="3">
                     <div class="ov-empty">
-                      <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
+                      <div class="ov-empty-icon"><i class="bi bi-people"></i></div>
                       <h3>No Family Members Yet</h3>
                       <p class="mb-3">Start building your family network.</p>
                       {% if current_user.member_profile %}
@@ -1539,7 +1539,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">👤</div>
+        <div class="ov-section-icon"><i class="bi bi-person"></i></div>
         <h4 class="ov-section-title">My Dashboard</h4>
       </div>
     </div>
@@ -1609,7 +1609,7 @@
         <div class="ov-section">
           <div class="ov-section-header">
             <div class="ov-section-header-left">
-              <div class="ov-section-icon">👤</div>
+              <div class="ov-section-icon"><i class="bi bi-person"></i></div>
               <h4 class="ov-section-title">My Profile</h4>
             </div>
             <a href="{{ url_for('main.profile') }}" class="ov-section-action">View Profile <i class="bi bi-arrow-right"></i></a>
@@ -1638,7 +1638,7 @@
         <div class="ov-section">
           <div class="ov-section-header">
             <div class="ov-section-header-left">
-              <div class="ov-section-icon">👨‍👩‍👧‍👦</div>
+              <div class="ov-section-icon"><i class="bi bi-people"></i></div>
               <h4 class="ov-section-title">Family Network</h4>
             </div>
             {% if current_user.member_profile %}
@@ -1648,17 +1648,17 @@
           {% if family_stats %}
           <div class="ov-family-stats">
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon spouse">💍</div>
+              <div class="ov-family-stat-icon spouse"><i class="bi bi-heart"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.spouse_count }}</div>
               <div class="ov-family-stat-label">Spouses</div>
             </div>
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon child">👶</div>
+              <div class="ov-family-stat-icon child"><i class="bi bi-baby"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.all_children_count }}</div>
               <div class="ov-family-stat-label">Children</div>
             </div>
             <div class="ov-family-stat">
-              <div class="ov-family-stat-icon total">👨‍👩‍👧‍👦</div>
+              <div class="ov-family-stat-icon total"><i class="bi bi-people"></i></div>
               <div class="ov-family-stat-value">{{ family_stats.total_family_members }}</div>
               <div class="ov-family-stat-label">Total Family</div>
             </div>
@@ -1677,14 +1677,14 @@
                 {% for spouse in member_details.spouses %}
                 <tr>
                   <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
-                  <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                  <td><span class="family-badge spouse-badge"><i class="bi bi-heart me-1"></i> Spouse</span></td>
                   <td>{{ spouse.phone_num|member_phone }}</td>
                 </tr>
                 {% endfor %}
                 {% for child in member_details.all_children %}
                 <tr>
                   <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
-                  <td><span class="family-badge child-badge">👶 Child</span></td>
+                  <td><span class="family-badge child-badge"><i class="bi bi-baby me-1"></i> Child</span></td>
                   <td>{{ child.phone_num|member_phone }}</td>
                 </tr>
                 {% endfor %}
@@ -1692,7 +1692,7 @@
                 <tr>
                   <td colspan="3">
                     <div class="ov-empty">
-                      <div class="ov-empty-icon">👨‍👩‍👧‍👦</div>
+                      <div class="ov-empty-icon"><i class="bi bi-people"></i></div>
                       <h3>No Family Members Yet</h3>
                       <p class="mb-3">Start building your family network.</p>
                       {% if current_user.member_profile %}
@@ -1717,7 +1717,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">📒</div>
+        <div class="ov-section-icon"><i class="bi bi-journal-text"></i></div>
         <h4 class="ov-section-title">Budget Overview</h4>
       </div>
       <a href="{{ url_for('budget.index') }}" class="ov-section-action">View Budgets <i class="bi bi-arrow-right"></i></a>
@@ -1801,7 +1801,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">📝</div>
+        <div class="ov-section-icon"><i class="bi bi-file-text"></i></div>
         <h4 class="ov-section-title">Minutes Overview</h4>
       </div>
       <a href="{{ url_for('minutes.index') }}" class="ov-section-action">View Minutes <i class="bi bi-arrow-right"></i></a>
@@ -1864,7 +1864,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">🏦</div>
+        <div class="ov-section-icon"><i class="bi bi-bank"></i></div>
         <h4 class="ov-section-title">Treasury Overview</h4>
       </div>
       <a href="{{ url_for('treasurer.index') }}" class="ov-section-action">View Treasury <i class="bi bi-arrow-right"></i></a>
@@ -1936,7 +1936,7 @@
   <section class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">🤝</div>
+        <div class="ov-section-icon"><i class="bi bi-handshake"></i></div>
         <h4 class="ov-section-title">Welfare Overview</h4>
       </div>
       <a href="{{ url_for('deposit.index') }}" class="ov-section-action">View Deposits <i class="bi bi-arrow-right"></i></a>
@@ -2004,17 +2004,17 @@
                   <button class="row-actions-toggle" type="button"
                           aria-haspopup="true" aria-expanded="false"
                           aria-label="Actions for contribution by {{ member.firstname }} {{ member.lastname }}">
-                    <span aria-hidden="true">⚙</span>
+                    <i class="bi bi-gear" aria-hidden="true"></i>
                     <span>Actions</span>
                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                   </button>
                   <div class="row-actions-menu" role="menu">
                     <div class="row-actions-menu-header">
                       <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
-                      <span class="row-actions-menu-sub">💳 Contribution</span>
+                      <span class="row-actions-menu-sub"><i class="bi bi-credit-card me-1"></i> Contribution</span>
                     </div>
                     <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
-                      <span class="row-action-icon" aria-hidden="true">📄</span>
+                      <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
                       <span class="row-action-copy">
                         <span class="row-action-label">View Deposits</span>
                         <span class="row-action-hint">View contribution history</span>
@@ -2022,7 +2022,7 @@
                     </a>
                     {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER'] %}
                     <a href="{{ url_for('deposit.edit_contribution', depo_id=contrib.id) }}" class="row-action-item" role="menuitem">
-                      <span class="row-action-icon" aria-hidden="true">✏️</span>
+                      <i class="bi bi-pencil" aria-hidden="true"></i>
                       <span class="row-action-copy">
                         <span class="row-action-label">Edit Contribution</span>
                         <span class="row-action-hint">Update amount or type</span>
@@ -2053,60 +2053,60 @@
   <div class="ov-section">
     <div class="ov-section-header">
       <div class="ov-section-header-left">
-        <div class="ov-section-icon">🔗</div>
+        <div class="ov-section-icon"><i class="bi bi-link-45deg"></i></div>
         <h4 class="ov-section-title">Quick Links</h4>
       </div>
     </div>
     <div class="ov-quick-links">
       <a href="{{ url_for('register.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">👥</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-people"></i></span>
         <span class="ov-quick-link-text">Members</span>
       </a>
       <a href="{{ url_for('community.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">🎉</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-calendar-event"></i></span>
         <span class="ov-quick-link-text">Community</span>
       </a>
       <a href="{{ url_for('reports.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">📊</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-bar-chart"></i></span>
         <span class="ov-quick-link-text">Reports</span>
       </a>
       {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
       <a href="{{ url_for('budget.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">📒</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-journal-text"></i></span>
         <span class="ov-quick-link-text">Budgets</span>
       </a>
       {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
       <a href="{{ url_for('treasurer.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">🏦</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-bank"></i></span>
         <span class="ov-quick-link-text">Treasurer</span>
       </a>
       {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY', 'CHAIRPERSON'] %}
       <a href="{{ url_for('minutes.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">📝</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-file-text"></i></span>
         <span class="ov-quick-link-text">Minutes</span>
       </a>
       {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER'] %}
       <a href="{{ url_for('deposit.index') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">💳</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-credit-card"></i></span>
         <span class="ov-quick-link-text">Deposits</span>
       </a>
       {% endif %}
       {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
       <a href="{{ url_for('register.create') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">➕</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-plus"></i></span>
         <span class="ov-quick-link-text">Add Member</span>
       </a>
       <a href="{{ url_for('community.add_event') }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">✨</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-stars"></i></span>
         <span class="ov-quick-link-text">New Event</span>
       </a>
       {% endif %}
       {% if current_user.member_profile %}
       <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}" class="ov-quick-link">
-        <span class="ov-quick-link-icon">💳</span>
+        <span class="ov-quick-link-icon"><i class="bi bi-credit-card"></i></span>
         <span class="ov-quick-link-text">My Deposits</span>
       </a>
       {% endif %}

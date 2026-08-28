@@ -34,22 +34,22 @@
                 {% if current_user.is_authenticated %}
                 <li>
                     <a href="{{ url_for('home.home') }}" class="{% if request.endpoint == 'home.home' %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🏠</span> Overview
+                        <i class="bi bi-house sidebar-nav-icon" aria-hidden="true"></i> Overview
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('main.profile') }}" class="{% if request.endpoint == 'main.profile' %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">👤</span> Profile
+                        <i class="bi bi-person sidebar-nav-icon" aria-hidden="true"></i> Profile
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('register.index') }}" class="{% if request.endpoint and request.endpoint.startswith('register') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">👥</span> Members
+                        <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Members
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('family.index') }}" class="{% if request.endpoint and request.endpoint.startswith('family') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">👨‍👩‍👧‍👦</span> Family
+                        <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Family
                     </a>
                 </li>
                   {% set deposit_endpoint = request.endpoint or '' %}
@@ -57,7 +57,7 @@
                   {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                   <li>
                       <a href="{{ url_for('deposit.index') }}" class="{% if deposit_section_active %}active{% endif %}">
-                          <span class="sidebar-nav-icon" aria-hidden="true">💰</span> Deposits
+                          <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
                           {% if (pending_deposits_count|default(0)) > 0 %}
                           <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting contributions">{{ pending_deposits_count|default(0) }}</span>
                           {% endif %}
@@ -66,7 +66,7 @@
                   {% else %}
                   <li>
                       <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="{% if deposit_section_active %}active{% endif %}">
-                          <span class="sidebar-nav-icon" aria-hidden="true">💰</span> Deposits
+                          <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
                           {% if (pending_deposits_count|default(0)) > 0 %}
                           <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting payment">{{ pending_deposits_count|default(0) }}</span>
                           {% endif %}
@@ -75,37 +75,37 @@
                   {% endif %}
                 <li>
                     <a href="{{ url_for('community.index') }}" class="{% if request.endpoint and request.endpoint.startswith('community') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🎉</span> Community
+                        <i class="bi bi-calendar-event sidebar-nav-icon" aria-hidden="true"></i> Community
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('reports.index') }}" class="{% if request.endpoint and request.endpoint.startswith('reports') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📊</span> Reports
+                        <i class="bi bi-bar-chart sidebar-nav-icon" aria-hidden="true"></i> Reports
                     </a>
                 </li>
                 {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
                 <li>
                     <a href="{{ url_for('budget.index') }}" class="{% if request.endpoint and request.endpoint.startswith('budget') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📒</span> Budgets
+                        <i class="bi bi-journal-text sidebar-nav-icon" aria-hidden="true"></i> Budgets
                     </a>
                 </li>
                 {% endif %}
                 {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                 <li>
                     <a href="{{ url_for('treasurer.index') }}" class="{% if request.endpoint and request.endpoint.startswith('treasurer') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🏦</span> Treasurer
+                        <i class="bi bi-bank sidebar-nav-icon" aria-hidden="true"></i> Treasurer
                     </a>
                 </li>
                 {% endif %}
                 <li>
                     <a href="{{ url_for('requisition.index') }}" class="{% if request.endpoint and request.endpoint.startswith('requisition') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📦</span> Requisitions
+                        <i class="bi bi-box sidebar-nav-icon" aria-hidden="true"></i> Requisitions
                     </a>
                 </li>
                 {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY', 'CHAIRPERSON'] %}
                 <li>
                     <a href="{{ url_for('minutes.index') }}" class="{% if request.endpoint and request.endpoint.startswith('minutes') %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📝</span> Minutes
+                        <i class="bi bi-file-text sidebar-nav-icon" aria-hidden="true"></i> Minutes
                     </a>
                 </li>
                 {% endif %}
@@ -116,7 +116,7 @@
                     <button type="button" class="sidebar-nav-toggle {% if faq_section_active %}active{% endif %}"
                             id="sidebarFaqToggle" aria-expanded="{{ 'true' if faq_section_active else 'false' }}"
                             aria-controls="sidebarFaqMenu">
-                        <span class="sidebar-nav-icon" aria-hidden="true">💬</span>
+                        <i class="bi bi-chat-left-text sidebar-nav-icon" aria-hidden="true"></i>
                         <span class="sidebar-nav-label">FAQ</span>
                         <span class="sidebar-nav-badge" title="{{ faq_count }} published question(s)">{{ faq_count }}</span>
                         <span class="sidebar-nav-caret" aria-hidden="true">▾</span>
@@ -124,17 +124,17 @@
                     <ul class="sidebar-submenu" id="sidebarFaqMenu">
                         <li>
                             <a href="{{ url_for('register.faq_list') }}" class="{% if faq_endpoint == 'register.faq_list' %}active{% endif %}">
-                                <span class="sidebar-submenu-icon" aria-hidden="true">🗂</span> Manage FAQs
+                                <i class="bi bi-folder sidebar-submenu-icon" aria-hidden="true"></i> Manage FAQs
                             </a>
                         </li>
                         <li>
                             <a href="{{ url_for('register.faq_create') }}" class="{% if faq_endpoint == 'register.faq_create' %}active{% endif %}">
-                                <span class="sidebar-submenu-icon" aria-hidden="true">➕</span> Add New FAQ
+                                <i class="bi bi-plus sidebar-submenu-icon" aria-hidden="true"></i> Add New FAQ
                             </a>
                         </li>
                         <li>
                             <a href="{{ url_for('main.faq') }}" class="{% if faq_endpoint == 'main.faq' %}active{% endif %}">
-                                <span class="sidebar-submenu-icon" aria-hidden="true">👁</span> View Public Page
+                                <i class="bi bi-eye sidebar-submenu-icon" aria-hidden="true"></i> View Public Page
                             </a>
                         </li>
                         {% if faq_categories %}
@@ -142,7 +142,7 @@
                         {% for category in faq_categories[:5] %}
                         <li>
                             <a href="{{ url_for('register.faq_list', category=category) }}" class="sidebar-submenu-tag">
-                                <span class="sidebar-submenu-icon" aria-hidden="true">📁</span> {{ category }}
+                                <i class="bi bi-folder-fill sidebar-submenu-icon" aria-hidden="true"></i> {{ category }}
                             </a>
                         </li>
                         {% endfor %}
@@ -152,7 +152,7 @@
                 {% else %}
                 <li>
                     <a href="{{ url_for('main.faq') }}" class="{% if faq_endpoint == 'main.faq' %}active{% endif %}">
-                        <span class="sidebar-nav-icon" aria-hidden="true">💬</span> Help &amp; FAQ
+                        <i class="bi bi-chat-left-text sidebar-nav-icon" aria-hidden="true"></i> Help &amp; FAQ
                     </a>
                 </li>
                 {% endif %}
@@ -167,32 +167,32 @@
             <ul class="sidebar-nav">
                 <li>
                     <a href="{{ url_for('register.create') }}" title="Add New Member">
-                        <span class="sidebar-nav-icon" aria-hidden="true">➕</span> Add Member
+                        <i class="bi bi-plus sidebar-nav-icon" aria-hidden="true"></i> Add Member
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('budget.create') }}" title="Create New Budget">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📒</span> New Budget
+                        <i class="bi bi-journal-text sidebar-nav-icon" aria-hidden="true"></i> New Budget
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('treasurer.create') }}" title="Record Transaction">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🏦</span> New Transaction
+                        <i class="bi bi-bank sidebar-nav-icon" aria-hidden="true"></i> New Transaction
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('minutes.create') }}" title="Record Meeting Minutes">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📝</span> New Minutes
+                        <i class="bi bi-file-text sidebar-nav-icon" aria-hidden="true"></i> New Minutes
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('deposit.index') }}" title="View All Deposits">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📋</span> View Deposits
+                        <i class="bi bi-clipboard sidebar-nav-icon" aria-hidden="true"></i> View Deposits
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('community.add_event') }}" title="Create Event">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🎉</span> New Event
+                        <i class="bi bi-calendar-event sidebar-nav-icon" aria-hidden="true"></i> New Event
                     </a>
                 </li>
             </ul>
@@ -205,7 +205,7 @@
             <ul class="sidebar-nav">
                 <li>
                     <a href="{{ url_for('treasurer.create') }}" title="Record Transaction">
-                        <span class="sidebar-nav-icon" aria-hidden="true">🏦</span> New Transaction
+                        <i class="bi bi-bank sidebar-nav-icon" aria-hidden="true"></i> New Transaction
                     </a>
                 </li>
             </ul>
@@ -218,7 +218,7 @@
             <ul class="sidebar-nav">
                 <li>
                     <a href="{{ url_for('minutes.create') }}" title="Record Meeting Minutes">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📝</span> New Minutes
+                        <i class="bi bi-file-text sidebar-nav-icon" aria-hidden="true"></i> New Minutes
                     </a>
                 </li>
             </ul>
@@ -231,12 +231,12 @@
             <ul class="sidebar-nav">
                 <li>
                     <a href="{{ url_for('budget.index') }}" title="View Budgets">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📒</span> View Budgets
+                        <i class="bi bi-journal-text sidebar-nav-icon" aria-hidden="true"></i> View Budgets
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('minutes.index') }}" title="View Minutes">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📝</span> View Minutes
+                        <i class="bi bi-file-text sidebar-nav-icon" aria-hidden="true"></i> View Minutes
                     </a>
                 </li>
             </ul>
@@ -249,17 +249,17 @@
             <ul class="sidebar-nav">
                 <li>
                     <a href="{{ url_for('family.create_spouse', depo_id=current_user.member_profile.id) }}" title="Add Spouse">
-                        <span class="sidebar-nav-icon" aria-hidden="true">👩</span> Add Spouse
+                        <i class="bi bi-person sidebar-nav-icon" aria-hidden="true"></i> Add Spouse
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('register.create_child', depo_id=current_user.member_profile.id) }}" title="Add Child">
-                        <span class="sidebar-nav-icon" aria-hidden="true">👶</span> Add Child
+                        <i class="bi bi-baby sidebar-nav-icon" aria-hidden="true"></i> Add Child
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}" title="View My Deposits">
-                        <span class="sidebar-nav-icon" aria-hidden="true">📋</span> My Deposits
+                        <i class="bi bi-clipboard sidebar-nav-icon" aria-hidden="true"></i> My Deposits
                     </a>
                 </li>
             </ul>
@@ -316,20 +316,20 @@
                         </div>
                         <div class="user-menu-divider" role="separator"></div>
                         <a href="{{ url_for('main.profile') }}" class="user-menu-item" role="menuitem">
-                            <span aria-hidden="true">👤</span> Profile
+                            <i class="bi bi-person" aria-hidden="true"></i> Profile
                         </a>
                         <a href="{{ url_for('main.edit_profile') }}" class="user-menu-item" role="menuitem">
-                            <span aria-hidden="true">✏️</span> Edit Profile
+                            <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Profile
                         </a>
                         <a href="{{ url_for('main.change_password') }}" class="user-menu-item" role="menuitem">
-                            <span aria-hidden="true">🔒</span> Change Password
+                            <i class="bi bi-lock" aria-hidden="true"></i> Change Password
                         </a>
                         <button class="user-menu-item user-menu-theme-toggle" id="themeToggle" type="button" role="menuitem">
-                            <span aria-hidden="true">🌓</span> <span id="themeLabel">Dark Mode</span>
+                            <i class="bi bi-moon-stars-fill" aria-hidden="true"></i> <span id="themeLabel">Dark Mode</span>
                         </button>
                         <div class="user-menu-divider" role="separator"></div>
                         <a href="{{ url_for('auth.logout') }}" class="user-menu-item user-menu-logout" role="menuitem">
-                            <span aria-hidden="true">🚪</span> Logout
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout
                         </a>
                     </div>
                 </div>

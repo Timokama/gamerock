@@ -20,7 +20,7 @@
 <div class="mg-page-header">
     <h2>Budgets</h2>
     {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-    <a href="{{ url_for('budget.create') }}" class="btn btn-primary">➕ New Budget</a>
+    <a href="{{ url_for('budget.create') }}" class="btn btn-primary"><i class="bi bi-plus"></i> New Budget</a>
     {% endif %}
 </div>
 
@@ -84,7 +84,7 @@
                         <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ budget.name }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -126,7 +126,7 @@
                     <tr>
                         <td colspan="7">
                             <div class="empty-state">
-                                <div class="empty-state-icon">📒</div>
+                                <div class="empty-state-icon"><i class="bi bi-journal-text"></i></div>
                                 <h3>No Budgets Yet</h3>
                                 <p>Create your first budget to start tracking community finances.</p>
                                 {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
