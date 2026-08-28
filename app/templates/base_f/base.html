@@ -97,6 +97,11 @@
                     </a>
                 </li>
                 {% endif %}
+                <li>
+                    <a href="{{ url_for('requisition.index') }}" class="{% if request.endpoint and request.endpoint.startswith('requisition') %}active{% endif %}">
+                        <span class="sidebar-nav-icon" aria-hidden="true">📦</span> Requisitions
+                    </a>
+                </li>
                 {% if current_user.role.name in ['DEVEL', 'ADMIN', 'SECRETARY', 'CHAIRPERSON'] %}
                 <li>
                     <a href="{{ url_for('minutes.index') }}" class="{% if request.endpoint and request.endpoint.startswith('minutes') %}active{% endif %}">

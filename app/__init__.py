@@ -96,6 +96,9 @@ def create_app():
     from app.treasurer import bp as treasurer_bp
     app.register_blueprint(treasurer_bp, url_prefix='/treasurer')
 
+    from app.requisition import bp as requisition_bp
+    app.register_blueprint(requisition_bp, url_prefix='/requisition')
+
     from app.models.register import Member
     from app.models.faq import FAQ
     from app.models.community_event import CommunityEvent

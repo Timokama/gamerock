@@ -1975,8 +1975,15 @@
           </thead>
           <tbody>
             {% for contrib in welfare_stats.recent_contributions %}
+            {% set member = contrib.member %}
             <tr>
-              <td data-label="Member"><strong>{{ contrib.member.firstname }} {{ contrib.member.lastname }} {{ contrib.member.surname }}</strong></td>
+              <td data-label="Member">
+                {% if member %}
+                <strong>{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
+                {% else %}
+                <span class="text-muted">Unknown Member</span>
+                {% endif %}
+              </td>
               <td data-label="Amount" class="text-end">Ksh. {{ '{:,}'.format(contrib.amount) }}</td>
               <td data-label="Payment Type">
                 {% if contrib.payment_type.value == 'Ksh' %}
@@ -1992,20 +1999,21 @@
               <td data-label="Event">{{ contrib.community_event.name if contrib.community_event else 'N/A' }}</td>
               <td data-label="Date">{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
               <td data-label="Actions">
+                {% if member %}
                 <div class="row-actions">
                   <button class="row-actions-toggle" type="button"
                           aria-haspopup="true" aria-expanded="false"
-                          aria-label="Actions for contribution by {{ contrib.member.firstname }} {{ contrib.member.lastname }}">
+                          aria-label="Actions for contribution by {{ member.firstname }} {{ member.lastname }}">
                     <span aria-hidden="true">⚙</span>
                     <span>Actions</span>
                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                   </button>
                   <div class="row-actions-menu" role="menu">
                     <div class="row-actions-menu-header">
-                      <span class="row-actions-menu-title">{{ contrib.member.firstname }} {{ contrib.member.lastname }} {{ contrib.member.surname }}</span>
+                      <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</span>
                       <span class="row-actions-menu-sub">💳 Contribution</span>
                     </div>
-                    <a href="{{ url_for('deposit.deposit', depo_id=contrib.member.id) }}" class="row-action-item" role="menuitem">
+                    <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                       <span class="row-action-icon" aria-hidden="true">📄</span>
                       <span class="row-action-copy">
                         <span class="row-action-label">View Deposits</span>
@@ -2023,6 +2031,7 @@
                     {% endif %}
                   </div>
                 </div>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}

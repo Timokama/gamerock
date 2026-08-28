@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from app.models.cont_reg import event_reg
 
 class Member(db.Model):
+    __tablename__ = 'member'
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)

@@ -348,12 +348,17 @@
                 </thead>
                 <tbody>
                     {% for contrib in contributions %}
+                    {% set member = contrib.member %}
                     <tr class="searchable-item">
                         <td>
                             <strong>
-                                <a href="{{ url_for('deposit.deposit', depo_id=contrib.member.id) }}" style="text-decoration: none; color: inherit;">
-                                    {{ contrib.member.firstname }} {{ contrib.member.lastname }}
+                                {% if member %}
+                                <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" style="text-decoration: none; color: inherit;">
+                                    {{ member.firstname }} {{ member.lastname }}
                                 </a>
+                                {% else %}
+                                <span class="text-muted">Unknown Member</span>
+                                {% endif %}
                             </strong>
                         </td>
                         <td>
@@ -371,6 +376,7 @@
                         <td>{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
                         {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                         <td>
+                            {% if member %}
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for contribution">
                                     <span aria-hidden="true">⚙</span>
@@ -379,7 +385,7 @@
                                 </button>
                                 <div class="row-actions-menu" role="menu">
                                     <div class="row-actions-menu-header">
-                                        <span class="row-actions-menu-title">{{ contrib.member.firstname }} {{ contrib.member.lastname }}</span>
+                                        <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
                                         <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(contrib.amount) }}</span>
                                     </div>
                                     <a href="{{ url_for('deposit.edit_contribution', depo_id=contrib.id) }}" class="row-action-item" role="menuitem">
@@ -400,20 +406,9 @@
                                     </form>
                                 </div>
                             </div>
+                            {% endif %}
                         </td>
                         {% endif %}
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="{% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}5{% else %}4{% endif %}">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            </div>
-                                <h3>No Contributions Yet</h3>
-                                <p>No contributions have been made for this event.</p>
-                            </div>
-                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -8,7 +8,7 @@ class Contribution(db.Model):
     trans_date = db.Column(db.DateTime(timezone=True), server_default=func.now())
     payment_type = db.Column(db.Enum(Payment))
     transaction_ref = db.Column(db.String(50))
-    member_id = db.Column(db.Integer,db.ForeignKey('member.id'))
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     propose = db.Column(db.Integer, db.ForeignKey('community_event.id'))
     added_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     

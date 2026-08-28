@@ -1684,6 +1684,7 @@
                 </thead>
                 <tbody>
                     {% for contrib in contributions %}
+                    {% set member = contrib.member %}
                     <tr>
                         <td>{{ contrib.trans_date.strftime('%b %d, %Y') if contrib.trans_date else 'N/A' }}</td>
                         <td class="deposit-amount">Ksh. {{ '{:,}'.format(contrib.amount or 0) }}</td>
@@ -1701,10 +1702,11 @@
                         </td>
                         <td>{{ contrib.community_event.name if contrib.community_event else 'N/A' }}</td>
                         <td class="deposit-actions-col">
+                            {% if member %}
                             <div class="row-actions">
                                 <button class="row-actions-toggle" type="button"
                                         aria-haspopup="true" aria-expanded="false"
-                                        aria-label="Actions for {{ contrib.member.firstname }} {{ contrib.member.lastname }}">
+                                        aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
                                     <span aria-hidden="true">⚙</span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
@@ -1725,6 +1727,7 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

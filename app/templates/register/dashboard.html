@@ -1522,15 +1522,24 @@
                         </thead>
                         <tbody>
                             {% for contrib in all_contributions %}
+                            {% set member = contrib.member %}
                             <tr>
                                 <td>{{ contrib.id }}</td>
-                                <td>{{ contrib.member.firstname }} {{ contrib.member.lastname }}</td>
+                                <td>
+                                    {% if member %}
+                                    {{ member.firstname }} {{ member.lastname }}
+                                    {% else %}
+                                    <span class="text-muted">Unknown Member</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ contrib.trans_date.strftime('%B %d, %Y') if contrib.trans_date else 'N/A' }}</td>
                                 <td>Ksh. {{ contrib.amount }}</td>
                                 <td>{{ contrib.payment_type.value if contrib.payment_type else 'N/A' }}</td>
                                 <td>{{ contrib.transaction_ref }}</td>
                                 <td>
+                                    {% if member %}
                                     <a href="{{ url_for('reports.reports', depo_id=contrib.id) }}" class="action-btn outline btn-sm">View</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
