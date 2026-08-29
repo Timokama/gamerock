@@ -45,12 +45,12 @@
   }
 
   .event-card-brand {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 100%);
     color: white;
     padding: 2.5rem 2rem;
     position: relative;
     overflow: hidden;
-    border-radius: var(--radius) var(--radius) 0 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
 
   .event-card-brand::before {
@@ -85,16 +85,17 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+    color: white;
     margin-bottom: 1.25rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   .upload-zone {
-    border: 2px dashed var(--border-color);
-    border-radius: var(--radius);
+    border: 2px dashed var(--border-light);
+    border-radius: var(--radius-xl);
     padding: 2.5rem 2rem;
     text-align: center;
-    background: var(--bg-color);
+    background: var(--bg-primary);
     transition: all 0.25s ease;
     cursor: pointer;
     position: relative;
@@ -102,7 +103,7 @@
   }
 
   .upload-zone:hover {
-    border-color: var(--primary-light);
+    border-color: var(--primary-500);
     background: rgba(20, 184, 166, 0.04);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(20, 184, 166, 0.08);
@@ -117,10 +118,10 @@
 
   .image-preview {
     margin-top: 1rem;
-    border-radius: var(--radius);
+    border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     position: relative;
   }
 
@@ -157,15 +158,14 @@
 
   .field-hint {
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin-top: 0.4rem;
     display: flex;
     align-items: center;
     gap: 0.35rem;
   }
 
-  .field-hint::before {
-    content: '<i class="bi bi-info-circle"></i>';
+  .field-hint i {
     font-size: 0.75rem;
   }
 
@@ -174,7 +174,7 @@
     gap: 0.75rem;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     align-items: center;
   }
 
@@ -210,11 +210,11 @@
                     <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.9;">Update the details for <strong>{{ event.name }}</strong></p>
                 </div>
                 <div class="card-body" style="padding: 2.5rem 2rem;">
-                    <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="background: var(--bg-primary); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
                         <span style="font-size: 1.25rem;"><i class="bi bi-calendar"></i></span>
                         <div>
-                            <strong style="color: var(--dark-color);">{{ event.name }}</strong>
-                            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}</div>
+                            <strong style="color: var(--text-primary);">{{ event.name }}</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}</div>
                         </div>
                     </div>
 
@@ -223,20 +223,20 @@
                             <div class="form-group">
                                 <label for="name">Event Name</label>
                                 <input type="text" class="form-control" id="name" name="name" value="{{ event.name }}" required>
-                                <p class="field-hint">Update the event name</p>
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event name</p>
                             </div>
 
                             <div class="form-group">
                                 <label for="event_date">Event Date</label>
                                 <input type="date" class="form-control" id="event_date" name="event_date" value="{{ event.event_date }}" required>
-                                <p class="field-hint">Update the event date</p>
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event date</p>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="details">Event Details</label>
                             <textarea class="form-control" id="details" name="details" rows="5" required>{{ event.details }}</textarea>
-                            <p class="field-hint">Update the event description and details</p>
+                            <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event description and details</p>
                         </div>
 
                         <div class="form-group">
@@ -246,7 +246,7 @@
                                 <img src="{{ url_for('static', filename='images/events/' + event.image) }}" alt="{{ event.name }}">
                             </div>
                             {% else %}
-                            <div style="width: 100%; max-height: 160px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 3.5rem; border: 2px dashed var(--border-color);">
+                            <div style="width: 100%; max-height: 160px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 3.5rem; border: 2px dashed var(--border-light);">
                                 <i class="bi bi-camera"></i>
                             </div>
                             {% endif %}
@@ -264,7 +264,7 @@
                                 <img id="imagePreview" src="" alt="Image Preview">
                                 <button type="button" class="remove-image" onclick="removeImage()"><i class="bi bi-x"></i></button>
                             </div>
-                            <p class="field-hint mt-2">Upload a new image to replace the current one</p>
+                            <p class="field-hint mt-2"><i class="bi bi-info-circle"></i> Upload a new image to replace the current one</p>
                         </div>
 
                         <div class="form-actions">

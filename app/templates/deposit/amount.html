@@ -97,6 +97,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+    color: white;
     margin-bottom: 1.25rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -263,8 +264,7 @@
     gap: 0.35rem;
 }
 
-.field-hint::before {
-    content: '<i class="bi bi-info-circle"></i>';
+.field-hint i {
     font-size: 0.75rem;
 }
 
@@ -529,7 +529,7 @@
                             <span class="currency-prefix">Ksh</span>
                             <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" required min="1" step="0.01" value="{{ form_data.amount if form_data is defined else '' }}">
                         </div>
-                        <p class="field-hint">Enter the contribution amount in Kenyan Shillings</p>
+                        <p class="field-hint"><i class="bi bi-info-circle"></i> Enter the contribution amount in Kenyan Shillings</p>
                     </div>
                     <div class="form-group">
                         <label for="payment">Payment Type</label>
@@ -539,7 +539,7 @@
                             <option value="{{ value }}" {% if form_data is defined and form_data.payment == value %}selected{% endif %}>{{ value }}</option>
                             {% endfor %}
                         </select>
-                        <p class="field-hint">Select the payment method used</p>
+                        <p class="field-hint"><i class="bi bi-info-circle"></i> Select the payment method used</p>
                     </div>
                 </div>
 
@@ -551,7 +551,7 @@
                             <option value="{{ event.id }}" {% if form_data is defined and form_data.propose == event.id|string() %}selected{% endif %} {% if preselected_event is defined and preselected_event == event.id %}selected{% endif %}>{{ event.name }}</option>
                             {% endfor %}
                         </select>
-                        <p class="field-hint">Link this contribution to a specific community event if applicable</p>
+                        <p class="field-hint"><i class="bi bi-info-circle"></i> Link this contribution to a specific community event if applicable</p>
                     </div>
 
                 <div class="form-group">
