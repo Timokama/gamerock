@@ -695,7 +695,7 @@
     <div class="report-container">
         <div class="report-header">
             <div class="report-header-content">
-                <div class="report-header-icon">📊</div>
+                <div class="report-header-icon"><i class="bi bi-bar-chart"></i></div>
                 <div>
                     <h2>Contribution Report</h2>
                     <p class="report-subtitle">Report #{{ contribute.id }} — Detailed view of this contribution record</p>
@@ -705,30 +705,30 @@
 
         <div class="report-stats-row">
             <div class="report-stat-card">
-                <div class="report-stat-icon amount">💰</div>
+                <div class="report-stat-icon amount"><i class="bi bi-cash-stack"></i></div>
                 <div>
                     <div class="report-stat-label">Amount</div>
                     <div class="report-stat-value amount">Ksh. {{ contribute.amount }}</div>
                 </div>
             </div>
             <div class="report-stat-card">
-                <div class="report-stat-icon date">📅</div>
+                <div class="report-stat-icon date"><i class="bi bi-calendar-date"></i></div>
                 <div>
                     <div class="report-stat-label">Transaction Date</div>
                     <div class="report-stat-value">{{ contribute.trans_date.strftime('%B %d, %Y') if contribute.trans_date else 'N/A' }}</div>
                 </div>
             </div>
             <div class="report-stat-card">
-                <div class="report-stat-icon payment">💳</div>
+                <div class="report-stat-icon payment"><i class="bi bi-credit-card"></i></div>
                 <div>
                     <div class="report-stat-label">Payment Type</div>
                     <div class="report-stat-value">
                         {% if contribute.payment_type.value == 'Ksh' %}
-                        <span class="report-badge report-badge-primary">💵 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        <span class="report-badge report-badge-primary"><i class="bi bi-currency-dollar"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
                         {% elif contribute.payment_type.value == 'MPESA' %}
-                        <span class="report-badge report-badge-success">📱 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        <span class="report-badge report-badge-success"><i class="bi bi-phone"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
                         {% elif contribute.payment_type.value == 'BANK DEPOSIT' %}
-                        <span class="report-badge report-badge-warning">🏦 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        <span class="report-badge report-badge-warning"><i class="bi bi-bank"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
                         {% else %}
                         <span class="report-badge report-badge-primary">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
                         {% endif %}
@@ -736,7 +736,7 @@
                 </div>
             </div>
             <div class="report-stat-card">
-                <div class="report-stat-icon event">🎉</div>
+                <div class="report-stat-icon event"><i class="bi bi-calendar-event"></i></div>
                 <div>
                     <div class="report-stat-label">Community Event</div>
                     <div class="report-stat-value">{{ contribute.community_event.name if contribute.community_event else 'N/A' }}</div>
@@ -747,7 +747,7 @@
         {% if event_image_url %}
         <div class="report-image-card">
             <div class="card-header">
-                <div class="report-card-header-icon event">🎉</div>
+                <div class="report-card-header-icon event"><i class="bi bi-calendar-event"></i></div>
                 <h4>Event Image — {{ contribute.community_event.name if contribute.community_event else 'N/A' }}</h4>
             </div>
             <div class="card-body">
@@ -759,7 +759,7 @@
         <div class="report-cards-row">
             <div class="report-card">
                 <div class="report-card-header">
-                    <div class="report-card-header-icon member">👤</div>
+                    <div class="report-card-header-icon member"><i class="bi bi-person"></i></div>
                     <h4>Member Information</h4>
                 </div>
                 <div class="report-card-body">
@@ -793,7 +793,7 @@
 
             <div class="report-card">
                 <div class="report-card-header">
-                    <div class="report-card-header-icon total">📈</div>
+                    <div class="report-card-header-icon total"><i class="bi bi-graph-up"></i></div>
                     <h4>Contribution Summary</h4>
                 </div>
                 <div class="report-card-body">
@@ -820,7 +820,7 @@
         {% if recent_contributions %}
         <div class="report-recent-card">
             <div class="card-header">
-                <h4>🕒 Recent Contributions</h4>
+                <h4><i class="bi bi-clock-history"></i> Recent Contributions</h4>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
@@ -839,11 +839,11 @@
                             <td class="fw-semibold">Ksh. {{ deposit.amount }}</td>
                             <td>
                                 {% if deposit.payment_type.value == 'Ksh' %}
-                                <span class="report-badge report-badge-primary">💵 {{ deposit.payment_type.value }}</span>
+                                <span class="report-badge report-badge-primary"><i class="bi bi-currency-dollar"></i> {{ deposit.payment_type.value }}</span>
                                 {% elif deposit.payment_type.value == 'MPESA' %}
-                                <span class="report-badge report-badge-success">📱 {{ deposit.payment_type.value }}</span>
+                                <span class="report-badge report-badge-success"><i class="bi bi-phone"></i> {{ deposit.payment_type.value }}</span>
                                 {% elif deposit.payment_type.value == 'BANK DEPOSIT' %}
-                                <span class="report-badge report-badge-warning">🏦 {{ deposit.payment_type.value }}</span>
+                                <span class="report-badge report-badge-warning"><i class="bi bi-bank"></i> {{ deposit.payment_type.value }}</span>
                                 {% else %}
                                 <span class="report-badge report-badge-primary">{{ deposit.payment_type.value if deposit.payment_type else 'N/A' }}</span>
                                 {% endif %}
@@ -859,7 +859,7 @@
 
         <div class="report-actions">
             <a href="{{ url_for('reports.index') }}" class="btn btn-outline">← Back to Reports</a>
-            <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="btn btn-primary">💳 View All Deposits</a>
+            <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="btn btn-primary"><i class="bi bi-credit-card"></i> View All Deposits</a>
         </div>
     </div>
 </div>

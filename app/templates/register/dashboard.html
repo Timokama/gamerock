@@ -1036,14 +1036,14 @@
                         <span class="profile-detail-label">ID Number</span>
                         <span class="profile-detail-value">
                             <span class="secret-value" data-full="{{ member.id_number }}" data-masked="****">****</span>
-                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                         </span>
                     </div>
                     <div class="profile-detail-item">
                         <span class="profile-detail-label">Phone</span>
                         <span class="profile-detail-value">
                             <span class="secret-value" data-full="{{ member.phone_num }}" data-masked="****">****</span>
-                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone number" title="Show / hide">👁</button>
+                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone number" title="Show / hide"><i class="bi bi-eye"></i></button>
                         </span>
                     </div>
                     <div class="profile-detail-item">
@@ -1080,7 +1080,7 @@
                         </select>
                     </div>
                     <div class="filter-actions">
-                        <button type="button" class="btn btn-primary" onclick="filterFamilyTable()">🔍 Filter</button>
+                        <button type="button" class="btn btn-primary" onclick="filterFamilyTable()"><i class="bi bi-search"></i> Filter</button>
                         <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()">✕ Clear</button>
                     </div>
                 </div>
@@ -1089,12 +1089,12 @@
         {% endif %}
         <div class="report-summary mb-3">
             <div class="report-summary-card">
-                <div class="summary-icon">💍</div>
+                <div class="summary-icon"><i class="bi bi-heart"></i></div>
                 <div class="summary-value">{{ spouses|length }}</div>
                 <div class="summary-label">Total Spouses</div>
             </div>
             <div class="report-summary-card">
-                <div class="summary-icon">👶</div>
+                <div class="summary-icon"><i class="bi bi-baby"></i></div>
                 <div class="summary-value">{{ all_children|length }}</div>
                 <div class="summary-label">Total Children</div>
             </div>
@@ -1107,8 +1107,8 @@
                         {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                         <button type="button" class="action-btn outline btn-sm" id="maskToggle" onclick="toggleFamilyMask()">🙈 Mask Sensitive Data</button>
                         <a href="{{ url_for('family.family', depo_id=member.id) }}" class="action-btn primary btn-sm">View Full Family</a>
-                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm">➕ Add Spouse</a>
-                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">➕ Add Child</a>
+                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Spouse</a>
+                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm"><i class="bi bi-plus"></i> Add Child</a>
                         {% endif %}
                     </div>
                 </div>
@@ -1136,14 +1136,14 @@
                                     <span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span>
                                     <strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong>
                                 </td>
-                                <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                                <td><span class="family-badge spouse-badge"><i class="bi bi-heart"></i> Spouse</span></td>
                                 <td>
                                     <span class="secret-value" data-full="{{ spouse.phone_num }}" data-masked="****">****</span>
-                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide">👁</button>
+                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
                                 </td>
                                 <td>
                                     <span class="secret-value" data-full="{{ spouse.id_number }}" data-masked="****">****</span>
-                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                                 </td>
                                 <td>{{ spouse.date_of_birth }}</td>
                             </tr>
@@ -1153,7 +1153,7 @@
                                     <div class="family-detail-wrapper">
                                         <div class="children-detail-card">
                                         <div class="children-header">
-                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;">👶</div>
+                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-baby"></i></div>
                                             <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
                                             <span class="children-badge family-badge child-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else 'd' }}</span>
                                         </div>
@@ -1176,11 +1176,11 @@
                                                     </td>
                                                      <td>
                                                         <span class="secret-value" data-full="{{ child.phone_num }}" data-masked="****">****</span>
-                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide">👁</button>
+                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
                                                     </td>
                                                     <td>
                                                         <span class="secret-value" data-full="{{ child.id_number }}" data-masked="****">****</span>
-                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                                                     </td>
                                                     <td>{{ child.date_of_birth }}</td>
                                                     <td>
@@ -1205,14 +1205,14 @@
                                     <span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
                                     <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
                                 </td>
-                                <td><span class="family-badge child-badge">👶 Direct Child</span></td>
+                                <td><span class="family-badge child-badge"><i class="bi bi-baby"></i> Direct Child</span></td>
                                 <td>
                                     <span class="secret-value" data-full="{{ child.phone_num }}" data-masked="****">****</span>
-                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide">👁</button>
+                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
                                 </td>
                                 <td>
                                     <span class="secret-value" data-full="{{ child.id_number }}" data-masked="****">****</span>
-                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide">👁</button>
+                                    <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                                 </td>
                                 <td>{{ child.date_of_birth }}</td>
                             </tr>
@@ -1221,7 +1221,7 @@
                             <tr>
                                 <td colspan="6">
                                     <div class="empty-state">
-                                        <div class="empty-state-icon">👨‍👩‍👧‍👦</div>
+                                        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                                         <h3>No Family Members Yet</h3>
                                         <p>Start building your family network by adding spouses and children.</p>
                                         <div class="d-grid gap-2 d-md-block">
@@ -1289,7 +1289,7 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-state-icon">💰</div>
+                    <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
                     <h3>No Deposits Yet</h3>
                     <p>No contributions have been recorded yet.</p>
                 </div>
@@ -1380,7 +1380,7 @@
                             <div class="event-card-footer">
                                 <div class="row-actions">
                                     <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -1446,7 +1446,7 @@
                             <div class="event-card-footer">
                                 <div class="row-actions">
                                     <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.event.name }}">
-                                        <span aria-hidden="true">⚙</span>
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                         <span>Actions</span>
                                         <span class="row-actions-caret" aria-hidden="true">▾</span>
                                     </button>
@@ -1481,7 +1481,7 @@
                 {% endif %}
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-state-icon">🎉</div>
+                    <div class="empty-state-icon"><i class="bi bi-calendar-event"></i></div>
                     <h3>No Events Yet</h3>
                     <p>There are no community events at the moment.</p>
                 </div>
@@ -1548,7 +1548,7 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-state-icon">📊</div>
+                    <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
                     <h3>No Reports Yet</h3>
                     <p>Reports will appear here once contributions are made.</p>
                 </div>
@@ -1565,7 +1565,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h4 class="mb-0">FAQ Management</h4>
-                    <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm">➕ Add FAQ</a>
+                    <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add FAQ</a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -1586,7 +1586,7 @@
                                 <td>{{ faq.category or 'General' }}</td>
                                 <td>{{ faq.created_at.strftime('%b %d, %Y') if faq.created_at else 'N/A' }}</td>
                                 <td>
-                                    <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                    <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -1602,7 +1602,7 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="empty-state">
-            <div class="empty-state-icon">👤</div>
+            <div class="empty-state-icon"><i class="bi bi-person"></i></div>
             <h3>No Member Profile</h3>
             <p>You don't have a member profile yet. Please contact an administrator to create one.</p>
         </div>
@@ -1670,7 +1670,7 @@ function toggleSecret(btn) {
     if (btn.getAttribute('data-revealed') === '1') {
         span.textContent = span.getAttribute('data-masked') || span.textContent;
         btn.setAttribute('data-revealed', '0');
-        btn.textContent = '👁';
+        btn.textContent = '<i class="bi bi-eye"></i>';
     } else {
         span.setAttribute('data-masked', span.textContent);
         span.textContent = full;
@@ -1700,11 +1700,11 @@ function toggleFamilyMask() {
 
     toggles.forEach(function(t) {
         t.setAttribute('data-revealed', familyMasked ? '0' : '1');
-        t.textContent = familyMasked ? '👁' : '🙈';
+        t.textContent = familyMasked ? '<i class="bi bi-eye"></i>' : '🙈';
     });
 
     if (btn) {
-        btn.textContent = familyMasked ? '🙈 Mask Sensitive Data' : '👁 Show Sensitive Data';
+        btn.textContent = familyMasked ? '🙈 Mask Sensitive Data' : '<i class="bi bi-eye"></i> Show Sensitive Data';
     }
 }
 </script>

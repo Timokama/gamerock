@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
         return True
     @property
     def passwords(self):
-        raise AttributeError('passwordis not a readable attribute!')
+        raise AttributeError('password is not a readable attribute!')
     
     @passwords.setter
     def passwords(self, password):

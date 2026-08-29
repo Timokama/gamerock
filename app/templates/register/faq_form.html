@@ -232,7 +232,7 @@
 
     <div class="faq-form-card">
         <div class="faq-form-header">
-            <span class="faq-form-header-icon">{{ '✏️' if faq else '➕' }}</span>
+            <span class="faq-form-header-icon">{{ '<i class="bi bi-pencil-square"></i>' if faq else '<i class="bi bi-plus"></i>' }}</span>
             <div>
                 <h4>{{ 'Edit FAQ' if faq else 'Create FAQ' }}</h4>
                 <p>{{ 'Update the question members see on the public help page.' if faq else 'Add a question and answer to the public help page.' }}</p>

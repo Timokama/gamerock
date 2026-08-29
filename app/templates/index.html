@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gamerock Welfare - Welcome</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -40,7 +41,7 @@
             overflow-x: hidden;
         }
 
-        /* Top Navigation Bar */
+        /* Modern Navigation */
         .top-nav {
             position: fixed;
             top: 0;
@@ -48,12 +49,14 @@
             right: 0;
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-light);
             padding: 1rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: all 0.3s ease;
         }
 
         .nav-brand {
@@ -62,14 +65,25 @@
             gap: 0.75rem;
             text-decoration: none;
             color: var(--text-dark);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-1px);
         }
 
         .nav-brand img {
             width: 42px;
             height: 42px;
-            border-radius: 10px;
+            border-radius: 12px;
             object-fit: cover;
             border: 2px solid var(--primary-light);
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand:hover img {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
         }
 
         .nav-brand-text {
@@ -82,11 +96,18 @@
         .nav-badge {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
-            padding: 0.4rem 1rem;
+            padding: 0.5rem 1.25rem;
             border-radius: 9999px;
             font-size: 0.8rem;
             font-weight: 600;
             letter-spacing: 0.02em;
+            box-shadow: 0 4px 14px rgba(20, 184, 166, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
         }
 
         /* Hero Section */
@@ -110,6 +131,7 @@
             height: 600px;
             background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
             border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
         }
 
         .hero-section::after {
@@ -121,6 +143,12 @@
             height: 500px;
             background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
             border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
         .hero-container {
@@ -161,6 +189,7 @@
             font-weight: 600;
             margin-bottom: 1.5rem;
             border: 1px solid rgba(20, 184, 166, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.1s both;
         }
 
         .hero-badge-dot {
@@ -183,6 +212,7 @@
             color: var(--text-dark);
             margin-bottom: 1.5rem;
             letter-spacing: -0.03em;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
         .hero-title-gradient {
@@ -198,12 +228,14 @@
             margin-bottom: 2.5rem;
             line-height: 1.7;
             max-width: 500px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
         }
 
         .hero-stats {
             display: flex;
             gap: 2.5rem;
             margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         .hero-stat {
@@ -226,11 +258,17 @@
 
         .hero-form-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 2.5rem;
             box-shadow: var(--shadow-xl);
             border: 1px solid var(--border-light);
             animation: fadeInUp 0.8s ease-out 0.2s both;
+            transition: all 0.3s ease;
+        }
+
+        .hero-form-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.3);
         }
 
         .hero-form-header {
@@ -239,9 +277,17 @@
         }
 
         .hero-form-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: var(--primary);
+            border: 1px solid rgba(20, 184, 166, 0.2);
         }
 
         .hero-form-title {
@@ -305,6 +351,10 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 14px rgba(15, 118, 110, 0.3);
             letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn-primary:hover {
@@ -358,11 +408,25 @@
             padding: 5rem 2rem;
             background: white;
             border-top: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .features-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 2px;
         }
 
         .features-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding-top: 2rem;
         }
 
         .features-header {
@@ -371,16 +435,19 @@
         }
 
         .features-label {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             background: rgba(20, 184, 166, 0.1);
             color: var(--primary);
-            padding: 0.4rem 1rem;
+            padding: 0.5rem 1.25rem;
             border-radius: 9999px;
             font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 1rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
+            border: 1px solid rgba(20, 184, 166, 0.2);
         }
 
         .features-title {
@@ -396,6 +463,7 @@
             font-size: 1.1rem;
             max-width: 600px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
         .features-grid {
@@ -405,12 +473,30 @@
         }
 
         .feature-card {
-            padding: 2rem;
-            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
             border: 1px solid var(--border-light);
             background: white;
             transition: all 0.3s ease;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-card:hover {
@@ -427,8 +513,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.75rem;
             margin: 0 auto 1.25rem;
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.1) 100%);
         }
 
         .feature-title {
@@ -443,8 +536,6 @@
             font-size: 0.9rem;
             line-height: 1.6;
         }
-
-
 
         /* Responsive */
         @media (max-width: 968px) {
@@ -623,7 +714,6 @@
             .feature-icon {
                 background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.05) 100%);
             }
-
         }
 
         [data-theme="dark"] body {
@@ -761,8 +851,6 @@
         [data-theme="dark"] .feature-icon {
             background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.05) 100%);
         }
-
-
 
         [data-theme="light"] body {
             background: var(--bg-light);
@@ -946,7 +1034,9 @@
 
             <div class="hero-form-card">
                 <div class="hero-form-header">
-                    <span class="hero-form-icon">👋</span>
+                    <div class="hero-form-icon">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                    </div>
                     <h2 class="hero-form-title">Welcome Back</h2>
                     <p class="hero-form-subtitle">Enter your email to continue to your dashboard</p>
                 </div>
@@ -965,7 +1055,8 @@
                         >
                     </div>
                     <button type="submit" class="btn-primary">
-                        Continue to Dashboard →
+                        <i class="bi bi-arrow-right"></i>
+                        Continue to Dashboard
                     </button>
                 </form>
 
@@ -980,24 +1071,33 @@
     <section class="features-section">
         <div class="features-container">
             <div class="features-header">
-                <span class="features-label">Why Choose Us</span>
+                <span class="features-label">
+                    <i class="bi bi-stars"></i>
+                    Why Choose Us
+                </span>
                 <h2 class="features-title">Building Stronger Communities Together</h2>
                 <p class="features-subtitle">We provide comprehensive support and resources to help our members thrive and succeed.</p>
             </div>
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">💰</div>
+                    <div class="feature-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
                     <h3 class="feature-title">Contributions</h3>
                     <p class="feature-description">Manage and track your contributions with full transparency and easy reporting tools.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
                     <h3 class="feature-title">Family Network</h3>
                     <p class="feature-description">Connect with your family members, manage relationships, and keep track of important updates.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🎉</div>
+                    <div class="feature-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
                     <h3 class="feature-title">Community Events</h3>
                     <p class="feature-description">Stay updated with upcoming events, activities, and community gatherings.</p>
                 </div>

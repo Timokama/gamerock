@@ -165,9 +165,17 @@ def create():
     if request.method == 'POST':
         
         # Convert date string to Python date object
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        id_number = request.form['id_number']
-        email = request.form['email']
+        date_of_birth = None
+        raw_dob = request.form.get('date_of_birth', '').strip()
+        if raw_dob:
+            try:
+                date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                flash('Invalid date of birth format.', 'danger')
+                return redirect(url_for('register.create'))
+        
+        id_number = request.form.get('id_number', '').strip()
+        email = request.form.get('email', '').strip()
         
         # Check for duplicate ID
         reg = Member.query.filter_by(id_number=id_number).first()
@@ -181,13 +189,21 @@ def create():
             flash("Email already exists. Please use a different email.")
             return redirect(url_for('register.create'))
 
+        member_id_number = None
+        if id_number:
+            try:
+                member_id_number = int(id_number)
+            except (ValueError, TypeError):
+                flash('ID number must be a valid integer.', 'danger')
+                return redirect(url_for('register.create'))
+
         # Create member
         register = Member(
             firstname=request.form['firstname'],
             lastname=request.form['lastname'],
             surname=request.form['surname'],
             date_of_birth=date_of_birth,
-            id_number=id_number,
+            id_number=member_id_number,
             phone_num=request.form['phone_num'],
             email=email,
             user=user
@@ -203,7 +219,7 @@ def create():
                 first_name=register.firstname,
                 email=email,
                 phone_num=register.phone_num,
-                passwords=id_number,  # Password is the ID number
+                passwords=id_number or str(register.id),  # Password is the ID number or member ID
                 role=AccessLevel.USER
             )
             db.session.add(new_user)
@@ -215,13 +231,23 @@ def create():
     return render_template('register/create.html')
 
 @bp.route('/<int:depo_id>/editname', methods=('POST', 'GET'))
+@login_required
 def edit_name(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
         firstname=request.form['firstname']
         lastname=request.form['lastname']
         surname = request.form['surname']
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+        
+        raw_dob = request.form.get('date_of_birth', '').strip()
+        date_of_birth = None
+        if raw_dob:
+            try:
+                date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                flash('Invalid date of birth format.', 'danger')
+                return redirect(url_for('register.edit_name', depo_id=register.id))
+        
         phone_num=request.form['phone_num']
         email=request.form['email']
         raw_id = request.form['id_number'].strip()
@@ -248,7 +274,7 @@ def edit_name(depo_id):
                     first_name=register.firstname,
                     email=email,
                     phone_num=register.phone_num,
-                    passwords=id_number,
+                    passwords=str(id_number) if id_number is not None else str(register.id),
                     role=AccessLevel.USER
                 )
                 db.session.add(new_user)
@@ -288,6 +314,7 @@ def create_child(depo_id):
     return render_template('register/create_child.html', register = register)
 
 @bp.post('/<int:depo_id>/delete/')
+@login_required
 def delete(depo_id):
     # depo = User.query.get_or_404(current_user.id)
     register = Member.query.get_or_404(depo_id)
@@ -306,13 +333,23 @@ def delete(depo_id):
     return redirect(url_for('register.index'))
 
 @bp.route('/<int:depo_id>/edit', methods=('POST', 'GET'))
+@login_required
 def edit(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
         firstname=request.form['firstname']
         lastname=request.form['lastname']
         surname = request.form['surname']
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+        
+        raw_dob = request.form.get('date_of_birth', '').strip()
+        date_of_birth = None
+        if raw_dob:
+            try:
+                date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                flash('Invalid date of birth format.', 'danger')
+                return redirect(url_for('register.edit', depo_id=register.id))
+        
         phone_num=request.form['phone_num']
         email=request.form['email']
         raw_id = request.form['id_number'].strip()
@@ -339,7 +376,7 @@ def edit(depo_id):
                     first_name=register.firstname,
                     email=email,
                     phone_num=register.phone_num,
-                    passwords=id_number,
+                    passwords=str(id_number) if id_number is not None else str(register.id),
                     role=AccessLevel.USER
                 )
                 db.session.add(new_user)

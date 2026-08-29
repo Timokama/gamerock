@@ -512,11 +512,30 @@
 }
 
 .pending-loading {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: var(--space-4);
     text-align: center;
     color: var(--text-muted, var(--text-secondary));
     font-size: 0.85rem;
+}
+
+.pending-loading .loading-spinner {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    animation: spin 1s linear infinite;
+}
+
+.pending-loading .loading-spinner i {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
@@ -1577,7 +1596,7 @@
                                     <span class="pending-detail-total" id="pending-count-{{ member.id }}">Loading...</span>
                                 </div>
                                 <div class="pending-contributions-list" id="pending-list-{{ member.id }}">
-                                    <span class="pending-loading">Loading...</span>
+                                    <span class="pending-loading"><span class="loading-spinner"><i class="bi bi-arrow-repeat"></i></span> Loading...</span>
                                 </div>
                             </div>
                         </div>
@@ -1865,8 +1884,8 @@ function loadPendingContributions(memberId) {
     pendingContributionsLoading[memberId] = true;
 
     // Show loading state
-    listEl.innerHTML = '<span class="pending-loading">Loading...</span>';
-    if (countEl) countEl.textContent = 'Loading...';
+    listEl.innerHTML = '<span class="pending-loading"><span class="loading-spinner"><i class="bi bi-arrow-repeat"></i></span> Loading...</span>';
+    if (countEl) countEl.innerHTML = '<span class="loading-spinner" style="display:inline-flex;align-items:center;gap:0.35rem;"><i class="bi bi-arrow-repeat"></i></span> Loading...';
 
     fetch('/contribution/api/member/' + memberId + '/pending-contributions?_=' + Date.now())
         .then(function(response) {

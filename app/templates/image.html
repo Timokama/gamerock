@@ -319,7 +319,7 @@
         <img src="data:;base64,{{ image }}" alt="Gallery Image" loading="lazy">
         <div class="gallery-overlay">
             <span class="gallery-name">Image {{ loop.index }}</span>
-            <button type="button" class="gallery-zoom" aria-label="View image" data-src="data:;base64,{{ image }}">🔍</button>
+            <button type="button" class="gallery-zoom" aria-label="View image" data-src="data:;base64,{{ image }}"><i class="bi bi-search"></i></button>
         </div>
     </div>
     {% endfor %}

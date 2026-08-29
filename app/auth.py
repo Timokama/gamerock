@@ -127,6 +127,13 @@ def signup_post():
         except (ValueError, TypeError):
             pass
 
+    member_id_number = None
+    if id_number and str(id_number).strip():
+        try:
+            member_id_number = int(str(id_number).strip())
+        except (ValueError, TypeError):
+            member_id_number = None
+
     member = Member(
         firstname=first_name,
         lastname=last_name,
@@ -134,7 +141,7 @@ def signup_post():
         date_of_birth=dob,
         phone_num=phone_num,
         email=email,
-        id_number=id_number,
+        id_number=member_id_number,
         user_id=new_user.id,
         added_by=new_user.id,
     )

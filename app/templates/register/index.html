@@ -38,7 +38,7 @@
             <input type="date" id="date_to" name="date_to" class="form-control" value="{{ filters.date_to }}">
         </div>
         <div class="filter-actions">
-            <button type="submit" class="btn btn-primary">🔍 Filter</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
             <a href="{{ url_for('register.index') }}" class="btn btn-outline">✕ Clear</a>
         </div>
     </form>
@@ -76,7 +76,7 @@
                         <td data-label="Actions">
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -159,7 +159,7 @@
                     <tr>
                         <td colspan="5">
                             <div class="empty-state">
-                                <div class="empty-state-icon">👥</div>
+                                <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                                 <h3>No Members Found</h3>
                                 <p>Try adjusting your filters or add a new member.</p>
                             </div>

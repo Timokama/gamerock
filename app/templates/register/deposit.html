@@ -815,7 +815,7 @@
         <h1 class="prof-hero-name">{{ register.firstname }} {{ register.lastname }} {{ register.surname }}</h1>
         <p class="prof-hero-sub">Member since {{ register.created_at.strftime('%B %d, %Y') if register.created_at else 'N/A' }}</p>
         <div class="prof-hero-meta">
-          <span class="prof-hero-badge"><span>👤</span> Registered Member</span>
+          <span class="prof-hero-badge"><span><i class="bi bi-person"></i></span> Registered Member</span>
         </div>
         <div class="prof-hero-actions">
           {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
@@ -834,28 +834,28 @@
   <!-- Stats -->
   <section class="prof-stats" aria-label="Member statistics">
     <div class="prof-stat success">
-      <div class="prof-stat-icon success">💰</div>
+      <div class="prof-stat-icon success"><i class="bi bi-cash-stack"></i></div>
       <div class="prof-stat-body">
         <div class="prof-stat-value">Ksh. {{ '{:,}'.format(contributions|sum(attribute='amount') if contributions else 0) }}</div>
         <div class="prof-stat-label">Total Contributions</div>
       </div>
     </div>
     <div class="prof-stat primary">
-      <div class="prof-stat-icon primary">📊</div>
+      <div class="prof-stat-icon primary"><i class="bi bi-bar-chart"></i></div>
       <div class="prof-stat-body">
         <div class="prof-stat-value">{{ contributions|length }}</div>
         <div class="prof-stat-label">Transactions</div>
       </div>
     </div>
     <div class="prof-stat warning">
-      <div class="prof-stat-icon warning">⏳</div>
+      <div class="prof-stat-icon warning"><i class="bi bi-hourglass-split"></i></div>
       <div class="prof-stat-body">
         <div class="prof-stat-value">{{ pending_contributions|length }}</div>
         <div class="prof-stat-label">Pending Events</div>
       </div>
     </div>
     <div class="prof-stat info">
-      <div class="prof-stat-icon info">💳</div>
+      <div class="prof-stat-icon info"><i class="bi bi-credit-card"></i></div>
       <div class="prof-stat-body">
         <div class="prof-stat-value">
           {% set payment_types = contributions | map(attribute='payment_type') | map(attribute='value') | unique | list %}
@@ -936,17 +936,17 @@
                   <button class="row-actions-toggle" type="button"
                           aria-haspopup="true" aria-expanded="false"
                           aria-label="Actions for contribution by {{ deposit.member.firstname }} {{ deposit.member.lastname }}">
-                    <span aria-hidden="true">⚙</span>
+                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                     <span>Actions</span>
                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                   </button>
                   <div class="row-actions-menu" role="menu">
                     <div class="row-actions-menu-header">
                       <span class="row-actions-menu-title">{{ deposit.member.firstname }} {{ deposit.member.lastname }} {{ deposit.member.surname }}</span>
-                      <span class="row-actions-menu-sub">💳 Contribution</span>
+                      <span class="row-actions-menu-sub"><i class="bi bi-credit-card"></i> Contribution</span>
                     </div>
                     <a href="{{ url_for('deposit.deposit', depo_id=deposit.member.id) }}" class="row-action-item" role="menuitem">
-                      <span class="row-action-icon" aria-hidden="true">📄</span>
+                      <span class="row-action-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
                       <span class="row-action-copy">
                         <span class="row-action-label">View Deposits</span>
                         <span class="row-action-hint">View contribution history</span>
@@ -954,7 +954,7 @@
                     </a>
                     {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
                     <a href="{{ url_for('deposit.edit_contribution', depo_id=deposit.id) }}" class="row-action-item" role="menuitem">
-                      <span class="row-action-icon" aria-hidden="true">✏️</span>
+                      <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                       <span class="row-action-copy">
                         <span class="row-action-label">Edit Contribution</span>
                         <span class="row-action-hint">Update amount or type</span>
@@ -1017,7 +1017,7 @@
             {% for event in pending_contributions %}
             <tr>
               <td class="pending-icon-cell" style="text-align: center;">
-                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">⏳</div>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
               </td>
               <td><span class="pending-name">{{ event.name }}</span></td>
               <td class="pending-date">

@@ -467,21 +467,21 @@
         <p>Create and curate the questions members see on the public help page.</p>
     </div>
     <div class="faq-admin-actions">
-        <a href="{{ url_for('main.faq') }}" class="action-btn outline btn-sm" target="_blank" rel="noopener">👁 Preview Public Page</a>
-        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm">➕ Add FAQ</a>
+        <a href="{{ url_for('main.faq') }}" class="action-btn outline btn-sm" target="_blank" rel="noopener"><i class="bi bi-eye"></i> Preview Public Page</a>
+        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add FAQ</a>
     </div>
 </div>
 
 <div class="faq-admin-stats">
     <div class="faq-stat">
-        <span class="faq-stat-icon">💬</span>
+        <span class="faq-stat-icon"><i class="bi bi-chat-left-text"></i></span>
         <div>
             <div class="faq-stat-value">{{ stats.total }}</div>
             <div class="faq-stat-label">Total Questions</div>
         </div>
     </div>
     <div class="faq-stat">
-        <span class="faq-stat-icon teal">🗂</span>
+        <span class="faq-stat-icon teal"><i class="bi bi-folder"></i></span>
         <div>
             <div class="faq-stat-value">{{ stats.categories }}</div>
             <div class="faq-stat-label">Categories</div>
@@ -530,7 +530,7 @@
                 </select>
             </div>
             <div class="faq-toolbar-actions">
-                <button type="submit" class="action-btn primary btn-sm">🔍 Apply</button>
+                <button type="submit" class="action-btn primary btn-sm"><i class="bi bi-search"></i> Apply</button>
                 <a href="{{ url_for('register.faq_list') }}" class="action-btn outline btn-sm">✕ Reset</a>
             </div>
         </div>
@@ -539,11 +539,11 @@
     {% if category_counts %}
     <div class="faq-category-strip">
         <a href="{{ url_for('register.faq_list', sort=filters.sort) }}" class="faq-chip {% if not filters.category %}active{% endif %}">
-            📋 All <span class="faq-chip-count">{{ stats.total }}</span>
+            <i class="bi bi-clipboard"></i> All <span class="faq-chip-count">{{ stats.total }}</span>
         </a>
         {% for category, count in category_counts.items() %}
         <a href="{{ url_for('register.faq_list', category=category, sort=filters.sort) }}" class="faq-chip {% if filters.category == category %}active{% endif %}">
-            📁 {{ category }} <span class="faq-chip-count">{{ count }}</span>
+            <i class="bi bi-folder-fill"></i> {{ category }} <span class="faq-chip-count">{{ count }}</span>
         </a>
         {% endfor %}
         {% if stats.uncategorised %}
@@ -577,7 +577,7 @@
                 <div class="faq-row-answer">{{ faq.answer }}</div>
                 <div class="faq-row-meta">
                     {% if faq.category %}
-                    <span class="faq-badge">📁 {{ faq.category }}</span>
+                    <span class="faq-badge"><i class="bi bi-folder-fill"></i> {{ faq.category }}</span>
                     {% else %}
                     <span class="faq-badge muted">🏷 Uncategorised</span>
                     {% endif %}
@@ -590,7 +590,7 @@
             </div>
             <div class="row-actions">
                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for FAQ">
-                    <span aria-hidden="true">⚙</span>
+                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                     <span>Actions</span>
                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                 </button>
@@ -622,17 +622,17 @@
     </div>
     {% elif stats.total %}
     <div class="faq-empty">
-        <div class="faq-empty-icon">🔍</div>
+        <div class="faq-empty-icon"><i class="bi bi-search"></i></div>
         <h3>No FAQs Match Your Filters</h3>
         <p>Try a different search term or clear the filters to see all {{ stats.total }} question(s).</p>
         <a href="{{ url_for('register.faq_list') }}" class="action-btn outline">Clear Filters</a>
     </div>
     {% else %}
     <div class="faq-empty">
-        <div class="faq-empty-icon">💬</div>
+        <div class="faq-empty-icon"><i class="bi bi-chat-left-text"></i></div>
         <h3>No FAQs Yet</h3>
         <p>Create your first FAQ so members can find answers without calling the office.</p>
-        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary">➕ Add Your First FAQ</a>
+        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary"><i class="bi bi-plus"></i> Add Your First FAQ</a>
     </div>
     {% endif %}
 </div>

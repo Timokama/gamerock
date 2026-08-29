@@ -860,11 +860,30 @@
 }
 
 .pending-loading {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.5rem;
     text-align: center;
     color: var(--text-muted, #64748b);
     font-size: 0.78rem;
+}
+
+.pending-loading .loading-spinner {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    animation: spin 1s linear infinite;
+}
+
+.pending-loading .loading-spinner i {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .pending-contributions-badge {
@@ -1840,7 +1859,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                  aria-live="polite"
                                                  aria-label="Pending contributions for selected member"
                                                  style="margin-top: 0.5rem; display: none;">
-                                                <span class="pending-loading">Loading...</span>
+                                                 <span class="pending-loading"><span class="loading-spinner"><i class="bi bi-arrow-repeat"></i></span> Loading...</span>
                                             </div>
                                         </div>
                                     </td>
@@ -3231,7 +3250,7 @@ function loadPendingContributions(select, rowMemberId) {
     // Show loading state
     listEl.style.display = 'block';
     listEl.setAttribute('aria-busy', 'true');
-    listEl.innerHTML = '<span class="pending-loading">Loading...</span>';
+    listEl.innerHTML = '<span class="pending-loading"><span class="loading-spinner"><i class="bi bi-arrow-repeat"></i></span> Loading...</span>';
     select.classList.add('loading');
 
     // Check cache first

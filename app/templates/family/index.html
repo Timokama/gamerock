@@ -963,7 +963,7 @@
     </div>
     <div class="d-flex gap-2 align-items-center">
         {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-        <a href="{{ url_for('register.create') }}" class="action-btn primary btn-sm">➕ Add Member</a>
+        <a href="{{ url_for('register.create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Member</a>
         {% endif %}
     </div>
     <div class="header-actions family-filter-bar">
@@ -986,7 +986,7 @@
           </select>
           <div class="family-filter-actions">
               <button type="button" class="family-clear-filters" onclick="clearFamilyFilters()">✕ Clear</button>
-              <button type="button" class="action-btn primary btn-sm" onclick="filterFamilyDirectory()">🔍 Filter</button>
+              <button type="button" class="action-btn primary btn-sm" onclick="filterFamilyDirectory()"><i class="bi bi-search"></i> Filter</button>
           </div>
     </div>
 </div>
@@ -994,21 +994,21 @@
 {% if members %}
 <div class="family-summary">
     <div class="family-summary-card members">
-        <div class="family-summary-icon members">👥</div>
+        <div class="family-summary-icon members"><i class="bi bi-people"></i></div>
         <div>
             <div class="family-summary-value" id="family-stat-members">{{ total_members }}</div>
             <div class="family-summary-label">Total Members</div>
         </div>
     </div>
     <div class="family-summary-card spouses">
-        <div class="family-summary-icon spouses">💍</div>
+        <div class="family-summary-icon spouses"><i class="bi bi-heart"></i></div>
         <div>
             <div class="family-summary-value" id="family-stat-spouses">{{ total_spouses }}</div>
             <div class="family-summary-label">Spouses</div>
         </div>
     </div>
     <div class="family-summary-card children">
-        <div class="family-summary-icon children">👶</div>
+        <div class="family-summary-icon children"><i class="bi bi-people"></i></div>
         <div>
             <div class="family-summary-value" id="family-stat-children">{{ total_children }}</div>
             <div class="family-summary-label">Children</div>
@@ -1056,7 +1056,7 @@
                         <td>
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -1105,7 +1105,7 @@
                         <td>
                             <div class="row-actions">
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true">⚙</span>
+                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
                                 </button>
@@ -1147,35 +1147,35 @@
                                 <div class="family-detail-card">
                                 {% if member.spouse %}
                                 <div class="detail-header">
-                                    <div class="detail-avatar">💍</div>
+                                    <div class="detail-avatar"><i class="bi bi-heart"></i></div>
                                     <h5>Spouse Details</h5>
                                     <span class="detail-badge family-badge spouse-badge">{{ member.spouse|length }} Spouse{{ 's' if member.spouse|length != 1 else '' }}</span>
                                 </div>
                                 {% for spouse in member.spouse %}
                                 <div class="spouse-section">
                                     <div class="spouse-section-header">
-                                        <span class="family-avatar spouse" style="width: 32px; height: 32px; font-size: 0.8rem;">👤</span>
+                                        <span class="family-avatar spouse" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-person"></i></span>
                                         <strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong>
                                         <span class="family-badge spouse-badge" style="margin-left: auto;">Spouse</span>
                                     </div>
                                     <div class="detail-grid">
                                         <div class="family-detail-item">
-                                            <span class="detail-icon">📱</span>
+                                            <span class="detail-icon"><i class="bi bi-telephone"></i></span>
                                             <span>{{ spouse.phone_num|member_phone }}</span>
                                         </div>
                                         <div class="family-detail-item">
-                                            <span class="detail-icon">🆔</span>
+                                            <span class="detail-icon"><i class="bi bi-fingerprint"></i></span>
                                             <span>{{ spouse.id_number|member_id }}</span>
                                         </div>
                                         <div class="family-detail-item">
-                                            <span class="detail-icon">🎂</span>
+                                            <span class="detail-icon"><i class="bi bi-calendar-date"></i></span>
                                             <span>{{ spouse.date_of_birth }}</span>
                                         </div>
                                     </div>
                                     {% if spouse.child %}
                                     <div class="children-section">
                                         <div class="children-section-header">
-                                            <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                            <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;"><i class="bi bi-people"></i></span>
                                             <strong>Children of {{ spouse.firstname }} {{ spouse.lastname }}</strong>
                                             <span class="family-badge child-badge" style="margin-left: auto;">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
                                         </div>
@@ -1201,7 +1201,7 @@
                                                         <td>{{ child.id_number|member_id }}</td>
                                                         <td>{{ child.date_of_birth }}</td>
                                                         <td>
-                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                         </td>
                                                     </tr>
                                                     {% endfor %}
@@ -1216,7 +1216,7 @@
                                 {% if member_children and member.id in member_children and member_children[member.id]|length > 0 %}
                                 <div class="children-section{% if not member.spouse %} children-section--standalone{% endif %}">
                                     <div class="children-section-header">
-                                        <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;">👶</span>
+                                        <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.75rem;"><i class="bi bi-people"></i></span>
                                         <strong>Children Details</strong>
                                         <span class="family-badge child-badge" style="margin-left: auto;">{{ member_children[member.id]|length }} Child{{ 'ren' if member_children[member.id]|length != 1 else '' }}</span>
                                     </div>
@@ -1243,9 +1243,9 @@
                                                     <td>{{ child.date_of_birth }}</td>
                                                     <td>
                                                         {% if child in member.child %}
-                                                        <a href="{{ url_for('family.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                        <a href="{{ url_for('family.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                         {% else %}
-                                                        <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id, child_id=child.id) }}" class="action-btn outline btn-sm">✏️ Edit</a>
+                                                        <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=child.spouse_id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                                                         {% endif %}
                                                     </td>
                                                 </tr>
@@ -1256,11 +1256,11 @@
                                 </div>
                                 {% endif %}
                                 <div class="detail-actions">
-                                    <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm">➕ Add Spouse</a>
+                                    <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Spouse</a>
                                     {% if member.spouse %}
-                                    <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=member.spouse[0].id) }}" class="action-btn outline btn-sm">✏️ Edit Spouse</a>
+                                    <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=member.spouse[0].id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit Spouse</a>
                                     {% endif %}
-                                    <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">➕ Add Child</a>
+                                    <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm"><i class="bi bi-plus"></i> Add Child</a>
                                 </div>
                             </div>
                             </div>
@@ -1275,7 +1275,7 @@
 </div>
 
 <div class="family-no-results" id="familyNoResults" style="display: none;">
-    <div class="family-no-results-icon">🔍</div>
+    <div class="family-no-results-icon"><i class="bi bi-search"></i></div>
     <h3>No Matching Members</h3>
     <p>Try a different name, ID number or relationship filter.</p>
 </div>
@@ -1304,7 +1304,7 @@
                             <span class="family-avatar spouse">{{ father.firstname[0] }}{{ father.lastname[0] }}</span>
                             <strong>{{ father.firstname }} {{ father.lastname }}</strong>
                         </td>
-                        <td><span class="family-badge spouse-badge">💍 Spouse</span></td>
+                        <td><span class="family-badge spouse-badge"><i class="bi bi-heart"></i> Spouse</span></td>
                         <td>{{ father.phone_num|member_phone }}</td>
                         <td>{{ father.id_number|member_id }}</td>
                         <td>{{ father.date_of_birth }}</td>
@@ -1318,7 +1318,7 @@
                             <span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
                             <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
                         </td>
-                        <td><span class="family-badge child-badge">👶 Child</span></td>
+                        <td><span class="family-badge child-badge"><i class="bi bi-people"></i> Child</span></td>
                         <td>{{ child.phone_num|member_phone }}</td>
                         <td>{{ child.id_number|member_id }}</td>
                         <td>{{ child.date_of_birth }}</td>
@@ -1331,7 +1331,7 @@
                     <tr>
                         <td colspan="6">
                             <div class="empty-state">
-                                <div class="empty-state-icon">👨‍👩‍👧‍👦</div>
+                                <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                                 <h3>No Family Records</h3>
                                 <p>Family records will appear here once members are added.</p>
                                 <div class="d-grid gap-2 d-md-block">
@@ -1349,7 +1349,7 @@
 </div>
 {% else %}
 <div class="family-empty-state col-12">
-    <div class="family-empty-state-icon">👤</div>
+    <div class="family-empty-state-icon"><i class="bi bi-person"></i></div>
     <h3>No Member Profile</h3>
     <p>You don't have a member profile yet. Please contact an administrator to create one.</p>
 </div>

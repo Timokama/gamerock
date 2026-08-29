@@ -219,17 +219,17 @@
 {% block content %}
 <div class="dashboard-grid">
     <div class="dashboard-card">
-        <div class="card-icon primary">👤</div>
+        <div class="card-icon primary"><i class="bi bi-person"></i></div>
         <div class="card-value">{{ name }}</div>
         <div class="card-label">Welcome, {{ name }}!</div>
     </div>
     <div class="dashboard-card">
-        <div class="card-icon success">👥</div>
+        <div class="card-icon success"><i class="bi bi-people"></i></div>
         <div class="card-value">{{ email }}</div>
         <div class="card-label">Your Role</div>
     </div>
     <div class="dashboard-card">
-        <div class="card-icon warning">📞</div>
+        <div class="card-icon warning"><i class="bi bi-telephone"></i></div>
         <div class="card-value">{{ contact }}</div>
         <div class="card-label">Contact Number</div>
     </div>
@@ -249,7 +249,7 @@
                         <tbody>
                             <tr>
                                 <td style="width: 40px; text-align: center; vertical-align: middle;">
-                                    <span style="font-size: 1.25rem;">👤</span>
+                                    <span style="font-size: 1.25rem;"><i class="bi bi-person"></i></span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
@@ -280,7 +280,7 @@
                                         <div class="detail-grid">
                                             {% for spouse in member_details.spouses %}
                                             <div class="detail-item">
-                                                <span class="detail-icon">👤</span>
+                                                <span class="detail-icon"><i class="bi bi-person"></i></span>
                                                 <span><strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong></span>
                                             </div>
                                             <div class="detail-item">
@@ -315,7 +315,7 @@
                                 <td colspan="2" class="dashboard-detail-cell">
                                     <div class="children-detail-card">
                                         <div class="children-header">
-                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;">👶</div>
+                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-baby"></i></div>
                                             <h5>All Children</h5>
                                             <span class="children-badge family-badge child-badge">{{ member_details.all_children|length }} Total</span>
                                         </div>
@@ -350,7 +350,7 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="empty-state">
-                                        <div class="empty-state-icon">👨‍👩‍👧‍👦</div>
+                                        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                                         <h3>No Family Members Yet</h3>
                                         <p class="mb-3">Start building your family network by adding spouses and children.</p>
                                         <a href="{{ url_for('family.create_spouse', depo_id=member_details.id) }}" class="action-btn primary btn-sm">Add Family</a>

@@ -3,363 +3,1017 @@
 {% block page_title %}Reports{% endblock %}
 
 {% block styles %}
-<meta http-equiv="refresh" content="60">
 <style>
-.report-filters {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    border: 1px solid var(--border-color);
+/* ============================================
+   REPORTS DASHBOARD - ENTERPRISE EDITION
+   ============================================ */
+
+/* CSS Variables for consistent theming */
+:root {
+    --report-primary: #667eea;
+    --report-primary-dark: #764ba2;
+    --report-success: #10b981;
+    --report-warning: #f59e0b;
+    --report-danger: #ef4444;
+    --report-info: #3b82f6;
+    --report-bg: #ffffff;
+    --report-surface: #f8fafc;
+    --report-border: #e2e8f0;
+    --report-text: #0f172a;
+    --report-text-muted: #64748b;
+    --report-shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --report-shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+    --report-shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+    --report-radius: 16px;
+    --report-radius-sm: 10px;
 }
 
-.report-filters .filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-}
-
-.report-filters .filter-group {
-    flex: 1;
-    min-width: 160px;
-}
-
-.report-filters .filter-group label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 0.3rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.report-filters .filter-group input,
-.report-filters .filter-group select {
-    width: 100%;
-    padding: 0.5rem 0.65rem;
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.85rem;
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: border-color 0.2s ease;
-}
-
-.report-filters .filter-group input:focus,
-.report-filters .filter-group select:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
-}
-
-.report-filters .filter-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-end;
-}
-
-.report-filters .filter-actions .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.report-filters .filter-actions .btn-primary {
-    background: var(--primary-color);
+/* Chart Tooltip */
+.chart-tooltip {
+    position: fixed;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.95);
     color: white;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-.report-filters .filter-actions .btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+/* Chart containers */
+.chart-container {
+    background: var(--report-bg);
+    border-radius: var(--report-radius);
+    padding: 1.5rem;
+    box-shadow: var(--report-shadow-md);
+    border: 1px solid var(--report-border);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
 }
 
-.report-filters .filter-actions .btn-outline {
-    background: transparent;
-    color: var(--text-color);
-    border: 1.5px solid var(--border-color);
+.chart-container:hover {
+    box-shadow: var(--report-shadow-lg);
 }
 
-.report-filters .filter-actions .btn-outline:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+.chart-container-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--report-border);
 }
 
-.report-summary {
+.chart-container-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--report-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.chart-container-subtitle {
+    font-size: 0.8rem;
+    color: var(--report-text-muted);
+    font-weight: 500;
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 250px;
+}
+
+.chart-wrapper svg {
+    width: 100%;
+    height: auto;
+}
+
+/* Charts Grid */
+.report-charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
-.report-summary-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--primary-color);
-    text-align: center;
-    transition: var(--transition);
+.report-charts-grid .chart-full-width {
+    grid-column: 1 / -1;
 }
 
-.report-summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.report-summary-card .summary-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 0.25rem;
-}
-
-.report-summary-card .summary-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.report-summary-card .summary-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.report-table-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+/* Dashboard Header */
+.report-dashboard-header {
+    background: linear-gradient(135deg, var(--report-primary) 0%, var(--report-primary-dark) 100%);
+    border-radius: var(--report-radius);
+    padding: 2rem;
+    box-shadow: var(--report-shadow-lg);
+    margin-bottom: 2rem;
+    position: relative;
     overflow: hidden;
 }
 
-.report-table-card .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 1.5rem;
-    border: none;
+.report-dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-.report-table-card .card-header h4 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.1rem;
+.report-dashboard-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-.report-table-card .table {
-    margin-bottom: 0;
-}
-
-.report-table-card .table th {
-    background: #f8fafc;
-    border-bottom: 2px solid var(--border-color);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    white-space: nowrap;
-}
-
-.report-table-card .table td {
-    padding: 0.75rem 1rem;
-    vertical-align: middle;
-    font-size: 0.9rem;
-}
-
-.report-table-card .table tbody tr:hover {
-    background: #f8fafc;
-}
-
-.report-badge {
-    display: inline-block;
-    padding: 0.25rem 0.65rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.report-badge-primary {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-}
-
-.report-badge-success {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-.report-badge-warning {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-}
-
-.report-badge-danger {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-}
-
-.report-pagination {
+.report-dashboard-header-content {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.report-dashboard-header-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.report-pagination .page-btn {
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.report-pagination .page-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.report-pagination .page-btn.active {
-    background: var(--primary-color);
+    font-size: 2rem;
     color: white;
-    border-color: var(--primary-color);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-.report-export {
+.report-dashboard-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.report-dashboard-header-text h2 {
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.report-dashboard-header-text p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+.report-dashboard-header-actions {
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
-.report-export .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
+.btn-dashboard {
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--report-radius-sm);
     font-weight: 600;
+    font-size: 0.85rem;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-.report-export .btn-export {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.btn-dashboard-outline {
+    background: rgba(255, 255, 255, 0.15);
     color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.report-export .btn-export:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    color: white;
+.btn-dashboard-outline:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.result-count {
+.btn-dashboard-solid {
+    background: white;
+    color: var(--report-primary);
+    border: 2px solid white;
+}
+
+.btn-dashboard-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* Advanced Filters */
+.report-filters-advanced {
+    background: var(--report-bg);
+    border-radius: var(--report-radius);
+    padding: 1.5rem;
+    box-shadow: var(--report-shadow-md);
+    border: 1px solid var(--report-border);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.report-filters-advanced:hover {
+    box-shadow: var(--report-shadow-lg);
+}
+
+.report-filters-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--report-border);
+}
+
+.report-filters-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--report-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.report-filters-toggle {
+    background: none;
+    border: none;
+    color: var(--report-text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--report-radius-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-filters-toggle:hover {
+    background: var(--report-surface);
+    color: var(--report-primary);
+}
+
+.filter-row-advanced {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group-advanced {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group-advanced label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--report-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.filter-group-advanced input,
+.filter-group-advanced select {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--report-border);
+    border-radius: var(--report-radius-sm);
+    font-size: 0.9rem;
+    background: var(--report-bg);
+    color: var(--report-text);
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.filter-group-advanced input:focus,
+.filter-group-advanced select:focus {
+    outline: none;
+    border-color: var(--report-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-actions-advanced {
+    display: flex;
+    gap: 0.75rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.btn-filter-primary {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--report-radius-sm);
+    font-weight: 600;
     font-size: 0.85rem;
-    color: var(--text-muted);
-    padding: 0.5rem 0;
+    border: none;
+    color: white;
+    background: linear-gradient(135deg, var(--report-primary) 0%, var(--report-primary-dark) 100%);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-filter-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-filter-outline {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--report-radius-sm);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 2px solid var(--report-border);
+    color: var(--report-text-muted);
+    background: transparent;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-filter-outline:hover {
+    border-color: var(--report-primary);
+    color: var(--report-primary);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+/* Summary Cards Grid */
+.report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.report-summary-card {
+    background: var(--report-bg);
+    border-radius: var(--report-radius);
+    padding: 1.5rem;
+    box-shadow: var(--report-shadow-md);
+    border: 1px solid var(--report-border);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.report-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: var(--report-radius) 0 0 var(--report-radius);
+    transition: width 0.3s ease;
+}
+
+.report-summary-card:hover::before {
+    width: 6px;
+}
+
+.report-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--report-shadow-lg);
+}
+
+.report-summary-card.primary::before {
+    background: linear-gradient(180deg, var(--report-primary) 0%, var(--report-primary-dark) 100%);
+}
+
+.report-summary-card.success::before {
+    background: linear-gradient(180deg, var(--report-success) 0%, #059669 100%);
+}
+
+.report-summary-card.warning::before {
+    background: linear-gradient(180deg, var(--report-warning) 0%, #d97706 100%);
+}
+
+.report-summary-card.info::before {
+    background: linear-gradient(180deg, var(--report-info) 0%, #2563eb 100%);
+}
+
+.report-summary-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.report-summary-card:hover .report-summary-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.report-summary-card.primary .report-summary-icon {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--report-primary);
+}
+
+.report-summary-card.success .report-summary-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--report-success);
+}
+
+.report-summary-card.warning .report-summary-icon {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--report-warning);
+}
+
+.report-summary-card.info .report-summary-icon {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--report-info);
+}
+
+.report-summary-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.report-summary-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--report-text);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.report-summary-label {
+    font-size: 0.8rem;
+    color: var(--report-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.report-summary-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+}
+
+.report-summary-trend.up {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--report-success);
+}
+
+.report-summary-trend.down {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--report-danger);
+}
+
+/* Results Info Bar */
+.report-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--report-bg);
+    border-radius: var(--report-radius-sm);
+    margin-bottom: 1rem;
+    border: 1px solid var(--report-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.report-results-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--report-text-muted);
+}
+
+.report-results-count {
+    font-weight: 700;
+    color: var(--report-text);
+}
+
+.report-filtered-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--report-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Modern Data Table */
+.report-data-table {
+    background: var(--report-bg);
+    border-radius: var(--report-radius);
+    box-shadow: var(--report-shadow-md);
+    border: 1px solid var(--report-border);
+    overflow: hidden;
+}
+
+.report-data-table-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, var(--report-primary) 0%, var(--report-primary-dark) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.report-data-table-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.report-data-table-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-table-action {
+    padding: 0.5rem 1rem;
+    border-radius: var(--report-radius-sm);
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-table-action-outline {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-table-action-outline:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-table-action-primary {
+    background: white;
+    color: var(--report-primary);
+    border: 1px solid white;
+}
+
+.btn-table-action-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.report-data-table .table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.report-data-table .table thead th {
+    background: var(--report-surface);
+    border-bottom: 2px solid var(--report-border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--report-text-muted);
+    font-weight: 700;
+    padding: 1rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.report-data-table .table thead th:hover {
+    background: #f1f5f9;
+    color: var(--report-text);
+}
+
+.report-data-table .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--report-border);
+    transition: all 0.2s ease;
+}
+
+.report-data-table .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.report-data-table .table tbody tr:hover {
+    background: var(--report-surface);
+    transform: scale(1.002);
+}
+
+.report-data-table .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Payment Type Badges */
+.report-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+}
+
+.report-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.report-badge-primary {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--report-primary);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.report-badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--report-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.report-badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--report-warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.report-badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--report-danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Empty State */
+.report-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--report-text-muted);
+}
+
+.report-empty-state-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: var(--report-primary);
+}
+
+.report-empty-state h3 {
+    color: var(--report-text);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.report-empty-state p {
+    color: var(--report-text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .report-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-dashboard-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .report-dashboard-header-actions {
+        justify-content: center;
+    }
+
+    .filter-row-advanced {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
-    .report-filters .filter-row {
+    .report-dashboard-header {
+        padding: 1.5rem;
+    }
+
+    .report-dashboard-header-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .filter-row-advanced {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions-advanced {
         flex-direction: column;
     }
 
-    .report-filters .filter-group {
-        min-width: 100%;
+    .filter-actions-advanced .btn {
+        width: 100%;
+        justify-content: center;
     }
 
-    .report-summary {
-        grid-template-columns: repeat(2, 1fr);
+    .report-summary-grid {
+        grid-template-columns: 1fr;
     }
 
-    .report-table-card .table {
+    .report-data-table-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .report-data-table-actions {
+        justify-content: center;
+    }
+
+    .report-results-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .report-data-table .table {
         font-size: 0.8rem;
     }
 
-    .report-table-card .table th,
-    .report-table-card .table td {
-        padding: 0.5rem 0.5rem;
+    .report-data-table .table thead th,
+    .report-data-table .table tbody td {
+        padding: 0.75rem 0.5rem;
     }
 }
 
-[data-theme="dark"] .report-table-card .table th {
-    background: var(--light-color);
+@media (max-width: 576px) {
+    .report-dashboard-header {
+        padding: 1.25rem;
+    }
+
+    .report-dashboard-header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+
+    .report-dashboard-header-text h2 {
+        font-size: 1.25rem;
+    }
+
+    .report-summary-card {
+        padding: 1.25rem;
+    }
+
+    .report-summary-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .report-summary-value {
+        font-size: 1.25rem;
+    }
+
+    .chart-container {
+        padding: 1rem;
+    }
 }
 
-[data-theme="dark"] .report-table-card .table tbody tr:hover {
-    background: var(--light-color);
+/* Dark Mode Support */
+[data-theme="dark"] .report-dashboard-header {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .report-filters-advanced {
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .report-filters-title {
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .filter-group-advanced input,
+[data-theme="dark"] .filter-group-advanced select {
+    background: var(--secondary-900, #0f172a);
+    border-color: var(--secondary-700, #334155);
+    color: var(--secondary-100, #f1f5f9);
 }
 
 [data-theme="dark"] .report-summary-card {
-    background: var(--card-bg);
-    border-color: var(--border-color);
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
 }
 
-[data-theme="dark"] .report-summary-card .summary-value {
-    color: var(--primary-color);
+[data-theme="dark"] .report-summary-value {
+    color: var(--secondary-100, #f1f5f9);
 }
 
-[data-theme="dark"] .report-summary-card .summary-label {
-    color: var(--text-muted);
+[data-theme="dark"] .report-summary-label {
+    color: var(--secondary-400, #94a3b8);
 }
 
-[data-theme="dark"] .report-badge-primary {
-    background: rgba(59, 130, 246, 0.15);
-    color: #93c5fd;
+[data-theme="dark"] .report-results-bar {
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
 }
 
-[data-theme="dark"] .report-badge-success {
-    background: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
+[data-theme="dark"] .report-results-info {
+    color: var(--secondary-400, #94a3b8);
 }
 
-[data-theme="dark"] .report-badge-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fcd34d;
+[data-theme="dark"] .report-results-count {
+    color: var(--secondary-100, #f1f5f9);
 }
 
-[data-theme="dark"] .report-badge-danger {
-    background: rgba(239, 68, 68, 0.15);
-    color: #fca5a5;
+[data-theme="dark"] .report-data-table {
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .report-data-table .table thead th {
+    background: var(--secondary-900, #0f172a);
+    border-bottom-color: var(--secondary-700, #334155);
+    color: var(--secondary-400, #94a3b8);
+}
+
+[data-theme="dark"] .report-data-table .table thead th:hover {
+    background: var(--secondary-800, #1e293b);
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .report-data-table .table tbody tr:hover {
+    background: var(--secondary-900, #0f172a);
+}
+
+[data-theme="dark"] .report-data-table .table tbody td {
+    border-bottom-color: var(--secondary-700, #334155);
+    color: var(--secondary-200, #e2e8f0);
+}
+
+[data-theme="dark"] .report-filters-header {
+    border-bottom-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .report-filters-title {
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .report-filters-toggle:hover {
+    background: var(--secondary-700, #334155);
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .btn-filter-outline {
+    border-color: var(--secondary-700, #334155);
+    color: var(--secondary-200, #e2e8f0);
+}
+
+[data-theme="dark"] .btn-filter-outline:hover {
+    border-color: var(--report-primary);
+    color: var(--report-primary);
+}
+
+[data-theme="dark"] .chart-container {
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .chart-container-header {
+    border-bottom-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .chart-container-title {
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .chart-container-subtitle {
+    color: var(--secondary-400, #94a3b8);
+}
+
+[data-theme="dark"] .report-empty-state h3 {
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .report-empty-state-icon {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12 text-end">
-        <div class="report-export">
-            <a href="{{ url_for('reports.index') }}" class="btn btn-outline">🔄 Refresh</a>
-            <a href="{{ url_for('reports.index', search=search, payment_type=payment_type_filter, date_from=date_from, date_to=date_to, event=event_filter, export='csv') }}" class="btn btn-export">📥 Export CSV</a>
+<!-- Dashboard Header -->
+<div class="report-dashboard-header">
+    <div class="report-dashboard-header-content">
+        <div class="report-dashboard-header-icon">
+            <i class="bi bi-bar-chart"></i>
+        </div>
+        <div class="report-dashboard-header-text">
+            <h2>Reports Dashboard</h2>
+            <p>Comprehensive contribution analytics and financial insights at your fingertips</p>
+        </div>
+        <div class="report-dashboard-header-actions">
+            <a href="{{ url_for('reports.index') }}" class="btn-dashboard btn-dashboard-outline">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </a>
+            <a href="{{ url_for('reports.index', search=search, payment_type=payment_type_filter, date_from=date_from, date_to=date_to, event=event_filter, export='csv') }}" class="btn-dashboard btn-dashboard-solid">
+                <i class="bi bi-download"></i> Export CSV
+            </a>
         </div>
     </div>
 </div>
 
-<!-- Filters -->
-<div class="report-filters">
-    <form method="get" action="{{ url_for('reports.index') }}">
-        <div class="filter-row">
-            <div class="filter-group">
-                <label for="search">Search</label>
+<!-- Advanced Filters -->
+<div class="report-filters-advanced">
+    <div class="report-filters-header">
+        <div class="report-filters-title">
+            <i class="bi bi-funnel"></i>
+            Filters & Search
+        </div>
+        <button class="report-filters-toggle" type="button" onclick="toggleFilters()">
+            <i class="bi bi-chevron-up" id="filterToggleIcon"></i>
+        </button>
+    </div>
+    <form method="get" action="{{ url_for('reports.index') }}" id="reportFiltersForm">
+        <div class="filter-row-advanced" id="filterContent">
+            <div class="filter-group-advanced">
+                <label for="search">
+                    <i class="bi bi-search"></i> Search
+                </label>
                 <input type="text" id="search" name="search" value="{{ search }}" placeholder="Name, ID..." data-target="reports-accounts-list">
             </div>
-            <div class="filter-group">
-                <label for="payment_type">Payment Type</label>
+            <div class="filter-group-advanced">
+                <label for="payment_type">
+                    <i class="bi bi-credit-card"></i> Payment Type
+                </label>
                 <select id="payment_type" name="payment_type">
                     <option value="">All Types</option>
                     {% for pt in payment_types %}
@@ -367,8 +1021,10 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="filter-group">
-                <label for="event">Event</label>
+            <div class="filter-group-advanced">
+                <label for="event">
+                    <i class="bi bi-calendar-event"></i> Event
+                </label>
                 <select id="event" name="event">
                     <option value="">All Events</option>
                     {% for event in events %}
@@ -376,123 +1032,314 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="filter-group">
-                <label for="date_from">From Date</label>
+            <div class="filter-group-advanced">
+                <label for="date_from">
+                    <i class="bi bi-calendar-date"></i> From Date
+                </label>
                 <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
             </div>
-            <div class="filter-group">
-                <label for="date_to">To Date</label>
+            <div class="filter-group-advanced">
+                <label for="date_to">
+                    <i class="bi bi-calendar-date"></i> To Date
+                </label>
                 <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
             </div>
-            <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                <a href="{{ url_for('reports.index') }}" class="btn btn-outline">✕ Clear</a>
-            </div>
+        </div>
+        <div class="filter-actions-advanced" style="margin-top: 1.25rem;">
+            <button type="submit" class="btn-filter-primary">
+                <i class="bi bi-funnel"></i> Apply Filters
+            </button>
+            <a href="{{ url_for('reports.index') }}" class="btn-filter-outline">
+                <i class="bi bi-x-circle"></i> Clear All
+            </a>
         </div>
     </form>
 </div>
 
 <!-- Summary Cards -->
-<div class="report-summary">
-    <div class="report-summary-card">
-        <div class="summary-icon">💰</div>
-        <div class="summary-value">Ksh. {{ total }}</div>
-        <div class="summary-label">Total Amount</div>
+<div class="report-summary-grid">
+    <div class="report-summary-card primary">
+        <div class="report-summary-icon">
+            <i class="bi bi-cash-stack"></i>
+        </div>
+        <div class="report-summary-content">
+            <div class="report-summary-value">Ksh. {{ total }}</div>
+            <div class="report-summary-label">Total Amount</div>
+            <div class="report-summary-trend up">
+                <i class="bi bi-arrow-up"></i> All contributions
+            </div>
+        </div>
     </div>
-    <div class="report-summary-card">
-        <div class="summary-icon">📊</div>
-        <div class="summary-value">{{ members }}</div>
-        <div class="summary-label">Total Records</div>
+    <div class="report-summary-card success">
+        <div class="report-summary-icon">
+            <i class="bi bi-people"></i>
+        </div>
+        <div class="report-summary-content">
+            <div class="report-summary-value">{{ members }}</div>
+            <div class="report-summary-label">Total Records</div>
+            <div class="report-summary-trend up">
+                <i class="bi bi-arrow-up"></i> Active members
+            </div>
+        </div>
     </div>
-</div>
-
-<!-- Results Count -->
-<div class="result-count">
-    Showing {{ all_contribution_accounts|length }} contribution record(s)
-    {% if search or payment_type_filter or date_from or date_to or event_filter %}
-    <span> (filtered)</span>
-    {% endif %}
-</div>
-
-<!-- Reports Table -->
-<div class="report-table-card">
-    <div class="card-header">
-        <h4>📊 All Contribution Accounts</h4>
+    <div class="report-summary-card warning">
+        <div class="report-summary-icon">
+            <i class="bi bi-calendar-event"></i>
+        </div>
+        <div class="report-summary-content">
+            <div class="report-summary-value">{{ events|length }}</div>
+            <div class="report-summary-label">Events</div>
+        </div>
     </div>
-    <div class="card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0" id="reports-accounts-list">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Member</th>
-                        <th>Amount</th>
-                        <th>Type</th>
-                        <th>Event</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contribute in all_contribution_accounts %}
-                    <tr>
-                        <td>{{ contribute.trans_date.strftime('%b %d, %Y') if contribute.trans_date else 'N/A' }}</td>
-                        <td>
-                            <strong>{{ contribute.member.firstname }} {{ contribute.member.lastname }}</strong>
-                        </td>
-                        <td class="fw-semibold">Ksh. {{ contribute.amount }}</td>
-                        <td>
-                            {% if contribute.payment_type.value == 'Ksh' %}
-                            <span class="report-badge report-badge-primary">💵 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
-                            {% elif contribute.payment_type.value == 'MPESA' %}
-                            <span class="report-badge report-badge-success">📱 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
-                            {% elif contribute.payment_type.value == 'BANK DEPOSIT' %}
-                            <span class="report-badge report-badge-warning">🏦 {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
-                            {% else %}
-                            <span class="report-badge report-badge-primary">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ contribute.community_event.name if contribute.community_event else 'N/A' }}</td>
-                        <td>
-                            <div class="row-actions">
-                                <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for report">
-                                    <span aria-hidden="true">⚙</span>
-                                    <span>Actions</span>
-                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                </button>
-                                <div class="row-actions-menu" role="menu">
-                                    <div class="row-actions-menu-header">
-                                        <span class="row-actions-menu-title">{{ contribute.member.firstname }} {{ contribute.member.lastname }}</span>
-                                        <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(contribute.amount) }}</span>
-                                    </div>
-                                    <a href="{{ url_for('reports.reports', depo_id=contribute.id) }}" class="row-action-item" role="menuitem">
-                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
-                                        <span class="row-action-copy">
-                                            <span class="row-action-label">View Report</span>
-                                            <span class="row-action-hint">See contribution details</span>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📊</div>
-                                <h3>No Reports Found</h3>
-                                <p>No contribution records match your filters.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="report-summary-card info">
+        <div class="report-summary-icon">
+            <i class="bi bi-currency-dollar"></i>
+        </div>
+        <div class="report-summary-content">
+            <div class="report-summary-value" id="avg-amount-value">{{ '{:,}'.format(avg_amount|default(0)) }}</div>
+            <div class="report-summary-label">Average Contribution</div>
         </div>
     </div>
 </div>
 
-<div class="mt-4 text-center">
-    <a href="{{ url_for('register.index') }}" class="action-btn outline">Back to Home</a>
+<!-- Results Bar -->
+<div class="report-results-bar">
+    <div class="report-results-info">
+        <i class="bi bi-info-circle"></i>
+        <span>Showing <span class="report-results-count">{{ all_contribution_accounts|length }}</span> contribution record(s)</span>
+        {% if search or payment_type_filter or date_from or date_to or event_filter %}
+        <span class="report-filtered-badge">
+            <i class="bi bi-funnel"></i> Filtered
+        </span>
+        {% endif %}
+    </div>
+    <div class="report-results-actions">
+        <a href="{{ url_for('reports.index') }}" class="btn-filter-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </a>
+    </div>
 </div>
+
+<!-- Charts Section -->
+<div class="report-charts-grid">
+    <div class="chart-container">
+        <div class="chart-container-header">
+            <div>
+                <h4 class="chart-container-title">
+                    <i class="bi bi-graph-up"></i>
+                    Contribution Trend
+                </h4>
+                <p class="chart-container-subtitle">Monthly contribution amounts over time</p>
+            </div>
+        </div>
+        <div class="chart-wrapper" id="contribution-trend-chart">
+            <div style="text-align: center; padding: 3rem; color: #94a3b8;">
+                <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p style="margin-top: 1rem;">Loading chart...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-container-header">
+            <div>
+                <h4 class="chart-container-title">
+                    <i class="bi bi-pie-chart"></i>
+                    Payment Breakdown
+                </h4>
+                <p class="chart-container-subtitle">Distribution by payment method</p>
+            </div>
+        </div>
+        <div class="chart-wrapper" id="payment-type-chart">
+            <div style="text-align: center; padding: 3rem; color: #94a3b8;">
+                <i class="bi bi-credit-card" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p style="margin-top: 1rem;">Loading chart...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-container-header">
+            <div>
+                <h4 class="chart-container-title">
+                    <i class="bi bi-trophy"></i>
+                    Top Contributors
+                </h4>
+                <p class="chart-container-subtitle">Highest contributing members</p>
+            </div>
+        </div>
+        <div class="chart-wrapper" id="top-members-chart">
+            <div style="text-align: center; padding: 3rem; color: #94a3b8;">
+                <i class="bi bi-people" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p style="margin-top: 1rem;">Loading chart...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-container-header">
+            <div>
+                <h4 class="chart-container-title">
+                    <i class="bi bi-calendar-event"></i>
+                    Event Contributions
+                </h4>
+                <p class="chart-container-subtitle">Amount raised per event</p>
+            </div>
+        </div>
+        <div class="chart-wrapper" id="event-contributions-chart">
+            <div style="text-align: center; padding: 3rem; color: #94a3b8;">
+                <i class="bi bi-calendar-event" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p style="margin-top: 1rem;">Loading chart...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Table -->
+<div class="report-data-table">
+    <div class="report-data-table-header">
+        <h3 class="report-data-table-title">
+            <i class="bi bi-table"></i>
+            All Contribution Accounts
+        </h3>
+        <div class="report-data-table-actions">
+            <a href="{{ url_for('reports.index', search=search, payment_type=payment_type_filter, date_from=date_from, date_to=date_to, event=event_filter, export='csv') }}" class="btn-table-action btn-table-action-outline">
+                <i class="bi bi-download"></i> Export
+            </a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0" id="reports-accounts-list">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Member</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Event</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contribute in all_contribution_accounts %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-calendar-date" style="color: var(--report-primary);"></i>
+                            {{ contribute.trans_date.strftime('%b %d, %Y') if contribute.trans_date else 'N/A' }}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--report-primary) 0%, var(--report-primary-dark) 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                                {{ contribute.member.firstname[0] }}{{ contribute.member.lastname[0] }}
+                            </div>
+                            <strong>{{ contribute.member.firstname }} {{ contribute.member.lastname }}</strong>
+                        </div>
+                    </td>
+                    <td class="fw-semibold">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-currency-dollar" style="color: var(--report-success);"></i>
+                            Ksh. {{ contribute.amount }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if contribute.payment_type.value == 'Ksh' %}
+                        <span class="report-badge report-badge-primary">
+                            <i class="bi bi-currency-dollar"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}
+                        </span>
+                        {% elif contribute.payment_type.value == 'MPESA' %}
+                        <span class="report-badge report-badge-success">
+                            <i class="bi bi-phone"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}
+                        </span>
+                        {% elif contribute.payment_type.value == 'BANK DEPOSIT' %}
+                        <span class="report-badge report-badge-warning">
+                            <i class="bi bi-bank"></i> {{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}
+                        </span>
+                        {% else %}
+                        <span class="report-badge report-badge-primary">{{ contribute.payment_type.value if contribute.payment_type else 'N/A' }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-calendar-event" style="color: var(--report-warning);"></i>
+                            {{ contribute.community_event.name if contribute.community_event else 'N/A' }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for report">
+                                <span aria-hidden="true"><i class="bi bi-three-dots"></i></span>
+                                <span>Actions</span>
+                                <span class="row-actions-caret" aria-hidden="true">▾</span>
+                            </button>
+                            <div class="row-actions-menu" role="menu">
+                                <div class="row-actions-menu-header">
+                                    <span class="row-actions-menu-title">{{ contribute.member.firstname }} {{ contribute.member.lastname }}</span>
+                                    <span class="row-actions-menu-sub">Ksh. {{ '{:,}'.format(contribute.amount) }}</span>
+                                </div>
+                                <a href="{{ url_for('reports.reports', depo_id=contribute.id) }}" class="row-action-item" role="menuitem">
+                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                    <span class="row-action-copy">
+                                        <span class="row-action-label">View Report</span>
+                                        <span class="row-action-hint">See contribution details</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">
+                        <div class="report-empty-state">
+                            <div class="report-empty-state-icon">
+                                <i class="bi bi-bar-chart"></i>
+                            </div>
+                            <h3>No Reports Found</h3>
+                            <p>No contribution records match your filters. Try adjusting your search criteria.</p>
+                            <a href="{{ url_for('reports.index') }}" class="btn-filter-primary" style="margin-top: 1rem;">
+                                <i class="bi bi-arrow-counterclockwise"></i> Clear Filters
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="{{ url_for('register.index') }}" class="action-btn outline">
+        <i class="bi bi-arrow-left"></i> Back to Home
+    </a>
+</div>
+
+<script src="{{ url_for('static', filename='js/reports-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reports-charts.js') }}"></script>
+<script>
+function toggleFilters() {
+    const content = document.getElementById('filterContent');
+    const icon = document.getElementById('filterToggleIcon');
+    if (content.style.display === 'none') {
+        content.style.display = 'grid';
+        icon.classList.remove('bi-chevron-down');
+        icon.classList.add('bi-chevron-up');
+    } else {
+        content.style.display = 'none';
+        icon.classList.remove('bi-chevron-up');
+        icon.classList.add('bi-chevron-down');
+    }
+}
+
+// Auto-submit on filter change (optional enhancement)
+document.querySelectorAll('#reportFiltersForm select, #reportFiltersForm input').forEach(element => {
+    element.addEventListener('change', function() {
+        if (this.tagName === 'SELECT') {
+            document.getElementById('reportFiltersForm').submit();
+        }
+    });
+});
+</script>
 {% endblock %}
