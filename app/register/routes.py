@@ -75,7 +75,23 @@ def index():
         except (ValueError, TypeError):
             pass
 
-    members = query.order_by(Member.created_at.desc()).all()
+    members = query.options(
+        joinedload(Member.user_account).subqueryload(User.image),
+        subqueryload(Member.spouse).subqueryload(Spouse.child),
+        subqueryload(Member.child)
+    ).order_by(Member.created_at.desc()).all()
+
+    member_stats = {}
+    member_children = {}
+    for m in members:
+        spouse_count = len(m.spouse)
+        children_count = sum(s.child.__len__() for s in (m.spouse or [])) + (m.child.__len__() if m.child else 0)
+        member_stats[m.id] = {'total_children': children_count}
+        member_children[m.id] = list(m.child or [])
+        for s in (m.spouse or []):
+            for c in (s.child or []):
+                if c not in member_children[m.id]:
+                    member_children[m.id].append(c)
 
     return render_template('register/index.html', user=user, members=members, access_levels=AccessLevel, filters={
         'search': search,
@@ -84,7 +100,7 @@ def index():
         'id_number': id_number,
         'date_from': date_from,
         'date_to': date_to
-    })
+    }, member_stats=member_stats, member_children=member_children)
 
 @bp.route('/<int:depo_id>/')
 @login_required

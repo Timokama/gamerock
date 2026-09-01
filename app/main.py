@@ -66,8 +66,9 @@ def index():
     recent_members = (
         Member.query
         .options(
-            joinedload(Member.user_account)
-            .subqueryload(User.image)
+            joinedload(Member.user_account).subqueryload(User.image),
+            subqueryload(Member.spouse).subqueryload(Spouse.child),
+            subqueryload(Member.child)
         )
         .order_by(Member.created_at.desc())
         .limit(5)
@@ -78,14 +79,30 @@ def index():
     unique_members = len(set(d.member_id for d in recent_deposits))
     unique_payment_types = len(set(d.payment_type.value for d in recent_deposits if d.payment_type))
 
-    # Limit members query and eager load images - only need for dropdown
+    # Load full member objects with family relationships for Members/Family sections
     all_members = (
         Member.query
-        .with_entities(Member.id, Member.firstname, Member.lastname, Member.surname)
+        .options(
+            joinedload(Member.user_account).subqueryload(User.image),
+            subqueryload(Member.spouse).subqueryload(Spouse.child),
+            subqueryload(Member.child)
+        )
         .order_by(Member.created_at.desc())
         .limit(50)
         .all()
     )
+
+    member_stats = {}
+    member_children = {}
+    for m in all_members:
+        spouse_count = m.spouse.__len__() if m.spouse else 0
+        children_count = sum(s.child.__len__() for s in (m.spouse or [])) + (m.child.__len__() if m.child else 0)
+        member_stats[m.id] = {'total_children': children_count}
+        member_children[m.id] = list(m.child or [])
+        for s in (m.spouse or []):
+            for c in (s.child or []):
+                if c not in member_children[m.id]:
+                    member_children[m.id].append(c)
     
     # Get current user and member profile
     user = User.query.get_or_404(current_user.id)
@@ -117,6 +134,8 @@ def index():
                          unique_members=unique_members,
                          unique_payment_types=unique_payment_types,
                          all_members=all_members,
+                         member_stats=member_stats,
+                         member_children=member_children,
                          total_spouses=total_spouses,
                          total_children=total_children,
                          access_levels=AccessLevel)

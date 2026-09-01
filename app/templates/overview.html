@@ -1143,6 +1143,304 @@
       grid-template-columns: 1fr;
     }
   }
+
+  /* ===== Expandable Family Rows ===== */
+  .expand-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color, #e2e8f0);
+    background: var(--card-bg, #fff);
+    color: var(--primary-color, #14b8a6);
+    font-size: 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .expand-btn:hover {
+    background: var(--primary-color, #14b8a6);
+    color: white;
+    border-color: var(--primary-color, #14b8a6);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+  }
+
+  .expand-btn:focus-visible {
+    outline: 2px solid var(--primary-color, #14b8a6);
+    outline-offset: 2px;
+  }
+
+  .expand-btn:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .expand-btn:disabled,
+  .expand-btn[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--card-bg, #fff);
+    color: var(--text-muted, #64748b);
+    border-color: var(--border-color, #e2e8f0);
+    box-shadow: none;
+  }
+
+  .expand-btn.expanded {
+    background: var(--primary-color, #14b8a6);
+    color: white;
+    border-color: var(--primary-color, #14b8a6);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+  }
+
+  .expand-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--text-muted, #64748b);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .family-detail-row {
+    display: table-row;
+  }
+
+  .family-detail-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: max-height 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .family-detail-row.open .family-detail-wrapper {
+    max-height: 1200px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .family-detail-cell {
+    padding: 0 !important;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .family-detail-card {
+    margin: 0.75rem 1rem 1rem;
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color, #e2e8f0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .family-detail-card .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .family-detail-card .detail-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+  }
+
+  .family-detail-card .detail-badge {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .family-detail-card .children-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .family-detail-card .children-table th {
+    background: #f8fafc;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted, #64748b);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--border-color, #e2e8f0);
+    white-space: nowrap;
+  }
+
+  .family-detail-card .children-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    vertical-align: middle;
+  }
+
+  .family-detail-card .children-table tbody tr:hover {
+    background: #f8fafc;
+  }
+
+  .family-detail-card .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .family-detail-card .spouse-section {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .family-detail-card .spouse-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .family-detail-card .spouse-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .family-detail-card .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .family-detail-card .family-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-color);
+  }
+
+  .family-detail-card .detail-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .family-detail-card .children-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .family-detail-card .children-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .family-detail-row {
+      display: none;
+    }
+
+    .family-detail-row.open {
+      display: table-row;
+    }
+
+    .family-detail-wrapper {
+      display: none;
+      max-height: none;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .family-detail-row.open .family-detail-wrapper {
+      display: block;
+    }
+
+    .family-detail-card {
+      margin: 0.5rem 0.5rem 0.75rem;
+      padding: 1rem;
+    }
+
+    .family-detail-card .children-table th,
+    .family-detail-card .children-table td {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .expand-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 1.25rem;
+      touch-action: manipulation;
+    }
+
+    .expand-placeholder {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .expand-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1.15rem;
+      touch-action: manipulation;
+    }
+
+    .expand-placeholder {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .row-actions {
+      display: block;
+      width: 100%;
+    }
+
+    .row-actions-toggle {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .row-actions-menu {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      margin-top: var(--space-2);
+      box-shadow: none;
+      display: none;
+    }
+
+    .row-actions.open .row-actions-menu {
+      display: block;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -1487,9 +1785,10 @@
           </div>
           {% endif %}
           <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0" id="family-network-table">
               <thead>
                 <tr>
+                  <th style="width: 40px;"></th>
                   <th>Name</th>
                   <th>Relationship</th>
                   <th>Phone</th>
@@ -1497,22 +1796,70 @@
               </thead>
               <tbody>
                 {% for spouse in member_details.spouses %}
-                <tr>
+                <tr class="searchable-item">
+                  <td style="text-align: center;">
+                    {% if spouse.child %}
+                    <button type="button" class="expand-btn" onclick="toggleOverviewSpouse(this, {{ spouse.id }})" title="Toggle Children">+</button>
+                    {% else %}
+                    <span class="expand-placeholder" aria-hidden="true">—</span>
+                    {% endif %}
+                  </td>
                   <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
                   <td><span class="family-badge spouse-badge"><i class="bi bi-heart me-1"></i> Spouse</span></td>
                   <td>{{ spouse.phone_num|member_phone }}</td>
                 </tr>
+                {% if spouse.child %}
+                <tr class="family-detail-row" id="overview-spouse-{{ spouse.id }}">
+                  <td colspan="4" class="family-detail-cell">
+                    <div class="family-detail-wrapper">
+                      <div class="family-detail-card">
+                        <div class="detail-header">
+                          <div class="detail-avatar"><i class="bi bi-baby"></i></div>
+                          <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
+                          <span class="detail-badge family-badge child-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
+                        </div>
+                        <div class="table-responsive">
+                          <table class="children-table">
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>ID Number</th>
+                                <th>Date of Birth</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for child in spouse.child %}
+                              <tr>
+                                <td><span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
+                                <td>{{ child.phone_num|member_phone }}</td>
+                                <td>{{ child.id_number|member_id }}</td>
+                                <td>{{ child.date_of_birth }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
                 {% endfor %}
                 {% for child in member_details.all_children %}
-                <tr>
+                {% set is_spouse_child = child in member_details.spouses[0].child if member_details.spouses else False %}
+                {% if not is_spouse_child %}
+                <tr class="searchable-item">
+                  <td style="text-align: center; color: var(--text-tertiary);">—</td>
                   <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
                   <td><span class="family-badge child-badge"><i class="bi bi-baby me-1"></i> Child</span></td>
                   <td>{{ child.phone_num|member_phone }}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 {% if not member_details.spouses and not member_details.all_children %}
                 <tr>
-                  <td colspan="3">
+                  <td colspan="4">
                     <div class="ov-empty">
                       <div class="ov-empty-icon"><i class="bi bi-people"></i></div>
                       <h3>No Family Members Yet</h3>
@@ -1665,9 +2012,10 @@
           </div>
           {% endif %}
           <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0" id="family-network-table">
               <thead>
                 <tr>
+                  <th style="width: 40px;"></th>
                   <th>Name</th>
                   <th>Relationship</th>
                   <th>Phone</th>
@@ -1675,22 +2023,70 @@
               </thead>
               <tbody>
                 {% for spouse in member_details.spouses %}
-                <tr>
+                <tr class="searchable-item">
+                  <td style="text-align: center;">
+                    {% if spouse.child %}
+                    <button type="button" class="expand-btn" onclick="toggleOverviewSpouse(this, {{ spouse.id }})" title="Toggle Children">+</button>
+                    {% else %}
+                    <span class="expand-placeholder" aria-hidden="true">—</span>
+                    {% endif %}
+                  </td>
                   <td><span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span> <strong>{{ spouse.firstname }} {{ spouse.lastname }}</strong></td>
                   <td><span class="family-badge spouse-badge"><i class="bi bi-heart me-1"></i> Spouse</span></td>
                   <td>{{ spouse.phone_num|member_phone }}</td>
                 </tr>
+                {% if spouse.child %}
+                <tr class="family-detail-row" id="overview-spouse-{{ spouse.id }}">
+                  <td colspan="4" class="family-detail-cell">
+                    <div class="family-detail-wrapper">
+                      <div class="family-detail-card">
+                        <div class="detail-header">
+                          <div class="detail-avatar"><i class="bi bi-baby"></i></div>
+                          <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
+                          <span class="detail-badge family-badge child-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else '' }}</span>
+                        </div>
+                        <div class="table-responsive">
+                          <table class="children-table">
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>ID Number</th>
+                                <th>Date of Birth</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for child in spouse.child %}
+                              <tr>
+                                <td><span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
+                                <td>{{ child.phone_num|member_phone }}</td>
+                                <td>{{ child.id_number|member_id }}</td>
+                                <td>{{ child.date_of_birth }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
                 {% endfor %}
                 {% for child in member_details.all_children %}
-                <tr>
+                {% set is_spouse_child = child in member_details.spouses[0].child if member_details.spouses else False %}
+                {% if not is_spouse_child %}
+                <tr class="searchable-item">
+                  <td style="text-align: center; color: var(--text-tertiary);">—</td>
                   <td><span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] if child.lastname else child.surname[0] }}</span> <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong></td>
                   <td><span class="family-badge child-badge"><i class="bi bi-baby me-1"></i> Child</span></td>
                   <td>{{ child.phone_num|member_phone }}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 {% if not member_details.spouses and not member_details.all_children %}
                 <tr>
-                  <td colspan="3">
+                  <td colspan="4">
                     <div class="ov-empty">
                       <div class="ov-empty-icon"><i class="bi bi-people"></i></div>
                       <h3>No Family Members Yet</h3>
@@ -2003,7 +2399,7 @@
                 <div class="row-actions">
                   <button class="row-actions-toggle" type="button"
                           aria-haspopup="true" aria-expanded="false"
-                          aria-label="Actions for contribution by {{ member.firstname }} {{ member.lastname }}">
+                           aria-label="Actions for contribution by {{ member.firstname }} {{ member.lastname }}"
                     <i class="bi bi-gear" aria-hidden="true"></i>
                     <span>Actions</span>
                     <span class="row-actions-caret" aria-hidden="true">▾</span>
@@ -2113,4 +2509,36 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleOverviewSpouse(btn, spouseId) {
+    if (!btn || !spouseId) return;
+    var row = document.getElementById('overview-spouse-' + spouseId);
+    if (!row) return;
+
+    var isOpen = row.classList.contains('open');
+
+    document.querySelectorAll('#family-network-table .family-detail-row.open').forEach(function(r) {
+        if (r === row) return;
+        r.classList.remove('open');
+        var prevRow = r.previousElementSibling;
+        if (prevRow) {
+            var b = prevRow.querySelector('.expand-btn');
+            if (b) { b.classList.remove('expanded'); b.textContent = '+'; }
+        }
+    });
+
+    if (!isOpen) {
+        row.classList.add('open');
+        btn.classList.add('expanded');
+        btn.textContent = '−';
+    } else {
+        row.classList.remove('open');
+        btn.classList.remove('expanded');
+        btn.textContent = '+';
+    }
+}
+</script>
 {% endblock %}
