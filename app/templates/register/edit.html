@@ -371,7 +371,7 @@
     [data-theme="dark"] .form-group input {
         background: var(--secondary-900);
         border-color: var(--border-medium);
-        color: var(--text-inverse);
+        color: white var(--text-inverse);
     }
 
     [data-theme="dark"] .form-group input:focus {
@@ -548,7 +548,8 @@
                 </div>
 
                 <div class="edit-footer">
-                    <p class="mb-0"><a href="{{ url_for('register.deposit', depo_id=register.id) }}">Cancel</a></p>
+                    {% set cancel_url = url_for('family.index') %}
+                    <p class="mb-0"><a href="{{ cancel_url }}">Cancel</a></p>
                 </div>
             </form>
         </div>

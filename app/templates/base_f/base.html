@@ -124,17 +124,17 @@
                     <ul class="sidebar-submenu" id="sidebarFaqMenu">
                         <li>
                             <a href="{{ url_for('register.faq_list') }}" class="{% if faq_endpoint == 'register.faq_list' %}active{% endif %}">
-                                <i class="bi bi-folder sidebar-submenu-icon" aria-hidden="true"></i> Manage FAQs
+                                 <i class="bi bi-ui-checks-grid sidebar-submenu-icon" aria-hidden="true"></i> Manage FAQs
                             </a>
                         </li>
                         <li>
                             <a href="{{ url_for('register.faq_create') }}" class="{% if faq_endpoint == 'register.faq_create' %}active{% endif %}">
-                                <i class="bi bi-plus sidebar-submenu-icon" aria-hidden="true"></i> Add New FAQ
+                                 <i class="bi bi-plus-circle-dotted sidebar-submenu-icon" aria-hidden="true"></i> Add New FAQ
                             </a>
                         </li>
                         <li>
                             <a href="{{ url_for('main.faq') }}" class="{% if faq_endpoint == 'main.faq' %}active{% endif %}">
-                                <i class="bi bi-eye sidebar-submenu-icon" aria-hidden="true"></i> View Public Page
+                                 <i class="bi bi-box-arrow-up-right sidebar-submenu-icon" aria-hidden="true"></i> View Public Page
                             </a>
                         </li>
                         {% if faq_categories %}
@@ -363,6 +363,7 @@
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/showPassword.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/community-events.js') }}"></script>
     <script>
         (function() {
             'use strict';

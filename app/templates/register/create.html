@@ -250,6 +250,14 @@
         border: 1px solid var(--success-200);
     }
 
+    .register-flash-messages {
+        margin-bottom: var(--space-5);
+    }
+
+    .register-flash-messages .alert {
+        margin-bottom: var(--space-3);
+    }
+
     @media (max-width: 768px) {
         .register-card {
             grid-template-columns: 1fr;
@@ -505,6 +513,16 @@
                 <h3>Member Details</h3>
                 <p>Fill in the member information below</p>
             </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="register-flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
 
             <form method="post">
                 <div class="form-row">

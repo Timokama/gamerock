@@ -67,8 +67,9 @@
     justify-content: center;
     font-size: 1.15rem;
     flex-shrink: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     color: #fff;
+    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
 }
 
 .faq-stat-icon.amber { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
@@ -217,7 +218,7 @@
 }
 
 .faq-admin-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     color: #fff;
     padding: 1rem 1.35rem;
     display: flex;
@@ -331,9 +332,9 @@
     border-radius: 9999px;
     font-size: 0.72rem;
     font-weight: 700;
-    background: rgba(102, 126, 234, 0.12);
-    color: #667eea;
-    border: 1px solid rgba(102, 126, 234, 0.22);
+    background: rgba(15, 118, 110, 0.12);
+    color: #0f766e;
+    border: 1px solid rgba(15, 118, 110, 0.22);
 }
 
 .faq-badge.muted {
@@ -467,8 +468,8 @@
         <p>Create and curate the questions members see on the public help page.</p>
     </div>
     <div class="faq-admin-actions">
-        <a href="{{ url_for('main.faq') }}" class="action-btn outline btn-sm" target="_blank" rel="noopener"><i class="bi bi-eye"></i> Preview Public Page</a>
-        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add FAQ</a>
+        <a href="{{ url_for('main.faq') }}" class="action-btn outline btn-sm" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Preview Public Page</a>
+        <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle-dotted"></i> Add FAQ</a>
     </div>
 </div>
 
@@ -488,14 +489,14 @@
         </div>
     </div>
     <div class="faq-stat">
-        <span class="faq-stat-icon amber">🏷</span>
+        <span class="faq-stat-icon amber"><i class="bi bi-tag"></i></span>
         <div>
             <div class="faq-stat-value">{{ stats.uncategorised }}</div>
             <div class="faq-stat-label">Uncategorised</div>
         </div>
     </div>
     <div class="faq-stat">
-        <span class="faq-stat-icon slate">🔎</span>
+        <span class="faq-stat-icon slate"><i class="bi bi-search"></i></span>
         <div>
             <div class="faq-stat-value">{{ stats.showing }}</div>
             <div class="faq-stat-label">Matching Filter</div>
@@ -531,7 +532,7 @@
             </div>
             <div class="faq-toolbar-actions">
                 <button type="submit" class="action-btn primary btn-sm"><i class="bi bi-search"></i> Apply</button>
-                <a href="{{ url_for('register.faq_list') }}" class="action-btn outline btn-sm">✕ Reset</a>
+                <a href="{{ url_for('register.faq_list') }}" class="action-btn outline btn-sm"><i class="bi bi-x"></i> Reset</a>
             </div>
         </div>
     </form>
@@ -548,7 +549,7 @@
         {% endfor %}
         {% if stats.uncategorised %}
         <a href="{{ url_for('register.faq_list', category='uncategorised', sort=filters.sort) }}" class="faq-chip {% if filters.category == 'uncategorised' %}active{% endif %}">
-            🏷 Uncategorised <span class="faq-chip-count">{{ stats.uncategorised }}</span>
+            <i class="bi bi-tag"></i> Uncategorised <span class="faq-chip-count">{{ stats.uncategorised }}</span>
         </a>
         {% endif %}
     </div>
@@ -571,7 +572,7 @@
         <div class="faq-row" id="faq-admin-{{ faq.id }}">
             <div class="faq-row-main">
                 <button type="button" class="faq-row-question" onclick="toggleAdminFaq(this)" aria-expanded="false">
-                    <span class="faq-row-caret" aria-hidden="true">▾</span>
+                    <span class="faq-row-caret" aria-hidden="true"><i class="bi bi-chevron-down"></i></span>
                     <span>{{ faq.question }}</span>
                 </button>
                 <div class="faq-row-answer">{{ faq.answer }}</div>
@@ -579,7 +580,7 @@
                     {% if faq.category %}
                     <span class="faq-badge"><i class="bi bi-folder-fill"></i> {{ faq.category }}</span>
                     {% else %}
-                    <span class="faq-badge muted">🏷 Uncategorised</span>
+                    <span class="faq-badge muted"><i class="bi bi-tag"></i> Uncategorised</span>
                     {% endif %}
                     <span>Created {{ faq.created_at.strftime('%b %d, %Y') if faq.created_at else 'N/A' }}</span>
                     {% if faq.updated_at and faq.created_at and faq.updated_at > faq.created_at %}
@@ -600,7 +601,7 @@
                         <span class="row-actions-menu-sub">{{ faq.category or 'Uncategorised' }}</span>
                     </div>
                     <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="row-action-item" role="menuitem">
-                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
                         <span class="row-action-copy">
                             <span class="row-action-label">Edit FAQ</span>
                             <span class="row-action-hint">Update question or answer</span>

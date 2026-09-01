@@ -1398,6 +1398,17 @@
                                             </span>
                                         </a>
                                         {% endif %}
+                                        {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                                        <form method="POST" action="{{ url_for('community.delete_event', event_id=item.event.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this event? This action cannot be undone and will remove all associated contribution records.');">
+                                            <button type="submit" class="row-action-item danger" role="menuitem">
+                                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                                <span class="row-action-copy">
+                                                    <span class="row-action-label">Delete Event</span>
+                                                    <span class="row-action-hint">Permanently remove event</span>
+                                                </span>
+                                            </button>
+                                        </form>
+                                        {% endif %}
                                         <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="row-action-item" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
                                             <span class="row-action-copy">
@@ -1463,6 +1474,17 @@
                                                 <span class="row-action-hint">Update event details</span>
                                             </span>
                                         </a>
+                                        {% endif %}
+                                        {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                                        <form method="POST" action="{{ url_for('community.delete_event', event_id=item.event.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this event? This action cannot be undone and will remove all associated contribution records.');">
+                                            <button type="submit" class="row-action-item danger" role="menuitem">
+                                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                                <span class="row-action-copy">
+                                                    <span class="row-action-label">Delete Event</span>
+                                                    <span class="row-action-hint">Permanently remove event</span>
+                                                </span>
+                                            </button>
+                                        </form>
                                         {% endif %}
                                         <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="row-action-item" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
@@ -1565,7 +1587,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h4 class="mb-0">FAQ Management</h4>
-                    <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add FAQ</a>
+                    <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle-dotted"></i> Add FAQ</a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -1586,7 +1608,7 @@
                                 <td>{{ faq.category or 'General' }}</td>
                                 <td>{{ faq.created_at.strftime('%b %d, %Y') if faq.created_at else 'N/A' }}</td>
                                 <td>
-                                    <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    <a href="{{ url_for('register.faq_edit', faq_id=faq.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                                 </td>
                             </tr>
                             {% endfor %}

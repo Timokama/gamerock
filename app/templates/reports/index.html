@@ -3,6 +3,7 @@
 {% block page_title %}Reports{% endblock %}
 
 {% block styles %}
+<meta name="template-version" content="{{ template_versions.get('index.html', 0) }}">
 <style>
 /* ============================================
    REPORTS DASHBOARD - ENTERPRISE EDITION
@@ -1316,8 +1317,8 @@
     </a>
 </div>
 
-<script src="{{ url_for('static', filename='js/reports-charts.js') }}"></script>
-<script src="{{ url_for('static', filename='js/reports-charts.js') }}"></script>
+<script src="{{ static_version('js/reports-charts.js') }}"></script>
+<script src="{{ static_version('js/reports-charts.js') }}"></script>
 <script>
 function toggleFilters() {
     const content = document.getElementById('filterContent');

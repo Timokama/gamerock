@@ -849,6 +849,59 @@
         </div>
     </div>
 </div>
+{% if pending_contributions %}
+<div class="contribution-section-card mt-4">
+    <div class="contribution-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+        <div class="contribution-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="contribution-info">
+            <div class="contribution-title">Pending Contributions</div>
+            <div class="contribution-subtitle">{{ pending_contributions|length }} event{{ 's' if pending_contributions|length != 1 else '' }} awaiting payment</div>
+        </div>
+    </div>
+    <div class="contribution-card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 pending-contributions-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                        <th style="width: 120px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in pending_contributions %}
+                    <tr>
+                        <td style="text-align: center;">
+                            <div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
+                        </td>
+                        <td>
+                            <span style="font-weight: 600; color: var(--text-primary);">{{ event.name }}</span>
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
+                        </td>
+                        <td style="color: #475569;">{{ event.details[:120] if event.details else 'No details provided' }}{% if event.details and event.details|length > 120 %}...{% endif %}</td>
+                        <td style="text-align: center; white-space: nowrap;">
+                            {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+                            <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Contribute</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="empty-state mt-4">
+    <div class="empty-state-icon"><i class="bi bi-check-circle"></i></div>
+    <h3>All Events Covered</h3>
+    <p>This member has contributed to all available events.</p>
+</div>
+{% endif %}
 
 {% if deposit %}
 {% for depo in deposit %}
@@ -949,59 +1002,6 @@
 </div>
 {% endif %}
 
-{% if pending_contributions %}
-<div class="contribution-section-card mt-4">
-    <div class="contribution-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
-        <div class="contribution-icon"><i class="bi bi-hourglass-split"></i></div>
-        <div class="contribution-info">
-            <div class="contribution-title">Pending Contributions</div>
-            <div class="contribution-subtitle">{{ pending_contributions|length }} event{{ 's' if pending_contributions|length != 1 else '' }} awaiting payment</div>
-        </div>
-    </div>
-    <div class="contribution-card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 pending-contributions-table">
-                <thead>
-                    <tr>
-                        <th style="width: 40px;"></th>
-                        <th>Event</th>
-                        <th>Date</th>
-                        <th>Details</th>
-                        <th style="width: 120px;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for event in pending_contributions %}
-                    <tr>
-                        <td style="text-align: center;">
-                            <div style="width: 32px; height: 32px; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
-                        </td>
-                        <td>
-                            <span style="font-weight: 600; color: var(--text-primary);">{{ event.name }}</span>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <i class="bi bi-calendar-event me-1" style="color: var(--text-secondary);"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
-                        </td>
-                        <td style="color: #475569;">{{ event.details[:120] if event.details else 'No details provided' }}{% if event.details and event.details|length > 120 %}...{% endif %}</td>
-                        <td style="text-align: center; white-space: nowrap;">
-                            {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
-                            <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Contribute</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="empty-state mt-4">
-    <div class="empty-state-icon"><i class="bi bi-check-circle"></i></div>
-    <h3>All Events Covered</h3>
-    <p>This member has contributed to all available events.</p>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}

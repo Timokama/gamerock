@@ -118,7 +118,8 @@ def index():
                          unique_payment_types=unique_payment_types,
                          all_members=all_members,
                          total_spouses=total_spouses,
-                         total_children=total_children)
+                         total_children=total_children,
+                         access_levels=AccessLevel)
 
 @main.route('/member/<int:member_id>/image')
 @login_required
@@ -502,16 +503,22 @@ def about():
                          total_contrib=int(total_contrib))
 
 FAQ_CATEGORY_ICONS = {
-    'general': '📋',
-    'membership': '🪪',
-    'contributions': '💰',
-    'deposits': '💰',
-    'events': '🎉',
-    'family': '👨‍👩‍👧‍👦',
-    'account': '👤',
-    'support': '🛟',
-    'payments': '💳',
-    'reports': '📊',
+    'general': 'bi-journal-text',
+    'membership': 'bi-person-badge',
+    'contributions': 'bi-cash-stack',
+    'deposits': 'bi-cash-coin',
+    'events': 'bi-calendar-event',
+    'family': 'bi-people',
+    'account': 'bi-person',
+    'support': 'bi-life-preserver',
+    'payments': 'bi-credit-card',
+    'reports': 'bi-bar-chart',
+    'uncategorised': 'bi-tag',
+    'faq': 'bi-question-circle',
+    'budget': 'bi-journal-text',
+    'treasurer': 'bi-bank',
+    'minutes': 'bi-file-text',
+    'requisition': 'bi-box',
 }
 
 
@@ -542,7 +549,7 @@ def faq():
     category_groups = [
         {
             'name': name,
-            'icon': FAQ_CATEGORY_ICONS.get(name.lower(), '📁'),
+            'icon': FAQ_CATEGORY_ICONS.get(name.lower(), 'bi-question-circle'),
             'faqs': items,
             'count': len(items),
         }
@@ -557,7 +564,7 @@ def faq():
     categories = [
         {
             'name': name,
-            'icon': FAQ_CATEGORY_ICONS.get(name.lower(), '📁'),
+            'icon': FAQ_CATEGORY_ICONS.get(name.lower(), 'bi-question-circle'),
             'count': count,
         }
         for name, count in sorted(all_category_counts.items(), key=lambda pair: pair[0].lower())

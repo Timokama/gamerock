@@ -176,18 +176,6 @@ def create():
         
         id_number = request.form.get('id_number', '').strip()
         email = request.form.get('email', '').strip()
-        
-        # Check for duplicate ID
-        reg = Member.query.filter_by(id_number=id_number).first()
-        if reg:
-            flash("Duplicate Id, Kindly check your details")
-            return redirect(url_for('register.create'))
-
-        # Check for duplicate email
-        existing_email = Member.query.filter_by(email=email).first()
-        if existing_email:
-            flash("Email already exists. Please use a different email.")
-            return redirect(url_for('register.create'))
 
         member_id_number = None
         if id_number:
@@ -196,6 +184,17 @@ def create():
             except (ValueError, TypeError):
                 flash('ID number must be a valid integer.', 'danger')
                 return redirect(url_for('register.create'))
+
+        if member_id_number is not None:
+            reg = Member.query.filter_by(id_number=member_id_number).first()
+            if reg:
+                flash('Duplicate ID. Please check your details.', 'danger')
+                return redirect(url_for('register.create'))
+
+        existing_email = Member.query.filter_by(email=email).first()
+        if existing_email:
+            flash('Email already exists. Please use a different email.', 'danger')
+            return redirect(url_for('register.create'))
 
         # Create member
         register = Member(
@@ -227,6 +226,7 @@ def create():
             register.user_id = new_user.id
         
         db.session.commit()
+        flash('Member registered successfully!', 'success')
         return redirect(url_for('register.deposit', depo_id=register.id))
     return render_template('register/create.html')
 

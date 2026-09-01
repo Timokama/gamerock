@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(500))
     phone_num = db.Column(db.String(20))
     role = db.Column(db.Enum(AccessLevel, values_callable=lambda e: [m.value for m in e]))
+    bookmarks = db.Column(db.JSON, nullable=True)
 
     event = db.relationship('CommunityEvent', backref='user')
     contribution = db.relationship('Contribution', backref='user')

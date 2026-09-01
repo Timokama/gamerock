@@ -3,279 +3,990 @@
 {% block page_title %}Contributions{% endblock %}
 
 {% block styles %}
+{{ super() }}
+<meta name="template-version" content="{{ template_versions.get('tag.html', 0) }}">
 <style>
-.report-filters {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    border: 1px solid var(--border-color);
-}
+    :root {
+        --chart-bg: #ffffff;
+        --chart-border: #e2e8f0;
+        --chart-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --chart-shadow-lg: 0 10px 30px -8px rgba(0, 0, 0, 0.12);
+        --chart-radius: 16px;
+        --chart-header-bg: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        --accent-1: #667eea;
+        --accent-2: #764ba2;
+        --accent-3: #14b8a6;
+        --accent-4: #f59e0b;
+        --accent-5: #ef4444;
+    }
 
-.report-filters .filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-}
+    [data-theme="dark"] {
+        --chart-bg: #1e1e2e;
+        --chart-border: #2e2e40;
+        --chart-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --chart-shadow-lg: 0 10px 30px -8px rgba(0, 0, 0, 0.5);
+        --chart-header-bg: linear-gradient(135deg, #1e1e2e 0%, #252538 100%);
+    }
 
-.report-filters .filter-group {
-    flex: 1;
-    min-width: 160px;
-}
+    /* ===== Header ===== */
+    .event-view-header {
+        background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-700) 50%, var(--primary-500) 100%);
+        color: white;
+        padding: 2.25rem 2.5rem;
+        border-radius: var(--chart-radius);
+        margin-bottom: 1.75rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--chart-shadow-lg);
+    }
 
-.report-filters .filter-group label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 0.3rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
+    .event-view-header::before {
+        content: '';
+        position: absolute;
+        top: -120px;
+        right: -120px;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: transform 0.6s ease;
+    }
 
-.report-filters .filter-group input,
-.report-filters .filter-group select {
-    width: 100%;
-    padding: 0.5rem 0.65rem;
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.85rem;
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: border-color 0.2s ease;
-}
+    .event-view-header:hover::before {
+        transform: scale(1.05) rotate(5deg);
+    }
 
-.report-filters .filter-group input:focus,
-.report-filters .filter-group select:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
-}
+    .event-view-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
 
-.report-filters .filter-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-end;
-}
+    .event-view-title {
+        font-size: 1.65rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: -0.03em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
 
-.report-filters .filter-actions .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    .event-view-meta {
+        margin-top: 0.6rem;
+        opacity: 0.92;
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        font-size: 0.9rem;
+    }
 
-.report-filters .filter-actions .btn-primary {
-    background: var(--primary-color);
-    color: white;
-}
+    .event-view-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
 
-.report-filters .filter-actions .btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
+    .event-view-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
 
-.report-filters .filter-actions .btn-outline {
-    background: transparent;
-    color: var(--text-color);
-    border: 1.5px solid var(--border-color);
-}
+    .event-view-actions .btn {
+        padding: 0.65rem 1.35rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-.report-filters .filter-actions .btn-outline:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
+    .btn-view-primary {
+        background: white;
+        color: var(--primary-700);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-.report-table-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-}
+    .btn-view-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        color: var(--primary-700);
+    }
 
-.report-table-card .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 1.5rem;
-    border: none;
-}
+    .btn-view-outline {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        border: 1.5px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+    }
 
-.report-table-card .card-header h4 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
+    .btn-view-outline:hover {
+        background: rgba(255, 255, 255, 0.22);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
 
-.report-table-card .table {
-    margin-bottom: 0;
-}
+    /* ===== Event Image Card ===== */
+    .event-image-card {
+        position: relative;
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        border: 1px solid var(--chart-border);
+        box-shadow: var(--chart-shadow);
+        overflow: hidden;
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 340px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.report-table-card .table th {
-    background: #f8fafc;
-    border-bottom: 2px solid var(--border-color);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    white-space: nowrap;
-}
+    .event-image-section {
+        display: flex;
+        gap: 1.75rem;
+        align-items: flex-start;
+        margin-bottom: 1.75rem;
+    }
 
-.report-table-card .table td {
-    padding: 0.75rem 1rem;
-    vertical-align: middle;
-    font-size: 0.9rem;
-}
+    .event-image-section .contribution-charts {
+        flex: 1;
+        min-width: 0;
+    }
 
-.report-table-card .table tbody tr:hover {
-    background: #f8fafc;
-}
-
-.result-count {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    padding: 0.5rem 1rem;
-    margin-bottom: 0;
-}
-
-.event-contributions-layout {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.event-contributions-layout .col-lg-7,
-.event-contributions-layout .col-lg-5 {
-    flex: 1 1 320px;
-    max-width: 100%;
-}
-
-@media (max-width: 768px) {
-    .report-filters .filter-row {
+    .event-image-sidebar {
+        flex-shrink: 0;
+        width: 340px;
+        display: flex;
         flex-direction: column;
+        gap: 1.75rem;
+    }
+
+    @media (max-width: 1024px) {
+        .event-image-section {
+            flex-direction: column;
+        }
+
+        .event-image-sidebar {
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+        }
+    }
+
+    .event-image-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.15));
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: xor;
+        -webkit-mask-composite: xor;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .event-image-card:hover::before {
+        opacity: 1;
+    }
+
+    .event-image-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    .event-image-card img {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        display: block;
+    }
+
+    .event-image-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .event-image-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .event-image-card:hover::after {
+        opacity: 0.6;
+    }
+
+    .event-image-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 1.15rem 1.35rem;
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.45) 55%, transparent 100%);
+        color: #fff;
+        pointer-events: none;
+    }
+
+    .event-image-caption-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+        line-height: 1.35;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    .event-image-caption-meta {
+        font-size: 0.78rem;
+        opacity: 0.92;
+        margin-top: 0.25rem;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        letter-spacing: 0.02em;
+    }
+
+    .event-image-card-badge {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: var(--primary-dark, #115e59);
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        pointer-events: none;
+    }
+
+    [data-theme="dark"] .event-image-caption {
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.5) 55%, transparent 100%);
+    }
+
+    [data-theme="dark"] .event-image-card-badge {
+        background: rgba(30, 41, 59, 0.92);
+        color: var(--primary-light, #2dd4bf);
+    }
+
+    @media (max-width: 768px) {
+        .event-image-card {
+            max-width: 100%;
+        }
+    }
+
+    /* ===== Stats Grid ===== */
+
+    /* ===== Stats Grid ===== */
+    .event-contributions-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        padding: 1.5rem;
+        box-shadow: var(--chart-shadow);
+        border: 1px solid var(--chart-border);
+        border-left: 4px solid var(--accent-1);
+        text-align: center;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(20px, -20px);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-1);
+        font-size: 1.2rem;
+    }
+
+    .stat-card-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+    }
+
+    .stat-card-value {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+    }
+
+    .stat-card-value.pending {
+        color: var(--accent-4);
+    }
+
+    /* ===== Filters ===== */
+    .report-filters {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        padding: 1.5rem;
+        box-shadow: var(--chart-shadow);
+        margin-bottom: 1.75rem;
+        border: 1px solid var(--chart-border);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .report-filters:hover {
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    .report-filters .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
     }
 
     .report-filters .filter-group {
-        min-width: 100%;
+        flex: 1;
+        min-width: 180px;
     }
 
-    .report-table-card .table {
-        font-size: 0.8rem;
+    .report-filters .filter-group label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .report-table-card .table th,
+    .report-filters .filter-group input,
+    .report-filters .filter-group select {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border: 1.5px solid var(--chart-border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.2s ease;
+    }
+
+    .report-filters .filter-group input:focus,
+    .report-filters .filter-group select:focus {
+        border-color: var(--accent-1);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .report-filters .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .report-filters .filter-actions .btn {
+        padding: 0.65rem 1.35rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .report-filters .filter-actions .btn-primary {
+        background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+        color: white;
+    }
+
+    .report-filters .filter-actions .btn-primary:hover {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .report-filters .filter-actions .btn-outline {
+        background: transparent;
+        color: var(--text-color);
+        border: 1.5px solid var(--chart-border);
+    }
+
+    .report-filters .filter-actions .btn-outline:hover {
+        border-color: var(--accent-1);
+        color: var(--accent-1);
+    }
+
+    .filter-loading {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--chart-radius);
+    }
+
+    [data-theme="dark"] .filter-loading {
+        background: rgba(30, 30, 46, 0.7);
+    }
+
+    .filter-loading.active {
+        display: flex;
+    }
+
+    .filter-loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--chart-border);
+        border-top-color: var(--accent-1);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ===== Charts ===== */
+    .contribution-charts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .chart-card {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        border: 1px solid var(--chart-border);
+        box-shadow: var(--chart-shadow);
+        overflow: hidden;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .chart-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    .chart-card-header {
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1px solid var(--chart-border);
+        background: var(--chart-header-bg);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chart-card-header h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+    }
+
+    .chart-card-body {
+        padding: 1.5rem;
+        position: relative;
+        min-height: 220px;
+    }
+
+    .chart-card-body .chart-loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.6);
+        z-index: 5;
+    }
+
+    [data-theme="dark"] .chart-card-body .chart-loading {
+        background: rgba(30, 30, 46, 0.6);
+    }
+
+    .chart-card-body .chart-loading-spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid var(--chart-border);
+        border-top-color: var(--accent-1);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    .chart-card-body .chart-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--text-secondary);
+    }
+
+    .chart-card-body .chart-empty i {
+        font-size: 2.5rem;
+        opacity: 0.4;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    /* ===== Activity Feed ===== */
+    .activity-feed {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        border: 1px solid var(--chart-border);
+        box-shadow: var(--chart-shadow);
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        transition: box-shadow 0.25s ease;
+    }
+
+    .activity-feed:hover {
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    .activity-feed-header {
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1px solid var(--chart-border);
+        background: var(--chart-header-bg);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-feed-header h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+    }
+
+    .activity-feed-list {
+        padding: 0.5rem 0;
+        max-height: 420px;
+        overflow-y: auto;
+    }
+
+    .activity-feed-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1.5rem;
+        transition: background 0.15s ease;
+        animation: feedSlideIn 0.35s ease forwards;
+    }
+
+    .activity-feed-item:hover {
+        background: var(--bg-primary);
+    }
+
+    @keyframes feedSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .activity-feed-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+    }
+
+    .activity-feed-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-feed-name {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .activity-feed-amount {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        margin-top: 0.15rem;
+    }
+
+    .activity-feed-time {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        white-space: nowrap;
+    }
+
+    .activity-feed-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--text-secondary);
+    }
+
+    .activity-feed-empty i {
+        font-size: 2.5rem;
+        opacity: 0.35;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    /* ===== Table Card ===== */
+    .report-table-card {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        box-shadow: var(--chart-shadow);
+        border: 1px solid var(--chart-border);
+        overflow: visible;
+    }
+
+    .report-table-card .card-header {
+        background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+    }
+
+    .report-table-card .card-header h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .report-table-card .table th {
+        background: var(--bg-primary);
+        border-bottom: 2px solid var(--chart-border);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        font-weight: 700;
+        padding: 1rem;
+        white-space: nowrap;
+    }
+
     .report-table-card .table td {
-        padding: 0.5rem 0.5rem;
+        padding: 1rem;
+        vertical-align: middle;
+        font-size: 0.9rem;
     }
 
-    .pending-filters-inline {
-        width: 100%;
-        margin-top: 0.5rem;
+    .report-table-card .table tbody tr {
+        transition: background 0.15s ease;
     }
 
-    .pending-filters-inline input {
-        width: 100%;
+    .report-table-card .table tbody tr:hover {
+        background: var(--bg-primary);
     }
-}
 
-.pending-filters-inline input {
-    border-radius: 8px;
-    border: 1.5px solid var(--border-color);
-    padding: 0.35rem 0.6rem;
-    font-size: 0.8rem;
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+    .result-count {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        padding: 0.75rem 1rem;
+        margin-bottom: 0;
+    }
 
-.pending-filters-inline input:focus {
-    border-color: var(--primary-light);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
-}
+    /* ===== Pending Section ===== */
+    .pending-table-card {
+        background: var(--chart-bg);
+        border-radius: var(--chart-radius);
+        box-shadow: var(--chart-shadow);
+        border: 1px solid var(--chart-border);
+        overflow: hidden;
+    }
 
-.event-contributions-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
+    .pending-table-card .card-header {
+        background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+    }
 
-.event-contributions-stats .stat-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--primary-color);
-    text-align: center;
-}
+    .pending-table-card .card-header h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
 
-.event-contributions-stats .stat-card-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+        .event-view-header {
+            padding: 1.5rem 1.25rem;
+        }
 
-.event-contributions-stats .stat-card-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #0f172a;
-}
+        .event-view-title {
+            font-size: 1.25rem;
+        }
 
-.event-contributions-stats .stat-card-value.pending {
-    color: #f59e0b;
-}
+        .event-view-header-content {
+            flex-direction: column;
+        }
 
-.btn-export {
-    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-}
+        .report-filters .filter-row {
+            flex-direction: column;
+        }
 
-.btn-export:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    color: white;
-}
+        .report-filters .filter-group {
+            min-width: 100%;
+        }
+
+        .event-contributions-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .contribution-charts {
+            grid-template-columns: 1fr;
+        }
+
+        .report-table-card .table {
+            font-size: 0.82rem;
+        }
+
+        .report-table-card .table th,
+        .report-table-card .table td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        .activity-feed-list {
+            max-height: 320px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .event-view-actions {
+            width: 100%;
+        }
+
+        .event-view-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .chart-card-body {
+            padding: 1rem;
+        }
+    }
+
+    /* ===== Dark Mode ===== */
+    [data-theme="dark"] .event-view-header::before {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .stat-card {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .stat-card-value {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .report-filters {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .report-filters .filter-group input,
+    [data-theme="dark"] .report-filters .filter-group select {
+        background: var(--bg-primary);
+        border-color: var(--chart-border);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .chart-card {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .chart-card-header {
+        background: var(--chart-header-bg);
+        border-bottom-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .activity-feed {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .activity-feed-header {
+        background: var(--chart-header-bg);
+        border-bottom-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .activity-feed-item:hover {
+        background: var(--bg-primary);
+    }
+
+    [data-theme="dark"] .report-table-card {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .report-table-card .table th {
+        background: var(--bg-primary);
+        border-bottom-color: var(--chart-border);
+        color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .report-table-card .table tbody tr:hover {
+        background: var(--bg-primary);
+    }
+
+    [data-theme="dark"] .event-image-card {
+        background: var(--chart-bg);
+        border-color: var(--chart-border);
+    }
+
+    [data-theme="dark"] .event-image-card:hover {
+        box-shadow: var(--chart-shadow-lg);
+    }
+
+    [data-theme="dark"] .event-image-card::before {
+        background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(102, 126, 234, 0.15));
+    }
 </style>
 {% endblock %}
 
-{% block scripts %}
-{% endblock %}
-
 {% block content %}
-<div class="report-table-card mb-5">
-    <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h4 class="mb-0">{{ event.name }} - Contributions</h4>
-            <a href="{{ url_for('community.index') }}" class="action-btn primary btn-sm">Back to Events</a>
+<div class="event-view-header">
+    <div class="event-view-header-content">
+        <div>
+            <h1 class="event-view-title">
+                <i class="bi bi-calendar-event"></i>
+                {{ event.name }}
+            </h1>
+            <div class="event-view-meta">
+                <span class="event-view-meta-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    {{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
+                </span>
+                {% if event.location %}
+                <span class="event-view-meta-item">
+                    <i class="bi bi-geo-alt"></i> {{ event.location }}
+                </span>
+                {% endif %}
+                {% if event.goal_amount %}
+                <span class="event-view-meta-item">
+                    <i class="bi bi-bullseye"></i> Goal: Ksh. {{ "{:,}".format(event.goal_amount) }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="event-view-actions">
+            <a href="{{ url_for('community.index') }}" class="btn btn-view-outline">
+                <i class="bi bi-arrow-left"></i> Back to Events
+            </a>
+            {% if current_user.role.value in ['Developer', 'Administrator'] %}
+            <a href="{{ url_for('community.edit_event', event_id=event.id) }}" class="btn btn-view-primary">
+                <i class="bi bi-pencil-square"></i> Edit Event
+            </a>
+            {% endif %}
         </div>
     </div>
 </div>
 
-<div class="report-filters">
-    <form method="get" action="{{ url_for('community.contribute', tag_name=event.name) }}">
+<div class="event-contributions-stats" id="eventStats">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <div class="stat-card-icon"><i class="bi bi-currency-dollar"></i></div>
+            <div class="stat-card-label">Total Contributions</div>
+        </div>
+        <div class="stat-card-value" id="statTotal">Ksh. {% set total_amount = contributions|sum(attribute='amount') %}{{ "{:,}".format(total_amount) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <div class="stat-card-icon"><i class="bi bi-people"></i></div>
+            <div class="stat-card-label">Contributors</div>
+        </div>
+        <div class="stat-card-value" id="statContributors">{{ contributions|map(attribute='member_id')|unique|list|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <div class="stat-card-icon"><i class="bi bi-clock"></i></div>
+            <div class="stat-card-label">Pending Members</div>
+        </div>
+        <div class="stat-card-value pending" id="statPending">{{ pending_members|length }}</div>
+    </div>
+</div>
+
+<div class="report-filters" id="filterCard">
+    <form method="get" action="{{ url_for('community.contribute', tag_name=event.name) }}" id="filterForm">
         <div class="filter-row">
             <div class="filter-group">
                 <label for="search">Search Member</label>
-                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search members...">
+                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search members..." autocomplete="off">
             </div>
             <div class="filter-group">
                 <label for="payment_type">Payment Type</label>
@@ -295,30 +1006,46 @@
                 <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('community.contribute', tag_name=event.name) }}" class="btn btn-outline">Clear</a>
+                <button type="submit" class="btn btn-primary" id="filterSubmit">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+                <a href="{{ url_for('community.contribute', tag_name=event.name) }}" class="btn btn-outline">
+                    <i class="bi bi-x"></i> Clear
+                </a>
             </div>
         </div>
     </form>
+    <div class="filter-loading" id="filterLoading">
+        <div class="filter-loading-spinner"></div>
+    </div>
 </div>
 
 <div class="d-flex justify-content-end gap-2 mb-3">
-    <a href="{{ url_for('community.contribute', tag_name=event.name) }}" class="btn btn-outline"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
-    <a href="{{ url_for('community.export_contributions_csv', tag_name=event.name, search=search, payment_type=filters.payment_type, date_from=filters.date_from, date_to=filters.date_to) }}" class="btn btn-export"><i class="bi bi-download"></i> Export CSV</a>
+    <a href="{{ url_for('community.contribute', tag_name=event.name) }}" class="btn btn-outline" id="refreshBtn">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+    </a>
+    <a href="{{ url_for('community.export_contributions_csv', tag_name=event.name, search=search, payment_type=filters.payment_type, date_from=filters.date_from, date_to=filters.date_to) }}" class="btn btn-export">
+        <i class="bi bi-download"></i> Export CSV
+    </a>
 </div>
 
-<div class="event-contributions-stats">
-    <div class="stat-card">
-        <div class="stat-card-label">Total Contributions</div>
-        <div class="stat-card-value">Ksh. {% set total_amount = contributions|sum(attribute='amount') %}{{ "{:,}".format(total_amount) }}</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-label">Contributors</div>
-        <div class="stat-card-value">{{ contributions|map(attribute='member_id')|unique|list|length }}</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-label">Pending Members</div>
-        <div class="stat-card-value pending">{{ pending_members|length }}</div>
+<div class="event-image-section">
+    {% include 'community/partials/contribution_charts.html' %}
+    <div class="event-image-sidebar">
+        {% if event.image %}
+        <div class="event-image-card">
+            <img src="{{ url_for('static', filename='images/events/' + event.image) }}" alt="{{ event.name }}" loading="lazy">
+            <div class="event-image-caption">
+                <div class="event-image-caption-name">{{ event.name }}</div>
+                <div class="event-image-caption-meta">
+                    {{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}
+                    {% if event.location %} · {{ event.location }}{% endif %}
+                </div>
+            </div>
+            <div class="event-image-card-badge">Event</div>
+        </div>
+        {% endif %}
+        {% include 'community/partials/activity_feed.html' %}
     </div>
 </div>
 
@@ -327,21 +1054,21 @@
         <h4>Contributions</h4>
     </div>
     <div class="card-body" style="padding: 0;">
-        <div class="result-count">
+        <div class="result-count" id="contributionsResultCount">
             Showing {{ contributions|length }} contribution record(s)
             {% if search or filters.payment_type or filters.date_from or filters.date_to %}
             <span> (filtered)</span>
             {% endif %}
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0" id="contributionsTable">
                 <thead>
                     <tr>
                         <th>Member</th>
                         <th>Payment Type</th>
                         <th>Amount</th>
                         <th>Date</th>
-                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                        {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                         <th>Actions</th>
                         {% endif %}
                     </tr>
@@ -349,7 +1076,7 @@
                 <tbody>
                     {% for contrib in contributions %}
                     {% set member = contrib.member %}
-                    <tr class="searchable-item">
+                    <tr class="searchable-item" data-member-name="{% if member %}{{ member.firstname }} {{ member.lastname }}{% endif %}">
                         <td>
                             <strong>
                                 {% if member %}
@@ -381,7 +1108,7 @@
                                 <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for contribution">
                                     <span aria-hidden="true"><i class="bi bi-gear"></i></span>
                                     <span>Actions</span>
-                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    <span class="row-actions-caret" aria-hidden="true">&#9662;</span>
                                 </button>
                                 <div class="row-actions-menu" role="menu">
                                     <div class="row-actions-menu-header">
@@ -418,7 +1145,7 @@
 </div>
 
 {% if pending_members %}
-<div class="report-table-card">
+<div class="pending-table-card mt-4">
     <div class="card-header">
         <h4 class="mb-0">Pending Contributions</h4>
     </div>
@@ -456,4 +1183,185 @@
     </div>
 </div>
 {% endif %}
+
+<div id="chart-tooltip" class="chart-tooltip"></div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ static_version('js/reports-charts.js') }}"></script>
+<script>
+(function () {
+    'use strict';
+
+    const eventId = '{{ event.id }}';
+    if (!eventId) return;
+
+    const $ = (id) => document.getElementById(id);
+    const filterForm = $('filterForm');
+    const filterLoading = $('filterLoading');
+    const searchInput = $('search');
+    const paymentTypeSelect = $('payment_type');
+    const dateFromInput = $('date_from');
+    const dateToInput = $('date_to');
+
+    let debounceTimer;
+    const DEBOUNCE_MS = 400;
+
+    function showFilterLoading() {
+        if (filterLoading) filterLoading.classList.add('active');
+    }
+
+    function hideFilterLoading() {
+        if (filterLoading) filterLoading.classList.remove('active');
+    }
+
+    function buildQueryString() {
+        const params = new URLSearchParams();
+        const search = (searchInput ? searchInput.value : '').trim();
+        const paymentType = paymentTypeSelect ? paymentTypeSelect.value : '';
+        const dateFrom = dateFromInput ? dateFromInput.value : '';
+        const dateTo = dateToInput ? dateToInput.value : '';
+
+        if (search) params.set('search', search);
+        if (paymentType) params.set('payment_type', paymentType);
+        if (dateFrom) params.set('date_from', dateFrom);
+        if (dateTo) params.set('date_to', dateTo);
+        return params.toString();
+    }
+
+    function updateStatsUI(stats) {
+        const totalEl = $('statTotal');
+        const contributorsEl = $('statContributors');
+
+        if (totalEl && stats.total !== undefined) {
+            totalEl.textContent = 'Ksh. ' + Number(stats.total || 0).toLocaleString('en-KE');
+        }
+        if (contributorsEl && stats.contributor_count !== undefined) {
+            contributorsEl.textContent = stats.contributor_count;
+        }
+    }
+
+    function renderChartFallback(containerId, message) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        el.innerHTML = '<div class="chart-empty"><i class="bi bi-bar-chart"></i><div>' + message + '</div></div>';
+    }
+
+    function renderCharts(data) {
+        const monthly = {};
+        (Object.entries(data.by_day || {}) || []).forEach(([day, amount]) => {
+            const month = day.substring(0, 7);
+            monthly[month] = (monthly[month] || 0) + amount;
+        });
+        const monthlyKeys = Object.keys(monthly).sort();
+
+        if (monthlyKeys.length && typeof ReportsCharts.createLineChart === 'function') {
+            ReportsCharts.createLineChart('event-trend-chart', monthly, { height: 220 });
+        } else {
+            renderChartFallback('event-trend-chart', 'No trend data available');
+        }
+
+        const paymentEntries = Object.entries(data.by_payment || {});
+        if (paymentEntries.length && typeof ReportsCharts.createDoughnutChart === 'function') {
+            ReportsCharts.createDoughnutChart('event-payment-chart', Object.fromEntries(paymentEntries), { size: 220 });
+        } else if (typeof ReportsCharts.createDoughnutChart === 'function') {
+            renderChartFallback('event-payment-chart', 'No payment data available');
+        } else {
+            renderChartFallback('event-payment-chart', 'No chart data available to work offline');
+        }
+
+        const topMembers = data.top_members || {};
+        const topKeys = Object.keys(topMembers).slice(0, 5);
+        const topValues = topKeys.map(k => topMembers[k]);
+        if (topKeys.length && typeof ReportsCharts.createHorizontalBarChart === 'function') {
+            ReportsCharts.createHorizontalBarChart('event-top-members-chart', Object.fromEntries(topKeys.map((k, i) => [k, topValues[i]])), { height: Math.max(220, topKeys.length * 40 + 40) });
+        } else if (typeof ReportsCharts.createHorizontalBarChart === 'function') {
+            renderChartFallback('event-top-members-chart', 'No contributor data available');
+        } else {
+            renderChartFallback('event-top-members-chart', 'No chart data available to work offline');
+        }
+    }
+
+    function renderActivityFeed(data) {
+        const container = document.getElementById('activityFeedList');
+        if (!container) return;
+
+        const members = Object.entries(data.top_members || {}).slice(0, 5);
+        if (!members.length) {
+            container.innerHTML = '<div class="activity-feed-empty"><i class="bi bi-inbox"></i><div>No contributions yet. Be the first to contribute!</div></div>';
+            return;
+        }
+
+        container.innerHTML = members.map(([name, amount]) => {
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            return '<div class="activity-feed-item">' +
+                '<div class="activity-feed-avatar">' + escapeHtml(initials) + '</div>' +
+                '<div class="activity-feed-content">' +
+                '<div class="activity-feed-name">' + escapeHtml(name) + '</div>' +
+                '<div class="activity-feed-amount">Ksh. ' + Number(amount).toLocaleString('en-KE') + '</div>' +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    async function loadEventData(updateUrl = true) {
+        showFilterLoading();
+
+        try {
+            const qs = buildQueryString();
+            const baseUrl = '/community/' + eventId + '/stats';
+            const url = qs ? baseUrl + '?' + qs + '&t=' + Date.now() : baseUrl + '?t=' + Date.now();
+
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed');
+            const data = await response.json();
+
+            renderCharts(data);
+            renderActivityFeed(data);
+            updateStatsUI({
+                total: data.total,
+                contributor_count: data.contributor_count
+            });
+
+            if (updateUrl && qs) {
+                const newUrl = window.location.pathname + (qs ? '?' + qs : '');
+                window.history.replaceState({}, '', newUrl);
+            }
+        } catch (error) {
+            console.error('Error loading event data:', error);
+            ['event-trend-chart', 'event-payment-chart', 'event-top-members-chart'].forEach(id => {
+                renderChartFallback(id, 'No chart data available to work offline');
+            });
+        } finally {
+            hideFilterLoading();
+        }
+    }
+
+    function onFilterChange() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => loadEventData(true), DEBOUNCE_MS);
+    }
+
+    if (filterForm) {
+        searchInput.addEventListener('input', onFilterChange);
+        paymentTypeSelect.addEventListener('change', onFilterChange);
+        dateFromInput.addEventListener('change', onFilterChange);
+        dateToInput.addEventListener('change', onFilterChange);
+
+        filterForm.addEventListener('submit', function () {
+            clearTimeout(debounceTimer);
+        });
+    }
+
+    loadEventData(false);
+})();
+</script>
 {% endblock %}

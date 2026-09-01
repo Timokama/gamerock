@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, make_response
+from flask import render_template, request, redirect, url_for, flash, make_response, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -57,7 +57,7 @@ def index():
         except (ValueError, TypeError):
             pass
     
-    events = query.order_by(CommunityEvent.event_date.desc()).all()
+    events = query.order_by(CommunityEvent.sort_order.asc(), CommunityEvent.event_date.desc()).all()
     total = 0
     for event in events:
         for amount in event.contribute:
@@ -120,7 +120,7 @@ def export_csv():
         except (ValueError, TypeError):
             pass
     
-    events = query.order_by(CommunityEvent.event_date.desc()).all()
+    events = query.order_by(CommunityEvent.sort_order.asc(), CommunityEvent.event_date.desc()).all()
     
     output = StringIO()
     writer = csv.writer(output)
@@ -156,6 +156,10 @@ def add_event():
         name = request.form['name']
         details = request.form['details']
         event_date = datetime.strptime(request.form['event_date'], '%Y-%m-%d').date()
+        location = request.form.get('location', '')
+        goal_amount = request.form.get('goal_amount', type=float)
+        is_featured = request.form.get('is_featured', 'false') == 'true'
+        sort_order = request.form.get('sort_order', default=0, type=int)
         
         # Handle image upload
         image_filename = None
@@ -164,12 +168,23 @@ def add_event():
             if image and image.filename != '' and allowed_file(image.filename):
                 ensure_events_folder()
                 filename = secure_filename(image.filename)
-                # Create unique filename to avoid conflicts
                 unique_filename = f"event_{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
                 image.save(os.path.join(EVENTS_FOLDER, unique_filename))
                 image_filename = unique_filename
         
-        com_event = CommunityEvent(name=name, details=details, event_date=event_date, created_by=user.id, update_by = user.first_name, user=user, image=image_filename)
+        com_event = CommunityEvent(
+            name=name,
+            details=details,
+            event_date=event_date,
+            created_by=user.id,
+            update_by=user.first_name,
+            user=user,
+            image=image_filename,
+            location=location,
+            goal_amount=goal_amount,
+            is_featured=is_featured,
+            sort_order=sort_order
+        )
         db.session.add(com_event)
         db.session.commit()
         return redirect(url_for('community.index'))
@@ -179,7 +194,7 @@ def add_event():
 @login_required
 def delete_event(event_id):
     user = User.query.get_or_404(current_user.id)
-    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL):
+    if user.role not in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.CHAIRPERSON):
         flash("You do not have permission to delete events.", "danger")
         return redirect(url_for('community.index'))
     event = CommunityEvent.query.get_or_404(event_id)
@@ -202,6 +217,10 @@ def edit_event(event_id):
         event.name = request.form['name']
         event.details = request.form['details']
         event.event_date = datetime.strptime(request.form['event_date'], '%Y-%m-%d').date()
+        event.location = request.form.get('location', '')
+        event.goal_amount = request.form.get('goal_amount', type=float)
+        event.is_featured = request.form.get('is_featured', 'false') == 'true'
+        event.sort_order = request.form.get('sort_order', default=0, type=int)
         event.update_by = user.first_name
         
         # Handle image upload
@@ -363,6 +382,160 @@ def export_contributions_csv(tag_name):
     response.headers['Content-Disposition'] = f'attachment; filename={event.name}_contributions.csv'
     response.headers['Content-Type'] = 'text/csv'
     return response
+
+
+@bp.route('/<int:event_id>/stats')
+@login_required
+def event_stats(event_id):
+    event = CommunityEvent.query.get_or_404(event_id)
+    
+    search = request.args.get('search', '')
+    payment_type = request.args.get('payment_type')
+    date_from = request.args.get('date_from')
+    date_to = request.args.get('date_to')
+    
+    query = Contribution.query.filter_by(propose=event_id)
+    
+    if search:
+        search_terms = [term.strip() for term in search.split() if term.strip()]
+        member_conditions = []
+        for term in search_terms:
+            member_conditions.append(
+                db.or_(
+                    db.cast(Member.id_number, db.String).ilike(f'%{term}%'),
+                    Member.firstname.ilike(f'%{term}%'),
+                    Member.lastname.ilike(f'%{term}%'),
+                    Member.surname.ilike(f'%{term}%'),
+                    Contribution.transaction_ref.ilike(f'%{term}%')
+                )
+            )
+        query = query.join(Member).filter(db.and_(*member_conditions))
+    
+    if payment_type:
+        try:
+            payment_enum = Payment[payment_type] if payment_type in Payment.__members__ else Payment(payment_type)
+            query = query.filter(Contribution.payment_type == payment_enum)
+        except (ValueError, KeyError):
+            pass
+    
+    if date_from:
+        try:
+            from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            query = query.filter(Contribution.trans_date >= from_date)
+        except (ValueError, TypeError):
+            pass
+    
+    if date_to:
+        try:
+            to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            query = query.filter(Contribution.trans_date <= to_date)
+        except (ValueError, TypeError):
+            pass
+    
+    contributions = query.order_by(Contribution.trans_date.asc()).all()
+
+    total = sum(c.amount for c in contributions)
+    contributor_count = len(set(c.member_id for c in contributions))
+
+    by_day = {}
+    by_payment = {}
+    by_member = {}
+    for c in contributions:
+        if c.trans_date:
+            day_key = c.trans_date.strftime('%Y-%m-%d')
+            by_day[day_key] = by_day.get(day_key, 0) + c.amount
+        if c.payment_type:
+            by_payment[c.payment_type.value] = by_payment.get(c.payment_type.value, 0) + c.amount
+        if c.member:
+            member_name = f"{c.member.firstname} {c.member.lastname}"
+            by_member[member_name] = by_member.get(member_name, 0) + c.amount
+
+    top_members = dict(sorted(by_member.items(), key=lambda x: x[1], reverse=True)[:5])
+    return jsonify({
+        'event_id': event.id,
+        'event_name': event.name,
+        'total': total,
+        'contributor_count': contributor_count,
+        'goal_amount': event.goal_amount,
+        'location': event.location,
+        'by_day': by_day,
+        'by_payment': by_payment,
+        'top_members': top_members
+    })
+
+
+@bp.post('/<int:event_id>/contribute')
+@login_required
+def quick_contribute(event_id):
+    user = User.query.get_or_404(current_user.id)
+    member = user.family
+    if not member:
+        return jsonify({'success': False, 'message': 'Member profile not found.'}), 400
+
+    event = CommunityEvent.query.get_or_404(event_id)
+    amount = request.form.get('amount', type=float)
+    payment_type = request.form.get('payment_type')
+    if not amount or amount <= 0 or not payment_type:
+        return jsonify({'success': False, 'message': 'Invalid contribution data.'}), 400
+
+    try:
+        payment_enum = Payment[payment_type] if payment_type in Payment.__members__ else Payment(payment_type)
+    except (ValueError, KeyError):
+        return jsonify({'success': False, 'message': 'Invalid payment type.'}), 400
+
+    contribution = Contribution(
+        amount=amount,
+        payment_type=payment_enum,
+        propose=event.id,
+        member_id=member.id,
+        trans_date=datetime.utcnow().date()
+    )
+    db.session.add(contribution)
+    db.session.commit()
+
+    contributions = Contribution.query.filter_by(propose=event.id).all()
+    new_total = sum(c.amount for c in contributions)
+    contributor_count = len(set(c.member_id for c in contributions))
+    return jsonify({
+        'success': True,
+        'new_total': new_total,
+        'contributor_count': contributor_count,
+        'message': 'Contribution recorded successfully.'
+    })
+
+
+@bp.post('/<int:event_id>/bookmark')
+@login_required
+def toggle_bookmark(event_id):
+    user = User.query.get_or_404(current_user.id)
+    bookmarks = list(user.bookmarks or [])
+    if event_id in bookmarks:
+        bookmarks.remove(event_id)
+        action = 'removed'
+    else:
+        bookmarks.append(event_id)
+        action = 'added'
+
+    user.bookmarks = bookmarks
+    db.session.commit()
+    return jsonify({'success': True, 'action': action, 'bookmarks': bookmarks})
+
+
+@bp.route('/events/upcoming')
+@login_required
+def upcoming_events():
+    today = datetime.utcnow().date()
+    events = CommunityEvent.query.filter(CommunityEvent.event_date >= today).order_by(CommunityEvent.event_date.asc()).limit(5).all()
+    data = []
+    for event in events:
+        data.append({
+            'id': event.id,
+            'name': event.name,
+            'event_date': event.event_date.strftime('%Y-%m-%d') if event.event_date else None,
+            'location': event.location,
+            'goal_amount': event.goal_amount
+        })
+    return jsonify({'upcoming': data})
 
 
 @bp.post('/<int:depo_id>/delete')

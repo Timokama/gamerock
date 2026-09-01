@@ -76,17 +76,17 @@
   }
 
   .event-brand-logo {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: var(--radius-xl);
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: white;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
@@ -107,6 +107,12 @@
     background: rgba(20, 184, 166, 0.04);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(20, 184, 166, 0.08);
+  }
+
+  .upload-zone.dragover {
+    border-color: var(--primary-500);
+    background: rgba(20, 184, 166, 0.08);
+    transform: scale(1.01);
   }
 
   .upload-zone input[type="file"] {
@@ -178,6 +184,81 @@
     align-items: center;
   }
 
+  .form-actions .btn {
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .form-actions .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-500) 100%);
+    color: rgb(14, 13, 13);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .form-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+  }
+
+  .form-actions .btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-light);
+  }
+
+  .form-actions .btn-outline:hover {
+    border-color: var(--primary-500);
+    color: var(--primary);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem;
+    background: var(--bg-light);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .form-group .form-control:focus {
+    border-color: var(--primary-500);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+  }
+
   @media (max-width: 768px) {
     .form-row {
       grid-template-columns: 1fr;
@@ -196,6 +277,33 @@
       justify-content: center;
     }
   }
+
+  .validation-feedback {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .validation-feedback.show {
+    display: flex;
+  }
+
+  .validation-feedback.error {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .validation-feedback.success {
+    background: rgba(20, 184, 166, 0.08);
+    color: var(--primary-dark);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+  }
 </style>
 {% endblock %}
 
@@ -210,38 +318,73 @@
                     <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.9;">Fill in the information below to create a new community event</p>
                 </div>
                 <div class="card-body" style="padding: var(--space-10) 2rem;">
-                    <form method="post" enctype="multipart/form-data" id="eventForm">
+                    <div class="validation-feedback" id="validationFeedback">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span id="validationMessage"></span>
+                    </div>
+                    <form method="post" enctype="multipart/form-data" id="eventForm" novalidate>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="name">Event Name</label>
+                                <label for="name">Event Name <span style="color: #dc2626;">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="e.g., Annual Welfare Fundraiser" required>
                                 <p class="field-hint"><i class="bi bi-info-circle"></i> Give this event a clear, descriptive name</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="event_date">Event Date</label>
+                                <label for="event_date">Event Date <span style="color: #dc2626;">*</span></label>
                                 <input type="date" class="form-control" id="event_date" name="event_date" required>
                                 <p class="field-hint"><i class="bi bi-info-circle"></i> Select the date when this event will take place</p>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="details">Event Details</label>
+                            <label for="details">Event Details <span style="color: #dc2626;">*</span></label>
                             <textarea class="form-control" id="details" name="details" rows="5" placeholder="Describe the event purpose, activities, and any important information..." required></textarea>
                                 <p class="field-hint"><i class="bi bi-info-circle"></i> Provide details about the event goals and activities</p>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="location">Location (Optional)</label>
+                                <input type="text" class="form-control" id="location" name="location" placeholder="e.g., Community Hall, Nairobi">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Where will the event take place?</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="goal_amount">Fundraising Goal (Ksh) (Optional)</label>
+                                <input type="number" class="form-control" id="goal_amount" name="goal_amount" placeholder="e.g., 50000" min="0" step="0.01">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Target amount for this event</p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="is_featured">Featured Event</label>
+                                <select class="form-control" id="is_featured" name="is_featured">
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Featured events appear prominently on the dashboard</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sort_order">Sort Order</label>
+                                <input type="number" class="form-control" id="sort_order" name="sort_order" value="0" min="0">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Lower numbers appear first</p>
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label>Event Image (Optional)</label>
                             <div class="upload-zone" id="uploadZone">
-                                <span class="upload-icon"><i class="bi bi-camera"></i></span>
-                                <div class="upload-title">Click to upload event image</div>
-                                <div class="upload-subtitle">Supported formats: JPG, PNG, GIF, WebP</div>
+                                <span class="upload-icon" style="font-size: 2.5rem; color: var(--text-light); margin-bottom: 0.75rem; display: block;"><i class="bi bi-camera"></i></span>
+                                <div class="upload-title" style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">Click to upload event image</div>
+                                <div class="upload-subtitle" style="font-size: 0.85rem; color: var(--text-secondary);">Supported formats: JPG, PNG, GIF, WebP</div>
                                 <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)">
                             </div>
                             <div class="image-preview d-none" id="imagePreviewContainer">
                                 <img id="imagePreview" src="" alt="Image Preview">
-                                <button type="button" class="remove-image" onclick="removeImage()"><i class="bi bi-x"></i></button>
+                                <button type="button" class="remove-image" onclick="removeImage()" aria-label="Remove image"><i class="bi bi-x"></i></button>
                             </div>
                             <p class="field-hint mt-2"><i class="bi bi-info-circle"></i> Upload an image to make this event stand out</p>
                         </div>
@@ -294,5 +437,22 @@ function removeImage() {
     uploadZone.style.display = 'block';
     fileInput.value = '';
 }
+
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+    var feedback = document.getElementById('validationFeedback');
+    var message = document.getElementById('validationMessage');
+    var name = document.getElementById('name').value.trim();
+    var date = document.getElementById('event_date').value;
+    var details = document.getElementById('details').value.trim();
+
+    if (!name || !date || !details) {
+        e.preventDefault();
+        feedback.className = 'validation-feedback show error';
+        message.textContent = 'Please fill in all required fields: Event Name, Event Date, and Event Details.';
+        return;
+    }
+
+    feedback.className = 'validation-feedback';
+});
 </script>
 {% endblock %}

@@ -16,6 +16,11 @@
     --primary-800: #115e59;
     --primary-900: #134e4a;
 
+    /* FAQ Module Aliases */
+    --primary-color: var(--primary-600);
+    --primary-light: var(--primary-400);
+    --primary-dark: var(--primary-800);
+
     /* Secondary Palette (Slate) */
     --secondary-50: #f8fafc;
     --secondary-100: #f1f5f9;
@@ -66,6 +71,18 @@
     --border-light: #e2e8f0;
     --border-medium: #cbd5e1;
     --border-dark: #94a3b8;
+
+    /* FAQ Module Aliases */
+    --card-bg: var(--bg-secondary);
+    --border-color: var(--border-light);
+    --bg-color: var(--bg-secondary);
+    --text-color: var(--text-primary);
+    --dark-color: var(--text-primary);
+    --text-muted: var(--text-tertiary);
+    --light-color: var(--bg-tertiary);
+    --radius: var(--radius-xl);
+    --shadow: var(--shadow-sm);
+    --transition: var(--transition-base);
 
     /* Spacing Scale (8px grid) */
     --space-1: 0.25rem;
@@ -3762,8 +3779,23 @@ textarea.form-control {
 }
 
 .action-btn.warning:hover {
-    background: var(--warning-600);
+    background: linear-gradient(135deg, var(--warning-600) 0%, var(--warning-700) 100%);
     color: white;
+}
+
+.action-btn.primary:active {
+    background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%);
+    color: white;
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.action-btn.outline:active {
+    background: var(--bg-secondary);
+    border-color: var(--primary-700);
+    color: var(--primary-700);
+    text-decoration: none;
 }
 
 /* ============================================
@@ -4781,6 +4813,18 @@ textarea.form-control {
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+
+    --primary-color: var(--primary-400);
+    --primary-light: var(--primary-300);
+    --primary-dark: var(--primary-600);
+
+    --card-bg: var(--bg-secondary);
+    --border-color: var(--border-light);
+    --bg-color: var(--bg-secondary);
+    --text-color: var(--text-primary);
+    --dark-color: var(--text-primary);
+    --text-muted: var(--text-tertiary);
+    --light-color: rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="dark"] body {

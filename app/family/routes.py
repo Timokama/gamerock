@@ -50,11 +50,13 @@ def index():
 
 
 @bp.route('/<int:depo_id>/')
+@login_required
 def family(depo_id):
     register = Member.query.get_or_404(depo_id)
     return render_template('family/family.html', register = register)
 
 @bp.route('/<int:depo_id>/edit', methods=('POST', 'GET'))
+@login_required
 def edit(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
@@ -99,6 +101,7 @@ def edit(depo_id):
     return render_template('register/edit.html', register = register, family = register)
 
 @bp.route('/<int:depo_id>/create_spouse', methods=('POST', 'GET'))
+@login_required
 def create_spouse(depo_id):
     # If depo_id is 0, redirect to members list
     if depo_id == 0:
@@ -115,6 +118,7 @@ def create_spouse(depo_id):
     return render_template('register/create.html', register=register)
 
 @bp.route('/<int:depo_id>/<int:spouse_id>/create_child', methods=('POST', 'GET'))
+@login_required
 def create_child(depo_id, spouse_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(spouse_id)
@@ -135,6 +139,7 @@ def create_child(depo_id, spouse_id):
     return render_template('register/create.html', register=register, spouse = spouse)
 
 @bp.post('/<int:depo_id>/<int:del_id>/delete')
+@login_required
 def delete(depo_id, del_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(del_id)
@@ -145,6 +150,7 @@ def delete(depo_id, del_id):
     return redirect(url_for('family.family', depo_id = register.id))
 
 @bp.route('/<int:depo_id>/<int:edit_id>/edit_spouse', methods=('POST','GET'))
+@login_required
 def edit_spouse(depo_id, edit_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(edit_id)
@@ -171,6 +177,7 @@ def edit_spouse(depo_id, edit_id):
     return render_template('register/edit.html', register = spouse, family = register)
 
 @bp.route('/<int:depo_id>/<int:edit_id>/<int:child_id>/edit_child', methods=('POST','GET'))
+@login_required
 def edit_child(depo_id, edit_id, child_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(edit_id)
@@ -198,6 +205,7 @@ def edit_child(depo_id, edit_id, child_id):
     return render_template('register/edit.html', register = child, family = register)
 
 @bp.route('/<int:depo_id>/<int:child_id>/edit_child', methods=('POST','GET'))
+@login_required
 def editchild(depo_id, child_id):
     register = Member.query.get_or_404(depo_id)
     child = Child.query.get_or_404(child_id)
@@ -224,6 +232,7 @@ def editchild(depo_id, child_id):
     return render_template('register/edit.html', register = child, family = register)
 
 @bp.post('/<int:depo_id>/<int:child_id>/delete_child')
+@login_required
 def delete_child(depo_id, child_id):
     register = Member.query.get_or_404(depo_id)
     child = Child.query.get_or_404(child_id)
@@ -232,6 +241,7 @@ def delete_child(depo_id, child_id):
     return redirect(url_for('family.family', depo_id = register.id))
 
 @bp.post('/<int:depo_id>/delete/')
+@login_required
 def delete_family(depo_id):
     register = Member.query.get_or_404(depo_id)
     for spouse in register.spouse:

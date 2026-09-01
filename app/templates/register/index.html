@@ -129,7 +129,7 @@
                                         </span>
                                     </a>
 
-                                    {% if current_user.role.name == 'DEVEL' and member.user_id and member.user_account %}
+                                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] and member.user_id and member.user_account %}
                                     <div class="row-actions-divider"></div>
                                     <button type="button" class="row-action-item" role="menuitem" onclick="openAssignRoleModal({{ member.id }}, '{{ member.firstname }} {{ member.lastname }}')">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-shield-plus"></i></span>

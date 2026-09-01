@@ -830,7 +830,37 @@
       </div>
     </div>
   </section>
-
+  <div class="prof-card-body" style="padding: 0;">
+      <div class="prof-history-filters" style="margin-bottom: 0; box-shadow: none; border: none; border-radius: 0;">
+        <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
+          <div class="filter-row" id="deposit-history-filters">
+            <div class="filter-group">
+              <label for="deposit-history-search">Search</label>
+              <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
+            </div>
+            <div class="filter-group">
+              <label for="deposit-history-payment-type">Payment Type</label>
+              <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
+                <option value="">All</option>
+                <option value="CASH">Cash</option>
+                <option value="MOBILE_MONEY">M-Pesa</option>
+                <option value="BANK">Bank</option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-primary" onclick="filterDepositHistory()">
+                <i class="bi bi-search me-1"></i>Filter
+              </button>
+              <button type="button" class="btn btn-outline" onclick="clearDepositHistoryFilters()">
+                <i class="bi bi-x-circle me-1"></i>Clear
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    <div class="prof-result-count">
+      Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)
+    </div>
   <!-- Stats -->
   <section class="prof-stats" aria-label="Member statistics">
     <div class="prof-stat success">
@@ -865,43 +895,54 @@
       </div>
     </div>
   </section>
-
+  <!-- Pending Contributions (Secondary Section) -->
+  {% if pending_contributions %}
+  <div class="prof-card" style="margin-top: 1.5rem;">
+    <div class="prof-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+      <h4><i class="bi bi-hourglass-split me-2"></i>Pending Contributions</h4>
+    </div>
+    <div class="prof-card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 prof-pending-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="width: 40px;"></th>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Details</th>
+              <th style="width: 120px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in pending_contributions %}
+            <tr>
+              <td class="pending-icon-cell" style="text-align: center;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
+              </td>
+              <td><span class="pending-name">{{ event.name }}</span></td>
+              <td class="pending-date">
+                <i class="bi bi-calendar-event me-1" style="color: var(--text-muted, var(--text-secondary));"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'Date TBD' }}
+              </td>
+              <td class="pending-details">{{ event.details[:150] if event.details else 'No details provided' }}{% if event.details and event.details|length > 150 %}...{% endif %}</td>
+              <td class="pending-actions" style="text-align: center; white-space: nowrap;">
+                {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+                <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="btn btn-primary btn-sm" style="border-radius: 999px; font-weight: 600; padding: 0.35rem 0.85rem; font-size: 0.8rem;">
+                  <i class="bi bi-plus-circle me-1"></i>Contribute
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   <!-- Contribution History (Primary Section) -->
   <div class="prof-card">
     <div class="prof-card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <h4><i class="bi bi-table me-2"></i>Contribution History</h4>
     </div>
-    <div class="prof-card-body" style="padding: 0;">
-      <div class="prof-history-filters" style="margin-bottom: 0; box-shadow: none; border: none; border-radius: 0;">
-        <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
-          <div class="filter-row" id="deposit-history-filters">
-            <div class="filter-group">
-              <label for="deposit-history-search">Search</label>
-              <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
-            </div>
-            <div class="filter-group">
-              <label for="deposit-history-payment-type">Payment Type</label>
-              <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
-                <option value="">All</option>
-                <option value="CASH">Cash</option>
-                <option value="MOBILE_MONEY">M-Pesa</option>
-                <option value="BANK">Bank</option>
-              </select>
-            </div>
-            <div class="filter-actions">
-              <button type="button" class="btn btn-primary" onclick="filterDepositHistory()">
-                <i class="bi bi-search me-1"></i>Filter
-              </button>
-              <button type="button" class="btn btn-outline" onclick="clearDepositHistoryFilters()">
-                <i class="bi bi-x-circle me-1"></i>Clear
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="prof-result-count">
-        Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)
-      </div>
       {% if contributions %}
       <div class="table-responsive">
         <table class="table table-hover mb-0" id="deposit-history-table" style="width: 100%;">
@@ -995,49 +1036,7 @@
     </div>
   </div>
 
-  <!-- Pending Contributions (Secondary Section) -->
-  {% if pending_contributions %}
-  <div class="prof-card" style="margin-top: 1.5rem;">
-    <div class="prof-card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
-      <h4><i class="bi bi-hourglass-split me-2"></i>Pending Contributions</h4>
-    </div>
-    <div class="prof-card-body" style="padding: 0;">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0 prof-pending-table" style="width: 100%;">
-          <thead>
-            <tr>
-              <th style="width: 40px;"></th>
-              <th>Event</th>
-              <th>Date</th>
-              <th>Details</th>
-              <th style="width: 120px;">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for event in pending_contributions %}
-            <tr>
-              <td class="pending-icon-cell" style="text-align: center;">
-                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1)); color: #f59e0b; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;"><i class="bi bi-hourglass-split"></i></div>
-              </td>
-              <td><span class="pending-name">{{ event.name }}</span></td>
-              <td class="pending-date">
-                <i class="bi bi-calendar-event me-1" style="color: var(--text-muted, var(--text-secondary));"></i>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'Date TBD' }}
-              </td>
-              <td class="pending-details">{{ event.details[:150] if event.details else 'No details provided' }}{% if event.details and event.details|length > 150 %}...{% endif %}</td>
-              <td class="pending-actions" style="text-align: center; white-space: nowrap;">
-                {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
-                <a href="{{ url_for('deposit.amount', depo_id=register.id, event_id=event.id) }}" class="btn btn-primary btn-sm" style="border-radius: 999px; font-weight: 600; padding: 0.35rem 0.85rem; font-size: 0.8rem;">
-                  <i class="bi bi-plus-circle me-1"></i>Contribute
-                </a>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  
   {% endif %}
 
   <!-- Member Information (Tertiary Section) -->

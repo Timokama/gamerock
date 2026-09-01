@@ -76,17 +76,17 @@
   }
 
   .event-brand-logo {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: white;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
@@ -107,6 +107,12 @@
     background: rgba(20, 184, 166, 0.04);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(20, 184, 166, 0.08);
+  }
+
+  .upload-zone.dragover {
+    border-color: var(--primary-500);
+    background: rgba(20, 184, 166, 0.08);
+    transform: scale(1.01);
   }
 
   .upload-zone input[type="file"] {
@@ -171,11 +177,121 @@
 
   .form-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--space-3);
     margin-top: 2rem;
-    padding-top: 1.5rem;
+    padding-top: var(--space-6);
     border-top: 1px solid var(--border-light);
     align-items: center;
+  }
+
+  .form-actions .btn {
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .form-actions .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-500) 100%);
+    color: rgb(23, 21, 21);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .form-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+  }
+
+  .form-actions .btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-light);
+  }
+
+  .form-actions .btn-outline:hover {
+    border-color: var(--primary-500);
+    color: var(--primary);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem;
+    background: var(--bg-light);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .form-group .form-control:focus {
+    border-color: var(--primary-500);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .event-info-banner {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+    border: 1px solid rgba(20, 184, 166, 0.15);
+    border-radius: var(--radius-xl);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .event-info-banner-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    background: rgba(20, 184, 166, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .event-info-banner-text strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .event-info-banner-text span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
   }
 
   @media (max-width: 768px) {
@@ -196,6 +312,27 @@
       justify-content: center;
     }
   }
+
+  .validation-feedback {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .validation-feedback.show {
+    display: flex;
+  }
+
+  .validation-feedback.error {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
 </style>
 {% endblock %}
 
@@ -210,33 +347,71 @@
                     <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.9;">Update the details for <strong>{{ event.name }}</strong></p>
                 </div>
                 <div class="card-body" style="padding: 2.5rem 2rem;">
-                    <div style="background: var(--bg-primary); border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="font-size: 1.25rem;"><i class="bi bi-calendar"></i></span>
-                        <div>
-                            <strong style="color: var(--text-primary);">{{ event.name }}</strong>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}</div>
+                    <div class="event-info-banner">
+                        <div class="event-info-banner-icon">
+                            <i class="bi bi-calendar"></i>
+                        </div>
+                        <div class="event-info-banner-text">
+                            <strong>{{ event.name }}</strong>
+                            <span>{{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'N/A' }}</span>
                         </div>
                     </div>
 
-                    <form method="post" enctype="multipart/form-data" id="eventForm">
+                    <div class="validation-feedback" id="validationFeedback">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span id="validationMessage"></span>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" id="eventForm" novalidate>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="name">Event Name</label>
+                                <label for="name">Event Name <span style="color: #dc2626;">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name" value="{{ event.name }}" required>
                                 <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event name</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="event_date">Event Date</label>
+                                <label for="event_date">Event Date <span style="color: #dc2626;">*</span></label>
                                 <input type="date" class="form-control" id="event_date" name="event_date" value="{{ event.event_date }}" required>
                                 <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event date</p>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="details">Event Details</label>
+                            <label for="details">Event Details <span style="color: #dc2626;">*</span></label>
                             <textarea class="form-control" id="details" name="details" rows="5" required>{{ event.details }}</textarea>
                             <p class="field-hint"><i class="bi bi-info-circle"></i> Update the event description and details</p>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" class="form-control" id="location" name="location" value="{{ event.location or '' }}" placeholder="e.g., Community Hall, Nairobi">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Where will the event take place?</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="goal_amount">Fundraising Goal (Ksh)</label>
+                                <input type="number" class="form-control" id="goal_amount" name="goal_amount" value="{{ event.goal_amount or '' }}" placeholder="e.g., 50000" min="0" step="0.01">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Target amount for this event</p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="is_featured">Featured Event</label>
+                                <select class="form-control" id="is_featured" name="is_featured">
+                                    <option value="false" {% if not event.is_featured %}selected{% endif %}>No</option>
+                                    <option value="true" {% if event.is_featured %}selected{% endif %}>Yes</option>
+                                </select>
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Featured events appear prominently on the dashboard</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sort_order">Sort Order</label>
+                                <input type="number" class="form-control" id="sort_order" name="sort_order" value="{{ event.sort_order or 0 }}" min="0">
+                                <p class="field-hint"><i class="bi bi-info-circle"></i> Lower numbers appear first</p>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -255,14 +430,14 @@
                         <div class="form-group">
                             <label>Upload New Image (Optional)</label>
                             <div class="upload-zone" id="uploadZone">
-                                <span class="upload-icon"><i class="bi bi-image"></i></span>
-                                <div class="upload-title">Click to upload a new image</div>
-                                <div class="upload-subtitle">Supported formats: JPG, PNG, GIF, WebP</div>
+                                <span class="upload-icon" style="font-size: 2.5rem; color: var(--text-light); margin-bottom: 0.75rem; display: block;"><i class="bi bi-image"></i></span>
+                                <div class="upload-title" style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">Click to upload a new image</div>
+                                <div class="upload-subtitle" style="font-size: 0.85rem; color: var(--text-secondary);">Supported formats: JPG, PNG, GIF, WebP</div>
                                 <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)">
                             </div>
                             <div class="image-preview d-none" id="imagePreviewContainer">
                                 <img id="imagePreview" src="" alt="Image Preview">
-                                <button type="button" class="remove-image" onclick="removeImage()"><i class="bi bi-x"></i></button>
+                                <button type="button" class="remove-image" onclick="removeImage()" aria-label="Remove image"><i class="bi bi-x"></i></button>
                             </div>
                             <p class="field-hint mt-2"><i class="bi bi-info-circle"></i> Upload a new image to replace the current one</p>
                         </div>
@@ -315,5 +490,22 @@ function removeImage() {
     uploadZone.style.display = 'block';
     fileInput.value = '';
 }
+
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+    var feedback = document.getElementById('validationFeedback');
+    var message = document.getElementById('validationMessage');
+    var name = document.getElementById('name').value.trim();
+    var date = document.getElementById('event_date').value;
+    var details = document.getElementById('details').value.trim();
+
+    if (!name || !date || !details) {
+        e.preventDefault();
+        feedback.className = 'validation-feedback show error';
+        message.textContent = 'Please fill in all required fields: Event Name, Event Date, and Event Details.';
+        return;
+    }
+
+    feedback.className = 'validation-feedback';
+});
 </script>
 {% endblock %}

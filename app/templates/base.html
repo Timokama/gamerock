@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Gamerock Welfare{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/footer.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/search.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/toast.css') }}">
     {% block styles %}{% endblock %}
 </head>
 <body>
@@ -108,17 +108,17 @@
                 <ul class="sidebar-submenu" id="sidebarFaqMenu">
                     <li>
                         <a href="{{ url_for('register.faq_list') }}" class="{% if faq_endpoint == 'register.faq_list' %}active{% endif %}">
-                            <i class="bi bi-folder sidebar-submenu-icon" aria-hidden="true"></i> Manage FAQs
+                             <i class="bi bi-gear sidebar-submenu-icon" aria-hidden="true"></i> Manage FAQs
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('register.faq_create') }}" class="{% if faq_endpoint == 'register.faq_create' %}active{% endif %}">
-                            <i class="bi bi-plus sidebar-submenu-icon" aria-hidden="true"></i> Add New FAQ
+                             <i class="bi bi-plus-circle sidebar-submenu-icon" aria-hidden="true"></i> Add New FAQ
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('main.faq') }}" class="{% if faq_endpoint == 'main.faq' %}active{% endif %}">
-                            <i class="bi bi-eye sidebar-submenu-icon" aria-hidden="true"></i> View Public Page
+                             <i class="bi bi-box-arrow-up-right sidebar-submenu-icon" aria-hidden="true"></i> View Public Page
                         </a>
                     </li>
                     {% if faq_categories %}
@@ -326,9 +326,9 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
+    <script src="{{ static_version('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ static_version('js/search.js') }}"></script>
+    <script src="{{ static_version('js/toast.js') }}"></script>
     <script>
         // Sidebar toggle for mobile
         const sidebar = document.getElementById('sidebar');

@@ -232,7 +232,13 @@
 
     <div class="faq-form-card">
         <div class="faq-form-header">
-            <span class="faq-form-header-icon">{{ '<i class="bi bi-pencil-square"></i>' if faq else '<i class="bi bi-plus"></i>' }}</span>
+            <span class="faq-form-header-icon">
+                {% if faq %}
+                    <i class="bi bi-pencil"></i>
+                {% else %}
+                    <i class="bi bi-plus-circle-dotted"></i>
+                {% endif %}
+            </span>
             <div>
                 <h4>{{ 'Edit FAQ' if faq else 'Create FAQ' }}</h4>
                 <p>{{ 'Update the question members see on the public help page.' if faq else 'Add a question and answer to the public help page.' }}</p>
@@ -292,7 +298,13 @@
                     </span>
                     {% endif %}
                     <a href="{{ url_for('register.faq_list') }}" class="action-btn outline">Cancel</a>
-                    <button type="submit" class="action-btn primary">{{ '💾 Update FAQ' if faq else '💾 Create FAQ' }}</button>
+                    <button type="submit" class="action-btn primary">
+                        {% if faq %}
+                            <i class="bi bi-check-lg"></i> Update FAQ
+                        {% else %}
+                            <i class="bi bi-check-lg"></i> Create FAQ
+                        {% endif %}
+                    </button>
                 </div>
             </form>
         </div>

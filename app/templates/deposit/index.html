@@ -1454,30 +1454,7 @@
     <!-- Contributions Table -->
     <div class="profile-section-sub-header">
         <div style="display: flex; gap: var(--space-2); align-items: center;">
-            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-            <div class="dropdown admin-action-dropdown">
-                <button class="dropdown-toggle action-btn primary btn-sm" type="button" onclick="toggleDropdown(this)" aria-label="Deposit Actions">
-                    +
-                </button>
-                <div class="dropdown-menu">
-                    {% if contributions %}
-                    <div class="dropdown-menu-label">Recent Contributions</div>
-                    {% for c in contributions[:5] %}
-                    <div class="dropdown-item" role="menuitem">
-                        <span class="dropdown-item-primary">{{ c.member.firstname }} {{ c.member.lastname }}</span>
-                        <span class="dropdown-item-secondary">{{ c.trans_date.strftime('%b %d, %Y') if c.trans_date else 'N/A' }}</span>
-                        <span class="deposit-amount">Ksh. {{ '{:,}'.format(c.amount or 0) }}</span>
-                    </div>
-                    {% endfor %}
-                    <div class="dropdown-divider"></div>
-                    {% else %}
-                    <div class="dropdown-item dropdown-item--muted">No recent contributions</div>
-                    {% endif %}
-                    <a href="{{ url_for('deposit.index') }}" class="dropdown-item dropdown-item--action" role="menuitem"><i class="bi bi-file-earmark-text"></i> View All Contributions</a>
-                </div>
-            </div>
-            {% endif %}
-            <h4>All Member Contributions</h4>
+          <h4>All Member Contributions</h4>
         </div>
     </div>
     <div class="deposit-table-card">

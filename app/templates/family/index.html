@@ -1039,8 +1039,8 @@
                     {% for member in members %}
                     {% set children_count = member_stats[member.id].total_children if member_stats and member.id in member_stats else member.child|length %}
                     {% set spouse_count = member.spouse|length %}
-                    {% if member.spouse or (member_stats and member.id in member_stats and member_stats[member.id].total_children > 0) %}
-                     <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="{{ '1' if member.spouse else '0' }}" data-has-children="{{ '1' if children_count > 0 else '0' }}" data-spouse-count="{{ spouse_count }}" data-children-count="{{ children_count }}">
+                     {% if member.spouse or (member_stats and member.id in member_stats and member_stats[member.id].total_children > 0) %}
+                      <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="{{ '1' if member.spouse else '0' }}" data-has-children="{{ '1' if children_count > 0 else '0' }}" data-spouse-count="{{ spouse_count }}" data-children-count="{{ children_count }}" data-spouse-names="{% for s in member.spouse %}{{ s.firstname }} {{ s.lastname }} {{ s.surname }}{% if not loop.last %}, {% endif %}{% endfor %}" data-children-names="{% if member_children and member.id in member_children %}{% for c in member_children[member.id] %}{{ c.firstname }} {{ c.lastname }} {{ c.surname }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}" data-spouse-details="{% for s in member.spouse %}{{ s.firstname }} {{ s.lastname }} {{ s.surname }}, {{ s.phone_num }}, {{ s.id_number }}{% if not loop.last %}; {% endif %}{% endfor %}" data-children-details="{% if member_children and member.id in member_children %}{% for c in member_children[member.id] %}{{ c.firstname }} {{ c.lastname }} {{ c.surname }}, {{ c.phone_num }}, {{ c.id_number }}{% if not loop.last %}; {% endif %}{% endfor %}{% endif %}">
                         <td style="text-align: center;">
                             <button class="expand-btn" onclick="toggleSpouse(this, {{ member.id }})" title="Toggle Family Details">+</button>
                         </td>
@@ -1091,7 +1091,7 @@
                         </td>
                     </tr>
                     {% else %}
-                    <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="0" data-has-children="0" data-spouse-count="0" data-children-count="{{ member.child|length }}">
+                    <tr class="searchable-item" data-member-id="{{ member.id }}" data-has-spouse="0" data-has-children="0" data-spouse-count="0" data-children-count="{{ member.child|length }}" data-spouse-names="" data-children-names="{% if member_children and member.id in member_children %}{% for c in member_children[member.id] %}{{ c.firstname }} {{ c.lastname }} {{ c.surname }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}" data-spouse-details="" data-children-details="{% if member_children and member.id in member_children %}{% for c in member_children[member.id] %}{{ c.firstname }} {{ c.lastname }} {{ c.surname }}, {{ c.phone_num }}, {{ c.id_number }}{% if not loop.last %}; {% endif %}{% endfor %}{% endif %}">
                         <td style="text-align: center; color: var(--text-tertiary);">—</td>
                         <td>
                             <span class="family-avatar">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
@@ -1377,17 +1377,22 @@ function filterFamilyDirectory() {
 
     rows.forEach(function (row) {
         var text = (row.textContent || '').toLowerCase();
+        var spouseNames = (row.getAttribute('data-spouse-names') || '').toLowerCase();
+        var childrenNames = (row.getAttribute('data-children-names') || '').toLowerCase();
+        var spouseDetails = (row.getAttribute('data-spouse-details') || '').toLowerCase();
+        var childrenDetails = (row.getAttribute('data-children-details') || '').toLowerCase();
+
         var matchesText = true;
         if (term) {
-            matchesText = text.indexOf(term) > -1;
+            matchesText = text.indexOf(term) > -1 || spouseNames.indexOf(term) > -1 || childrenNames.indexOf(term) > -1 || spouseDetails.indexOf(term) > -1 || childrenDetails.indexOf(term) > -1;
         }
         var matchesId = true;
         if (idTerm) {
-            matchesId = text.indexOf(idTerm) > -1;
+            matchesId = text.indexOf(idTerm) > -1 || spouseDetails.indexOf(idTerm) > -1 || childrenDetails.indexOf(idTerm) > -1;
         }
         var matchesPhone = true;
         if (phoneTerm) {
-            matchesPhone = text.indexOf(phoneTerm) > -1;
+            matchesPhone = text.indexOf(phoneTerm) > -1 || spouseDetails.indexOf(phoneTerm) > -1 || childrenDetails.indexOf(phoneTerm) > -1;
         }
         var matchesStatus = true;
         if (status === 'spouse') {
@@ -1397,6 +1402,17 @@ function filterFamilyDirectory() {
         }
         var show = matchesText && matchesId && matchesPhone && matchesStatus;
         row.style.display = show ? '' : 'none';
+
+        var detailRow = row.nextElementSibling;
+        if (detailRow && detailRow.classList.contains('family-detail-row')) {
+            detailRow.style.display = show ? '' : 'none';
+            if (show && (term || idTerm || phoneTerm)) {
+                detailRow.classList.add('open');
+                var btn = row.querySelector('.expand-btn');
+                if (btn) { btn.classList.add('expanded'); btn.textContent = '−'; }
+            }
+        }
+
         if (show) {
             visible++;
             visibleSpouses += parseInt(row.getAttribute('data-spouse-count') || '0', 10);
@@ -1405,6 +1421,7 @@ function filterFamilyDirectory() {
     });
 
     document.querySelectorAll('#family-list tr.family-detail-row').forEach(function (row) {
+        if (!row.style.display || row.style.display === 'none') return;
         row.classList.remove('open');
         var prevRow = row.previousElementSibling;
         if (prevRow) {
@@ -1434,6 +1451,15 @@ function clearFamilyFilters() {
     if (idSearchInput) idSearchInput.value = '';
     if (phoneSearchInput) phoneSearchInput.value = '';
     if (statusSelect) statusSelect.value = '';
+
+    document.querySelectorAll('#family-list tr.family-detail-row').forEach(function (row) {
+        row.classList.remove('open');
+        var prevRow = row.previousElementSibling;
+        if (prevRow) {
+            var btn = prevRow.querySelector('.expand-btn');
+            if (btn) { btn.classList.remove('expanded'); btn.textContent = '+'; }
+        }
+    });
 }
 
 function toggleSpouse(btn, memberId) {

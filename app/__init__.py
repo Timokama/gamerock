@@ -34,6 +34,11 @@ def create_app():
     app.config['USE_RELOADER'] = False
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.config['DEBUG'] = False
+    app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+
+    app.jinja_env.auto_reload = True
+    app.jinja_env.cache = {}
+    app.jinja_env.autoescape = True
 
     @app.after_request
     def set_no_cache(response):
@@ -276,5 +281,18 @@ def create_app():
             return f"{url_for('static', filename=filename)}?v={int(os.path.getmtime(filepath))}"
         except OSError:
             return url_for('static', filename=filename)
+
+    @app.context_processor
+    def inject_template_versions():
+        import os
+        version_map = {}
+        template_names = ['admin_dashboard.html', 'tag.html']
+        for name in template_names:
+            filepath = os.path.join(app.root_path, 'templates', name)
+            try:
+                version_map[name] = int(os.path.getmtime(filepath))
+            except OSError:
+                version_map[name] = 0
+        return {'template_versions': version_map}
 
     return app
