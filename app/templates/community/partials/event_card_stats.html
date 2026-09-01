@@ -1,0 +1,16 @@
+<div class="event-card-stats">
+    <div class="event-card-stat">
+        <span class="event-card-stat-value">Ksh. {{ "{:,}".format(item.total) }}</span>
+        <span class="event-card-stat-label">Total</span>
+    </div>
+    <div class="event-card-stat">
+        <span class="event-card-stat-value">{{ item.contributor_count }}</span>
+        <span class="event-card-stat-label">Contributors</span>
+    </div>
+    {% if item.event.goal_amount %}
+    <div class="event-card-stat">
+        <span class="event-card-stat-value">{{ "{:.0f}".format((item.total / item.event.goal_amount) * 100) }}%</span>
+        <span class="event-card-stat-label">Goal</span>
+    </div>
+    {% endif %}
+</div>

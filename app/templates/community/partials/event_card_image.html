@@ -1,0 +1,7 @@
+{% if item.event.image %}
+<img src="{{ url_for('static', filename='images/events/' + item.event.image) }}" alt="{{ item.event.name }}" class="event-card-image" loading="lazy">
+{% else %}
+<div class="event-card-image d-flex align-items-center justify-content-center text-muted">
+    <i class="bi bi-calendar-event" style="font-size: 3rem; opacity: 0.4;"></i>
+</div>
+{% endif %}
