@@ -72,10 +72,17 @@
                     <i class="bi bi-bar-chart sidebar-nav-icon" aria-hidden="true"></i> Reports
                 </a>
             </li>
-            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
             <li>
                 <a href="{{ url_for('budget.index') }}" class="{% if request.endpoint and request.endpoint.startswith('budget') %}active{% endif %}">
                     <i class="bi bi-journal-text sidebar-nav-icon" aria-hidden="true"></i> Budgets
+                </a>
+            </li>
+            {% endif %}
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+            <li>
+                <a href="{{ url_for('sponsor.index') }}" class="{% if request.endpoint and request.endpoint.startswith('sponsor') %}active{% endif %}">
+                    <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Sponsors
                 </a>
             </li>
             {% endif %}
@@ -174,6 +181,13 @@
                         <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Add Family
                     </a>
                 </li>
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                <li>
+                    <a href="{{ url_for('sponsor.create') }}" title="Add New Sponsor">
+                        <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> New Sponsor
+                    </a>
+                </li>
+                {% endif %}
                 {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                 <li>
                     <a href="{{ url_for('budget.create') }}" title="Create New Budget">

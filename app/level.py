@@ -30,6 +30,10 @@ class AccessLevel(Enum):
         return self in (AccessLevel.DEVEL, AccessLevel.CHAIRPERSON, AccessLevel.ADMIN, AccessLevel.WELFARE_OFFICER)
 
     @property
+    def is_sponsor_admin(self):
+        return self in (AccessLevel.DEVEL, AccessLevel.CHAIRPERSON, AccessLevel.ADMIN)
+
+    @property
     def level(self):
         hierarchy = {
             AccessLevel.DEVEL: 5,

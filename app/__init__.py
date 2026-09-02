@@ -104,6 +104,9 @@ def create_app():
     from app.requisition import bp as requisition_bp
     app.register_blueprint(requisition_bp, url_prefix='/requisition')
 
+    from app.sponsor import bp as sponsor_bp
+    app.register_blueprint(sponsor_bp, url_prefix='/sponsor')
+
     from app.models.register import Member
     from app.models.faq import FAQ
     from app.models.community_event import CommunityEvent

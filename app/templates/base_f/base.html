@@ -320,6 +320,13 @@
                     </a>
                 </li>
                 {% endif %}
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                <li>
+                    <a href="{{ url_for('sponsor.index') }}" class="{% if request.endpoint and request.endpoint.startswith('sponsor') %}active{% endif %}">
+                        <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Sponsors
+                    </a>
+                </li>
+                {% endif %}
                 {% if current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER'] %}
                 <li>
                     <a href="{{ url_for('treasurer.index') }}" class="{% if request.endpoint and request.endpoint.startswith('treasurer') %}active{% endif %}">
@@ -400,6 +407,13 @@
                         <i class="bi bi-plus sidebar-nav-icon" aria-hidden="true"></i> Add Member
                     </a>
                 </li>
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                <li>
+                    <a href="{{ url_for('sponsor.create') }}" title="Add New Sponsor">
+                        <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> New Sponsor
+                    </a>
+                </li>
+                {% endif %}
                 <li>
                     <a href="{{ url_for('budget.create') }}" title="Create New Budget">
                         <i class="bi bi-journal-text sidebar-nav-icon" aria-hidden="true"></i> New Budget
