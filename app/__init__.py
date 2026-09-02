@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
 from flaskwebgui import FlaskUI
-from flask_migrate import Migrate
 import os
 import sys
 from datetime import datetime
@@ -18,7 +17,6 @@ def allowed_file(filename):
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
-migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -48,7 +46,6 @@ def create_app():
         return response
 
     db.init_app(app)
-    migrate.init_app(app, db)
     
     login_manager = LoginManager()
     login_manager.login_view = 'auth.index'
