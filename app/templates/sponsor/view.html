@@ -1,0 +1,204 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}{{ sponsor.name }}{% endblock %}
+
+{% block content %}
+<div class="mg-detail-container">
+    <div class="mg-page-header mb-6">
+        <h2>{{ sponsor.name }}</h2>
+        {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+        <div class="row-actions">
+            <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ sponsor.name }}">
+                <span aria-hidden="true"><i class="bi bi-gear"></i></span>
+                <span>Actions</span>
+                <span class="row-actions-caret" aria-hidden="true">▾</span>
+            </button>
+            <div class="row-actions-menu" role="menu">
+                <a href="{{ url_for('sponsor.edit', sponsor_id=sponsor.id) }}" class="row-action-item" role="menuitem">
+                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
+                    <span class="row-action-copy">
+                        <span class="row-action-label">Edit</span>
+                        <span class="row-action-hint">Update details</span>
+                    </span>
+                </a>
+                <form method="post" action="{{ url_for('sponsor.delete', sponsor_id=sponsor.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ sponsor.name }}? This action cannot be undone.');">
+                    <button type="submit" class="row-action-item danger" role="menuitem">
+                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                        <span class="row-action-copy">
+                            <span class="row-action-label">Delete</span>
+                            <span class="row-action-hint">Permanent removal</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Sponsor Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Name</span>
+                <span class="mg-detail-value">{{ sponsor.name }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Contact Person</span>
+                <span class="mg-detail-value">{{ sponsor.contact_person or 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Email</span>
+                <span class="mg-detail-value">{{ sponsor.email or 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Phone</span>
+                <span class="mg-detail-value">{{ sponsor.phone or 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Address</span>
+                <span class="mg-detail-value">{{ sponsor.address or 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Sponsorship Type</span>
+                <span class="mg-detail-value">{{ sponsor.sponsorship_type or 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Amount</span>
+                <span class="mg-detail-value">{% if sponsor.amount %}Ksh. {{ '{:,}'.format(sponsor.amount) }}{% else %}N/A{% endif %}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Start Date</span>
+                <span class="mg-detail-value">{{ sponsor.start_date.strftime('%B %d, %Y') if sponsor.start_date else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">End Date</span>
+                <span class="mg-detail-value">{{ sponsor.end_date.strftime('%B %d, %Y') if sponsor.end_date else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Status</span>
+                <span class="mg-detail-value">
+                    {% if sponsor.status == 'Active' %}
+                    <span class="mg-badge mg-badge-success">{{ sponsor.status }}</span>
+                    {% elif sponsor.status == 'Pending' %}
+                    <span class="mg-badge mg-badge-warning">{{ sponsor.status }}</span>
+                    {% elif sponsor.status == 'Inactive' %}
+                    <span class="mg-badge mg-badge-danger">{{ sponsor.status }}</span>
+                    {% else %}
+                    <span class="mg-badge mg-badge-info">{{ sponsor.status }}</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created By</span>
+                <span class="mg-detail-value">{{ sponsor.creator.first_name if sponsor.creator else 'N/A' }}</span>
+            </div>
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Created At</span>
+                <span class="mg-detail-value">{{ sponsor.created_at.strftime('%B %d, %Y %I:%M %p') if sponsor.created_at else 'N/A' }}</span>
+            </div>
+            {% if sponsor.notes %}
+            <div class="mg-detail-row">
+                <span class="mg-detail-label">Notes</span>
+                <span class="mg-detail-value">{{ sponsor.notes }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mg-card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Sponsorship Items</h4>
+            {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+            <a href="{{ url_for('sponsor.create_item', sponsor_id=sponsor.id) }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus"></i> Add Item
+            </a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% set items = sponsor.items.all() %}
+            {% if items %}
+            <div class="table-responsive">
+                <table class="mg-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td data-label="Item"><strong>{{ item.item_name }}</strong>{% if item.description %}<br><small class="text-muted">{{ item.description }}</small>{% endif %}</td>
+                            <td data-label="Type">{{ item.item_type or 'N/A' }}</td>
+                            <td data-label="Qty">{{ item.quantity }}</td>
+                            <td data-label="Unit Price">{% if item.unit_price %}Ksh. {{ '{:,}'.format(item.unit_price) }}{% else %}N/A{% endif %}</td>
+                            <td data-label="Total"><strong>{% if item.total_price %}Ksh. {{ '{:,}'.format(item.total_price) }}{% else %}N/A{% endif %}</strong></td>
+                            <td data-label="Status">
+                                {% if item.status == 'Completed' %}
+                                <span class="mg-badge mg-badge-success">{{ item.status }}</span>
+                                {% elif item.status == 'Pending' %}
+                                <span class="mg-badge mg-badge-warning">{{ item.status }}</span>
+                                {% elif item.status == 'Cancelled' %}
+                                <span class="mg-badge mg-badge-danger">{{ item.status }}</span>
+                                {% else %}
+                                <span class="mg-badge mg-badge-info">{{ item.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Actions">
+                                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                                <div class="row-actions">
+                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ item.item_name }}">
+                                        <span aria-hidden="true"><i class="bi bi-gear"></i></span>
+                                        <span>Actions</span>
+                                        <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                    </button>
+                                    <div class="row-actions-menu" role="menu">
+                                        <a href="{{ url_for('sponsor.edit_item', sponsor_id=sponsor.id, item_id=item.id) }}" class="row-action-item" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Edit</span>
+                                                <span class="row-action-hint">Update item</span>
+                                            </span>
+                                        </a>
+                                        <form method="post" action="{{ url_for('sponsor.delete_item', sponsor_id=sponsor.id, item_id=item.id) }}" class="row-action-form" onsubmit="return confirm('Delete this item? This action cannot be undone.');">
+                                            <button type="submit" class="row-action-item danger" role="menuitem">
+                                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                                <span class="row-action-copy">
+                                                    <span class="row-action-label">Delete</span>
+                                                    <span class="row-action-hint">Permanent removal</span>
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-box"></i></div>
+                <h3>No Items Yet</h3>
+                <p>Add sponsorship items to track details.</p>
+                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON'] %}
+                <a href="{{ url_for('sponsor.create_item', sponsor_id=sponsor.id) }}" class="btn btn-primary">Add Item</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('sponsor.index') }}" class="btn btn-outline">← Back to Sponsors</a>
+    </div>
+</div>
+{% endblock %}

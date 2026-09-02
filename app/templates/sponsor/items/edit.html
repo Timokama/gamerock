@@ -1,0 +1,74 @@
+{% extends "base_f/base.html" %}
+
+{% block page_title %}Edit Sponsor Item{% endblock %}
+
+{% block content %}
+<div class="mg-form-container">
+    <div class="mg-page-header">
+        <h2>Edit Sponsor Item</h2>
+        <a href="{{ url_for('sponsor.view', sponsor_id=sponsor.id) }}" class="btn btn-outline">← Back</a>
+    </div>
+
+    <div class="mg-card">
+        <div class="card-header">
+            <h4>Item Details for {{ sponsor.name }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="item_name">Item Name *</label>
+                        <input type="text" id="item_name" name="item_name" value="{{ item.item_name }}" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="item_type">Type</label>
+                        <select id="item_type" name="item_type">
+                            <option value="">Select type...</option>
+                            <option value="Financial" {{ 'selected' if item.item_type == 'Financial' }}>Financial</option>
+                            <option value="In-Kind" {{ 'selected' if item.item_type == 'In-Kind' }}>In-Kind</option>
+                            <option value="Equipment" {{ 'selected' if item.item_type == 'Equipment' }}>Equipment</option>
+                            <option value="Other" {{ 'selected' if item.item_type == 'Other' }}>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mg-form-row">
+                    <div class="mg-form-group">
+                        <label for="quantity">Quantity *</label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="{{ item.quantity }}" required>
+                    </div>
+                    <div class="mg-form-group">
+                        <label for="unit_price">Unit Price (Ksh)</label>
+                        <input type="number" id="unit_price" name="unit_price" min="0" value="{{ item.unit_price or '' }}">
+                    </div>
+                </div>
+
+                <div class="mg-form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="Pending" {{ 'selected' if item.status == 'Pending' }}>Pending</option>
+                        <option value="Active" {{ 'selected' if item.status == 'Active' }}>Active</option>
+                        <option value="Completed" {{ 'selected' if item.status == 'Completed' }}>Completed</option>
+                        <option value="Cancelled" {{ 'selected' if item.status == 'Cancelled' }}>Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="mg-form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="2">{{ item.description or '' }}</textarea>
+                </div>
+
+                <div class="mg-form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes" rows="2">{{ item.notes or '' }}</textarea>
+                </div>
+
+                <div class="mg-form-actions">
+                    <button type="submit" class="btn btn-primary">Update Item</button>
+                    <a href="{{ url_for('sponsor.view', sponsor_id=sponsor.id) }}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

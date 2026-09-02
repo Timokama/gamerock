@@ -14,7 +14,7 @@ if __name__ == "__main__":
         app=app,
         server="flask",
         port=port,
-        server_kwargs={"app": app, "host": host},
+        server_kwargs={"app": app, "host": host, "port": port},
         width=1024,
         height=768,
         fullscreen=False,

@@ -5,6 +5,7 @@ from flask_login import LoginManager, current_user
 from flaskwebgui import FlaskUI
 import os
 import sys
+import logging
 from datetime import datetime
 
 PEOPLE_FOLDER = os.path.join('static', 'photos')
@@ -14,6 +15,14 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Suppress verbose Flask/Jinja2/Werkzeug INFO logs
+logging.getLogger('werkzeug').setLevel(logging.WARNING)
+logging.getLogger('jinja2').setLevel(logging.WARNING)
+logging.getLogger('flask').setLevel(logging.WARNING)
+logging.getLogger('sqlalchemy').setLevel(logging.WARNING)
+logging.getLogger('alembic').setLevel(logging.WARNING)
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
@@ -28,15 +37,17 @@ def create_app():
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = False
     app.config['USE_RELOADER'] = False
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.config['DEBUG'] = False
-    app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+    app.config['EXPLAIN_TEMPLATE_LOADING'] = False
 
-    app.jinja_env.auto_reload = True
+    app.jinja_env.auto_reload = False
     app.jinja_env.cache = {}
     app.jinja_env.autoescape = True
+
+    app.logger.setLevel(logging.WARNING)
 
     @app.after_request
     def set_no_cache(response):
