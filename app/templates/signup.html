@@ -1,31 +1,73 @@
 {% extends "base.html" %}
 
 {% block styles %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --primary: #0f766e;
-        --primary-dark: #115e59;
-        --primary-light: #14b8a6;
         --primary-50: #f0fdfa;
-        --accent: #f59e0b;
-        --accent-light: #fbbf24;
-        --text-dark: #0f172a;
-        --text-muted: #475569;
-        --text-light: #94a3b8;
-        --bg-light: #f8fafc;
-        --bg-white: #ffffff;
-        --border-light: #e2e8f0;
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --primary-100: #ccfbf1;
+        --primary-200: #99f6e4;
+        --primary-300: #5eead4;
+        --primary-400: #2dd4bf;
+        --primary-500: #14b8a6;
+        --primary-600: #0d9488;
+        --primary-700: #0f766e;
+        --primary-800: #115e59;
+        --primary-900: #134e4a;
+        --accent-400: #fbbf24;
+        --accent-500: #f59e0b;
+        --accent-600: #d97706;
+        --neutral-50: #f8fafc;
+        --neutral-100: #f1f5f9;
+        --neutral-200: #e2e8f0;
+        --neutral-300: #cbd5e1;
+        --neutral-400: #64748b;
+        --neutral-500: #475569;
+        --neutral-600: #334155;
+        --neutral-700: #1e293b;
+        --neutral-800: #0f172a;
+        --surface-primary: #ffffff;
+        --surface-secondary: #f8fafc;
+        --surface-tertiary: #f1f5f9;
+        --text-primary: #0f172a;
+        --text-secondary: #334155;
+        --text-tertiary: #64748b;
+        --text-inverse: #ffffff;
+        --border-subtle: #e2e8f0;
+        --border-default: #cbd5e1;
+        --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.25rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 1.125rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        background: linear-gradient(135deg, var(--primary-50) 0%, var(--surface-primary) 50%, var(--surface-tertiary) 100%);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: "ss01", "cv02", "cv03";
+        text-rendering: optimizeLegibility;
     }
 
     .signup-wrapper {
@@ -34,26 +76,8 @@
         align-items: center;
         justify-content: center;
         padding: 2rem 1rem;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
         position: relative;
         overflow: hidden;
-    }
-
-    .signup-wrapper .main-content {
-        margin-left: 0 !important;
-        width: 100% !important;
-        max-width: none !important;
-    }
-
-    .signup-wrapper #main-content {
-        margin-left: 0 !important;
-        padding: 0 !important;
-    }
-
-    .signup-wrapper .container {
-        max-width: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
     }
 
     .signup-wrapper::before {
@@ -63,8 +87,9 @@
         right: -200px;
         width: 600px;
         height: 600px;
-        background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(20, 184, 166, 0.10), transparent 70%);
         border-radius: 50%;
+        pointer-events: none;
     }
 
     .signup-wrapper::after {
@@ -74,30 +99,30 @@
         left: -150px;
         width: 500px;
         height: 500px;
-        background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.08), transparent 70%);
         border-radius: 50%;
-    }
-
-    .signup-container {
-        width: 100%;
-        max-width: 1200px;
-        position: relative;
-        z-index: 1;
+        pointer-events: none;
     }
 
     .signup-card {
-        background: #ffffff;
-        border-radius: 24px;
-        border: 1px solid var(--border-light);
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-2xl);
         box-shadow: var(--shadow-2xl);
         overflow: hidden;
         display: grid;
-        grid-template-columns: 1fr 1.8fr;
-        min-height: 600px;
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 1100px;
+        position: relative;
+        z-index: 1;
+        animation: fadeInUp 0.7s ease-out;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
     .signup-brand {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%);
         color: white;
         padding: 3rem 2.5rem;
         display: flex;
@@ -114,8 +139,9 @@
         right: -30%;
         width: 300px;
         height: 300px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 50%;
+        pointer-events: none;
     }
 
     .signup-brand::after {
@@ -127,6 +153,7 @@
         height: 250px;
         background: rgba(255, 255, 255, 0.08);
         border-radius: 50%;
+        pointer-events: none;
     }
 
     .signup-brand-content {
@@ -137,7 +164,7 @@
     .signup-logo {
         width: 56px;
         height: 56px;
-        border-radius: 16px;
+        border-radius: var(--radius-xl);
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
         display: flex;
@@ -204,13 +231,14 @@
     .signup-form-header h3 {
         font-size: 1.75rem;
         font-weight: 700;
-        color: var(--text-dark);
+        color: var(--text-primary);
         margin-bottom: 0.5rem;
+        letter-spacing: -0.01em;
     }
 
     .signup-form-header p {
-        color: var(--text-muted);
-        font-size: 0.9rem;
+        color: var(--text-tertiary);
+        font-size: 0.9375rem;
         margin-bottom: 0;
     }
 
@@ -218,7 +246,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
-        margin-bottom: 1rem;
     }
 
     .form-group {
@@ -228,7 +255,7 @@
     .form-group label {
         display: block;
         font-weight: 600;
-        color: var(--text-dark);
+        color: var(--text-primary);
         margin-bottom: 0.5rem;
         font-size: 0.875rem;
         letter-spacing: 0.01em;
@@ -238,25 +265,26 @@
     .form-group select {
         width: 100%;
         padding: 0.875rem 1rem;
-        border: 2px solid var(--border-light);
-        border-radius: 12px;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        background: var(--bg-light);
-        color: var(--text-dark);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        background: var(--surface-secondary);
+        color: var(--text-primary);
         font-family: inherit;
+        line-height: 1.5;
     }
 
     .form-group input:focus,
     .form-group select:focus {
         outline: none;
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
-        background: var(--bg-white);
+        border-color: var(--primary-400);
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+        background: var(--surface-primary);
     }
 
     .form-group input::placeholder {
-        color: var(--text-light);
+        color: var(--text-tertiary);
     }
 
     .password-field {
@@ -272,41 +300,43 @@
         right: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
-        background: none;
+        background: transparent;
         border: none;
-        color: var(--text-muted);
+        color: var(--text-tertiary);
         cursor: pointer;
         padding: 0.5rem;
         border-radius: 8px;
-        transition: all 0.2s ease;
-        display: flex;
+        transition: all var(--transition-fast);
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        z-index: 2;
     }
 
     .password-toggle:hover {
-        color: var(--primary);
-        background: rgba(20, 184, 166, 0.1);
+        color: var(--primary-600);
+        background: rgba(20, 184, 166, 0.10);
     }
 
     .btn-signup {
         width: 100%;
-        padding: 0.875rem;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        color: white;
+        padding: 0.9375rem;
+        background: linear-gradient(135deg, var(--accent-500), var(--accent-400));
+        color: #1a1a1a;
         border: none;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+        transition: all var(--transition-fast);
+        box-shadow: var(--shadow-sm), 0 0 0 0 rgba(245, 158, 11, 0);
+        letter-spacing: 0.01em;
         margin-top: 0.5rem;
     }
 
     .btn-signup:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.45);
+        box-shadow: var(--shadow-md), 0 0 0 6px rgba(245, 158, 11, 0.12);
     }
 
     .btn-signup:active {
@@ -317,55 +347,65 @@
         text-align: center;
         margin-top: 1.5rem;
         padding-top: 1.5rem;
-        border-top: 1px solid var(--border-light);
-        color: var(--text-muted);
-        font-size: 0.9rem;
+        border-top: 1px solid var(--border-subtle);
+        color: var(--text-tertiary);
+        font-size: 0.875rem;
     }
 
     .signup-footer a {
-        color: var(--primary);
+        color: var(--primary-700);
         text-decoration: none;
         font-weight: 600;
-        transition: color 0.2s ease;
     }
 
     .signup-footer a:hover {
-        color: var(--primary-dark);
         text-decoration: underline;
     }
 
     .alert {
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         border: none;
-        padding: 0.85rem 1.1rem;
+        padding: 0.875rem 1.125rem;
         font-weight: 500;
         font-size: 0.875rem;
         margin-bottom: 1.25rem;
+        display: none;
     }
 
     .alert-danger {
         background: #fef2f2;
         color: #991b1b;
         border: 1px solid #fecaca;
+        display: block;
     }
 
     .alert-success {
         background: #f0fdf4;
         color: #166534;
         border: 1px solid #bbf7d0;
+        display: block;
     }
 
     .password-hint {
-        font-size: 0.75rem;
-        color: var(--text-light);
+        font-size: 0.8125rem;
+        color: var(--text-tertiary);
         margin-top: 0.35rem;
         text-align: right;
     }
 
-    /* Responsive */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 968px) {
+        .signup-card {
+            grid-template-columns: 1fr 1.8fr;
+        }
+    }
+
     @media (max-width: 968px) {
         .signup-card {
-            grid-template-columns: 1fr;
             max-width: 520px;
             margin: 0 auto;
         }
@@ -406,39 +446,38 @@
         }
     }
 
-    /* Dark mode overrides */
     @media (prefers-color-scheme: dark) {
-        .signup-wrapper {
+        body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         }
 
         .signup-card {
-            background: #1e293b;
-            border-color: #334155;
+            background: rgba(30, 41, 59, 0.96);
+            border-color: var(--neutral-700);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .signup-form-header h3 {
-            color: #f1f5f9;
+            color: var(--neutral-100);
         }
 
         .signup-form-header p {
-            color: #94a3b8;
+            color: var(--neutral-400);
         }
 
         .form-group label {
-            color: #e2e8f0;
+            color: var(--neutral-100);
         }
 
         .form-group input {
             background: #0f172a;
             border-color: #334155;
-            color: #e2e8f0;
+            color: var(--neutral-100);
         }
 
         .form-group input:focus {
             background: #1e293b;
-            border-color: var(--primary-light);
+            border-color: var(--primary-400);
         }
 
         .form-group input::placeholder {
@@ -446,7 +485,6 @@
         }
 
         .btn-signup {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4);
         }
 
@@ -456,15 +494,15 @@
 
         .signup-footer {
             border-top-color: #334155;
-            color: #94a3b8;
+            color: var(--neutral-400);
         }
 
         .signup-footer a {
-            color: var(--primary-light);
+            color: var(--primary-400);
         }
 
         .signup-footer a:hover {
-            color: var(--primary);
+            color: var(--primary-300);
         }
 
         .password-hint {
@@ -484,37 +522,37 @@
         }
     }
 
-    [data-theme="dark"] .signup-wrapper {
+    [data-theme="dark"] body {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
 
     [data-theme="dark"] .signup-card {
-        background: #1e293b;
+        background: rgba(30, 41, 59, 0.96);
         border-color: #334155;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
     [data-theme="dark"] .signup-form-header h3 {
-        color: #f1f5f9;
+        color: var(--neutral-100);
     }
 
     [data-theme="dark"] .signup-form-header p {
-        color: #94a3b8;
+        color: var(--neutral-400);
     }
 
     [data-theme="dark"] .form-group label {
-        color: #e2e8f0;
+        color: var(--neutral-100);
     }
 
     [data-theme="dark"] .form-group input {
         background: #0f172a;
         border-color: #334155;
-        color: #e2e8f0;
+        color: var(--neutral-100);
     }
 
     [data-theme="dark"] .form-group input:focus {
         background: #1e293b;
-        border-color: var(--primary-light);
+        border-color: var(--primary-400);
     }
 
     [data-theme="dark"] .form-group input::placeholder {
@@ -531,15 +569,15 @@
 
     [data-theme="dark"] .signup-footer {
         border-top-color: #334155;
-        color: #94a3b8;
+        color: var(--neutral-400);
     }
 
     [data-theme="dark"] .signup-footer a {
-        color: var(--primary-light);
+        color: var(--primary-400);
     }
 
     [data-theme="dark"] .signup-footer a:hover {
-        color: var(--primary);
+        color: var(--primary-300);
     }
 
     [data-theme="dark"] .password-hint {
@@ -557,204 +595,124 @@
         color: #34d399;
         border-color: rgba(16, 185, 129, 0.3);
     }
-
-    [data-theme="light"] .signup-wrapper {
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fefaf3 100%);
-    }
-
-    [data-theme="light"] .signup-card {
-        background: var(--bg-white);
-        border-color: var(--border-light);
-        box-shadow: var(--shadow-xl);
-    }
-
-    [data-theme="light"] .signup-form-header h3 {
-        color: var(--text-dark);
-    }
-
-    [data-theme="light"] .signup-form-header p {
-        color: var(--text-muted);
-    }
-
-    [data-theme="light"] .form-group label {
-        color: var(--text-dark);
-    }
-
-    [data-theme="light"] .form-group input {
-        background: var(--bg-light);
-        border-color: var(--border-light);
-        color: var(--text-dark);
-    }
-
-    [data-theme="light"] .form-group input:focus {
-        background: var(--bg-white);
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
-    }
-
-    [data-theme="light"] .form-group input::placeholder {
-        color: var(--text-light);
-    }
-
-    [data-theme="light"] .btn-signup {
-        box-shadow: 0 4px 14px rgba(15, 118, 110, 0.3);
-    }
-
-    [data-theme="light"] .btn-signup:hover {
-        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
-    }
-
-    [data-theme="light"] .signup-footer {
-        border-top-color: var(--border-light);
-        color: var(--text-muted);
-    }
-
-    [data-theme="light"] .signup-footer a {
-        color: var(--primary);
-    }
-
-    [data-theme="light"] .signup-footer a:hover {
-        color: var(--primary-dark);
-    }
-
-    [data-theme="light"] .password-hint {
-        color: var(--text-light);
-    }
-
-    [data-theme="light"] .alert-danger {
-        background: #fef2f2;
-        color: #991b1b;
-        border-color: #fecaca;
-    }
-
-    [data-theme="light"] .alert-success {
-        background: #f0fdf4;
-        color: #166534;
-        border-color: #bbf7d0;
-    }
 </style>
 {% endblock %}
 
 {% block body_class %}signup-page{% endblock %}
 {% block content %}
 <div class="signup-wrapper">
-    <div class="signup-container">
-        <div class="signup-card">
-            <div class="signup-brand">
-                <div class="signup-brand-content">
-                    <div class="signup-logo"><i class="bi bi-stars"></i></div>
-                    <h2>Join Gamerock Welfare</h2>
-                    <p>Create your account and become part of our supportive community. Manage contributions, connect with family, and stay updated with events.</p>
-                    <ul class="signup-features-list">
-                        <li>
-                            <span class="feature-check">✓</span>
-                            <span>Secure member dashboard</span>
-                        </li>
-                        <li>
-                            <span class="feature-check">✓</span>
-                            <span>Family connection tools</span>
-                        </li>
-                        <li>
-                            <span class="feature-check">✓</span>
-                            <span>Contribution tracking</span>
-                        </li>
-                        <li>
-                            <span class="feature-check">✓</span>
-                            <span>Community events access</span>
-                        </li>
-                    </ul>
-                </div>
+    <div class="signup-card">
+        <div class="signup-brand">
+            <div class="signup-brand-content">
+                <div class="signup-logo"><i class="bi bi-stars"></i></div>
+                <h2>Join Gamerock Welfare</h2>
+                <p>Create your account and become part of our supportive community. Manage contributions, connect with family, and stay updated with events.</p>
+                <ul class="signup-features-list">
+                    <li>
+                        <span class="feature-check">✓</span>
+                        <span>Secure member dashboard</span>
+                    </li>
+                    <li>
+                        <span class="feature-check">✓</span>
+                        <span>Family connection tools</span>
+                    </li>
+                    <li>
+                        <span class="feature-check">✓</span>
+                        <span>Contribution tracking</span>
+                    </li>
+                    <li>
+                        <span class="feature-check">✓</span>
+                        <span>Community events access</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="signup-form-section">
+            <div class="signup-form-header">
+                <h3>Create Account</h3>
+                <p>Fill in your details to get started</p>
             </div>
 
-            <div class="signup-form-section">
-                <div class="signup-form-header">
-                    <h3>Create Account</h3>
-                    <p>Fill in your details to get started</p>
+            {% if error %}
+            <div class="alert alert-danger" style="display: block;">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('auth.signup') }}" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-input" id="first_name" name="first_name" placeholder="Enter first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-input" id="last_name" name="last_name" placeholder="Enter last name" required>
+                    </div>
                 </div>
 
-                <form method="POST" action="{{ url_for('auth.signup') }}">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="first_name">First Name</label>
-                             <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name" required style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                        </div>
-                        <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name" required style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="surname">Surname</label>
-                            <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter surname" required style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="date_of_birth">Date of Birth</label>
-                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_number">ID Number</label>
-                            <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone_num">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number" required style="width: 100%; height: 2.75rem; border-radius: 12px;">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="password-field">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required style="width: 100%; height: 2.75rem; border-radius: 12px; padding-right: 3rem;">
-                            <button type="button" class="password-toggle" id="toggle-password" data-input-id="password" title="Show password" aria-label="Show password" aria-pressed="false">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="password-hint">Use at least 6 characters</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
-                        <div class="password-field">
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required style="width: 100%; height: 2.75rem; border-radius: 12px; padding-right: 3rem;">
-                            <button type="button" class="password-toggle" id="toggle-confirm-password" data-input-id="confirm_password" title="Show password" aria-label="Show password" aria-pressed="false">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="display: none;">
-                        <label for="role">Account Type</label>
-                        <select class="form-control" id="role" name="role">
-                            <option value="USER" selected>User</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-signup">Create Account</button>
-                </form>
-
-                <div class="signup-footer">
-                    <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login', role='User') }}">Sign in here</a></p>
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input type="text" class="form-input" id="surname" name="surname" placeholder="Enter surname" required>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth</label>
+                        <input type="date" class="form-input" id="date_of_birth" name="date_of_birth">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_number">ID Number</label>
+                        <input type="text" class="form-input" id="id_number" name="id_number" placeholder="Enter ID number">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-input" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_num">Phone Number</label>
+                    <input type="tel" class="form-input" id="phone_num" name="phone_num" placeholder="+254 700 000000" required autocomplete="tel">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-input" id="password" name="password" placeholder="Create a password" required autocomplete="new-password">
+                        <button type="button" class="password-toggle" id="toggle-password" data-input-id="password" title="Show password" aria-label="Show password" aria-pressed="false">
+                        </button>
+                    </div>
+                    <div class="password-hint">Use at least 6 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-input" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required autocomplete="new-password">
+                        <button type="button" class="password-toggle" id="toggle-confirm-password" data-input-id="confirm_password" title="Show password" aria-label="Show password" aria-pressed="false">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none;">
+                    <label for="role">Account Type</label>
+                    <select class="form-input" id="role" name="role">
+                        <option value="USER" selected>User</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-signup">Create Account</button>
+            </form>
+
+            <div class="signup-footer">
+                <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login', role='User') }}">Sign in here</a></p>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script>
     const html = document.documentElement;
