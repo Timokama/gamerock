@@ -11,10 +11,12 @@
     <link rel="stylesheet" href="{{ static_version('css/toast.css') }}">
     {% block styles %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
+    {% set hide_chrome = request.endpoint in ['auth.login', 'auth.signup'] %}
     <!-- Skip to Content -->
     <a href="#main-content" class="skip-to-content">Skip to content</a>
 
+    {% if not hide_chrome %}
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -249,9 +251,11 @@
         </div>
         {% endif %}
     </aside>
+    {% endif %}
 
     <!-- Main Content -->
     <div class="main-content">
+        {% if not hide_chrome %}
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-left">
@@ -320,6 +324,7 @@
                 {% endif %}
             </div>
         </header>
+        {% endif %}
 
         <!-- Toast Notifications -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -335,7 +340,9 @@
 
         <!-- Footer (shared partial) -->
         {% block footer %}
+        {% if not hide_chrome %}
         {% include 'partials/footer.html' %}
+        {% endif %}
         {% endblock %}
     </div>
 
@@ -470,7 +477,11 @@
         }
 
         var savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
+        var bodyClass = document.body.className || '';
+        var forceLight = bodyClass.indexOf('landing-page') !== -1 || bodyClass.indexOf('login-page') !== -1 || bodyClass.indexOf('signup-page') !== -1;
+        if (forceLight) {
+            setTheme('light');
+        } else if (savedTheme) {
             setTheme(savedTheme);
         }
 

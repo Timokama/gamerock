@@ -39,23 +39,10 @@
         overflow: hidden;
     }
 
-    .signup-wrapper .sidebar,
-    .signup-wrapper .sidebar-overlay {
-        display: none !important;
-    }
-
     .signup-wrapper .main-content {
         margin-left: 0 !important;
         width: 100% !important;
         max-width: none !important;
-    }
-
-    .signup-wrapper .top-header {
-        display: none !important;
-    }
-
-    .signup-wrapper .footer {
-        display: none !important;
     }
 
     .signup-wrapper #main-content {
@@ -648,6 +635,7 @@
 </style>
 {% endblock %}
 
+{% block body_class %}signup-page{% endblock %}
 {% block content %}
 <div class="signup-wrapper">
     <div class="signup-container">
@@ -766,4 +754,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    const html = document.documentElement;
+    if (html) {
+        html.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('theme', 'light'); } catch (e) {}
+    }
+</script>
 {% endblock %}

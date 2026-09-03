@@ -32,23 +32,10 @@
         overflow: hidden;
     }
 
-    .login-wrapper .sidebar,
-    .login-wrapper .sidebar-overlay {
-        display: none !important;
-    }
-
     .login-wrapper .main-content {
         margin-left: 0 !important;
         width: 100% !important;
         max-width: none !important;
-    }
-
-    .login-wrapper .top-header {
-        display: none !important;
-    }
-
-    .login-wrapper .footer {
-        display: none !important;
     }
 
     .login-wrapper #main-content {
@@ -942,6 +929,7 @@
 </style>
 {% endblock %}
 
+{% block body_class %}login-page{% endblock %}
 {% block content %}
 <div class="login-wrapper">
     <div class="card login-card" style="max-width: 1000px; width: 100%; margin: 0 auto;">
@@ -1050,4 +1038,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    const html = document.documentElement;
+    if (html) {
+        html.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('theme', 'light'); } catch (e) {}
+    }
+</script>
 {% endblock %}
