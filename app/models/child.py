@@ -10,6 +10,7 @@ class Child(db.Model):
     surname = db.Column(db.String(100), nullable=False)
     phone_num = db.Column(db.String(20))
     id_number = db.Column(db.Integer)
+    email = db.Column(db.String(120))
     date_of_birth = db.Column(db.Date)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     

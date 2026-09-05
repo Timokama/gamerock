@@ -272,7 +272,7 @@
             <p class="text-muted mt-2">Update child information</p>
         </div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" onsubmit="return validateChildForm();">
                 <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="firstname" class="form-label">First Name</label>
@@ -296,12 +296,17 @@
 
                     <div class="mb-3">
                         <label for="phone_num" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone_num" name="phone_num" value="{{ child.phone_num }}">
+                        <input type="tel" class="form-control" id="phone_num" name="phone_num" value="{{ child.phone_num }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ child.email or '' }}" required>
                     </div>
 
                     <div class="mb-4">
                         <label for="id_number" class="form-label">ID Number</label>
-                        <input type="text" class="form-control" id="id_number" name="id_number" value="{{ child.id_number if child.id_number is not none else '' }}">
+                        <input type="text" class="form-control" id="id_number" name="id_number" value="{{ child.id_number if child.id_number is not none else '' }}" required>
                     </div>
 
                 <div class="form-actions">
@@ -312,4 +317,35 @@
         </div>
     </div>
 </div>
+
+<script>
+function validateChildForm() {
+    var phone = document.getElementById('phone_num').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var idNumber = document.getElementById('id_number').value.trim();
+    
+    if (!phone) {
+        showToast('Please enter a phone number.', 'error');
+        return false;
+    }
+    
+    if (!email) {
+        showToast('Please enter an email address.', 'error');
+        return false;
+    }
+    
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Please enter a valid email address.', 'error');
+        return false;
+    }
+    
+    if (!idNumber) {
+        showToast('Please enter an ID number.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+</script>
 {% endblock %}

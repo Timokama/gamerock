@@ -1,13 +1,12 @@
 from flask import render_template, request, redirect, url_for, flash
-# from app.register import bp
 from flask_login import login_required, current_user
 from datetime import date, datetime
+from sqlalchemy.exc import IntegrityError
 from app.family import bp
 from app import db
 from app.user import User
 from app.level import AccessLevel
 from app.models.register import Member
-# from app.models.deposit import Deposit
 from app.models.community_event import CommunityEvent
 from app.models.child import Child
 from app.models.spouse import Spouse
@@ -60,61 +59,84 @@ def family(depo_id):
 def edit(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        firstname=request.form['firstname']
-        lastname=request.form['lastname']
-        surname = request.form['surname']
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        phone_num=request.form['phone_num']
-        email=request.form['email']
-        id_number=request.form['id_number']
+        try:
+            firstname=request.form['firstname']
+            lastname=request.form['lastname']
+            surname = request.form['surname']
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            phone_num=request.form['phone_num']
+            email=request.form['email']
+            id_number=request.form['id_number']
 
-        register.firstname = firstname
-        register.lastname = lastname
-        register.surname = surname
-        register.phone_num = phone_num
-        register.email = email
-        register.date_of_birth = date_of_birth
-        register.id_number = id_number
+            register.firstname = firstname
+            register.lastname = lastname
+            register.surname = surname
+            register.phone_num = phone_num
+            register.email = email
+            register.date_of_birth = date_of_birth
+            register.id_number = id_number
 
-        if register.user_account:
-            register.user_account.email = email
-            register.user_account.phone_num = phone_num
-            register.user_account.role = AccessLevel.USER
-        else:
-            existing_user = User.query.filter_by(email=email).first()
-            if not existing_user:
-                new_user = User(
-                    surname=register.surname,
-                    first_name=register.firstname,
-                    email=email,
-                    phone_num=register.phone_num,
-                    passwords=id_number,
-                    role=AccessLevel.USER
-                )
-                db.session.add(new_user)
-                db.session.flush()
-                register.user_id = new_user.id
+            if register.user_account:
+                register.user_account.email = email
+                register.user_account.phone_num = phone_num
+                register.user_account.role = AccessLevel.USER
+            else:
+                existing_user = User.query.filter_by(email=email).first()
+                if not existing_user:
+                    new_user = User(
+                        surname=register.surname,
+                        first_name=register.firstname,
+                        email=email,
+                        phone_num=register.phone_num,
+                        passwords=id_number,
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    register.user_id = new_user.id
 
-        db.session.add(register)
-        db.session.commit()
-        return redirect(url_for('family.family', depo_id=register.id))
+            db.session.add(register)
+            db.session.commit()
+            flash('Member updated successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Failed to update member. The ID number or email you entered is already in use.', 'error')
+            return redirect(url_for('family.edit', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update member. Please check your input and try again.', 'error')
+            return redirect(url_for('family.edit', depo_id=register.id))
     return render_template('register/edit.html', register = register, family = register)
 
 @bp.route('/<int:depo_id>/create_spouse', methods=('POST', 'GET'))
 @login_required
 def create_spouse(depo_id):
-    # If depo_id is 0, redirect to members list
     if depo_id == 0:
-        flash("Please select a member first to add family information.")
+        flash("Please select a member first to add family information.", "error")
         return redirect(url_for('register.index'))
     
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        new_spouse = Spouse(firstname = request.form['firstname'], lastname = request.form['lastname'], surname = request.form['surname'], phone_num = request.form['phone_num'], date_of_birth = date_of_birth, id_number=request.form['id_number'],member = register)
-        db.session.add(new_spouse)
-        db.session.commit()
-        return redirect(url_for('family.family', depo_id = register.id))
+        try:
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            new_spouse = Spouse(
+                firstname=request.form['firstname'],
+                lastname=request.form['lastname'],
+                surname=request.form['surname'],
+                phone_num=request.form['phone_num'],
+                date_of_birth=date_of_birth,
+                id_number=request.form['id_number'],
+                member=register
+            )
+            db.session.add(new_spouse)
+            db.session.commit()
+            flash('Spouse added successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add spouse. Please check your input and try again.', 'error')
+            return redirect(url_for('family.create_spouse', depo_id=register.id))
     return render_template('register/create.html', register=register)
 
 @bp.route('/<int:depo_id>/<int:spouse_id>/create_child', methods=('POST', 'GET'))
@@ -123,20 +145,27 @@ def create_child(depo_id, spouse_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(spouse_id)
     if request.method == 'POST':
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        child = Child(
-            firstname=request.form['firstname'],
-            lastname=request.form['lastname'],
-            surname=request.form['surname'],
-            phone_num=request.form['phone_num'],
-            id_number=request.form['id_number'],
-            date_of_birth=date_of_birth,
-            spouse = spouse
-        )
-        db.session.add(child)
-        db.session.commit()
-        return redirect(url_for('family.family', depo_id = register.id))
-    return render_template('register/create.html', register=register, spouse = spouse)
+        try:
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            child = Child(
+                firstname=request.form['firstname'],
+                lastname=request.form['lastname'],
+                surname=request.form['surname'],
+                phone_num=request.form['phone_num'],
+                id_number=request.form['id_number'],
+                email=request.form['email'],
+                date_of_birth=date_of_birth,
+                spouse=spouse
+            )
+            db.session.add(child)
+            db.session.commit()
+            flash('Child added successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add child. Please check your input and try again.', 'error')
+            return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
+    return render_template('register/create.html', register=register, spouse=spouse)
 
 @bp.post('/<int:depo_id>/<int:del_id>/delete')
 @login_required
@@ -155,25 +184,30 @@ def edit_spouse(depo_id, edit_id):
     register = Member.query.get_or_404(depo_id)
     spouse = Spouse.query.get_or_404(edit_id)
     if request.method == 'POST':
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        surname = request.form['surname']
-        phone_num = request.form['phone_num']
-        raw_id = request.form['id_number'].strip()
-        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        
-        spouse.firstname = firstname
-        spouse.lastname = lastname
-        spouse.surname = surname
-        spouse.phone_num = phone_num
-        spouse.id_number = id_number
-        spouse.date_of_birth = date_of_birth
+        try:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            surname = request.form['surname']
+            phone_num = request.form['phone_num']
+            raw_id = request.form['id_number'].strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            
+            spouse.firstname = firstname
+            spouse.lastname = lastname
+            spouse.surname = surname
+            spouse.phone_num = phone_num
+            spouse.id_number = id_number
+            spouse.date_of_birth = date_of_birth
 
-        db.session.add(spouse)
-        db.session.commit()
-
-        return redirect(url_for('family.family', depo_id = register.id))
+            db.session.add(spouse)
+            db.session.commit()
+            flash('Spouse updated successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update spouse. Please check your input and try again.', 'error')
+            return redirect(url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id))
     return render_template('register/edit.html', register = spouse, family = register)
 
 @bp.route('/<int:depo_id>/<int:edit_id>/<int:child_id>/edit_child', methods=('POST','GET'))
@@ -183,25 +217,32 @@ def edit_child(depo_id, edit_id, child_id):
     spouse = Spouse.query.get_or_404(edit_id)
     child = Child.query.get_or_404(child_id)
     if request.method == 'POST':
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        surname = request.form['surname']
-        phone_num = request.form['phone_num']
-        raw_id = request.form['id_number'].strip()
-        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        
-        child.firstname = firstname
-        child.lastname = lastname
-        child.surname = surname
-        child.phone_num = phone_num
-        child.id_number = id_number
-        child.date_of_birth = date_of_birth
+        try:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            surname = request.form['surname']
+            phone_num = request.form['phone_num']
+            email = request.form['email']
+            raw_id = request.form['id_number'].strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            
+            child.firstname = firstname
+            child.lastname = lastname
+            child.surname = surname
+            child.phone_num = phone_num
+            child.email = email
+            child.id_number = id_number
+            child.date_of_birth = date_of_birth
 
-        db.session.add(child)
-        db.session.commit()
-
-        return redirect(url_for('family.family', depo_id = register.id))
+            db.session.add(child)
+            db.session.commit()
+            flash('Child updated successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update child. Please check your input and try again.', 'error')
+            return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
     return render_template('register/edit.html', register = child, family = register)
 
 @bp.route('/<int:depo_id>/<int:child_id>/edit_child', methods=('POST','GET'))
@@ -210,25 +251,32 @@ def editchild(depo_id, child_id):
     register = Member.query.get_or_404(depo_id)
     child = Child.query.get_or_404(child_id)
     if request.method == 'POST':
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        surname = request.form['surname']
-        phone_num = request.form['phone_num']
-        raw_id = request.form['id_number'].strip()
-        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        
-        child.firstname = firstname
-        child.lastname = lastname
-        child.surname = surname
-        child.phone_num = phone_num
-        child.id_number = id_number
-        child.date_of_birth = date_of_birth
+        try:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            surname = request.form['surname']
+            phone_num = request.form['phone_num']
+            email = request.form['email']
+            raw_id = request.form['id_number'].strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            
+            child.firstname = firstname
+            child.lastname = lastname
+            child.surname = surname
+            child.phone_num = phone_num
+            child.email = email
+            child.id_number = id_number
+            child.date_of_birth = date_of_birth
 
-        db.session.add(child)
-        db.session.commit()
-
-        return redirect(url_for('family.family', depo_id = register.id))
+            db.session.add(child)
+            db.session.commit()
+            flash('Child updated successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update child. Please check your input and try again.', 'error')
+            return redirect(url_for('family.editchild', depo_id=register.id, child_id=child.id))
     return render_template('register/edit.html', register = child, family = register)
 
 @bp.post('/<int:depo_id>/<int:child_id>/delete_child')

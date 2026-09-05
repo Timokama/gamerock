@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 import base64
 from werkzeug.security import generate_password_hash
+from sqlalchemy.exc import IntegrityError
 from app.register import bp
 from app import db
 from app.user import User
@@ -251,55 +252,65 @@ def create():
 def edit_name(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        firstname=request.form['firstname']
-        lastname=request.form['lastname']
-        surname = request.form['surname']
-        
-        raw_dob = request.form.get('date_of_birth', '').strip()
-        date_of_birth = None
-        if raw_dob:
-            try:
-                date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
-            except (ValueError, TypeError):
-                flash('Invalid date of birth format.', 'danger')
-                return redirect(url_for('register.edit_name', depo_id=register.id))
-        
-        phone_num=request.form['phone_num']
-        email=request.form['email']
-        raw_id = request.form['id_number'].strip()
-        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+        try:
+            firstname=request.form['firstname']
+            lastname=request.form['lastname']
+            surname = request.form['surname']
+            
+            raw_dob = request.form.get('date_of_birth', '').strip()
+            date_of_birth = None
+            if raw_dob:
+                try:
+                    date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    flash('Invalid date of birth format.', 'danger')
+                    return redirect(url_for('register.edit_name', depo_id=register.id))
+            
+            phone_num=request.form['phone_num']
+            email=request.form['email']
+            raw_id = request.form['id_number'].strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
 
-        register.firstname = firstname
-        register.lastname = lastname
-        register.surname = surname
-        register.phone_num = phone_num
-        register.email = email
-        register.date_of_birth = date_of_birth
-        register.id_number = id_number
+            register.firstname = firstname
+            register.lastname = lastname
+            register.surname = surname
+            register.phone_num = phone_num
+            register.email = email
+            register.date_of_birth = date_of_birth
+            register.id_number = id_number
 
-        # Update linked user account email if exists
-        if register.user_account:
-            register.user_account.email = email
-            register.user_account.phone_num = phone_num
-            register.user_account.role = AccessLevel.USER
-        else:
-            existing_user = User.query.filter_by(email=email).first()
-            if not existing_user:
-                new_user = User(
-                    surname=register.surname,
-                    first_name=register.firstname,
-                    email=email,
-                    phone_num=register.phone_num,
-                    passwords=str(id_number) if id_number is not None else str(register.id),
-                    role=AccessLevel.USER
-                )
-                db.session.add(new_user)
-                db.session.flush()
-                register.user_id = new_user.id
+            # Update linked user account email if exists
+            if register.user_account:
+                register.user_account.email = email
+                register.user_account.phone_num = phone_num
+                register.user_account.role = AccessLevel.USER
+            else:
+                existing_user = User.query.filter_by(email=email).first()
+                if not existing_user:
+                    new_user = User(
+                        surname=register.surname,
+                        first_name=register.firstname,
+                        email=email,
+                        phone_num=register.phone_num,
+                        passwords=str(id_number) if id_number is not None else str(register.id),
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    register.user_id = new_user.id
 
-        db.session.add(register)
-        db.session.commit()
-        return redirect(url_for('register.deposit', depo_id=register.id))
+            db.session.add(register)
+            db.session.commit()
+            flash('Member updated successfully!', 'success')
+            return redirect(url_for('register.deposit', depo_id=register.id))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Failed to update member. The ID number or email you entered is already in use.', 'error')
+            return redirect(url_for('register.edit_name', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update member. Please check your input and try again.', 'error')
+            return redirect(url_for('register.edit_name', depo_id=register.id))
     return render_template('register/edit.html', register = register, family = register)
 
 @bp.route('/<int:depo_id>/create_spouse/', methods=('POST','GET'))
@@ -317,16 +328,28 @@ def create_spouse(depo_id):
 
 @bp.route('/<int:depo_id>/create_child/', methods=('POST','GET'))
 def create_child(depo_id):
-    # depo = Deposit.query.get_or_404(depo_id)
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        # register = Register.query.get_or_404(depo_id)
-        # spouse = depo.family.id
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        new_child = Child(firstname = request.form['firstname'], lastname = request.form['lastname'], surname = request.form['surname'], phone_num = request.form['phone_num'], date_of_birth = date_of_birth, id_number=request.form['id_number'],member = register)
-        db.session.add_all([new_child])
-        db.session.commit()
-        return redirect(url_for('family.family', depo_id = register.id))
+        try:
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            new_child = Child(
+                firstname=request.form['firstname'],
+                lastname=request.form['lastname'],
+                surname=request.form['surname'],
+                phone_num=request.form['phone_num'],
+                date_of_birth=date_of_birth,
+                id_number=request.form['id_number'],
+                email=request.form['email'],
+                member=register
+            )
+            db.session.add(new_child)
+            db.session.commit()
+            flash('Child added successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add child. Please check your input and try again.', 'error')
+            return redirect(url_for('register.create_child', depo_id=register.id))
     return render_template('register/create_child.html', register = register)
 
 @bp.post('/<int:depo_id>/delete/')
@@ -353,55 +376,65 @@ def delete(depo_id):
 def edit(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        firstname=request.form['firstname']
-        lastname=request.form['lastname']
-        surname = request.form['surname']
-        
-        raw_dob = request.form.get('date_of_birth', '').strip()
-        date_of_birth = None
-        if raw_dob:
-            try:
-                date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
-            except (ValueError, TypeError):
-                flash('Invalid date of birth format.', 'danger')
-                return redirect(url_for('register.edit', depo_id=register.id))
-        
-        phone_num=request.form['phone_num']
-        email=request.form['email']
-        raw_id = request.form['id_number'].strip()
-        id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+        try:
+            firstname=request.form['firstname']
+            lastname=request.form['lastname']
+            surname = request.form['surname']
+            
+            raw_dob = request.form.get('date_of_birth', '').strip()
+            date_of_birth = None
+            if raw_dob:
+                try:
+                    date_of_birth = datetime.strptime(raw_dob, '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    flash('Invalid date of birth format.', 'danger')
+                    return redirect(url_for('register.edit', depo_id=register.id))
+            
+            phone_num=request.form['phone_num']
+            email=request.form['email']
+            raw_id = request.form['id_number'].strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
 
-        register.firstname = firstname
-        register.lastname = lastname
-        register.surname = surname
-        register.phone_num = phone_num
-        register.email = email
-        register.date_of_birth = date_of_birth
-        register.id_number = id_number
+            register.firstname = firstname
+            register.lastname = lastname
+            register.surname = surname
+            register.phone_num = phone_num
+            register.email = email
+            register.date_of_birth = date_of_birth
+            register.id_number = id_number
 
-        # Update linked user account email if exists
-        if register.user_account:
-            register.user_account.email = email
-            register.user_account.phone_num = phone_num
-            register.user_account.role = AccessLevel.USER
-        else:
-            existing_user = User.query.filter_by(email=email).first()
-            if not existing_user:
-                new_user = User(
-                    surname=register.surname,
-                    first_name=register.firstname,
-                    email=email,
-                    phone_num=register.phone_num,
-                    passwords=str(id_number) if id_number is not None else str(register.id),
-                    role=AccessLevel.USER
-                )
-                db.session.add(new_user)
-                db.session.flush()
-                register.user_id = new_user.id
+            # Update linked user account email if exists
+            if register.user_account:
+                register.user_account.email = email
+                register.user_account.phone_num = phone_num
+                register.user_account.role = AccessLevel.USER
+            else:
+                existing_user = User.query.filter_by(email=email).first()
+                if not existing_user:
+                    new_user = User(
+                        surname=register.surname,
+                        first_name=register.firstname,
+                        email=email,
+                        phone_num=register.phone_num,
+                        passwords=str(id_number) if id_number is not None else str(register.id),
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    register.user_id = new_user.id
 
-        db.session.add(register)
-        db.session.commit()
-        return redirect(url_for('register.deposit', depo_id=register.id))
+            db.session.add(register)
+            db.session.commit()
+            flash('Member updated successfully!', 'success')
+            return redirect(url_for('register.deposit', depo_id=register.id))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Failed to update member. The ID number or email you entered is already in use.', 'error')
+            return redirect(url_for('register.edit', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to update member. Please check your input and try again.', 'error')
+            return redirect(url_for('register.edit', depo_id=register.id))
     return render_template("register/edit.html", register = register)
 
 

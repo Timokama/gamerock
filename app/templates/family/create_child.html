@@ -411,7 +411,7 @@
                 <p>Fill in the child information below</p>
             </div>
 
-            <form method="post">
+            <form method="post" onsubmit="return validateChildForm();">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstname">First Name</label>
@@ -435,13 +435,19 @@
                     </div>
                     <div class="form-group">
                         <label for="id_number">ID Number</label>
-                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number">
+                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="phone_num">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone_num">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -455,4 +461,35 @@
         </div>
     </div>
 </div>
+
+<script>
+function validateChildForm() {
+    var phone = document.getElementById('phone_num').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var idNumber = document.getElementById('id_number').value.trim();
+    
+    if (!phone) {
+        showToast('Please enter a phone number.', 'error');
+        return false;
+    }
+    
+    if (!email) {
+        showToast('Please enter an email address.', 'error');
+        return false;
+    }
+    
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Please enter a valid email address.', 'error');
+        return false;
+    }
+    
+    if (!idNumber) {
+        showToast('Please enter an ID number.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+</script>
 {% endblock %}
