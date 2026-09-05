@@ -185,14 +185,14 @@ def index():
     if export_csv == 'csv':
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow(['Date', 'Member', 'Amount', 'Type', 'Reference', 'Event'])
+        writer.writerow(['Date', 'Member', 'Phone Number', 'Amount', 'Type', 'Event'])
         for contribute in all_contribution_accounts:
             writer.writerow([
                 contribute.trans_date.strftime('%Y-%m-%d') if contribute.trans_date else '',
                 f'{contribute.member.firstname} {contribute.member.lastname} {contribute.member.surname}' if contribute.member else '',
+                contribute.member.phone_num if contribute.member and contribute.member.phone_num else '',
                 contribute.amount,
                 contribute.payment_type.value if contribute.payment_type else '',
-                contribute.transaction_ref or '',
                 contribute.community_event.name if contribute.community_event else 'N/A'
             ])
         response = Response(

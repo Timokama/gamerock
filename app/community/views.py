@@ -366,16 +366,16 @@ def export_contributions_csv(tag_name):
     
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(['Member Name', 'ID Number', 'Payment Type', 'Amount', 'Date', 'Transaction Ref'])
+    writer.writerow(['Member Name', 'ID Number', 'Phone Number', 'Payment Type', 'Amount', 'Date'])
     
     for contrib in contributions:
         writer.writerow([
-            f"{contrib.member.firstname} {contrib.member.lastname}",
-            contrib.member.id_number or '',
+            f"{contrib.member.firstname} {contrib.member.lastname}" if contrib.member else '',
+            contrib.member.id_number or '' if contrib.member else '',
+            contrib.member.phone_num or '' if contrib.member else '',
             contrib.payment_type.value if contrib.payment_type else 'N/A',
             contrib.amount,
-            contrib.trans_date.strftime('%Y-%m-%d') if contrib.trans_date else '',
-            contrib.transaction_ref or ''
+            contrib.trans_date.strftime('%Y-%m-%d') if contrib.trans_date else ''
         ])
     
     response = make_response(output.getvalue())
