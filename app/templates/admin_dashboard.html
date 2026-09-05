@@ -1725,18 +1725,19 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
         {% endif %}
         {% endfor %}
     </div>
+    {% set has_deposit_filter = request.args.get('search') or request.args.get('payment_type') or request.args.get('date_from') or request.args.get('date_to') %}
     <div class="deposit-stats" style="margin-bottom: 1rem;">
         <div class="deposit-stat-card">
             <div class="deposit-stat-icon primary"><i class="bi bi-cash-stack"></i></div>
             <div>
-                <div class="deposit-stat-value">Ksh. {{ '{:,}'.format(total_deposits) }}</div>
+                <div class="deposit-stat-value">Ksh. {{ '{:,}'.format(filtered_total_deposits if has_deposit_filter else total_deposits) }}</div>
                 <div class="deposit-stat-label">Total Deposits</div>
             </div>
         </div>
         <div class="deposit-stat-card">
             <div class="deposit-stat-icon success"><i class="bi bi-list-ul"></i></div>
             <div>
-                <div class="deposit-stat-value">{{ recent_deposits|length }}</div>
+                <div class="deposit-stat-value">{{ filtered_total_transactions if has_deposit_filter else total_transactions }}</div>
                 <div class="deposit-stat-label">Transactions</div>
             </div>
         </div>
@@ -1750,7 +1751,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
         <div class="deposit-stat-card">
             <div class="deposit-stat-icon warning"><i class="bi bi-tags"></i></div>
             <div>
-                <div class="deposit-stat-value">{{ unique_payment_types }}</div>
+                <div class="deposit-stat-value">{{ filtered_payment_types if has_deposit_filter else unique_payment_types }}</div>
                 <div class="deposit-stat-label">Payment Methods</div>
             </div>
         </div>
@@ -1758,24 +1759,24 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
     <div class="deposit-table-card">
         <div class="card-body" style="padding: 1rem;">
             <div class="report-filters" style="margin-bottom: 0; box-shadow: none; border: none; padding: 0;">
-                <form method="get" action="{{ url_for('deposit.index') }}" onsubmit="return false;">
+                <form method="get" action="{{ url_for('main.index') }}">
                     <div class="filter-row" id="deposit-basic-filters">
                         <div class="filter-group">
                             <label for="deposit-search">Search</label>
-                            <input type="text" id="deposit-search" placeholder="Search contributions..." oninput="filterDepositTable()">
+                            <input type="text" id="deposit-search" name="search" placeholder="Search contributions..." value="{{ request.args.get('search', '') }}">
                         </div>
                         <div class="filter-group">
                             <label for="deposit-payment-type">Payment Type</label>
-                            <select id="deposit-payment-type" onchange="filterDepositTable()">
+                            <select id="deposit-payment-type" name="payment_type">
                                 <option value="">All</option>
-                                <option value="CASH">Cash</option>
-                                <option value="MPESA">M-Pesa</option>
-                                <option value="BANK DEPOSIT">Bank</option>
+                                <option value="Ksh" {% if request.args.get('payment_type') == 'Ksh' %}selected{% endif %}>Cash</option>
+                                <option value="MPESA" {% if request.args.get('payment_type') == 'MPESA' %}selected{% endif %}>M-Pesa</option>
+                                <option value="BANK DEPOSIT" {% if request.args.get('payment_type') == 'BANK DEPOSIT' %}selected{% endif %}>Bank</option>
                             </select>
                         </div>
                         <div class="filter-actions">
-                            <button type="button" class="action-btn primary" onclick="filterDepositTable()"><i class="bi bi-search"></i> Filter</button>
-                            <button type="button" class="action-btn outline" onclick="clearDepositFilters()"><i class="bi bi-x"></i> Clear</button>
+                            <button type="submit" class="action-btn primary"><i class="bi bi-search"></i> Filter</button>
+                            <a href="{{ url_for('main.index') }}" class="action-btn outline"><i class="bi bi-x"></i> Clear</a>
                         </div>
                     </div>
                 </form>
@@ -1796,21 +1797,28 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                         </tr>
                     </thead>
                     <tbody>
-                        {% set deposits_by_member = {} %}
-                        {% set member_order = [] %}
+                        {% set all_members_dict = {} %}
+                        {% for m in all_members %}
+                            {% set _ = all_members_dict.update({m.id: m}) %}
+                        {% endfor %}
+                        {% set member_order = (filtered_member_deposit_totals if has_deposit_filter else member_deposit_totals).keys() | list %}
                         {% set visible_deposits = recent_deposits | selectattr('member') | list %}
+                        {% set deposits_by_member = {} %}
                         {% for deposit in visible_deposits %}
                             {% set mid = deposit.member.id %}
                             {% if mid not in deposits_by_member %}
-                                {% set _ = member_order.append(mid) %}
                                 {% set _ = deposits_by_member.update({mid: []}) %}
                             {% endif %}
                             {% set _ = deposits_by_member[mid].append(deposit) %}
                         {% endfor %}
                         {% if member_order %}
                             {% for mid in member_order %}
-                                {% set deposits = deposits_by_member[mid] %}
-                                {% set member = deposits[0].member %}
+                                {% set member = all_members_dict.get(mid) %}
+                                {% if not member %}
+                                    {% continue %}
+                                {% endif %}
+                                {% set member_full_deposits = (filtered_contributions_by_member if has_deposit_filter else all_contributions_by_member).get(member.id, []) %}
+                                {% set last_contribution = member_full_deposits[0] if member_full_deposits else None %}
                                 {% set payment_types = [] %}
                                 {% for d in deposits %}
                                     {% if d.payment_type %}
@@ -1820,7 +1828,9 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
-                                <tr class="searchable-item" data-member-name="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" data-member-id="{{ member.id_number|member_id if member.id_number else '' }}" data-payment-types="{% for pt in payment_types %}{{ pt }} {% endfor %}" data-member-id-value="{{ member.id }}">
+                                {% set member_totals = (filtered_member_deposit_totals if has_deposit_filter else member_deposit_totals).get(member.id, {'total': 0, 'count': 0}) %}
+                                {% set member_payment_types_list = (filtered_member_payment_types if has_deposit_filter else member_payment_types).get(member.id, []) %}
+                                <tr class="searchable-item" data-member-name="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" data-member-id="{{ member.id_number|member_id if member.id_number else '' }}" data-payment-types="{% for pt in member_payment_types_list %}{{ pt }} {% endfor %}" data-member-id-value="{{ member.id }}">
                                     <td style="text-align: center;">
                                         {% if member.contribute %}
                                         <button class="expand-btn" onclick="toggleDepositMember(this, '{{ member.id }}')" title="Toggle Member Contributions">+</button>
@@ -1830,16 +1840,16 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                     </td>
                                     <td data-label="Member">
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            {% if member.member_image_url %}
-                                            <img src="{{ member.member_image_url }}" alt="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                                            {% if member.user_account and member.user_account.image %}
+                                            <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
                                             {% else %}
                                             <span class="family-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
                                             {% endif %}
                                             <strong>{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</strong>
                                         </div>
                                     </td>
-                                    <td data-label="Total Deposits" class="deposit-amount">Ksh. {{ '{:,}'.format(deposits | sum(attribute='amount')) }}</td>
-                                    <td data-label="Transactions">{{ deposits | length }}</td>
+                                    <td data-label="Total Deposits" class="deposit-amount">Ksh. {{ '{:,}'.format(member_totals.total) }}</td>
+                                    <td data-label="Transactions">{{ member_totals.count }}</td>
                                     <td data-label="Pending Contributions">
                                         <div class="pending-contributions-cell" id="pending-cell-{{ member.id }}" data-member-id="{{ member.id }}">
                                             <select class="pending-contributions-select" 
@@ -1860,7 +1870,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-label="Last Contribution">{{ deposits[0].trans_date.strftime('%b %d, %Y') if deposits[0].trans_date else 'N/A' }}</td>
+                                    <td data-label="Last Contribution">{{ last_contribution.trans_date.strftime('%b %d, %Y') if last_contribution and last_contribution.trans_date else 'N/A' }}</td>
                                     <td data-label="Actions" style="text-align: center;">
                                         <div class="row-actions">
                                     <button class="row-actions-toggle" type="button"
@@ -1934,15 +1944,15 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                             <div class="family-detail-card">
                                         <div class="family-detail-header">
                                             <h5>
-                                        {% if member.member_image_url %}
-                                        <img src="{{ member.member_image_url }}" alt="{{ member.firstname }} {{ member.lastname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-right: 0.5rem;">
+                                        {% if member.user_account and member.user_account.image %}
+                                        <img src="{{ url_for('main.member_image', member_id=member.id) }}" alt="{{ member.firstname }} {{ member.lastname }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-right: 0.5rem;">
                                         {% else %}
                                         <span class="family-avatar" style="width: 32px; height: 32px; font-size: 0.8rem; margin-right: 0.5rem;">{{ member.firstname[0] }}{{ member.lastname[0] }}</span>
                                         {% endif %}
                                         Recent Contributions
                                     </h5>
                                     <span class="family-detail-total">
-                                        Ksh. {{ '{:,}'.format(deposits | sum(attribute='amount')) }}
+                                        Ksh. {{ '{:,}'.format(member_totals.total) }}
                                     </span>
                                 </div>
                                     <table class="children-table">
@@ -1955,7 +1965,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for c in deposits %}
+                                                    {% set member_full_deposits = (filtered_contributions_by_member if has_deposit_filter else all_contributions_by_member).get(member.id, []) %}
+                                                    {% for c in member_full_deposits %}
                                                     <tr>
                                                         <td>{{ c.trans_date.strftime('%b %d, %Y') if c.trans_date else 'N/A' }}</td>
                                                         <td class="deposit-amount">Ksh. {{ '{:,}'.format(c.amount or 0) }}</td>
@@ -1968,8 +1979,8 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                                  {% elif c.payment_type.value == 'BANK DEPOSIT' %}
                                                                  <span class="payment-badge bank">{{ c.payment_type.value }}</span>
                                                                  {% else %}
-                                                                <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ c.payment_type.value }}</span>
-                                                                {% endif %}
+                                                                 <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">{{ c.payment_type.value }}</span>
+                                                                 {% endif %}
                                                             {% else %}
                                                             <span class="payment-badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">N/A</span>
                                                             {% endif %}
@@ -1988,7 +1999,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                         {% else %}
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                                No member data available for recent contributions.
+                                No contributions found.
                             </td>
                         </tr>
                         {% endif %}
@@ -1996,7 +2007,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                     <tfoot>
                         <tr style="background: #f8fafc;">
                             <td colspan="2" style="font-weight: 700; color: var(--dark-color);">Total</td>
-                            <td class="deposit-amount" style="font-weight: 700;">Ksh. {{ '{:,}'.format(visible_deposits | sum(attribute='amount')) }}</td>
+                            <td class="deposit-amount" style="font-weight: 700;">Ksh. {{ '{:,}'.format(total_deposits) }}</td>
                             <td colspan="4" style="font-size: 0.8rem; color: var(--text-muted);">{{ member_order|length }} members</td>
                         </tr>
                     </tfoot>
@@ -2396,7 +2407,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                 <button type="button" class="dev-secret-toggle" onclick="toggleMemberSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
                             </td>
                             <td data-label="Joined">{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
-                            <td class="deposit-amount" data-label="Deposits">Ksh. {{ '{:,}'.format(member.contribute|sum(attribute='amount')) }}</td>
+                            <td class="deposit-amount" data-label="Deposits">Ksh. {{ '{:,}'.format(member.contribute|sum(attribute='amount') or 0) }}</td>
                             <td data-label="Actions">
                                 <div class="row-actions">
                                     <button class="row-actions-toggle" type="button"
@@ -2600,7 +2611,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
     </div>
     <div class="dashboard-card">
         <div class="card-icon warning"><i class="bi bi-cash-stack"></i></div>
-        <div class="card-value">Ksh. {{ total_contributions }}</div>
+        <div class="card-value">Ksh. {{ total_deposits }}</div>
         <div class="card-label">Total Contributions</div>
     </div>
     <div class="dashboard-card">

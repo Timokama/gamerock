@@ -158,6 +158,77 @@
     color: var(--primary-700);
 }
 
+/* Deposit summary stats */
+.deposit-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.deposit-stat-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    transition: all var(--transition-base);
+}
+
+.deposit-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.deposit-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.deposit-stat-icon.primary {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+    color: var(--primary-color, #14b8a6);
+}
+
+.deposit-stat-icon.success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    color: #059669;
+}
+
+.deposit-stat-icon.warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    color: #d97706;
+}
+
+.deposit-stat-icon.info {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+    color: #667eea;
+}
+
+.deposit-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color, #0f172a);
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.deposit-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted, #64748b);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
 /* Deposit table */
 .deposit-table-card {
     background: var(--bg-secondary);
@@ -1411,6 +1482,31 @@
     <h2>Deposits</h2>
 </div>
 
+<!-- Deposit Summary Stats -->
+<div class="deposit-stats" style="margin-bottom: var(--space-6);">
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon primary"><i class="bi bi-cash-stack"></i></div>
+        <div>
+            <div class="deposit-stat-value">Ksh. {{ '{:,}'.format(filtered_total_deposits) }}</div>
+            <div class="deposit-stat-label">Total Deposits</div>
+        </div>
+    </div>
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon success"><i class="bi bi-list-ul"></i></div>
+        <div>
+            <div class="deposit-stat-value">{{ filtered_total_transactions }}</div>
+            <div class="deposit-stat-label">Transactions</div>
+        </div>
+    </div>
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon warning"><i class="bi bi-tags"></i></div>
+        <div>
+            <div class="deposit-stat-value">{{ filtered_payment_types }}</div>
+            <div class="deposit-stat-label">Payment Methods</div>
+        </div>
+    </div>
+</div>
+
 <!-- Deposit Filters -->
 <div class="deposit-filters">
     <form method="get" action="{{ url_for('deposit.index') }}">
@@ -1501,7 +1597,7 @@
                             </div>
                         </div>
                     </td>
-                    <td data-label="Total Deposits" class="deposit-amount">Ksh. {{ '{:,}'.format(member_contributions|sum(attribute='amount')) }}</td>
+                    <td data-label="Total Deposits" class="deposit-amount">Ksh. {{ '{:,}'.format(member_contributions|sum(attribute='amount') or 0) }}</td>
                     <td data-label="Transactions">{{ member_contributions|length }}</td>
                     <td data-label="Payment Methods">
                         {% set payment_types = member_contributions|map(attribute='payment_type')|reject('none')|map(attribute='value')|list %}
@@ -1604,9 +1700,34 @@
     </div>
 </div>
 {% else %}
-    <!-- Page Header -->
+<!-- Page Header -->
 <div class="deposit-page-header">
     <h2>Deposits</h2>
+</div>
+
+<!-- Deposit Summary Stats -->
+<div class="deposit-stats" style="margin-bottom: var(--space-6);">
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon primary"><i class="bi bi-cash-stack"></i></div>
+        <div>
+            <div class="deposit-stat-value">Ksh. {{ '{:,}'.format(filtered_total_deposits) }}</div>
+            <div class="deposit-stat-label">Total Deposits</div>
+        </div>
+    </div>
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon success"><i class="bi bi-list-ul"></i></div>
+        <div>
+            <div class="deposit-stat-value">{{ filtered_total_transactions }}</div>
+            <div class="deposit-stat-label">Transactions</div>
+        </div>
+    </div>
+    <div class="deposit-stat-card">
+        <div class="deposit-stat-icon warning"><i class="bi bi-tags"></i></div>
+        <div>
+            <div class="deposit-stat-value">{{ filtered_payment_types }}</div>
+            <div class="deposit-stat-label">Payment Methods</div>
+        </div>
+    </div>
 </div>
 
 <!-- Deposit Filters -->

@@ -137,7 +137,7 @@ def deposit(depo_id):
             pass
     
     contributions = query.order_by(Contribution.trans_date.desc()).all()
-    total = sum(c.amount for c in contributions)
+    total = sum(c.amount or 0 for c in contributions)
     member_contribution_events = db.select(Contribution.propose).where(
         Contribution.member_id == register.id
     ).distinct()
@@ -461,7 +461,7 @@ def dashboard():
     
     contributions = Contribution.query.filter_by(member_id=member.id).order_by(Contribution.trans_date.desc()).all()
     
-    total_contributed = sum(c.amount for c in contributions)
+    total_contributed = sum(c.amount or 0 for c in contributions)
     total_contributed = "{:,}".format(total_contributed)
     
     from app.models.community_event import CommunityEvent
@@ -533,7 +533,7 @@ def dashboard():
                 all_children.append(child)
     
     deposits = contributions
-    total_deposits = sum(c.amount for c in deposits)
+    total_deposits = sum(c.amount or 0 for c in deposits)
     total_deposits = "{:,}".format(total_deposits)
     
     faqs = []

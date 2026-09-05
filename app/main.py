@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from sqlalchemy import select
 from . import db
 from .image import Images, get_image_mime_type
 from .user import User
@@ -32,11 +33,8 @@ def index():
         db.func.count(Member.id).label('total_members'),
         db.func.count(Spouse.id).label('total_spouses'),
         db.func.count(Child.id).label('total_children'),
-        db.func.count(CommunityEvent.id).label('total_events'),
-        db.func.sum(Contribution.amount).label('total_contributions')
+        db.func.count(CommunityEvent.id).label('total_events')
     ).select_from(Member).outerjoin(
-        Contribution, Contribution.member_id == Member.id
-    ).outerjoin(
         Spouse, Spouse.member_id == Member.id
     ).outerjoin(
         Child, Child.member_id == Member.id
@@ -48,7 +46,6 @@ def index():
     total_spouses = stats.total_spouses or 0
     total_children = stats.total_children or 0
     total_events = stats.total_events or 0
-    total_contributions = stats.total_contributions or 0
     
     # Eager load relationships to avoid N+1 queries
     recent_deposits = (
@@ -75,9 +72,125 @@ def index():
         .all()
     )
 
-    total_deposits = sum(d.amount or 0 for d in recent_deposits)
-    unique_members = len(set(d.member_id for d in recent_deposits))
-    unique_payment_types = len(set(d.payment_type.value for d in recent_deposits if d.payment_type))
+    total_deposits_result = db.session.query(db.func.sum(Contribution.amount)).scalar()
+    total_deposits = total_deposits_result or 0
+
+    total_transactions_result = db.session.query(db.func.count(Contribution.id)).scalar()
+    total_transactions = total_transactions_result or 0
+
+    unique_members_result = db.session.query(db.func.count(db.func.distinct(Contribution.member_id))).scalar()
+    unique_members = unique_members_result or 0
+
+    unique_payment_types_result = db.session.query(db.func.count(db.func.distinct(Contribution.payment_type))).scalar()
+    unique_payment_types = unique_payment_types_result or 0
+
+    deposit_search = request.args.get('search', '')
+    deposit_payment_type = request.args.get('payment_type')
+    deposit_date_from = request.args.get('date_from')
+    deposit_date_to = request.args.get('date_to')
+
+    filtered_contribution_query = Contribution.query
+    if deposit_search:
+        deposit_search_terms = [term.strip() for term in deposit_search.split() if term.strip()]
+        filtered_contribution_query = filtered_contribution_query.join(Member)
+        for term in deposit_search_terms:
+            filtered_contribution_query = filtered_contribution_query.filter(
+                db.or_(
+                    db.cast(Member.id_number, db.String).ilike(f'%{term}%'),
+                    Member.firstname.ilike(f'%{term}%'),
+                    Member.lastname.ilike(f'%{term}%'),
+                    Member.surname.ilike(f'%{term}%')
+                )
+            )
+    if deposit_payment_type:
+        try:
+            payment_enum = Payment[deposit_payment_type] if deposit_payment_type in Payment.__members__ else Payment(deposit_payment_type)
+            filtered_contribution_query = filtered_contribution_query.filter(Contribution.payment_type == payment_enum)
+        except (ValueError, KeyError):
+            pass
+    if deposit_date_from:
+        try:
+            from_date = datetime.strptime(deposit_date_from, '%Y-%m-%d').date()
+            filtered_contribution_query = filtered_contribution_query.filter(Contribution.trans_date >= from_date)
+        except (ValueError, TypeError):
+            pass
+    if deposit_date_to:
+        try:
+            to_date = datetime.strptime(deposit_date_to, '%Y-%m-%d').date()
+            filtered_contribution_query = filtered_contribution_query.filter(Contribution.trans_date <= to_date)
+        except (ValueError, TypeError):
+            pass
+
+    filtered_total_deposits = filtered_contribution_query.with_entities(db.func.sum(Contribution.amount)).scalar() or 0
+    filtered_total_transactions = filtered_contribution_query.with_entities(db.func.count(Contribution.id)).scalar() or 0
+    filtered_payment_types = db.session.query(db.func.count(db.func.distinct(Contribution.payment_type))).filter(
+        Contribution.id.in_(select(filtered_contribution_query.with_entities(Contribution.id).subquery()))
+    ).scalar() or 0
+
+    member_deposit_totals = db.session.query(
+        Contribution.member_id,
+        db.func.sum(Contribution.amount).label('total_amount'),
+        db.func.count(Contribution.id).label('transaction_count')
+    ).group_by(Contribution.member_id).all()
+
+    member_deposit_totals_dict = {
+        mid: {'total': total or 0, 'count': count or 0}
+        for mid, total, count in member_deposit_totals
+    }
+
+    has_deposit_filter = bool(deposit_search or deposit_payment_type or deposit_date_from or deposit_date_to)
+    if has_deposit_filter:
+        filtered_member_totals = db.session.query(
+            Contribution.member_id,
+            db.func.sum(Contribution.amount).label('total_amount'),
+            db.func.count(Contribution.id).label('transaction_count')
+        ).filter(
+            Contribution.id.in_(select(filtered_contribution_query.with_entities(Contribution.id).subquery()))
+        ).group_by(Contribution.member_id).all()
+
+        filtered_member_deposit_totals_dict = {
+            mid: {'total': total or 0, 'count': count or 0}
+            for mid, total, count in filtered_member_totals
+        }
+    else:
+        filtered_member_deposit_totals_dict = member_deposit_totals_dict
+
+    all_contributions = (
+        Contribution.query
+        .options(
+            joinedload(Contribution.member),
+            joinedload(Contribution.community_event)
+        )
+        .order_by(Contribution.trans_date.desc())
+        .all()
+    )
+
+    member_payment_types = {}
+    for c in all_contributions:
+        if c.member_id and c.payment_type:
+            member_payment_types.setdefault(c.member_id, set()).add(c.payment_type.value)
+
+    all_contributions_by_member = {}
+    for c in all_contributions:
+        if c.member_id:
+            all_contributions_by_member.setdefault(c.member_id, []).append(c)
+
+    filtered_member_payment_types = {}
+    if has_deposit_filter:
+        for member_id, payment_type in filtered_contribution_query.with_entities(Contribution.member_id, Contribution.payment_type).all():
+            if member_id and payment_type:
+                filtered_member_payment_types.setdefault(member_id, set()).add(payment_type.value)
+        filtered_contributions = filtered_contribution_query.options(
+            joinedload(Contribution.member),
+            joinedload(Contribution.community_event)
+        ).order_by(Contribution.trans_date.desc()).all()
+        filtered_contributions_by_member = {}
+        for c in filtered_contributions:
+            if c.member_id:
+                filtered_contributions_by_member.setdefault(c.member_id, []).append(c)
+    else:
+        filtered_member_payment_types = member_payment_types
+        filtered_contributions_by_member = all_contributions_by_member
 
     # Load full member objects with family relationships for Members/Family sections
     all_members = (
@@ -88,7 +201,6 @@ def index():
             subqueryload(Member.child)
         )
         .order_by(Member.created_at.desc())
-        .limit(50)
         .all()
     )
 
@@ -103,6 +215,9 @@ def index():
             for c in (s.child or []):
                 if c not in member_children[m.id]:
                     member_children[m.id].append(c)
+        m.member_image_url = None
+        if m.user_account and m.user_account.image:
+            m.member_image_url = url_for('main.member_image', member_id=m.id)
     
     # Get current user and member profile
     user = User.query.get_or_404(current_user.id)
@@ -124,15 +239,24 @@ def index():
                          contact=current_user.phone_num,
                          email=current_user.role.value,
                          total_members=total_members,
-                         total_contributions=total_contributions,
                          total_events=total_events,
                          recent_members=recent_members,
                          recent_deposits=recent_deposits,
                          member=member,
                          member_image_url=member_image_url,
                          total_deposits=total_deposits,
+                         total_transactions=total_transactions,
                          unique_members=unique_members,
                          unique_payment_types=unique_payment_types,
+                         filtered_total_deposits=filtered_total_deposits,
+                         filtered_total_transactions=filtered_total_transactions,
+                         filtered_payment_types=filtered_payment_types,
+                         filtered_member_deposit_totals=filtered_member_deposit_totals_dict,
+                         filtered_member_payment_types=filtered_member_payment_types,
+                         filtered_contributions_by_member=filtered_contributions_by_member,
+                         member_deposit_totals=member_deposit_totals_dict,
+                         member_payment_types=member_payment_types,
+                         all_contributions_by_member=all_contributions_by_member,
                          all_members=all_members,
                          member_stats=member_stats,
                          member_children=member_children,

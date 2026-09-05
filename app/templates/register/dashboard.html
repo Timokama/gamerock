@@ -1261,7 +1261,7 @@
                 <div class="stat-card">
                     <div class="stat-card-label">Payment Methods</div>
                     <div class="stat-card-value">
-                        {% set payment_types = deposits | map(attribute='payment_type') | map(attribute='value') | unique | list %}
+                        {% set payment_types = deposits | map(attribute='payment_type') | reject('none') | map(attribute='value') | unique | list %}
                         {{ payment_types|length }}
                     </div>
                 </div>
@@ -1274,7 +1274,7 @@
                     <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="deposit-strip-item">
                         <div class="deposit-strip-avatar">
                             {% if user_image %}
-                            <img src="data:;base64,{{ user_image }}" alt="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}">
+                             <img src="data:{{ user_image_mime_type }};base64,{{ user_image }}" alt="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}">
                             {% else %}
                             {{ member.firstname[0] }}{{ member.lastname[0] }}
                             {% endif %}

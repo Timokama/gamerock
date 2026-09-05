@@ -16,6 +16,7 @@ from app.models.spouse import Spouse
 from app.models.contribute import Contribution
 from app.models.payments import Payment
 from app.image import get_image_mime_type
+from sqlalchemy import select, not_
 from sqlalchemy.orm import joinedload, subqueryload
 @bp.route('/')
 @login_required
@@ -23,8 +24,9 @@ def index():
     user = User.query.get_or_404(current_user.id)
     export_csv = request.args.get('export', '')
 
-    if user.role in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.WELFARE_OFFICER):
+    if user.role in (AccessLevel.ADMIN, AccessLevel.DEVEL, AccessLevel.WELFARE_OFFICER, AccessLevel.TREASURER):
         search = request.args.get('search', '')
+        member_id = request.args.get('member', type=int)
         payment_type = request.args.get('payment_type')
         date_from = request.args.get('date_from')
         date_to = request.args.get('date_to')
@@ -55,13 +57,18 @@ def index():
             joinedload(Contribution.community_event)
         )
         if search:
-            contribution_query = contribution_query.join(Member).filter(
-                db.or_(
-                    Member.firstname.ilike(f'%{search}%'),
-                    Member.lastname.ilike(f'%{search}%'),
-                    Member.surname.ilike(f'%{search}%')
+            contribution_query = contribution_query.join(Member)
+            for term in search_terms:
+                contribution_query = contribution_query.filter(
+                    db.or_(
+                        db.cast(Member.id_number, db.String).ilike(f'%{term}%'),
+                        Member.firstname.ilike(f'%{term}%'),
+                        Member.lastname.ilike(f'%{term}%'),
+                        Member.surname.ilike(f'%{term}%')
+                    )
                 )
-            )
+        if member_id:
+            contribution_query = contribution_query.filter(Contribution.member_id == member_id)
         if payment_type:
             try:
                 payment_enum = Payment[payment_type] if payment_type in Payment.__members__ else Payment(payment_type)
@@ -87,6 +94,10 @@ def index():
         contributions_by_member = defaultdict(list)
         for c in contributions:
             contributions_by_member[c.member_id].append(c)
+        
+        filtered_total_deposits = sum(c.amount or 0 for c in contributions)
+        filtered_total_transactions = len(contributions)
+        filtered_payment_types = len(set(c.payment_type.value for c in contributions if c.payment_type))
         
         if export_csv == 'csv':
             output = io.StringIO()
@@ -114,10 +125,14 @@ def index():
             for m in members
         ]
         
-        return render_template("deposit/index.html", user=user, members=members, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'search': search, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, members_dropdown=members_dropdown, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
+        return render_template("deposit/index.html", user=user, members=members, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'search': search, 'member': member_id, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, members_dropdown=members_dropdown, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'], filtered_total_deposits=filtered_total_deposits, filtered_total_transactions=filtered_total_transactions, filtered_payment_types=filtered_payment_types)
     member = user.member_profile
     if not member:
-        return render_template("deposit/index.html", user=user, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
+        return render_template("deposit/index.html", user=user, register=None,
+                               contributions=[], contributions_by_member={},
+                               events=[], level=Payment,
+                               filters={'event': None, 'payment_type': None, 'date_from': None, 'date_to': None},
+                               can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
     
     event_id = request.args.get('event', type=int)
     payment_type = request.args.get('payment_type')
@@ -154,7 +169,11 @@ def index():
     for c in contributions:
         contributions_by_member[c.member_id].append(c)
     
-    return render_template("deposit/index.html", user=user, register=member, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'event': event_id, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'])
+    filtered_total_deposits = sum(c.amount or 0 for c in contributions)
+    filtered_total_transactions = len(contributions)
+    filtered_payment_types = len(set(c.payment_type.value for c in contributions if c.payment_type))
+    
+    return render_template("deposit/index.html", user=user, register=member, contributions=contributions, contributions_by_member=contributions_by_member, events=events, level=Payment, filters={'event': event_id, 'payment_type': payment_type, 'date_from': date_from, 'date_to': date_to}, can_contribute=user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'], filtered_total_deposits=filtered_total_deposits, filtered_total_transactions=filtered_total_transactions, filtered_payment_types=filtered_payment_types)
 
 @bp.route('/<int:depo_id>/')
 def deposit(depo_id):
@@ -170,7 +189,7 @@ def deposit(depo_id):
     pending_contributions = CommunityEvent.query.filter(
         ~CommunityEvent.id.in_(member_contribution_events)
     ).all()
-    total = sum(c.amount for c in deposit)
+    total = sum(c.amount or 0 for c in deposit)
     total = "{:,}".format(total)
     events = CommunityEvent.query.all()
 
@@ -274,15 +293,15 @@ def api_member_pending_contributions(member_id):
     member = Member.query.get_or_404(member_id)
 
     # Get events the member has already contributed to - optimized query
-    member_contribution_events = db.session.query(Contribution.propose).filter(
+    member_contribution_events = select(Contribution.propose).where(
         Contribution.member_id == member_id,
         Contribution.propose.isnot(None)
-    ).subquery()
+    )
 
     # Get pending events (events not yet contributed to by this member)
     pending_events = (
         CommunityEvent.query
-        .filter(~CommunityEvent.id.in_(member_contribution_events))
+        .filter(not_(CommunityEvent.id.in_(member_contribution_events)))
         .order_by(CommunityEvent.event_date.asc())
         .all()
     )

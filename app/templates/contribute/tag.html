@@ -963,7 +963,7 @@
             <div class="stat-card-icon"><i class="bi bi-currency-dollar"></i></div>
             <div class="stat-card-label">Total Contributions</div>
         </div>
-        <div class="stat-card-value" id="statTotal">Ksh. {% set total_amount = contributions|sum(attribute='amount') %}{{ "{:,}".format(total_amount) }}</div>
+        <div class="stat-card-value" id="statTotal">Ksh. {% set total_amount = contributions|sum(attribute='amount') or 0 %}{{ "{:,}".format(total_amount) }}</div>
     </div>
     <div class="stat-card">
         <div class="stat-card-header">
