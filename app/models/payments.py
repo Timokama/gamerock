@@ -4,3 +4,4 @@ class Payment(Enum):
     CASH = 'Ksh'
     MOBILE_MONEY = 'MPESA'
     BANK = 'BANK DEPOSIT'
+    NEW='NEW'

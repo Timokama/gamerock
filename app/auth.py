@@ -158,33 +158,36 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-@auth.route('/forgot-password', methods=['POST'])
+@auth.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
 
-    if not email or not password or not confirm_password:
-        flash('All fields are required.', 'danger')
+        if not email or not password or not confirm_password:
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('auth.index'))
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('auth.index'))
+
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long.', 'danger')
+            return redirect(url_for('auth.index'))
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('No account found with that email address.', 'danger')
+            return redirect(url_for('auth.index'))
+
+        user.password = generate_password_hash(password, method='pbkdf2:sha256')
+        db.session.commit()
+        flash('Password has been reset successfully. You can now login.', 'success')
         return redirect(url_for('auth.index'))
 
-    if password != confirm_password:
-        flash('Passwords do not match.', 'danger')
-        return redirect(url_for('auth.index'))
-
-    if len(password) < 6:
-        flash('Password must be at least 6 characters long.', 'danger')
-        return redirect(url_for('auth.index'))
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        flash('No account found with that email address.', 'danger')
-        return redirect(url_for('auth.index'))
-
-    user.password = generate_password_hash(password, method='pbkdf2:sha256')
-    db.session.commit()
-    flash('Password has been reset successfully. You can now login.', 'success')
-    return redirect(url_for('auth.index'))
+    return render_template('forgot_password.html')
 
 # @auth.route('/<int:user_id>/changePassword', methods=['POST', 'GET'])
 # @login_required
