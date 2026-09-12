@@ -540,160 +540,7 @@
         background: var(--bg-primary);
     }
 
-    .family-search-box {
-        position: relative;
-        max-width: 420px;
-        width: 100%;
-    }
-
-    .family-search-box input {
-        width: 100%;
-        padding: var(--space-3) var(--space-4) var(--space-3) var(--space-11);
-        border: 1.5px solid var(--border-light);
-        border-radius: var(--radius-lg);
-        font-size: var(--text-sm);
-        transition: all var(--transition-fast);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        font-family: inherit;
-        box-shadow: var(--shadow-xs);
-    }
-
-    .family-search-box input:focus {
-        outline: none;
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1), var(--shadow-xs);
-    }
-
-    .family-search-box .search-icon {
-        position: absolute;
-        left: var(--space-3);
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1rem;
-        color: var(--text-tertiary);
-        pointer-events: none;
-        transition: color var(--transition-fast);
-    }
-
-    .family-search-box input:focus + .search-icon,
-    .family-search-box input:focus ~ .search-icon {
-        color: var(--primary-500);
-    }
-
-    .family-filter-bar {
-        display: flex;
-        gap: var(--space-3);
-        align-items: center;
-        flex-wrap: wrap;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-light);
-        border-radius: var(--radius-xl);
-        padding: var(--space-3) var(--space-4);
-        box-shadow: var(--shadow-sm);
-        transition: box-shadow var(--transition-base);
-    }
-
-    .family-filter-bar:hover {
-        box-shadow: var(--shadow-md);
-    }
-
-    .family-search-box {
-        position: relative;
-        flex: 1 1 180px;
-        min-width: 160px;
-        max-width: 280px;
-    }
-
-    .family-search-box input {
-        width: 100%;
-        padding: var(--space-2) var(--space-3) var(--space-2) var(--space-10);
-        border: 1.5px solid var(--border-light);
-        border-radius: var(--radius-lg);
-        font-size: var(--text-sm);
-        transition: all var(--transition-fast);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        font-family: inherit;
-        box-shadow: var(--shadow-xs);
-    }
-
-    .family-search-box input:focus {
-        outline: none;
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1), var(--shadow-xs);
-    }
-
-    .family-search-box .search-icon {
-        position: absolute;
-        left: var(--space-3);
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1rem;
-        color: var(--text-tertiary);
-        pointer-events: none;
-        transition: color var(--transition-fast);
-    }
-
-    .family-filter-select {
-        padding: var(--space-3) var(--space-4);
-        border: 1.5px solid var(--border-light);
-        border-radius: var(--radius-lg);
-        font-size: var(--text-sm);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        cursor: pointer;
-        appearance: none;
-        -webkit-appearance: none;
-        transition: all var(--transition-fast);
-        min-width: 180px;
-        font-family: inherit;
-        box-shadow: var(--shadow-xs);
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right var(--space-3) center;
-    }
-
-    .family-filter-select:focus {
-        outline: none;
-        border-color: var(--primary-500);
-        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1), var(--shadow-xs);
-    }
-
-    .family-filter-actions {
-        display: flex;
-        gap: var(--space-2);
-    }
-
-    .family-clear-filters {
-        padding: var(--space-2) var(--space-4);
-        border: 1.5px solid var(--border-light);
-        border-radius: var(--radius-full);
-        font-size: var(--text-sm);
-        font-weight: var(--font-weight-medium);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-1);
-        font-family: inherit;
-        box-shadow: var(--shadow-xs);
-    }
-
-    .family-clear-filters:hover {
-        border-color: var(--danger-500);
-        color: var(--danger-600);
-        background: var(--danger-50);
-        text-decoration: none;
-    }
-
-    .family-clear-filters:focus-visible {
-        outline: 2px solid var(--primary-500);
-        outline-offset: 2px;
-    }
+    
 
     .family-no-results {
         text-align: center;
@@ -732,157 +579,7 @@
         margin-bottom: var(--space-2);
     }
 
-    @media (max-width: 1024px) {
-        .family-table-card .table {
-            font-size: var(--text-sm);
-        }
-
-        .family-table-card .table th,
-        .family-table-card .table td {
-            padding: var(--space-3);
-        }
-
-        .family-detail-card .detail-grid {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        }
-
-        .family-filter-bar {
-            gap: var(--space-2);
-            padding: var(--space-2) var(--space-3);
-        }
-
-        .family-search-box {
-            max-width: 220px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .family-table-card .table {
-            font-size: var(--text-sm);
-        }
-
-        .family-table-card .table th,
-        .family-table-card .table td {
-            padding: var(--space-2) var(--space-3);
-        }
-
-        .family-detail-card .detail-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .spouse-section-header {
-            flex-wrap: wrap;
-        }
-
-        .children-section-header {
-            flex-wrap: wrap;
-        }
-
-        .family-filter-panel {
-            width: 100%;
-        }
-
-        .family-search-box {
-            min-width: 100%;
-            max-width: 100%;
-        }
-
-        .family-filter-select {
-            width: 100%;
-            min-width: 100%;
-        }
-
-        .family-filter-actions {
-            width: 100%;
-            flex-direction: column;
-            gap: var(--space-3);
-        }
-
-        .family-clear-filters,
-        .family-filter-actions .action-btn {
-            width: 100%;
-            justify-content: center;
-            min-height: 48px;
-            font-size: var(--text-base);
-        }
-
-        .family-detail-row {
-            display: none;
-        }
-
-        .family-detail-row.open {
-            display: block;
-        }
-
-        .family-detail-wrapper {
-            display: none;
-            max-height: none;
-            opacity: 1;
-            transform: none;
-            transition: none;
-        }
-
-        .family-detail-row.open .family-detail-wrapper {
-            display: block;
-        }
-
-        .family-detail-card {
-            margin: var(--space-3) var(--space-3);
-            border-radius: var(--radius-lg);
-        }
-
-        .detail-header {
-            padding: var(--space-3) var(--space-4);
-        }
-
-        .detail-header h5 {
-            font-size: 0.85rem;
-        }
-
-        .detail-grid {
-            padding: var(--space-3) var(--space-4);
-        }
-
-        .detail-actions {
-            padding: var(--space-3) var(--space-4);
-        }
-    }
-
-    @media (max-width: 576px) {
-        .family-search-box input {
-            padding: var(--space-2) var(--space-3) var(--space-2) var(--space-10);
-            font-size: var(--text-sm);
-        }
-
-        .family-filter-select {
-            padding: var(--space-2) var(--space-3);
-            font-size: var(--text-sm);
-        }
-
-        .family-filter-actions {
-            gap: var(--space-1);
-        }
-
-        .family-clear-filters,
-        .family-filter-actions .action-btn {
-            font-size: var(--text-xs);
-            padding: var(--space-2) var(--space-3);
-        }
-
-        .family-page-header h2 {
-            font-size: var(--text-xl);
-        }
-
-        .family-summary-value {
-            font-size: var(--text-xl);
-        }
-
-        .family-summary-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 1.1rem;
-        }
-    }
+    
 
     [data-theme="dark"] .family-table-card .table th {
         background: var(--secondary-800);
@@ -1002,28 +699,51 @@
         <a href="{{ url_for('register.create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Member</a>
         {% endif %}
     </div>
-    <div class="header-actions family-filter-bar">
-        <div class="family-search-box">
-            <i class="bi bi-search search-icon"></i>
-            <input type="text" id="familySearch" placeholder="Search by member name...">
+    <div class="filter-bar">
+        <button type="button" class="filter-bar-toggle" id="family-directory-filters-toggle" aria-expanded="false" aria-controls="family-directory-filters-list">
+            <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+            Filters
+        </button>
+        <div class="filter-bar-collapsible" id="family-directory-filters-list">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="familySearch">Search by Member Name</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="familySearch" placeholder="Search by member name..." class="form-control">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="familyIdSearch">ID Number</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-card-list input-icon"></i>
+                    <input type="text" id="familyIdSearch" placeholder="ID Number..." class="form-control">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="familyPhoneSearch">Phone</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-telephone input-icon"></i>
+                    <input type="text" id="familyPhoneSearch" placeholder="Phone..." class="form-control">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="familyStatus">Relationship</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-people input-icon"></i>
+                    <select id="familyStatus" class="form-control">
+                        <option value="" hidden>Filter by relationship…</option>
+                        <option value="spouse">Has Spouse</option>
+                        <option value="children">Has Children</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()"><i class="bi bi-x-circle"></i> Clear</button>
+                <button type="button" class="btn btn-primary" onclick="filterFamilyDirectory()"><i class="bi bi-search"></i> Filter</button>
+            </div>
         </div>
-        <div class="family-search-box">
-            <i class="bi bi-card-list search-icon"></i>
-            <input type="text" id="familyIdSearch" placeholder="ID Number...">
         </div>
-        <div class="family-search-box">
-            <i class="bi bi-telephone search-icon"></i>
-            <input type="text" id="familyPhoneSearch" placeholder="Phone...">
-        </div>
-         <select id="familyStatus" class="family-filter-select">
-              <option value="" hidden>Filter by relationship…</option>
-              <option value="spouse">Has Spouse</option>
-              <option value="children">Has Children</option>
-          </select>
-          <div class="family-filter-actions">
-              <button type="button" class="family-clear-filters" onclick="clearFamilyFilters()">✕ Clear</button>
-              <button type="button" class="action-btn primary btn-sm" onclick="filterFamilyDirectory()"><i class="bi bi-search"></i> Filter</button>
-          </div>
     </div>
 </div>
 

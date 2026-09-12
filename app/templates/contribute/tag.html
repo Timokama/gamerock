@@ -982,39 +982,57 @@
 </div>
 
 <div class="report-filters" id="filterCard">
+    <button type="button" class="filter-bar-toggle" id="contribute-filters-toggle" aria-expanded="false" aria-controls="contribute-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="contribute-filters-list">
     <form method="get" action="{{ url_for('community.contribute', tag_name=event.name) }}" id="filterForm">
         <div class="filter-row">
             <div class="filter-group">
                 <label for="search">Search Member</label>
-                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search members..." autocomplete="off">
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search members..." autocomplete="off" class="form-control">
+                </div>
             </div>
             <div class="filter-group">
                 <label for="payment_type">Payment Type</label>
-                <select id="payment_type" name="payment_type" class="form-control">
-                    <option value="">All Types</option>
-                    {% for level in level %}
-                    <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
-                    {% endfor %}
-                </select>
+                <div class="input-wrapper">
+                    <i class="bi bi-credit-card input-icon"></i>
+                    <select id="payment_type" name="payment_type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for level in level %}
+                        <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="filter-group">
                 <label for="date_from">From Date</label>
-                <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}" class="form-control">
+                </div>
             </div>
             <div class="filter-group">
                 <label for="date_to">To Date</label>
-                <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}" class="form-control">
+                </div>
             </div>
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary" id="filterSubmit">
-                    <i class="bi bi-search"></i> Filter
+                    <i class="bi bi-funnel"></i> Filter
                 </button>
                 <a href="{{ url_for('community.contribute', tag_name=event.name) }}" class="btn btn-outline">
-                    <i class="bi bi-x"></i> Clear
+                    <i class="bi bi-x-circle"></i> Clear
                 </a>
             </div>
         </div>
     </form>
+    </div>
     <div class="filter-loading" id="filterLoading">
         <div class="filter-loading-spinner"></div>
     </div>

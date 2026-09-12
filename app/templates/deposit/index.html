@@ -1507,44 +1507,62 @@
     </div>
 </div>
 
-<!-- Deposit Filters -->
+<!-- Deposit Filters (Admin) -->
 <div class="deposit-filters">
+    <button type="button" class="filter-bar-toggle" id="deposit-admin-filters-toggle" aria-expanded="false" aria-controls="deposit-admin-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="deposit-admin-filters-list">
     <form method="get" action="{{ url_for('deposit.index') }}">
         <div class="filter-row">
             <!-- Admin search filter -->
             <div class="filter-group">
                 <label for="search">Search Member</label>
-                <input type="text" id="search" name="search" value="{{ filters.search or '' }}" placeholder="Name or ID Number...">
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="search" name="search" value="{{ filters.search or '' }}" placeholder="Name or ID Number..." class="form-control">
+                </div>
             </div>
 
             <!-- Payment Type filter -->
             <div class="filter-group">
                 <label for="payment_type">Payment Type</label>
-                <select id="payment_type" name="payment_type">
-                    <option value="">All Types</option>
-                    {% for level in level %}
-                    <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
-                    {% endfor %}
-                </select>
+                <div class="input-wrapper">
+                    <i class="bi bi-credit-card input-icon"></i>
+                    <select id="payment_type" name="payment_type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for level in level %}
+                        <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <!-- Date filters -->
             <div class="filter-group">
                 <label for="date_from">From Date</label>
-                <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}" class="form-control">
+                </div>
             </div>
 
             <div class="filter-group">
                 <label for="date_to">To Date</label>
-                <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}" class="form-control">
+                </div>
             </div>
 
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
-                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
         </div>
     </form>
+    </div>
 </div>
 
     <!-- Contributions Table -->
@@ -1730,49 +1748,67 @@
     </div>
 </div>
 
-<!-- Deposit Filters -->
+<!-- Deposit Filters (User) -->
 <div class="deposit-filters">
+    <button type="button" class="filter-bar-toggle" id="deposit-user-filters-toggle" aria-expanded="false" aria-controls="deposit-user-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="deposit-user-filters-list">
     <form method="get" action="{{ url_for('deposit.index') }}">
         <div class="filter-row">
             <!-- User event filter -->
             <div class="filter-group">
                 <label for="event">Event</label>
-                <select id="event" name="event">
-                    <option value="">All Events</option>
-                    {% for event in events %}
-                    <option value="{{ event.id }}" {% if filters.event and filters.event == event.id|string() %}selected{% endif %}>{{ event.name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-event input-icon"></i>
+                    <select id="event" name="event" class="form-control">
+                        <option value="">All Events</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}" {% if filters.event and filters.event == event.id|string() %}selected{% endif %}>{{ event.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <!-- Payment Type filter -->
             <div class="filter-group">
                 <label for="payment_type">Payment Type</label>
-                <select id="payment_type" name="payment_type">
-                    <option value="">All Types</option>
-                    {% for level in level %}
-                    <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
-                    {% endfor %}
-                </select>
+                <div class="input-wrapper">
+                    <i class="bi bi-credit-card input-icon"></i>
+                    <select id="payment_type" name="payment_type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for level in level %}
+                        <option value="{{ level.value }}" {% if filters.payment_type == level.value %}selected{% endif %}>{{ level.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <!-- Date filters -->
             <div class="filter-group">
                 <label for="date_from">From Date</label>
-                <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from or '' }}" class="form-control">
+                </div>
             </div>
 
             <div class="filter-group">
                 <label for="date_to">To Date</label>
-                <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to or '' }}" class="form-control">
+                </div>
             </div>
 
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
-                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
+                <a href="{{ url_for('deposit.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
         </div>
     </form>
+    </div>
 </div>
 
     <!-- Contributions Table -->

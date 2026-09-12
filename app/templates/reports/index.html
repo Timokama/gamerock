@@ -993,68 +993,66 @@
 </div>
 
 <!-- Advanced Filters -->
-<div class="report-filters-advanced">
-    <div class="report-filters-header">
-        <div class="report-filters-title">
-            <i class="bi bi-funnel"></i>
-            Filters & Search
-        </div>
-        <button class="report-filters-toggle" type="button" onclick="toggleFilters()">
-            <i class="bi bi-chevron-up" id="filterToggleIcon"></i>
-        </button>
-    </div>
+<div class="report-filters">
+    <button type="button" class="filter-bar-toggle" id="reports-filters-toggle" aria-expanded="false" aria-controls="reports-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="reports-filters-list">
     <form method="get" action="{{ url_for('reports.index') }}" id="reportFiltersForm">
-        <div class="filter-row-advanced" id="filterContent">
-            <div class="filter-group-advanced">
-                <label for="search">
-                    <i class="bi bi-search"></i> Search
-                </label>
-                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Name, ID..." data-target="reports-accounts-list">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="search">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="search" name="search" value="{{ search }}" placeholder="Name, ID..." class="form-control">
+                </div>
             </div>
-            <div class="filter-group-advanced">
-                <label for="payment_type">
-                    <i class="bi bi-credit-card"></i> Payment Type
-                </label>
-                <select id="payment_type" name="payment_type">
-                    <option value="">All Types</option>
-                    {% for pt in payment_types %}
-                    <option value="{{ pt }}" {% if payment_type_filter == pt %}selected{% endif %}>{{ pt }}</option>
-                    {% endfor %}
-                </select>
+            <div class="filter-group">
+                <label for="payment_type">Payment Type</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-credit-card input-icon"></i>
+                    <select id="payment_type" name="payment_type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for pt in payment_types %}
+                        <option value="{{ pt }}" {% if payment_type_filter == pt %}selected{% endif %}>{{ pt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="filter-group-advanced">
-                <label for="event">
-                    <i class="bi bi-calendar-event"></i> Event
-                </label>
-                <select id="event" name="event">
-                    <option value="">All Events</option>
-                    {% for event in events %}
-                    <option value="{{ event.id }}" {% if event_filter == event.id|string %}selected{% endif %}>{{ event.name }}</option>
-                    {% endfor %}
-                </select>
+            <div class="filter-group">
+                <label for="event">Event</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-event input-icon"></i>
+                    <select id="event" name="event" class="form-control">
+                        <option value="">All Events</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}" {% if event_filter == event.id|string %}selected{% endif %}>{{ event.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="filter-group-advanced">
-                <label for="date_from">
-                    <i class="bi bi-calendar-date"></i> From Date
-                </label>
-                <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
+            <div class="filter-group">
+                <label for="date_from">From Date</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" value="{{ date_from }}" class="form-control">
+                </div>
             </div>
-            <div class="filter-group-advanced">
-                <label for="date_to">
-                    <i class="bi bi-calendar-date"></i> To Date
-                </label>
-                <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
+            <div class="filter-group">
+                <label for="date_to">To Date</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" value="{{ date_to }}" class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="filter-actions-advanced" style="margin-top: 1.25rem;">
-            <button type="submit" class="btn-filter-primary">
-                <i class="bi bi-funnel"></i> Apply Filters
-            </button>
-            <a href="{{ url_for('reports.index') }}" class="btn-filter-outline">
-                <i class="bi bi-x-circle"></i> Clear All
-            </a>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Apply Filters</button>
+                <a href="{{ url_for('reports.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear All</a>
+            </div>
         </div>
     </form>
+    </div>
 </div>
 
 <!-- Summary Cards -->
@@ -1318,29 +1316,4 @@
 </div>
 
 <script src="{{ static_version('js/reports-charts.js') }}"></script>
-<script src="{{ static_version('js/reports-charts.js') }}"></script>
-<script>
-function toggleFilters() {
-    const content = document.getElementById('filterContent');
-    const icon = document.getElementById('filterToggleIcon');
-    if (content.style.display === 'none') {
-        content.style.display = 'grid';
-        icon.classList.remove('bi-chevron-down');
-        icon.classList.add('bi-chevron-up');
-    } else {
-        content.style.display = 'none';
-        icon.classList.remove('bi-chevron-up');
-        icon.classList.add('bi-chevron-down');
-    }
-}
-
-// Auto-submit on filter change (optional enhancement)
-document.querySelectorAll('#reportFiltersForm select, #reportFiltersForm input').forEach(element => {
-    element.addEventListener('change', function() {
-        if (this.tagName === 'SELECT') {
-            document.getElementById('reportFiltersForm').submit();
-        }
-    });
-});
-</script>
 {% endblock %}

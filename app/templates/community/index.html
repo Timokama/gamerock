@@ -759,26 +759,41 @@
 </div>
 
 <div class="report-filters">
+    <button type="button" class="filter-bar-toggle" id="community-filters-toggle" aria-expanded="false" aria-controls="community-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="community-filters-list">
     <form method="get" action="{{ url_for('community.index') }}">
         <div class="filter-row">
             <div class="filter-group">
                 <label for="search">Search Events</label>
-                <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search by event name or details...">
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="search" name="search" value="{{ search }}" placeholder="Search by event name or details..." class="form-control">
+                </div>
             </div>
             <div class="filter-group">
                 <label for="date_from">From Date</label>
-                <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" value="{{ date_from }}" class="form-control">
+                </div>
             </div>
             <div class="filter-group">
                 <label for="date_to">To Date</label>
-                <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-date input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" value="{{ date_to }}" class="form-control">
+                </div>
             </div>
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
-                <a href="{{ url_for('community.index') }}" class="btn btn-outline"><i class="bi bi-x"></i> Clear</a>
+                <a href="{{ url_for('community.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
         </div>
     </form>
+    </div>
 </div>
 
 <div class="stats-row">

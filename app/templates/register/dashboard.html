@@ -1065,26 +1065,38 @@
     <div class="col-12">
         {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
         <div class="report-filters">
+            <button type="button" class="filter-bar-toggle" id="dashboard-family-filters-toggle" aria-expanded="false" aria-controls="dashboard-family-filters-list">
+                <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+                Filters
+            </button>
+            <div class="filter-bar-collapsible" id="dashboard-family-filters-list">
             <form method="get" action="{{ url_for('register.dashboard') }}" onsubmit="return false;">
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="family-search">Search Family</label>
-                        <input type="text" id="family-search" placeholder="Search by name or ID..." oninput="filterFamilyTable()">
+                        <div class="input-wrapper">
+                            <i class="bi bi-search input-icon"></i>
+                            <input type="text" id="family-search" placeholder="Search by name or ID..." oninput="filterFamilyTable()" class="form-control">
+                        </div>
                     </div>
                     <div class="filter-group">
                         <label for="family-type">Relationship</label>
-                        <select id="family-type" onchange="filterFamilyTable()">
-                            <option value="">All</option>
-                            <option value="spouse">Spouse</option>
-                            <option value="child">Child</option>
-                        </select>
+                        <div class="input-wrapper">
+                            <i class="bi bi-people input-icon"></i>
+                            <select id="family-type" onchange="filterFamilyTable()" class="form-control">
+                                <option value="">All</option>
+                                <option value="spouse">Spouse</option>
+                                <option value="child">Child</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="filter-actions">
                         <button type="button" class="btn btn-primary" onclick="filterFamilyTable()"><i class="bi bi-search"></i> Filter</button>
-                        <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()">✕ Clear</button>
+                        <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()"><i class="bi bi-x-circle"></i> Clear</button>
                     </div>
                 </div>
             </form>
+            </div>
         </div>
         {% endif %}
         <div class="report-summary mb-3">
@@ -1312,21 +1324,36 @@
             <div class="card-body p-0">
                 {% if all_events %}
                 <div class="community-filters">
+                    <button type="button" class="filter-bar-toggle" id="community-event-filters-toggle" aria-expanded="false" aria-controls="community-event-filters-list">
+                        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+                        Filters
+                    </button>
+                    <div class="filter-bar-collapsible" id="community-event-filters-list">
                     <div class="filter-group">
                         <label for="community-search">Search Events</label>
-                        <input type="text" id="community-search" placeholder="Search by name or details..." value="{{ request.args.get('search', '') }}">
+                        <div class="input-wrapper">
+                            <i class="bi bi-search input-icon"></i>
+                            <input type="text" id="community-search" placeholder="Search by name or details..." value="{{ request.args.get('search', '') }}" class="form-control">
+                        </div>
                     </div>
                     <div class="filter-group">
                         <label for="community-date-from">From Date</label>
-                        <input type="date" id="community-date-from" value="{{ request.args.get('date_from', '') }}">
+                        <div class="input-wrapper">
+                            <i class="bi bi-calendar-date input-icon"></i>
+                            <input type="date" id="community-date-from" value="{{ request.args.get('date_from', '') }}" class="form-control">
+                        </div>
                     </div>
                     <div class="filter-group">
                         <label for="community-date-to">To Date</label>
-                        <input type="date" id="community-date-to" value="{{ request.args.get('date_to', '') }}">
+                        <div class="input-wrapper">
+                            <i class="bi bi-calendar-date input-icon"></i>
+                            <input type="date" id="community-date-to" value="{{ request.args.get('date_to', '') }}" class="form-control">
+                        </div>
                     </div>
                     <div class="filter-actions">
-                        <button class="btn btn-primary" onclick="applyCommunityFilters()">Filter</button>
+                        <button class="btn btn-primary" onclick="applyCommunityFilters()"><i class="bi bi-search"></i> Filter</button>
                         <a href="{{ url_for('register.dashboard') }}" class="btn btn-outline">Reset</a>
+                    </div>
                     </div>
                 </div>
                 {% endif %}

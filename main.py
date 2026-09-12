@@ -1,7 +1,12 @@
 import os
+import logging
 from flaskwebgui import FlaskUI
 from app import create_app
 from app import db
+
+# Suppress FlaskWebGUI verbose "Task queue depth" warnings
+logging.getLogger('flaskwebgui').setLevel(logging.ERROR)
+
 app = create_app()
 
 if __name__ == "__main__":

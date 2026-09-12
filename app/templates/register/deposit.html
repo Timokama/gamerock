@@ -832,24 +832,35 @@
   </section>
   <div class="prof-card-body" style="padding: 0;">
       <div class="prof-history-filters" style="margin-bottom: 0; box-shadow: none; border: none; border-radius: 0;">
+        <button type="button" class="filter-bar-toggle" id="deposit-history-filters-toggle" aria-expanded="false" aria-controls="deposit-history-filters-list">
+            <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+            Filters
+        </button>
+        <div class="filter-bar-collapsible" id="deposit-history-filters-list">
         <form method="get" action="{{ url_for('deposit.deposit', depo_id=register.id) }}" onsubmit="return false;">
           <div class="filter-row" id="deposit-history-filters">
             <div class="filter-group">
               <label for="deposit-history-search">Search</label>
-              <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()">
+              <div class="input-wrapper">
+                <i class="bi bi-search input-icon"></i>
+                <input type="text" id="deposit-history-search" placeholder="Search contributions..." oninput="filterDepositHistory()" class="form-control">
+              </div>
             </div>
             <div class="filter-group">
               <label for="deposit-history-payment-type">Payment Type</label>
-              <select id="deposit-history-payment-type" onchange="filterDepositHistory()">
-                <option value="">All</option>
-                <option value="CASH">Cash</option>
-                <option value="MOBILE_MONEY">M-Pesa</option>
-                <option value="BANK">Bank</option>
-              </select>
+              <div class="input-wrapper">
+                <i class="bi bi-credit-card input-icon"></i>
+                <select id="deposit-history-payment-type" onchange="filterDepositHistory()" class="form-control">
+                  <option value="">All</option>
+                  <option value="CASH">Cash</option>
+                  <option value="MOBILE_MONEY">M-Pesa</option>
+                  <option value="BANK">Bank</option>
+                </select>
+              </div>
             </div>
             <div class="filter-actions">
               <button type="button" class="btn btn-primary" onclick="filterDepositHistory()">
-                <i class="bi bi-search me-1"></i>Filter
+                <i class="bi bi-funnel me-1"></i>Filter
               </button>
               <button type="button" class="btn btn-outline" onclick="clearDepositHistoryFilters()">
                 <i class="bi bi-x-circle me-1"></i>Clear
@@ -857,6 +868,7 @@
             </div>
           </div>
         </form>
+        </div>
       </div>
     <div class="prof-result-count">
       Showing <span id="deposit-history-count">{{ contributions|length }}</span> contribution record(s)

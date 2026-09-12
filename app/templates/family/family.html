@@ -1030,26 +1030,38 @@
 </div>
 
 <div class="report-filters">
+    <button type="button" class="filter-bar-toggle" id="family-page-filters-toggle" aria-expanded="false" aria-controls="family-page-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="family-page-filters-list">
     <form method="get" action="{{ url_for('family.family', depo_id=register.id) }}" onsubmit="return false;">
         <div class="filter-row">
             <div class="filter-group">
                 <label for="family-search">Search Family</label>
-                <input type="text" id="family-search" placeholder="Search by name or ID...">
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="family-search" placeholder="Search by name or ID..." class="form-control">
+                </div>
             </div>
             <div class="filter-group">
                 <label for="family-type">Relationship</label>
-                <select id="family-type">
-                    <option value="">All</option>
-                    <option value="spouse">Spouse</option>
-                    <option value="child">Child</option>
-                </select>
+                <div class="input-wrapper">
+                    <i class="bi bi-people input-icon"></i>
+                    <select id="family-type" class="form-control">
+                        <option value="">All</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="child">Child</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-actions">
                 <button type="button" class="btn btn-primary" onclick="filterFamilyPage()"><i class="bi bi-search"></i> Filter</button>
-                <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()">✕ Clear</button>
+                <button type="button" class="btn btn-outline" onclick="clearFamilyFilters()"><i class="bi bi-x-circle"></i> Clear</button>
             </div>
         </div>
     </form>
+    </div>
 </div>
 
 <div class="family-profile-section mb-4">

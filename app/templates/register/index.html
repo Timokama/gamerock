@@ -312,44 +312,73 @@
   {% endif %}
 {% endfor %}
 <div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="register-filters-toggle" aria-expanded="false" aria-controls="register-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="register-filters-list">
     <form method="get" action="{{ url_for('register.index') }}" style="display:contents;" onsubmit="return false;">
-        <div class="filter-group">
-            <label for="search">Search</label>
-            <input type="text" id="search" name="search" class="form-control" value="{{ filters.search }}" placeholder="Name...">
-        </div>
-        <div class="filter-group">
-            <label for="email">Email</label>
-            <input type="text" id="email" name="email" class="form-control" value="{{ filters.email }}" placeholder="Email...">
-        </div>
-        <div class="filter-group">
-            <label for="phone">Phone</label>
-            <input type="text" id="phone" name="phone" class="form-control" value="{{ filters.phone }}" placeholder="Phone...">
-        </div>
-        <div class="filter-group">
-            <label for="id_number">ID Number</label>
-            <input type="text" id="id_number" name="id_number" class="form-control" value="{{ filters.id_number }}" placeholder="ID Number...">
-        </div>
-        <div class="filter-group">
-            <label for="date_from">Joined From</label>
-            <input type="date" id="date_from" name="date_from" class="form-control" value="{{ filters.date_from }}">
-        </div>
-        <div class="filter-group">
-            <label for="date_to">Joined To</label>
-            <input type="date" id="date_to" name="date_to" class="form-control" value="{{ filters.date_to }}">
-        </div>
-        <div class="filter-group">
-            <label for="memberFamilyStatus">Family</label>
-            <select id="memberFamilyStatus" name="family_status" class="form-control">
-                <option value="">All Members</option>
-                <option value="spouse" {{ 'selected' if filters.family_status == 'spouse' }}>Has Spouse</option>
-                <option value="children" {{ 'selected' if filters.family_status == 'children' }}>Has Children</option>
-            </select>
-        </div>
-        <div class="filter-actions">
-            <button type="button" class="btn btn-primary" onclick="filterMembersTable()"><i class="bi bi-search"></i> Filter</button>
-            <a href="{{ url_for('register.index') }}" class="btn btn-outline">✕ Clear</a>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="search">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="search" name="search" class="form-control" value="{{ filters.search }}" placeholder="Name...">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-envelope input-icon"></i>
+                    <input type="text" id="email" name="email" class="form-control" value="{{ filters.email }}" placeholder="Email...">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="phone">Phone</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-telephone input-icon"></i>
+                    <input type="text" id="phone" name="phone" class="form-control" value="{{ filters.phone }}" placeholder="Phone...">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="id_number">ID Number</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-card-text input-icon"></i>
+                    <input type="text" id="id_number" name="id_number" class="form-control" value="{{ filters.id_number }}" placeholder="ID Number...">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="date_from">Joined From</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-plus input-icon"></i>
+                    <input type="date" id="date_from" name="date_from" class="form-control" value="{{ filters.date_from }}">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="date_to">Joined To</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-check input-icon"></i>
+                    <input type="date" id="date_to" name="date_to" class="form-control" value="{{ filters.date_to }}">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="memberFamilyStatus">Family</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-people input-icon"></i>
+                    <select id="memberFamilyStatus" name="family_status" class="form-control">
+                        <option value="">All Members</option>
+                        <option value="spouse" {{ 'selected' if filters.family_status == 'spouse' }}>Has Spouse</option>
+                        <option value="children" {{ 'selected' if filters.family_status == 'children' }}>Has Children</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="btn btn-primary" onclick="filterMembersTable()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('register.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
+            </div>
         </div>
     </form>
+    </div>
 </div>
 
 <script>

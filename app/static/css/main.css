@@ -661,6 +661,8 @@ textarea.form-control {
     flex-wrap: wrap;
     gap: var(--space-4);
     align-items: flex-end;
+    width: 100%;
+    padding: 0px 0px 0px 0px;
 }
 
 .filter-bar .filter-row {
@@ -681,6 +683,7 @@ textarea.form-control {
     margin-left: auto;
 }
 
+/* Label styles - text only, icons moved inside inputs */
 .filter-bar .filter-group label {
     display: block;
     font-size: var(--text-xs);
@@ -692,10 +695,17 @@ textarea.form-control {
     line-height: var(--leading-tight);
 }
 
-.filter-bar .filter-group select,
-.filter-bar .filter-group input {
+/* Input wrapper for icon positioning */
+.filter-bar .filter-group .input-wrapper {
+    position: relative;
+    display: block;
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+}
+
+.filter-bar .filter-group .input-wrapper select,
+.filter-bar .filter-group .input-wrapper input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
     border: 1.5px solid var(--border-light);
     border-radius: var(--radius-lg);
     font-size: var(--text-base);
@@ -706,14 +716,47 @@ textarea.form-control {
     line-height: var(--leading-normal);
 }
 
+.filter-bar .filter-group .input-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-3) center;
+    background-size: 16px;
+    padding-right: var(--space-10);
+}
+
+/* Icon inside input - positioned at far left */
+.filter-bar .filter-group .input-wrapper .input-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--text-base);
+    color: var(--text-tertiary);
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-bar .filter-group .input-wrapper:focus-within .input-icon {
+    color: var(--primary-500);
+}
+
 .filter-bar .filter-group select:hover,
-.filter-bar .filter-group input:hover {
+.filter-bar .filter-group input:hover,
+.filter-bar .filter-group .input-wrapper select:hover,
+.filter-bar .filter-group .input-wrapper input:hover {
     border-color: var(--border-medium);
     background: var(--bg-tertiary);
 }
 
 .filter-bar .filter-group select:focus,
-.filter-bar .filter-group input:focus {
+.filter-bar .filter-group input:focus,
+.filter-bar .filter-group .input-wrapper select:focus,
+.filter-bar .filter-group .input-wrapper input:focus {
     border-color: var(--primary-500);
     outline: none;
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
@@ -738,6 +781,7 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 48px;
 }
 
 .filter-bar .filter-actions .btn-primary {
@@ -770,17 +814,480 @@ textarea.form-control {
         min-width: 0;
     }
 
+    .filter-bar .filter-row {
+        width: 100%;
+    }
+
     .filter-bar .filter-actions {
         width: 100%;
         flex-direction: column;
         gap: var(--space-3);
+        margin-left: 0;
     }
 
     .filter-bar .filter-actions .btn {
         width: 100%;
         justify-content: center;
+        min-height: 52px;
+        font-size: var(--text-base);
+        font-weight: 600;
+    }
+
+    /* Mobile: Full-width form inputs with larger touch targets */
+    .filter-bar .filter-group .input-wrapper select,
+    .filter-bar .filter-group .input-wrapper input {
+        min-height: 52px;
+        font-size: var(--text-base);
+        padding-left: var(--space-10);
+    }
+}
+
+/* ========== MOBILE: Comprehensive full-width fix for ALL filter components (≤768px) ========== */
+@media (max-width: 768px) {
+    /* 1. All filter groups - force full width, single column */
+    .filter-bar .filter-group,
+    .report-filters .filter-group,
+    .deposit-filters .filter-group,
+    .prof-history-filters .filter-group,
+    .family-filter-bar .filter-group,
+    .community-filters .filter-group,
+    .dashboard-filters .filter-group,
+    .members-filter-bar .family-search-box {
+        flex: 1 1 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    /* 2. Filter rows - stack vertically, full width */
+    .filter-bar .filter-row,
+    .report-filters .filter-row,
+    .deposit-filters .filter-row,
+    .prof-history-filters .filter-row,
+    .family-filter-bar .filter-row,
+    .community-filters .filter-row,
+    .dashboard-filters .filter-row,
+    .filter-bar-collapsible .filter-row {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: var(--space-4) !important;
+    }
+
+    /* 3. Input wrappers - full width, proper box sizing */
+    .filter-bar .input-wrapper,
+    .report-filters .input-wrapper,
+    .deposit-filters .input-wrapper,
+    .prof-history-filters .input-wrapper,
+    .family-filter-bar .input-wrapper,
+    .family-search-box .input-wrapper,
+    .community-filters .input-wrapper,
+    .dashboard-filters .input-wrapper,
+    .members-filter-bar .family-search-box .input-wrapper {
+        width: 100% !important;
+        display: block !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 4. All inputs & selects - 100% width, touch-friendly, no overflow */
+    .filter-bar .input-wrapper input,
+    .filter-bar .input-wrapper select,
+    .report-filters .input-wrapper input,
+    .report-filters .input-wrapper select,
+    .deposit-filters .input-wrapper input,
+    .deposit-filters .input-wrapper select,
+    .prof-history-filters .input-wrapper input,
+    .prof-history-filters .input-wrapper select,
+    .family-filter-bar .input-wrapper input,
+    .family-filter-bar .input-wrapper select,
+    .family-search-box .input-wrapper input,
+    .community-filters .input-wrapper input,
+    .community-filters .input-wrapper select,
+    .dashboard-filters .input-wrapper input,
+    .dashboard-filters .input-wrapper select,
+    .members-filter-bar .family-search-box .input-wrapper input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        min-height: 52px !important;
+        font-size: 16px !important; /* prevents iOS zoom on focus */
+        padding-left: var(--space-10) !important; /* space for icon */
+        padding-right: var(--space-4) !important;
+    }
+
+    /* 5. Select dropdowns - prevent overflow, ensure arrow visible */
+    .filter-bar .input-wrapper select,
+    .report-filters .input-wrapper select,
+    .deposit-filters .input-wrapper select,
+    .prof-history-filters .input-wrapper select,
+    .family-filter-bar .input-wrapper select,
+    .community-filters .input-wrapper select,
+    .dashboard-filters .input-wrapper select,
+    .family-filter-select,
+    .members-filter-bar .family-filter-select {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-position: right var(--space-4) center !important;
+        background-size: 16px !important;
+        padding-right: var(--space-12) !important;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    /* 6. Filter actions - stacked full width buttons */
+    .filter-bar .filter-actions,
+    .report-filters .filter-actions,
+    .deposit-filters .filter-actions,
+    .prof-history-filters .filter-actions,
+    .family-filter-bar .filter-actions,
+    .family-filter-actions,
+    .community-filters .filter-actions,
+    .dashboard-filters .filter-actions {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: var(--space-3) !important;
+        margin-left: 0 !important;
+        align-items: stretch !important;
+    }
+
+    .filter-bar .filter-actions .btn,
+    .report-filters .filter-actions .btn,
+    .deposit-filters .filter-actions .btn,
+    .prof-history-filters .filter-actions .btn,
+    .family-filter-bar .filter-actions .btn,
+    .family-clear-filters,
+    .family-filter-actions .btn,
+    .community-filters .filter-actions .btn,
+    .dashboard-filters .filter-actions .btn,
+    .members-filter-bar .action-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        min-height: 52px !important;
+        font-size: var(--text-base) !important;
+        font-weight: 600 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 7. Search/icon boxes - full width */
+    .family-search-box,
+    .members-filter-bar .family-search-box,
+    .members-filter-bar .family-filter-select {
+        flex: 1 1 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    /* 8. Icon positioning inside inputs */
+    .filter-bar .input-wrapper .input-icon,
+    .report-filters .input-wrapper .input-icon,
+    .deposit-filters .input-wrapper .input-icon,
+    .prof-history-filters .input-wrapper .input-icon,
+    .family-filter-bar .input-wrapper .input-icon,
+    .family-search-box .input-wrapper .input-icon,
+    .community-filters .input-wrapper .input-icon,
+    .dashboard-filters .input-wrapper .input-icon,
+    .members-filter-bar .family-search-box .input-icon {
+        left: var(--space-3) !important;
+        font-size: 1.1rem !important;
+    }
+}
+
+/* ========== RESPONSIVE FILTER TOGGLE (Mobile/Tablet) ========== */
+/* Toggle button - hidden on desktop, visible on mobile/tablet */
+.filter-bar-toggle,
+.filter-toggle-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 48px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.filter-bar-toggle:hover,
+.filter-toggle-btn:hover {
+    border-color: var(--primary-500);
+    color: var(--primary-700);
+    background: var(--bg-tertiary);
+}
+
+.filter-bar-toggle:focus-visible,
+.filter-toggle-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.25);
+    border-color: var(--primary-500);
+}
+
+.filter-bar-toggle .filter-icon,
+.filter-toggle-btn .filter-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: currentColor;
+    transition: transform var(--transition-base);
+}
+
+.filter-bar-toggle[aria-expanded="true"] .filter-icon,
+.filter-toggle-btn[aria-expanded="true"] .filter-icon {
+    transform: rotate(180deg);
+}
+
+/* Mobile: Full-screen bottom sheet drawer */
+@media (max-width: 768px) {
+    .filter-bar-toggle,
+    .filter-toggle-btn {
+        display: inline-flex;
+        width: 100%;
+        margin-bottom: var(--space-4);
+    }
+
+    .filter-bar-collapsible {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1050;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+        padding: var(--space-5) var(--space-4) max(var(--space-6), env(safe-area-inset-bottom));
+        transform: translateY(100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform var(--transition-base) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                    opacity var(--transition-base) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                    visibility var(--transition-base);
+        max-height: 85vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-bar-collapsible::before {
+        content: '';
+        position: absolute;
+        top: var(--space-3);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: var(--border-medium);
+        border-radius: 2px;
+    }
+
+    .filter-bar-collapsible.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .filter-bar-collapsible .filter-row {
+        padding-top: var(--space-4);
+    }
+
+    .filter-bar-collapsible .filter-group {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    .filter-bar-collapsible .filter-actions {
+        position: sticky;
+        bottom: max(var(--space-4), env(safe-area-inset-bottom));
+        background: var(--bg-secondary);
+        padding-top: var(--space-4);
+        margin-top: var(--space-4);
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        z-index: 1;
+    }
+
+    .filter-bar-collapsible .filter-actions .btn {
+        width: 100%;
+        min-height: 52px;
+        font-size: var(--text-base);
+        font-weight: 600;
+    }
+
+    /* Backdrop overlay for mobile */
+    .filter-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1040;
+        background: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition-base), visibility var(--transition-base);
+        backdrop-filter: blur(2px);
+    }
+
+    .filter-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Prevent body scroll when filter is open */
+    body.filter-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+}
+
+/* Tablet: Keep filters inline like desktop, with touch-friendly sizing (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .filter-bar-toggle,
+    .filter-toggle-btn {
+        display: none !important;
+    }
+
+    .filter-bar-collapsible {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        border-radius: 0 !important;
+    }
+
+    .filter-bar-collapsible::before {
+        display: none;
+    }
+
+    .filter-backdrop {
+        display: none !important;
+    }
+
+    /* Touch-friendly sizing for tablet - ALL filter components */
+    .filter-bar .filter-group,
+    .report-filters .filter-group,
+    .deposit-filters .filter-group,
+    .prof-history-filters .filter-group,
+    .family-filter-bar .filter-group,
+    .community-filters .filter-group,
+    .dashboard-filters .filter-group,
+    .members-filter-bar .family-search-box,
+    .members-filter-bar .family-filter-select {
+        min-width: 180px;
+    }
+
+    .filter-bar .filter-group select,
+    .filter-bar .filter-group input,
+    .report-filters .filter-group select,
+    .report-filters .filter-group input,
+    .deposit-filters .filter-group select,
+    .deposit-filters .filter-group input,
+    .prof-history-filters .filter-group select,
+    .prof-history-filters .filter-group input,
+    .family-filter-bar .filter-group select,
+    .family-filter-bar .filter-group input,
+    .community-filters .filter-group select,
+    .community-filters .filter-group input,
+    .dashboard-filters .filter-group select,
+    .dashboard-filters .filter-group input,
+    .members-filter-bar .family-search-box input,
+    .members-filter-bar .family-filter-select {
         min-height: 48px;
         font-size: var(--text-base);
+    }
+
+    .filter-bar .filter-actions .btn,
+    .report-filters .filter-actions .btn,
+    .deposit-filters .filter-actions .btn,
+    .prof-history-filters .filter-actions .btn,
+    .family-filter-bar .filter-actions .btn,
+    .family-filter-actions .btn,
+    .community-filters .filter-actions .btn,
+    .dashboard-filters .filter-actions .btn,
+    .members-filter-bar .action-btn {
+        min-height: 48px;
+        font-size: var(--text-base);
+        padding: var(--space-3) var(--space-5);
+    }
+}
+
+/* Desktop: Always visible, no toggle needed */
+@media (min-width: 1025px) {
+    .filter-bar-toggle,
+    .filter-toggle-btn {
+        display: none !important;
+    }
+
+    .filter-bar-collapsible {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        border-radius: 0 !important;
+    }
+
+    .filter-bar-collapsible::before {
+        display: none;
+    }
+
+    .filter-backdrop {
+        display: none !important;
+    }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .filter-bar-collapsible {
+    background: var(--bg-secondary);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .filter-bar-collapsible .filter-actions {
+    border-top-color: var(--border-medium);
+}
+
+[data-theme="dark"] .filter-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .filter-bar-collapsible,
+    .filter-backdrop,
+    .filter-bar-toggle .filter-icon,
+    .filter-toggle-btn .filter-icon {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .filter-bar-toggle,
+    .filter-toggle-btn {
+        border-width: 2px;
+    }
+    .filter-bar-collapsible {
+        border: 2px solid var(--border-medium);
+        border-bottom: none;
     }
 }
 
@@ -810,6 +1317,7 @@ textarea.form-control {
     max-width: 320px;
 }
 
+/* Label styles - text only, icons moved inside inputs */
 .report-filters .filter-group label,
 .deposit-filters .filter-group label {
     display: block;
@@ -822,12 +1330,20 @@ textarea.form-control {
     line-height: var(--leading-tight);
 }
 
-.report-filters .filter-group select,
-.report-filters .filter-group input,
-.deposit-filters .filter-group select,
-.deposit-filters .filter-group input {
+/* Input wrapper for icon positioning */
+.report-filters .filter-group .input-wrapper,
+.deposit-filters .filter-group .input-wrapper {
+    position: relative;
+    display: block;
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+}
+
+.report-filters .filter-group .input-wrapper select,
+.report-filters .filter-group .input-wrapper input,
+.deposit-filters .filter-group .input-wrapper select,
+.deposit-filters .filter-group .input-wrapper input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
     border: 1.5px solid var(--border-light);
     border-radius: var(--radius-lg);
     font-size: var(--text-base);
@@ -838,10 +1354,46 @@ textarea.form-control {
     line-height: var(--leading-normal);
 }
 
+.report-filters .filter-group .input-wrapper select,
+.deposit-filters .filter-group .input-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-3) center;
+    background-size: 16px;
+    padding-right: var(--space-10);
+}
+
+/* Icon inside input - positioned at far left */
+.report-filters .filter-group .input-wrapper .input-icon,
+.deposit-filters .filter-group .input-wrapper .input-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--text-base);
+    color: var(--text-tertiary);
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-filters .filter-group .input-wrapper:focus-within .input-icon,
+.deposit-filters .filter-group .input-wrapper:focus-within .input-icon {
+    color: var(--primary-500);
+}
+
 .report-filters .filter-group select:hover,
 .report-filters .filter-group input:hover,
 .deposit-filters .filter-group select:hover,
-.deposit-filters .filter-group input:hover {
+.deposit-filters .filter-group input:hover,
+.report-filters .filter-group .input-wrapper select:hover,
+.report-filters .filter-group .input-wrapper input:hover,
+.deposit-filters .filter-group .input-wrapper select:hover,
+.deposit-filters .filter-group .input-wrapper input:hover {
     border-color: var(--border-medium);
     background: var(--bg-tertiary);
 }
@@ -849,7 +1401,11 @@ textarea.form-control {
 .report-filters .filter-group select:focus,
 .report-filters .filter-group input:focus,
 .deposit-filters .filter-group select:focus,
-.deposit-filters .filter-group input:focus {
+.deposit-filters .filter-group input:focus,
+.report-filters .filter-group .input-wrapper select:focus,
+.report-filters .filter-group .input-wrapper input:focus,
+.deposit-filters .filter-group .input-wrapper select:focus,
+.deposit-filters .filter-group .input-wrapper input:focus {
     border-color: var(--primary-500);
     outline: none;
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
@@ -876,6 +1432,7 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 48px;
 }
 
 .report-filters .filter-actions .btn-primary,
@@ -913,6 +1470,11 @@ textarea.form-control {
         min-width: 0;
     }
 
+    .report-filters .filter-row,
+    .deposit-filters .filter-row {
+        width: 100%;
+    }
+
     .report-filters .filter-actions,
     .deposit-filters .filter-actions {
         width: 100%;
@@ -924,8 +1486,19 @@ textarea.form-control {
     .deposit-filters .filter-actions .btn {
         width: 100%;
         justify-content: center;
-        min-height: 48px;
+        min-height: 52px;
         font-size: var(--text-base);
+        font-weight: 600;
+    }
+
+    /* Mobile: Full-width form inputs with larger touch targets */
+    .report-filters .filter-group .input-wrapper select,
+    .report-filters .filter-group .input-wrapper input,
+    .deposit-filters .filter-group .input-wrapper select,
+    .deposit-filters .filter-group .input-wrapper input {
+        min-height: 52px;
+        font-size: var(--text-base);
+        padding-left: var(--space-10);
     }
 }
 
@@ -4554,97 +5127,44 @@ textarea.form-control {
     border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-.family-search-box {
-    position: relative;
+/* Family filter bar - uses standard filter-bar styles */
+.family-filter-bar {
+    /* Inherits from .filter-bar */
+}
+
+.family-filter-bar .filter-group {
     flex: 1 1 180px;
     min-width: 160px;
-}
-
-.family-search-box input {
-    width: 100%;
-    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-8);
-    border: 1.5px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-sm);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-}
-
-.family-search-box input:focus {
-    outline: none;
-    border-color: var(--primary-400);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
-}
-
-.family-search-box .search-icon {
-    position: absolute;
-    left: var(--space-3);
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: var(--text-base);
-    color: var(--text-tertiary);
-    pointer-events: none;
-}
-
-.family-filter-bar {
-    display: flex;
-    gap: var(--space-3);
-    align-items: center;
-    flex-wrap: wrap;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    padding: var(--space-3) var(--space-4);
-    box-shadow: var(--shadow-sm);
-}
-
-.family-filter-select {
-    padding: var(--space-2) var(--space-3);
-    border: 1.5px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-sm);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    min-width: 180px;
-}
-
-.family-filter-select:focus {
-    outline: none;
-    border-color: var(--primary-400);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    max-width: 320px;
 }
 
 .family-filter-actions {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-left: auto;
 }
 
 .family-clear-filters {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) 1.25rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.82rem;
     border: 1.5px solid var(--border-light);
-    border-radius: var(--radius-full);
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-medium);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
     cursor: pointer;
-    transition: all var(--transition-fast);
-    text-decoration: none;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1);
-    min-height: 44px;
+    justify-content: center;
+    min-height: 48px;
+    background: transparent;
+    color: var(--text-primary);
 }
 
 .family-clear-filters:hover {
-    border-color: var(--danger-500);
-    color: var(--danger-600);
-    background: var(--danger-50);
+    border-color: var(--primary-700);
+    color: var(--primary-700);
 }
 
 .family-no-results,
@@ -4671,105 +5191,34 @@ textarea.form-control {
     margin-bottom: var(--space-2);
 }
 
+/* Mobile responsive for family filter bar - matches standard filter-bar */
 @media (max-width: 768px) {
-    .family-search-box {
-        min-width: 100%;
+    .family-filter-bar .filter-group {
+        flex: 1 1 100%;
         max-width: none;
+        min-width: 0;
     }
 
-    .family-search-box input {
-        font-size: var(--text-base);
-        padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
-        min-height: 48px;
-    }
-
-    .family-filter-select {
+    .family-filter-bar .filter-row {
         width: 100%;
-        min-width: 100%;
-        max-width: none;
-        font-size: var(--text-base);
-        padding: var(--space-3) var(--space-4);
-        min-height: 48px;
     }
 
-    .family-filter-actions {
+    .family-filter-bar .filter-actions {
         width: 100%;
         flex-direction: column;
         gap: var(--space-3);
+        margin-left: 0;
     }
 
-    .family-filter-actions .btn {
-        width: 100%;
-        justify-content: center;
-        min-height: 48px;
-    }
-
+    .family-filter-bar .filter-actions .btn,
     .family-clear-filters {
         width: 100%;
         justify-content: center;
-        min-height: 48px;
+        min-height: 52px;
         font-size: var(--text-base);
+        font-weight: 600;
     }
-
-    .pending-contributions-table {
-        font-size: var(--text-xs);
-    }
-
-    .pending-contributions-table th,
-    .pending-contributions-table td {
-        padding: var(--space-2);
-    }
-
-    .sidebar-nav a {
-        min-height: 48px;
-        font-size: var(--text-base);
-    }
-
-    .sidebar-member-select {
-        min-height: 48px;
-        font-size: var(--text-base);
-    }
-
-    .sidebar-fullscreen-toggle {
-        min-height: 48px;
-        font-size: var(--text-base);
-    }
-}
-
-@media (max-width: 576px) {
-    .family-filter-bar {
-        padding: var(--space-3);
-        gap: var(--space-2);
-    }
-
-    .family-search-box input {
-        font-size: var(--text-sm);
-        padding: var(--space-2) var(--space-3) var(--space-2) var(--space-8);
-        min-height: 44px;
-    }
-
-    .family-filter-select {
-        font-size: var(--text-sm);
-        padding: var(--space-2) var(--space-3);
-        min-height: 44px;
-    }
-
-    .pending-detail-card {
-        margin: var(--space-2);
-        padding: var(--space-3);
-    }
-
-    .pending-contributions-table {
-        font-size: 0.75rem;
-    }
-
-    .pending-contributions-table th,
-    .pending-contributions-table td {
-        padding: var(--space-1) var(--space-2);
-    }
-}
-
-/* ============================================
+}/* ============================================
    PAGE HEADER
    ============================================ */
 .page-header {

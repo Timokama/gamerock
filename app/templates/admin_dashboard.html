@@ -1759,27 +1759,39 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
     <div class="deposit-table-card">
         <div class="card-body" style="padding: 1rem;">
             <div class="report-filters" style="margin-bottom: 0; box-shadow: none; border: none; padding: 0;">
+                <button type="button" class="filter-bar-toggle" id="admin-deposit-filters-toggle" aria-expanded="false" aria-controls="admin-deposit-filters-list">
+                    <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+                    Filters
+                </button>
+                <div class="filter-bar-collapsible" id="admin-deposit-filters-list">
                 <form method="get" action="{{ url_for('main.index') }}">
                     <div class="filter-row" id="deposit-basic-filters">
                         <div class="filter-group">
                             <label for="deposit-search">Search</label>
-                            <input type="text" id="deposit-search" name="search" placeholder="Search contributions..." value="{{ request.args.get('search', '') }}">
+                            <div class="input-wrapper">
+                                <i class="bi bi-search input-icon"></i>
+                                <input type="text" id="deposit-search" name="search" placeholder="Search contributions..." value="{{ request.args.get('search', '') }}" class="form-control">
+                            </div>
                         </div>
                         <div class="filter-group">
                             <label for="deposit-payment-type">Payment Type</label>
-                            <select id="deposit-payment-type" name="payment_type">
-                                <option value="">All</option>
-                                <option value="Ksh" {% if request.args.get('payment_type') == 'Ksh' %}selected{% endif %}>Cash</option>
-                                <option value="MPESA" {% if request.args.get('payment_type') == 'MPESA' %}selected{% endif %}>M-Pesa</option>
-                                <option value="BANK DEPOSIT" {% if request.args.get('payment_type') == 'BANK DEPOSIT' %}selected{% endif %}>Bank</option>
-                            </select>
+                            <div class="input-wrapper">
+                                <i class="bi bi-credit-card input-icon"></i>
+                                <select id="deposit-payment-type" name="payment_type" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="Ksh" {% if request.args.get('payment_type') == 'Ksh' %}selected{% endif %}>Cash</option>
+                                    <option value="MPESA" {% if request.args.get('payment_type') == 'MPESA' %}selected{% endif %}>M-Pesa</option>
+                                    <option value="BANK DEPOSIT" {% if request.args.get('payment_type') == 'BANK DEPOSIT' %}selected{% endif %}>Bank</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="filter-actions">
                             <button type="submit" class="action-btn primary"><i class="bi bi-search"></i> Filter</button>
-                            <a href="{{ url_for('main.index') }}" class="action-btn outline"><i class="bi bi-x"></i> Clear</a>
+                            <a href="{{ url_for('main.index') }}" class="action-btn outline"><i class="bi bi-x-circle"></i> Clear</a>
                         </div>
                     </div>
                 </form>
+                </div>
             </div>
         </div>
         <div class="card-body" style="padding: 0;">
@@ -2019,26 +2031,43 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
             <h4>Members Directory</h4>
             <p style="color: var(--text-secondary); margin: var(--space-1) 0 0; font-size: var(--text-sm);">View family details for each member</p>
         </div>
-        <div class="header-actions members-filter-bar">
-            <div class="family-search-box">
-                <i class="bi bi-search search-icon"></i>
-                <input type="text" id="membersSearch" placeholder="Search name...">
+        <div class="filter-bar">
+            <button type="button" class="filter-bar-toggle" id="members-directory-filters-toggle" aria-expanded="false" aria-controls="members-directory-filters-list">
+                <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+                Filters
+            </button>
+            <div class="filter-bar-collapsible" id="members-directory-filters-list">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="membersSearch">Search Name</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-search input-icon"></i>
+                        <input type="text" id="membersSearch" placeholder="Search name..." class="form-control">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="membersIdSearch">ID Number</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-card-list input-icon"></i>
+                        <input type="text" id="membersIdSearch" placeholder="ID Number..." class="form-control">
+                    </div>
+                </div>
+                <div class="filter-group" style="flex: 0 0 160px; min-width: 140px;">
+                    <label for="membersFamilyStatus">Family Status</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-people input-icon"></i>
+                        <select id="membersFamilyStatus" class="form-control">
+                            <option value="">All Members</option>
+                            <option value="spouse">Has Spouse</option>
+                            <option value="children">Has Children</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="button" class="btn btn-outline" onclick="clearMembersFilters()"><i class="bi bi-x-circle"></i> Clear</button>
+                    <button type="button" class="btn btn-primary" onclick="filterMembersTable()"><i class="bi bi-search"></i> Filter</button>
+                </div>
             </div>
-            <div class="family-search-box">
-                <i class="bi bi-card-list search-icon"></i>
-                <input type="text" id="membersIdSearch" placeholder="ID Number...">
-            </div>
-            <div class="family-search-box" style="flex: 0 0 160px; min-width: 140px;">
-                <i class="bi bi-people search-icon"></i>
-                <select id="membersFamilyStatus" style="padding-left: 2.2rem;">
-                    <option value="">All Members</option>
-                    <option value="spouse">Has Spouse</option>
-                    <option value="children">Has Children</option>
-                </select>
-            </div>
-            <div class="family-filter-actions">
-                <button type="button" class="family-clear-filters" onclick="clearMembersFilters()"><i class="bi bi-x"></i> Clear</button>
-                <button type="button" class="action-btn primary btn-sm" onclick="filterMembersTable()"><i class="bi bi-search"></i> Filter</button>
             </div>
         </div>
     </div>
