@@ -18,38 +18,53 @@
     <a href="{{ url_for('requisition.create') }}" class="btn btn-primary"><i class="bi bi-plus"></i> New Requisition</a>
 </div>
 
-<div class="mg-card mb-4">
-    <div class="card-body">
-        <form method="get" action="{{ url_for('requisition.index') }}" class="filter-row">
+<div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="requisition-filters-toggle" aria-expanded="false" aria-controls="requisition-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="requisition-filters-list">
+    <form method="get" action="{{ url_for('requisition.index') }}" style="display:contents;" onsubmit="return false;">
+        <div class="filter-row">
             {% if can_manage %}
             <div class="filter-group">
-                <label>Member</label>
-                <select name="member_id">
-                    <option value="">All Members</option>
-                    {% for m in members %}
-                    <option value="{{ m.id }}" {{ 'selected' if member_filter == m.id }}>{{ m.firstname }} {{ m.lastname }} {{ m.surname }}</option>
-                    {% endfor %}
-                </select>
+                <label for="requisitionMember">Member</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-person input-icon"></i>
+                    <select id="requisitionMember" name="member_id" class="form-control">
+                        <option value="">All Members</option>
+                        {% for m in members %}
+                        <option value="{{ m.id }}" {{ 'selected' if member_filter == m.id }}>{{ m.firstname }} {{ m.lastname }} {{ m.surname }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             {% endif %}
             <div class="filter-group">
-                <label>Status</label>
-                <select name="status">
-                    <option value="">All Statuses</option>
-                    {% for s in statuses %}
+                <label for="requisitionStatus">Status</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-tag input-icon"></i>
+                    <select id="requisitionStatus" name="status" class="form-control">
+                        <option value="">All Statuses</option>
+                        {% for s in statuses %}
                             <option value="{{ s }}" {{ 'selected' if status_filter == s }}>{{ s }}</option>
-                            {% endfor %}
-                </select>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="filter-group">
-                <label>Search</label>
-                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search items, members...">
+                <label for="requisitionSearch">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="requisitionSearch" name="search" class="form-control" value="{{ search or '' }}" placeholder="Search items, members...">
+                </div>
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('requisition.index') }}" class="btn btn-outline">Reset</a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('requisition-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('requisition.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 </div>
 

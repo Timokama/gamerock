@@ -24,32 +24,47 @@
     {% endif %}
 </div>
 
-<div class="mg-card mb-4">
-    <div class="card-body">
-        <form method="get" action="{{ url_for('budget.index') }}" class="filter-row">
+<div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="budget-filters-toggle" aria-expanded="false" aria-controls="budget-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="budget-filters-list">
+    <form method="get" action="{{ url_for('budget.index') }}" style="display:contents;" onsubmit="return false;">
+        <div class="filter-row">
             <div class="filter-group">
-                <label>Search</label>
-                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search budgets...">
+                <label for="budgetSearch">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="budgetSearch" name="search" class="form-control" value="{{ search or '' }}" placeholder="Search budgets...">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Fiscal Year</label>
-                <input type="text" name="fiscal_year" value="{{ fiscal_year or '' }}" placeholder="e.g. 2025">
+                <label for="budgetFiscalYear">Fiscal Year</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar input-icon"></i>
+                    <input type="text" id="budgetFiscalYear" name="fiscal_year" class="form-control" value="{{ fiscal_year or '' }}" placeholder="e.g. 2025">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Status</label>
-                <select name="status">
-                    <option value="">All</option>
-                    <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
-                    <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
-                    <option value="Active" {{ 'selected' if status == 'Active' }}>Active</option>
-                    <option value="Closed" {{ 'selected' if status == 'Closed' }}>Closed</option>
-                </select>
+                <label for="budgetStatus">Status</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-tag input-icon"></i>
+                    <select id="budgetStatus" name="status" class="form-control">
+                        <option value="">All</option>
+                        <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
+                        <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
+                        <option value="Active" {{ 'selected' if status == 'Active' }}>Active</option>
+                        <option value="Closed" {{ 'selected' if status == 'Closed' }}>Closed</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('budget.index') }}" class="btn btn-outline">Reset</a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('budget-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('budget.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 </div>
 

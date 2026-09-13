@@ -96,15 +96,21 @@
     border-bottom: 1px solid var(--border-color, #e2e8f0);
   }
 
-  .family-detail-card {
-    margin: 0.75rem 1rem 1rem;
-    background: white;
-    border-radius: 12px;
-    padding: 1.25rem;
-    border: 1px solid var(--border-color, #e2e8f0);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  [data-theme="dark"] .family-detail-card {
+      background: #0f172a;
+      border-color: var(--secondary-700);
   }
-
+  .family-detail-card {
+      margin: var(--space-3) var(--space-4) var(--space-4);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition-base);
+      will-change: transform, opacity;
+      contain: layout style paint;
+  }
   .family-detail-card .detail-header {
     display: flex;
     align-items: center;

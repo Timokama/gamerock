@@ -19,37 +19,52 @@
     {% endif %}
 </div>
 
-<div class="mg-card mb-4">
-    <div class="card-body">
-        <form method="get" action="{{ url_for('sponsor.index') }}" class="filter-row">
+<div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="sponsor-filters-toggle" aria-expanded="false" aria-controls="sponsor-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="sponsor-filters-list">
+    <form method="get" action="{{ url_for('sponsor.index') }}" style="display:contents;" onsubmit="return false;">
+        <div class="filter-row">
             <div class="filter-group">
-                <label>Search</label>
-                <input type="text" name="search" value="{{ search or '' }}" placeholder="Name, contact, email...">
+                <label for="sponsorSearch">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="sponsorSearch" name="search" class="form-control" value="{{ search or '' }}" placeholder="Name, contact, email...">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Type</label>
-                <select name="type">
-                    <option value="">All Types</option>
-                    <option value="Financial" {{ 'selected' if sponsorship_type == 'Financial' }}>Financial</option>
-                    <option value="In-Kind" {{ 'selected' if sponsorship_type == 'In-Kind' }}>In-Kind</option>
-                    <option value="Equipment" {{ 'selected' if sponsorship_type == 'Equipment' }}>Equipment</option>
-                    <option value="Other" {{ 'selected' if sponsorship_type == 'Other' }}>Other</option>
-                </select>
+                <label for="sponsorType">Type</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-cash-stack input-icon"></i>
+                    <select id="sponsorType" name="type" class="form-control">
+                        <option value="">All Types</option>
+                        <option value="Financial" {{ 'selected' if sponsorship_type == 'Financial' }}>Financial</option>
+                        <option value="In-Kind" {{ 'selected' if sponsorship_type == 'In-Kind' }}>In-Kind</option>
+                        <option value="Equipment" {{ 'selected' if sponsorship_type == 'Equipment' }}>Equipment</option>
+                        <option value="Other" {{ 'selected' if sponsorship_type == 'Other' }}>Other</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-group">
-                <label>Status</label>
-                <select name="status">
-                    <option value="">All</option>
-                    <option value="Active" {{ 'selected' if status == 'Active' }}>Active</option>
-                    <option value="Pending" {{ 'selected' if status == 'Pending' }}>Pending</option>
-                    <option value="Inactive" {{ 'selected' if status == 'Inactive' }}>Inactive</option>
-                </select>
+                <label for="sponsorStatus">Status</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-tag input-icon"></i>
+                    <select id="sponsorStatus" name="status" class="form-control">
+                        <option value="">All</option>
+                        <option value="Active" {{ 'selected' if status == 'Active' }}>Active</option>
+                        <option value="Pending" {{ 'selected' if status == 'Pending' }}>Pending</option>
+                        <option value="Inactive" {{ 'selected' if status == 'Inactive' }}>Inactive</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('sponsor.index') }}" class="btn btn-outline">Reset</a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('sponsor-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('sponsor.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 </div>
 

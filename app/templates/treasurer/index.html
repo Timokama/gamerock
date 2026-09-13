@@ -38,39 +38,60 @@
     </div>
 </div>
 
-<div class="mg-card mb-4">
-    <div class="card-body">
-        <form method="get" action="{{ url_for('treasurer.index') }}" class="filter-row">
+<div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="treasurer-filters-toggle" aria-expanded="false" aria-controls="treasurer-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="treasurer-filters-list">
+    <form method="get" action="{{ url_for('treasurer.index') }}" style="display:contents;" onsubmit="return false;">
+        <div class="filter-row">
             <div class="filter-group">
-                <label>Search</label>
-                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search records...">
+                <label for="treasurerSearch">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="treasurerSearch" name="search" class="form-control" value="{{ search or '' }}" placeholder="Search records...">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Type</label>
-                <select name="record_type">
-                    <option value="">All</option>
-                    <option value="Income" {{ 'selected' if record_type == 'Income' }}>Income</option>
-                    <option value="Expense" {{ 'selected' if record_type == 'Expense' }}>Expense</option>
-                    <option value="Transaction" {{ 'selected' if record_type == 'Transaction' }}>Transaction</option>
-                </select>
+                <label for="treasurerRecordType">Type</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-tag input-icon"></i>
+                    <select id="treasurerRecordType" name="record_type" class="form-control">
+                        <option value="">All</option>
+                        <option value="Income" {{ 'selected' if record_type == 'Income' }}>Income</option>
+                        <option value="Expense" {{ 'selected' if record_type == 'Expense' }}>Expense</option>
+                        <option value="Transaction" {{ 'selected' if record_type == 'Transaction' }}>Transaction</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-group">
-                <label>Category</label>
-                <input type="text" name="category" value="{{ category or '' }}" placeholder="e.g. Tithes">
+                <label for="treasurerCategory">Category</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-folder input-icon"></i>
+                    <input type="text" id="treasurerCategory" name="category" class="form-control" value="{{ category or '' }}" placeholder="e.g. Tithes">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Date From</label>
-                <input type="date" name="date_from" value="{{ date_from or '' }}">
+                <label for="treasurerDateFrom">Date From</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-plus input-icon"></i>
+                    <input type="date" id="treasurerDateFrom" name="date_from" class="form-control" value="{{ date_from or '' }}">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Date To</label>
-                <input type="date" name="date_to" value="{{ date_to or '' }}">
+                <label for="treasurerDateTo">Date To</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-calendar-check input-icon"></i>
+                    <input type="date" id="treasurerDateTo" name="date_to" class="form-control" value="{{ date_to or '' }}">
+                </div>
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline">Reset</a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('treasurer-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('treasurer.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 </div>
 

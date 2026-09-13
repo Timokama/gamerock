@@ -24,37 +24,52 @@
     {% endif %}
 </div>
 
-<div class="mg-card mb-4">
-    <div class="card-body">
-        <form method="get" action="{{ url_for('minutes.index') }}" class="filter-row">
+<div class="filter-bar">
+    <button type="button" class="filter-bar-toggle" id="minutes-filters-toggle" aria-expanded="false" aria-controls="minutes-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="minutes-filters-list">
+    <form method="get" action="{{ url_for('minutes.index') }}" style="display:contents;" onsubmit="return false;">
+        <div class="filter-row">
             <div class="filter-group">
-                <label>Search</label>
-                <input type="text" name="search" value="{{ search or '' }}" placeholder="Search minutes...">
+                <label for="minutesSearch">Search</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-search input-icon"></i>
+                    <input type="text" id="minutesSearch" name="search" class="form-control" value="{{ search or '' }}" placeholder="Search minutes...">
+                </div>
             </div>
             <div class="filter-group">
-                <label>Meeting Type</label>
-                <select name="meeting_type">
-                    <option value="">All</option>
-                    <option value="General" {{ 'selected' if meeting_type == 'General' }}>General</option>
-                    <option value="Committee" {{ 'selected' if meeting_type == 'Committee' }}>Committee</option>
-                    <option value="Annual" {{ 'selected' if meeting_type == 'Annual' }}>Annual</option>
-                    <option value="Emergency" {{ 'selected' if meeting_type == 'Emergency' }}>Emergency</option>
-                </select>
+                <label for="minutesMeetingType">Meeting Type</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-people input-icon"></i>
+                    <select id="minutesMeetingType" name="meeting_type" class="form-control">
+                        <option value="">All</option>
+                        <option value="General" {{ 'selected' if meeting_type == 'General' }}>General</option>
+                        <option value="Committee" {{ 'selected' if meeting_type == 'Committee' }}>Committee</option>
+                        <option value="Annual" {{ 'selected' if meeting_type == 'Annual' }}>Annual</option>
+                        <option value="Emergency" {{ 'selected' if meeting_type == 'Emergency' }}>Emergency</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-group">
-                <label>Status</label>
-                <select name="status">
-                    <option value="">All</option>
-                    <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
-                    <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
-                    <option value="Archived" {{ 'selected' if status == 'Archived' }}>Archived</option>
-                </select>
+                <label for="minutesStatus">Status</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-tag input-icon"></i>
+                    <select id="minutesStatus" name="status" class="form-control">
+                        <option value="">All</option>
+                        <option value="Draft" {{ 'selected' if status == 'Draft' }}>Draft</option>
+                        <option value="Approved" {{ 'selected' if status == 'Approved' }}>Approved</option>
+                        <option value="Archived" {{ 'selected' if status == 'Archived' }}>Archived</option>
+                    </select>
+                </div>
             </div>
             <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('minutes.index') }}" class="btn btn-outline">Reset</a>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('minutes-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                <a href="{{ url_for('minutes.index') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 </div>
 

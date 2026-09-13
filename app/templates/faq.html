@@ -743,7 +743,37 @@
         </div>
     </div>
 
-    <!-- Categories + tools -->
+    <!-- Categories + tools (filter-bar pattern) -->
+    <div class="filter-bar">
+        <button type="button" class="filter-bar-toggle" id="faq-filters-toggle" aria-expanded="false" aria-controls="faq-filters-list">
+            <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+            Filters
+        </button>
+        <div class="filter-bar-collapsible" id="faq-filters-list">
+        <form method="get" action="{{ url_for('main.faq') }}" style="display:contents;" onsubmit="return false;">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="faqCategoryFilter">Category</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-folder input-icon"></i>
+                        <select id="faqCategoryFilter" name="category" class="form-control">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.name }}" {{ 'selected' if active_category == category.name }}>{{ category.name }} ({{ category.count }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('faq-filters-list').querySelector('form').submit()"><i class="bi bi-search"></i> Filter</button>
+                    <a href="{{ url_for('main.faq') }}" class="btn btn-outline"><i class="bi bi-x-circle"></i> Clear</a>
+                </div>
+            </div>
+            {% if search %}<input type="hidden" name="q" value="{{ search }}">{% endif %}
+        </form>
+        </div>
+    </div>
+
     <div class="faq-toolbar">
         <div class="faq-toolbar-top">
             <p class="faq-toolbar-title">Browse by category</p>
