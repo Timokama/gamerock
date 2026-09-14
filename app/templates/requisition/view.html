@@ -1,90 +1,403 @@
 {% extends 'base_f/base.html' %}
 
 {% block page_title %}View Requisition #{{ requisition.id }}{% endblock %}
+{% block styles %}
+{{ super() }}
+<style>
+  /* ===== Page Header ===== */
+  .rq-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4, 1rem);
+    margin-bottom: var(--space-6, 1.5rem);
+    padding: var(--space-5, 1.25rem);
+    background: var(--bg-secondary, #ffffff);
+    border-radius: var(--radius-xl, 0.75rem);
+    box-shadow: var(--shadow-sm, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+    border: 1px solid var(--border-light, #e2e8f0);
+  }
+
+  .rq-page-header h2 {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    font-weight: 700;
+    color: var(--text-primary, #0f172a);
+    letter-spacing: -0.02em;
+  }
+
+  .rq-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3, 0.75rem);
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .rq-page-header {
+      flex-direction: column;
+      align-items: stretch;
+      padding: var(--space-4, 1rem);
+    }
+
+    .rq-page-header h2 {
+      font-size: var(--text-xl, 1.25rem);
+    }
+
+    .rq-actions {
+      flex-direction: column;
+    }
+
+    .rq-actions .btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 44px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .rq-page-header {
+      padding: var(--space-3, 0.75rem);
+    }
+  }
+
+  /* ===== Detail Card ===== */
+  .rq-detail-card {
+    background: var(--bg-secondary, #ffffff);
+    border-radius: var(--radius-2xl, 1.5rem);
+    border: 1px solid var(--border-light, #e2e8f0);
+    box-shadow: var(--shadow-sm, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+    overflow: hidden;
+    margin-bottom: var(--space-6, 1.5rem);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .rq-detail-card:hover {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  }
+
+  .rq-card-header {
+    background: linear-gradient(135deg, var(--primary-700, #0f766e) 0%, var(--primary-600, #0d9488) 100%);
+    color: var(--text-inverse, #ffffff);
+    padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
+    border: none;
+  }
+
+  .rq-card-header h4 {
+    margin: 0;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .rq-card-body {
+    padding: var(--space-6, 1.5rem);
+  }
+
+  @media (max-width: 576px) {
+    .rq-card-header {
+      padding: var(--space-4, 1rem);
+    }
+
+    .rq-card-body {
+      padding: var(--space-5, 1.25rem);
+    }
+  }
+
+  /* ===== Detail Grid ===== */
+  .rq-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5, 1.25rem);
+  }
+
+  @media (min-width: 768px) {
+    .rq-detail-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* ===== Detail Row ===== */
+  .rq-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1.5, 0.5rem);
+    padding: var(--space-3, 0.75rem) 0;
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+    transition: background-color 0.2s ease;
+  }
+
+  .rq-detail-row:hover {
+    background: var(--bg-tertiary, #f8fafc);
+    margin: 0 calc(-1 * var(--space-5, 1.25rem));
+    padding-left: var(--space-5, 1.25rem);
+    padding-right: var(--space-5, 1.25rem);
+  }
+
+  .rq-detail-row:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 576px) {
+    .rq-detail-row:hover {
+      margin: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .rq-label {
+    font-size: var(--text-xs, 0.75rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #64748b);
+  }
+
+  .rq-value {
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    color: var(--text-primary, #0f172a);
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  @media (max-width: 576px) {
+    .rq-value {
+      font-size: var(--text-sm, 0.875rem);
+    }
+  }
+
+  .rq-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+    border-radius: var(--radius-full, 9999px);
+    font-size: clamp(0.7rem, 1.5vw, 0.8125rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border: 1px solid;
+  }
+
+  .rq-status-badge.pending {
+    background: color-mix(in srgb, var(--warning-50, #fffbeb) 80%, transparent);
+    color: var(--warning-700, #92400e);
+    border-color: var(--warning-200, #fed7aa);
+  }
+
+  .rq-status-badge.approved {
+    background: color-mix(in srgb, var(--success-50, #f0fdf4) 80%, transparent);
+    color: var(--success-700, #15803d);
+    border-color: var(--success-200, #bbf7d0);
+  }
+
+  .rq-status-badge.cancelled {
+    background: color-mix(in srgb, var(--danger-50, #fef2f2) 80%, transparent);
+    color: var(--danger-700, #b91c1c);
+    border-color: var(--danger-200, #fecaca);
+  }
+
+  /* ===== Items Table ===== */
+  .rq-items-card {
+    background: var(--bg-secondary, #ffffff);
+    border-radius: var(--radius-2xl, 1.5rem);
+    border: 1px solid var(--border-light, #e2e8f0);
+    box-shadow: var(--shadow-sm, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+    overflow: hidden;
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .rq-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(0.8rem, 1vw + 0.6rem, 0.9375rem);
+  }
+
+  .rq-items-table thead th {
+    background: var(--bg-tertiary, #f1f5f9);
+    color: var(--text-secondary, #64748b);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--text-xs, 0.75rem);
+    padding: var(--space-3, 0.75rem) var(--space-5, 1.25rem);
+    text-align: left;
+    border-bottom: 2px solid var(--border-light, #e2e8f0);
+  }
+
+  .rq-items-table td {
+    padding: var(--space-3, 0.75rem) var(--space-5, 1.25rem);
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+    vertical-align: middle;
+    color: var(--text-primary, #0f172a);
+  }
+
+  .rq-items-table tbody tr:hover {
+    background: var(--bg-tertiary, #f8fafc);
+  }
+
+  .rq-items-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    .rq-items-table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .rq-items-table thead {
+      display: none;
+    }
+
+    .rq-items-table tbody tr {
+      display: block;
+      margin-bottom: var(--space-4, 1rem);
+      border-radius: var(--radius-lg, 0.5rem);
+      border: 1px solid var(--border-light, #e2e8f0);
+      box-shadow: var(--shadow-xs, 0 1px 2px 0 rgba(0, 0, 0, 0.04));
+      overflow: hidden;
+    }
+
+    .rq-items-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+      border-bottom: 1px solid var(--border-light, #e2e8f0);
+      text-align: right;
+    }
+
+    .rq-items-table td:last-child {
+      border-bottom: none;
+    }
+
+    .rq-items-table td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: var(--text-secondary, #64748b);
+      text-transform: uppercase;
+      font-size: var(--text-xs, 0.75rem);
+      letter-spacing: 0.05em;
+      text-align: left;
+      flex-shrink: 0;
+      margin-right: var(--space-3, 0.75rem);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .rq-items-table td {
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      font-size: var(--text-xs, 0.75rem);
+    }
+  }
+
+  /* ===== Focus Visible ===== */
+  .rq-actions .btn:focus-visible,
+  .rq-items-table a:focus-visible {
+    outline: 2px solid var(--primary-500, #14b8a6);
+    outline-offset: 2px;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="mg-page-header">
+  <header class="rq-page-header">
     <h2>Requisition #{{ requisition.id }}</h2>
-    <div class="d-flex gap-2">
-        <a href="{{ url_for('requisition.index') }}" class="btn btn-outline"><i class="bi bi-arrow-left"></i> Back to List</a>
-        {% if can_manage_requisition() %}
-        <a href="{{ url_for('requisition.edit', req_id=requisition.id) }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
-        {% endif %}
+    <div class="rq-actions">
+      <a href="{{ url_for('requisition.index') }}" class="btn btn-outline" aria-label="Back to requisition list">
+        <i class="bi bi-arrow-left"></i> Back to List
+      </a>
+      {% if can_manage_requisition() %}
+      <a href="{{ url_for('requisition.edit', req_id=requisition.id) }}" class="btn btn-primary" aria-label="Edit requisition">
+        <i class="bi bi-pencil"></i> Edit
+      </a>
+      {% endif %}
     </div>
-</div>
+  </header>
 
-<div class="mg-card mb-4">
-    <div class="card-header">
-        <h4>Requisition Details</h4>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <dl class="row">
-                    <dt class="col-sm-4">Status</dt>
-                    <dd class="col-sm-8">
-                        <span class="mg-badge mg-badge-{{ requisition.status.lower() }}">
-                            {{ requisition.status }}
-                        </span>
-                    </dd>
-
-                    <dt class="col-sm-4">Member</dt>
-                    <dd class="col-sm-8">
-                        {% if requisition.member %}
-                        <a href="{{ url_for('register.deposit', depo_id=requisition.member.id) }}">
-                            <strong>{{ requisition.member.firstname }} {{ requisition.member.lastname }} {{ requisition.member.surname }}</strong>
-                        </a>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4">Date Taken</dt>
-                    <dd class="col-sm-8">{{ requisition.date_taken.strftime('%b %d, %Y') if requisition.date_taken else 'N/A' }}</dd>
-
-                    <dt class="col-sm-4">Expected Return</dt>
-                    <dd class="col-sm-8">{{ requisition.expected_return_date.strftime('%b %d, %Y') if requisition.expected_return_date else 'N/A' }}</dd>
-
-                    <dt class="col-sm-4">Created By</dt>
-                    <dd class="col-sm-8">
-                        {% if requisition.creator %}
-                        {{ requisition.creator.firstname }} {{ requisition.creator.lastname }}
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </dd>
-
-                    <dt class="col-sm-4">Created On</dt>
-                    <dd class="col-sm-8">{{ requisition.created_at.strftime('%b %d, %Y %H:%M') if requisition.created_at else 'N/A' }}</dd>
-                </dl>
-            </div>
+  <article class="rq-detail-card">
+    <header class="rq-card-header">
+      <h4>Requisition Details</h4>
+    </header>
+    <div class="rq-card-body">
+      <div class="rq-detail-grid">
+        <div class="rq-detail-row">
+          <dt class="rq-label">Status</dt>
+          <dd class="rq-value">
+            <span class="rq-status-badge rq-status-{{ requisition.status.lower() }}">
+              {{ requisition.status }}
+            </span>
+          </dd>
         </div>
-    </div>
-</div>
 
-<div class="mg-card">
-    <div class="card-header">
-        <h4>Items</h4>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="mg-table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in requisition.items %}
-                    <tr>
-                        <td data-label="Item">{{ item.item_name }}</td>
-                        <td data-label="Quantity">{{ item.quantity }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="rq-detail-row">
+          <dt class="rq-label">Member</dt>
+          <dd class="rq-value">
+            {% if requisition.member %}
+            <a href="{{ url_for('register.deposit', depo_id=requisition.member.id) }}">
+              <strong>{{ requisition.member.firstname }} {{ requisition.member.lastname }} {{ requisition.member.surname }}</strong>
+            </a>
+            {% else %}
+            <span class="text-muted">N/A</span>
+            {% endif %}
+          </dd>
         </div>
+
+        <div class="rq-detail-row">
+          <dt class="rq-label">Date Taken</dt>
+          <dd class="rq-value">{{ requisition.date_taken.strftime('%b %d, %Y') if requisition.date_taken else 'N/A' }}</dd>
+        </div>
+
+        <div class="rq-detail-row">
+          <dt class="rq-label">Expected Return</dt>
+          <dd class="rq-value">{{ requisition.expected_return_date.strftime('%b %d, %Y') if requisition.expected_return_date else 'N/A' }}</dd>
+        </div>
+
+        <div class="rq-detail-row">
+          <dt class="rq-label">Created By</dt>
+          <dd class="rq-value">
+            {% if requisition.creator %}
+            {{ requisition.creator.firstname }} {{ requisition.creator.lastname }}
+            {% else %}
+            <span class="text-muted">N/A</span>
+            {% endif %}
+          </dd>
+        </div>
+
+        <div class="rq-detail-row">
+          <dt class="rq-label">Created On</dt>
+          <dd class="rq-value">{{ requisition.created_at.strftime('%b %d, %Y %H:%M') if requisition.created_at else 'N/A' }}</dd>
+        </div>
+      </div>
     </div>
-</div>
+  </article>
+
+  <article class="rq-items-card">
+    <header class="rq-card-header">
+      <h4>Items</h4>
+    </header>
+    <div class="rq-card-body p-0">
+      <div class="table-responsive">
+        <table class="rq-items-table">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in requisition.items %}
+            <tr>
+              <td data-label="Item">{{ item.item_name }}</td>
+              <td data-label="Quantity">{{ item.quantity }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
 {% endblock %}

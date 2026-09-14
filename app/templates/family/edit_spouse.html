@@ -299,6 +299,11 @@
                         <input type="tel" class="form-control" id="phone_num" name="phone_num" value="{{ spouse.phone_num }}" required>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ spouse.display_email or '' }}">
+                    </div>
+
                     <div class="mb-4">
                         <label for="id_number" class="form-label">ID Number</label>
                         <input type="text" class="form-control" id="id_number" name="id_number" value="{{ spouse.id_number if spouse.id_number is not none else '' }}" required>

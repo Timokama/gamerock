@@ -1160,7 +1160,7 @@
                                 <td>{{ spouse.date_of_birth }}</td>
                             </tr>
                             {% if spouse.child %}
-                            <tr class="family-detail-row" id="spouse-{{ spouse.id }}">
+                             <tr class="family-detail-row{% if spouse.id in expand_spouse_ids %} open{% endif %}" id="spouse-{{ spouse.id }}">
                                 <td colspan="6" class="family-detail-cell">
                                     <div class="family-detail-wrapper">
                                         <div class="children-detail-card">
@@ -1692,6 +1692,18 @@ function toggleFamilyDetail(btn, rowId) {
         btn.textContent = '+';
     }
 }
+
+// Auto-expand spouse detail rows on page load
+document.addEventListener('DOMContentLoaded', function() {
+    var openRows = document.querySelectorAll('.family-detail-row.open');
+    openRows.forEach(function(row) {
+        var btn = row.querySelector('.expand-btn');
+        if (btn) {
+            btn.classList.add('expanded');
+            btn.textContent = '−';
+        }
+    });
+});
 
 function filterFamilyTable() {
     var search = document.getElementById('family-search').value.toLowerCase();

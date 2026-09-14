@@ -317,13 +317,48 @@ def edit_name(depo_id):
 def create_spouse(depo_id):
     register = Member.query.get_or_404(depo_id)
     if request.method == 'POST':
-        # register = Register.query.get_or_404(depo_id)
-        # spouse = depo.family.id
-        date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-        new_spouse = Spouse(firstname = request.form['firstname'], lastname = request.form['lastname'], surname = request.form['surname'], phone_num = request.form['phone_num'], date_of_birth = date_of_birth, id_number=request.form['id_number'],member = register)
-        db.session.add(new_spouse)
-        db.session.commit()
-        return redirect(url_for('family.family', depo_id = register.id))
+        try:
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            raw_id = request.form.get('id_number', '').strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+
+            new_spouse = Spouse(
+                firstname=request.form['firstname'],
+                lastname=request.form['lastname'],
+                surname=request.form['surname'],
+                phone_num=phone_num,
+                email=email,
+                date_of_birth=date_of_birth,
+                id_number=id_number,
+                member=register
+            )
+            db.session.add(new_spouse)
+            db.session.flush()
+
+            # Create User account for the spouse if email provided
+            if email:
+                password_value = str(id_number) if id_number else str(new_spouse.id)
+                new_user = User(
+                    surname=new_spouse.surname,
+                    first_name=new_spouse.firstname,
+                    email=email,
+                    phone_num=phone_num,
+                    passwords=password_value,
+                    role=AccessLevel.USER
+                )
+                db.session.add(new_user)
+                db.session.flush()
+                new_spouse.user_id = new_user.id
+
+            db.session.commit()
+            flash('Spouse added successfully!', 'success')
+            return redirect(url_for('family.family', depo_id=register.id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add spouse. Please check your input and try again.', 'error')
+            return redirect(url_for('register.create_spouse', depo_id=register.id))
     return render_template('register/create_spouse.html', register=register)
 
 @bp.route('/<int:depo_id>/create_child/', methods=('POST','GET'))
@@ -332,17 +367,39 @@ def create_child(depo_id):
     if request.method == 'POST':
         try:
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            raw_id = request.form.get('id_number', '').strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+
             new_child = Child(
                 firstname=request.form['firstname'],
                 lastname=request.form['lastname'],
                 surname=request.form['surname'],
-                phone_num=request.form['phone_num'],
+                phone_num=phone_num,
                 date_of_birth=date_of_birth,
-                id_number=request.form['id_number'],
-                email=request.form['email'],
+                id_number=id_number,
+                email=email,
                 member=register
             )
             db.session.add(new_child)
+            db.session.flush()
+
+            # Create User account for the child if email provided
+            if email:
+                password_value = str(id_number) if id_number else str(new_child.id)
+                new_user = User(
+                    surname=new_child.surname,
+                    first_name=new_child.firstname,
+                    email=email,
+                    phone_num=phone_num,
+                    passwords=password_value,
+                    role=AccessLevel.USER
+                )
+                db.session.add(new_user)
+                db.session.flush()
+                new_child.user_id = new_user.id
+
             db.session.commit()
             flash('Child added successfully!', 'success')
             return redirect(url_for('family.family', depo_id=register.id))
@@ -525,12 +582,18 @@ def dashboard():
     
     spouses = member.spouse
     children = member.child
-    
+
     all_children = list(member.child)
     for spouse in spouses:
         for child in spouse.child:
             if child.id not in [c.id for c in all_children]:
                 all_children.append(child)
+
+    family_members = list(spouses) + list(children) + all_children
+
+    expand_spouse_ids = set()
+    if family_members:
+        expand_spouse_ids = {s.id for s in spouses if s.child}
     
     deposits = contributions
     total_deposits = sum(c.amount or 0 for c in deposits)
@@ -557,7 +620,8 @@ def dashboard():
                          total_deposits=total_deposits,
                          faqs=faqs,
                          user_image=user_image,
-                         user_image_mime_type=user_image_mime_type)
+                         user_image_mime_type=user_image_mime_type,
+                         expand_spouse_ids=expand_spouse_ids)
 
 @bp.post('/<int:member_id>/assign_admin')
 @login_required

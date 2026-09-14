@@ -120,16 +120,57 @@ def create_spouse(depo_id):
     if request.method == 'POST':
         try:
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            raw_id = request.form.get('id_number', '').strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+
+            # Check for duplicate ID number
+            if id_number:
+                if Spouse.query.filter_by(id_number=id_number).first():
+                    flash('This ID number is already associated with another spouse.', 'error')
+                    return redirect(url_for('family.create_spouse', depo_id=register.id))
+                if Member.query.filter_by(id_number=id_number).first():
+                    flash('This ID number is already associated with another member.', 'error')
+                    return redirect(url_for('family.create_spouse', depo_id=register.id))
+
+            # Check for duplicate email
+            if email:
+                if User.query.filter_by(email=email).first():
+                    flash('This email is already associated with an account.', 'error')
+                    return redirect(url_for('family.create_spouse', depo_id=register.id))
+                if Member.query.filter_by(email=email).first():
+                    flash('This email is already associated with a member.', 'error')
+                    return redirect(url_for('family.create_spouse', depo_id=register.id))
+
             new_spouse = Spouse(
                 firstname=request.form['firstname'],
                 lastname=request.form['lastname'],
                 surname=request.form['surname'],
-                phone_num=request.form['phone_num'],
+                phone_num=phone_num,
+                email=email,
                 date_of_birth=date_of_birth,
-                id_number=request.form['id_number'],
+                id_number=id_number,
                 member=register
             )
             db.session.add(new_spouse)
+            db.session.flush()
+
+            # Create User account for the spouse if email provided
+            if email:
+                password_value = str(id_number) if id_number else str(new_spouse.id)
+                new_user = User(
+                    surname=new_spouse.surname,
+                    first_name=new_spouse.firstname,
+                    email=email,
+                    phone_num=phone_num,
+                    passwords=password_value,
+                    role=AccessLevel.USER
+                )
+                db.session.add(new_user)
+                db.session.flush()
+                new_spouse.user_id = new_user.id
+
             db.session.commit()
             flash('Spouse added successfully!', 'success')
             return redirect(url_for('family.family', depo_id=register.id))
@@ -137,7 +178,7 @@ def create_spouse(depo_id):
             db.session.rollback()
             flash('Failed to add spouse. Please check your input and try again.', 'error')
             return redirect(url_for('family.create_spouse', depo_id=register.id))
-    return render_template('register/create.html', register=register)
+    return render_template('register/create_spouse.html', register=register)
 
 @bp.route('/<int:depo_id>/<int:spouse_id>/create_child', methods=('POST', 'GET'))
 @login_required
@@ -147,17 +188,57 @@ def create_child(depo_id, spouse_id):
     if request.method == 'POST':
         try:
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
+            raw_id = request.form.get('id_number', '').strip()
+            id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+
+            # Check for duplicate ID number
+            if id_number:
+                if Child.query.filter_by(id_number=id_number).first():
+                    flash('This ID number is already associated with another child.', 'error')
+                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
+                if Member.query.filter_by(id_number=id_number).first():
+                    flash('This ID number is already associated with a member.', 'error')
+                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
+
+            # Check for duplicate email
+            if email:
+                if User.query.filter_by(email=email).first():
+                    flash('This email is already associated with an account.', 'error')
+                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
+                if Member.query.filter_by(email=email).first():
+                    flash('This email is already associated with a member.', 'error')
+                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
+
             child = Child(
                 firstname=request.form['firstname'],
                 lastname=request.form['lastname'],
                 surname=request.form['surname'],
-                phone_num=request.form['phone_num'],
-                id_number=request.form['id_number'],
-                email=request.form['email'],
+                phone_num=phone_num,
+                id_number=id_number,
+                email=email,
                 date_of_birth=date_of_birth,
                 spouse=spouse
             )
             db.session.add(child)
+            db.session.flush()
+
+            # Create User account for the child if email provided
+            if email:
+                password_value = str(id_number) if id_number else str(child.id)
+                new_user = User(
+                    surname=child.surname,
+                    first_name=child.firstname,
+                    email=email,
+                    phone_num=phone_num,
+                    passwords=password_value,
+                    role=AccessLevel.USER
+                )
+                db.session.add(new_user)
+                db.session.flush()
+                child.user_id = new_user.id
+
             db.session.commit()
             flash('Child added successfully!', 'success')
             return redirect(url_for('family.family', depo_id=register.id))
@@ -165,7 +246,7 @@ def create_child(depo_id, spouse_id):
             db.session.rollback()
             flash('Failed to add child. Please check your input and try again.', 'error')
             return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
-    return render_template('register/create.html', register=register, spouse=spouse)
+    return render_template('register/create_child.html', register=register, spouse=spouse)
 
 @bp.post('/<int:depo_id>/<int:del_id>/delete')
 @login_required
@@ -188,17 +269,65 @@ def edit_spouse(depo_id, edit_id):
             firstname = request.form['firstname']
             lastname = request.form['lastname']
             surname = request.form['surname']
-            phone_num = request.form['phone_num']
-            raw_id = request.form['id_number'].strip()
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+            raw_id = request.form.get('id_number', '').strip()
             id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-            
+
+            # Check for duplicate ID number
+            if id_number:
+                existing_spouse = Spouse.query.filter_by(id_number=id_number).first()
+                if existing_spouse and existing_spouse.id != spouse.id:
+                    flash('This ID number is already associated with another spouse.', 'error')
+                    return redirect(url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id))
+                existing_member = Member.query.filter_by(id_number=id_number).first()
+                if existing_member:
+                    flash('This ID number is already associated with a member.', 'error')
+                    return redirect(url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id))
+
+            # Check for duplicate email
+            if email:
+                existing_user = User.query.filter_by(email=email).first()
+                if existing_user and (not spouse.user_id or existing_user.id != spouse.user_id):
+                    flash('This email is already associated with an account.', 'error')
+                    return redirect(url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id))
+                existing_member = Member.query.filter_by(email=email).first()
+                if existing_member and existing_member.id != register.id:
+                    flash('This email is already associated with a member.', 'error')
+                    return redirect(url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id))
+
             spouse.firstname = firstname
             spouse.lastname = lastname
             spouse.surname = surname
             spouse.phone_num = phone_num
+            spouse.email = email
             spouse.id_number = id_number
             spouse.date_of_birth = date_of_birth
+
+            # Update or create User account for the spouse
+            if email:
+                password_value = str(id_number) if id_number else str(spouse.id)
+                if spouse.user_id:
+                    existing_user = User.query.get(spouse.user_id)
+                    if existing_user:
+                        existing_user.surname = surname
+                        existing_user.first_name = firstname
+                        existing_user.email = email
+                        existing_user.phone_num = phone_num
+                        existing_user.role = AccessLevel.USER
+                else:
+                    new_user = User(
+                        surname=surname,
+                        first_name=firstname,
+                        email=email,
+                        phone_num=phone_num,
+                        passwords=password_value,
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    spouse.user_id = new_user.id
 
             db.session.add(spouse)
             db.session.commit()
@@ -221,12 +350,34 @@ def edit_child(depo_id, edit_id, child_id):
             firstname = request.form['firstname']
             lastname = request.form['lastname']
             surname = request.form['surname']
-            phone_num = request.form['phone_num']
-            email = request.form['email']
-            raw_id = request.form['id_number'].strip()
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+            raw_id = request.form.get('id_number', '').strip()
             id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-            
+
+            # Check for duplicate ID number
+            if id_number:
+                existing_child = Child.query.filter_by(id_number=id_number).first()
+                if existing_child and existing_child.id != child.id:
+                    flash('This ID number is already associated with another child.', 'error')
+                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
+                existing_member = Member.query.filter_by(id_number=id_number).first()
+                if existing_member:
+                    flash('This ID number is already associated with a member.', 'error')
+                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
+
+            # Check for duplicate email
+            if email:
+                existing_user = User.query.filter_by(email=email).first()
+                if existing_user and (not child.user_id or existing_user.id != child.user_id):
+                    flash('This email is already associated with an account.', 'error')
+                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
+                existing_member = Member.query.filter_by(email=email).first()
+                if existing_member and existing_member.id != register.id:
+                    flash('This email is already associated with a member.', 'error')
+                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
+
             child.firstname = firstname
             child.lastname = lastname
             child.surname = surname
@@ -234,6 +385,30 @@ def edit_child(depo_id, edit_id, child_id):
             child.email = email
             child.id_number = id_number
             child.date_of_birth = date_of_birth
+
+            # Update or create User account for the child
+            if email:
+                password_value = str(id_number) if id_number else str(child.id)
+                if child.user_id:
+                    existing_user = User.query.get(child.user_id)
+                    if existing_user:
+                        existing_user.surname = surname
+                        existing_user.first_name = firstname
+                        existing_user.email = email
+                        existing_user.phone_num = phone_num
+                        existing_user.role = AccessLevel.USER
+                else:
+                    new_user = User(
+                        surname=surname,
+                        first_name=firstname,
+                        email=email,
+                        phone_num=phone_num,
+                        passwords=password_value,
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    child.user_id = new_user.id
 
             db.session.add(child)
             db.session.commit()
@@ -255,12 +430,12 @@ def editchild(depo_id, child_id):
             firstname = request.form['firstname']
             lastname = request.form['lastname']
             surname = request.form['surname']
-            phone_num = request.form['phone_num']
-            email = request.form['email']
-            raw_id = request.form['id_number'].strip()
+            phone_num = request.form.get('phone_num', '').strip()
+            email = request.form.get('email', '').strip()
+            raw_id = request.form.get('id_number', '').strip()
             id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
-            
+
             child.firstname = firstname
             child.lastname = lastname
             child.surname = surname
@@ -268,6 +443,30 @@ def editchild(depo_id, child_id):
             child.email = email
             child.id_number = id_number
             child.date_of_birth = date_of_birth
+
+            # Update or create User account for the child
+            if email:
+                password_value = str(id_number) if id_number else str(child.id)
+                if child.user_id:
+                    existing_user = User.query.get(child.user_id)
+                    if existing_user:
+                        existing_user.surname = surname
+                        existing_user.first_name = firstname
+                        existing_user.email = email
+                        existing_user.phone_num = phone_num
+                        existing_user.role = AccessLevel.USER
+                else:
+                    new_user = User(
+                        surname=surname,
+                        first_name=firstname,
+                        email=email,
+                        phone_num=phone_num,
+                        passwords=password_value,
+                        role=AccessLevel.USER
+                    )
+                    db.session.add(new_user)
+                    db.session.flush()
+                    child.user_id = new_user.id
 
             db.session.add(child)
             db.session.commit()

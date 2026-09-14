@@ -4,7 +4,7 @@ from . import db
 from .level import AccessLevel
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    id = db.Column(db.Integer, primary_key=True)
     surname = db.Column(db.String(1000))
     first_name = db.Column(db.String(100))
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -18,6 +18,8 @@ class User(UserMixin, db.Model):
     family = db.relationship('Member', backref='user', foreign_keys='Member.added_by')
     member_profile = db.relationship('Member', backref='user_account', uselist=False, foreign_keys='Member.user_id')
     image = db.relationship('Images', backref='user')
+    spouse = db.relationship('Spouse', backref='user_account', uselist=False)
+    child = db.relationship('Child', backref='user_account', uselist=False)
 
     def is_active(self):
         return True

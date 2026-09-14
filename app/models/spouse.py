@@ -1,6 +1,7 @@
 from app import db
 from datetime import date
 from sqlalchemy.sql import func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Spouse(db.Model):
     __tablename__ = 'spouse'
@@ -9,8 +10,21 @@ class Spouse(db.Model):
     lastname = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100), nullable=False)
     phone_num = db.Column(db.String(20))
+    email = db.Column(db.String(120))
     date_of_birth = db.Column(db.Date)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     id_number = db.Column(db.Integer, unique=True)
     child = db.relationship('Child', backref='spouse')
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
+    @hybrid_property
+    def display_email(self):
+        if self.email:
+            return self.email
+        if self.user_account:
+            return self.user_account.email
+        return ''
+
+    def __repr__(self):
+        return f'<Spouse {self.firstname}>'
