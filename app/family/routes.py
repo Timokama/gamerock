@@ -521,6 +521,38 @@ def delete_family(depo_id):
     return redirect(url_for('family.index'))
 
 
+@bp.post('/<int:depo_id>/delete_member/')
+@login_required
+def delete_member(depo_id):
+    register = Member.query.get_or_404(depo_id)
+
+    for contribution in register.contribute:
+        db.session.delete(contribution)
+
+    for spouse in register.spouse:
+        if spouse.user_account:
+            db.session.delete(spouse.user_account)
+        for child in spouse.child:
+            if child.user_account:
+                db.session.delete(child.user_account)
+            db.session.delete(child)
+        db.session.delete(spouse)
+
+    for child in register.child:
+        if child.user_account:
+            db.session.delete(child.user_account)
+        db.session.delete(child)
+
+    if register.user_account:
+        db.session.delete(register.user_account)
+
+    db.session.delete(register)
+    db.session.commit()
+
+    flash('Member and all associated records deleted successfully.', 'success')
+    return redirect(url_for('family.index'))
+
+
 # @bp.route('/<int:depo_id>/age')
 # def date_of_b(depo_id):
 #         deposit = Deposit.query.get_or_404(depo_id)

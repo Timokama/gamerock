@@ -979,6 +979,15 @@
                                             <span class="row-action-hint">Contribution history</span>
                                         </span>
                                     </a>
+                                    <form method="post" action="{{ url_for('family.delete_member', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This will also delete their spouses, children, contributions, and cannot be undone.');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove member</span>
+                                            </span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
@@ -1026,6 +1035,15 @@
                                             <span class="row-action-hint">Contribution history</span>
                                         </span>
                                     </a>
+                                    <form method="post" action="{{ url_for('family.delete_member', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This will also delete their spouses, children, contributions, and cannot be undone.');">
+                                        <button type="submit" class="row-action-item danger" role="menuitem">
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Delete</span>
+                                                <span class="row-action-hint">Permanently remove member</span>
+                                            </span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
