@@ -260,6 +260,15 @@ def create_app():
         return hasattr(current_user, 'is_authenticated') and current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'TREASURER']
 
     @app.template_global()
+    def can_manage_requisition():
+        return (
+            hasattr(current_user, 'is_authenticated')
+            and current_user.is_authenticated
+            and getattr(current_user, 'role', None) is not None
+            and current_user.role.name in ['DEVEL', 'ADMIN', 'CHAIRPERSON']
+        )
+
+    @app.template_global()
     def access_level_global():
         from .level import AccessLevel
         return AccessLevel

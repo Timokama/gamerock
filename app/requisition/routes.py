@@ -393,3 +393,20 @@ def update_status(req_id):
     db.session.commit()
     flash(f'Requisition status updated to {new_status}.', 'success')
     return redirect(url_for('requisition.index'))
+
+
+@bp.route('/<int:req_id>')
+@login_required
+def view(req_id):
+    user = User.query.get_or_404(current_user.id)
+    requisition = Requisition.query.options(
+        db.joinedload(Requisition.member),
+        db.joinedload(Requisition.creator),
+        db.joinedload(Requisition.items)
+    ).get_or_404(req_id)
+
+    if not can_manage_requisition() and requisition.member_id != (user.member_profile.id if user.member_profile else None):
+        flash('You do not have permission to view this requisition.', 'danger')
+        return redirect(url_for('requisition.index'))
+
+    return render_template('requisition/view.html', requisition=requisition, can_manage=can_manage_requisition())

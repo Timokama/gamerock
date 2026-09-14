@@ -248,9 +248,25 @@
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFilterToggles);
+    document.addEventListener('DOMContentLoaded', function () {
+      initFilterToggles();
+      initFilterFormSubmit();
+    });
   } else {
     initFilterToggles();
+    initFilterFormSubmit();
+  }
+
+  // Auto-close filter drawer on form submission (mobile only)
+  function initFilterFormSubmit() {
+    var forms = document.querySelectorAll('.filter-bar-collapsible form');
+    forms.forEach(function (form) {
+      form.addEventListener('submit', function () {
+        if (usesDrawer()) {
+          closeAllFilters();
+        }
+      });
+    });
   }
 
   // Expose for manual control if needed

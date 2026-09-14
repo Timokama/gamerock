@@ -8,32 +8,32 @@
   .expand-btn {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
-    border: 1.5px solid var(--border-color, #e2e8f0);
-    background: var(--card-bg, #fff);
-    color: var(--primary-color, #14b8a6);
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--border-light);
+    background: var(--bg-secondary);
+    color: var(--primary-500);
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     padding: 0;
     line-height: 1;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-xs);
+    touch-action: manipulation;
   }
 
   .expand-btn:hover {
-    background: var(--primary-color, #14b8a6);
-    color: white;
-    border-color: var(--primary-color, #14b8a6);
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+    border-color: var(--primary-500);
+    background: rgba(20, 184, 166, 0.05);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
   }
 
   .expand-btn:focus-visible {
-    outline: 2px solid var(--primary-color, #14b8a6);
+    outline: 2px solid var(--primary-500);
     outline-offset: 2px;
   }
 
@@ -46,17 +46,17 @@
     opacity: 0.35;
     cursor: not-allowed;
     pointer-events: none;
-    background: var(--card-bg, #fff);
+    background: var(--bg-secondary);
     color: var(--text-muted, #64748b);
-    border-color: var(--border-color, #e2e8f0);
+    border-color: var(--border-light);
     box-shadow: none;
   }
 
   .expand-btn.expanded {
-    background: var(--primary-color, #14b8a6);
-    color: white;
-    border-color: var(--primary-color, #14b8a6);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+    color: #fff;
+    box-shadow: var(--shadow-md);
   }
 
   .expand-placeholder {
@@ -68,6 +68,34 @@
     color: var(--text-muted, #64748b);
     font-size: 1rem;
     font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .expand-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 1.25rem;
+      touch-action: manipulation;
+    }
+
+    .expand-placeholder {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .expand-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1.15rem;
+      touch-action: manipulation;
+    }
+
+    .expand-placeholder {
+      width: 40px;
+      height: 40px;
+    }
   }
 
   .family-detail-row {

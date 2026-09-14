@@ -134,6 +134,13 @@
                                         <span class="row-actions-menu-title">Requisition #{{ req.id }}</span>
                                         <span class="row-actions-menu-sub">{{ req.member.firstname }} {{ req.member.lastname }}</span>
                                     </div>
+                                    <a href="{{ url_for('requisition.view', req_id=req.id) }}" class="row-action-item" role="menuitem">
+                                        <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                        <span class="row-action-copy">
+                                            <span class="row-action-label">View</span>
+                                            <span class="row-action-hint">View details</span>
+                                        </span>
+                                    </a>
                                     <a href="{{ url_for('requisition.edit', req_id=req.id) }}" class="row-action-item" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
                                         <span class="row-action-copy">

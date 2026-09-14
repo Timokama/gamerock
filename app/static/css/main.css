@@ -4437,7 +4437,7 @@ textarea.form-control {
 .filter-group {
     flex: 1 1 200px;
     min-width: 180px;
-    max-width: 320px;
+    max-width: 100%;
 }
 
 .filter-group label {
@@ -6240,7 +6240,7 @@ textarea.form-control {
 
     .filter-group {
         flex: 1 1 160px;
-        max-width: 260px;
+        max-width: 100%;
     }
 
     .mg-summary-cards {
