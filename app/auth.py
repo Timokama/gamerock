@@ -7,7 +7,24 @@ from .image import Images
 from . import db
 from .level import AccessLevel
 from app.models.register import Member
+from app.models.spouse import Spouse
+from app.models.child import Child
+
 auth = Blueprint('auth', __name__)
+
+def get_primary_member_id():
+    """Returns the primary member ID if the current user is a spouse/child of a member."""
+    if not current_user.is_authenticated:
+        return None
+    if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']:
+        return None
+    spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+    if spouse_link and spouse_link.member_id:
+        return spouse_link.member_id
+    child_link = Child.query.filter_by(user_id=current_user.id).first()
+    if child_link and child_link.member_id:
+        return child_link.member_id
+    return None
 
 @auth.route('/', methods=['POST', 'GET'])
 def index():
@@ -55,6 +72,18 @@ def login(role):
 
         login_user(user)
         session.pop('auth_email', None)
+        
+        # Check if user is a spouse/child of a primary member
+        primary_member_id = get_primary_member_id()
+        if primary_member_id:
+            return redirect(url_for('register.dashboard_member', member_id=primary_member_id))
+        
+        # Regular user redirect
+        if current_user.role == AccessLevel.USER:
+            member = Member.query.filter_by(user_id=user.id).first()
+            if member:
+                return redirect(url_for('register.dashboard_member', member_id=member.id))
+        
         return redirect(url_for('home.home'))
     return render_template('login.html', level=level, role=role, session_email=session_email)
 

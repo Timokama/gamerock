@@ -44,8 +44,29 @@ def index():
     member = user.member_profile
     if not member:
         members = []
-        return render_template("family/index.html", members=members)
-    return render_template("family/index.html", user=user, member=member)
+        return render_template("family/index.html", members=members, total_members=0, total_spouses=0, total_children=0, member_stats={}, member_children={})
+
+    members = [member]
+    spouse_count = len(member.spouse)
+    direct_children = len(member.child)
+    spouse_children = sum(len(spouse.child) for spouse in member.spouse)
+    total_spouses = spouse_count
+    total_children = direct_children + spouse_children
+    member_stats = {
+        member.id: {
+            'spouse_count': spouse_count,
+            'direct_children': direct_children,
+            'spouse_children': spouse_children,
+            'total_children': total_children,
+        }
+    }
+    member_children = {}
+    all_children = list(member.child)
+    for spouse in member.spouse:
+        for child in spouse.child:
+            all_children.append(child)
+    member_children[member.id] = all_children
+    return render_template("family/index.html", members=members, total_members=1, total_spouses=total_spouses, total_children=total_children, member_stats=member_stats, member_children=member_children, user=user, member=member)
 
 
 @bp.route('/<int:depo_id>/')

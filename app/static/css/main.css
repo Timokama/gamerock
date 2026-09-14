@@ -695,14 +695,20 @@ textarea.form-control {
 }
 
 /* Input wrapper for icon positioning */
-.filter-bar .filter-group .input-wrapper {
+.filter-bar .filter-group .input-wrapper,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper,
+.filter-bar-collapsible .filter-group .input-wrapper {
     position: relative;
     display: block;
     width: 100%;
 }
 
 .filter-bar .filter-group .input-wrapper select,
-.filter-bar .filter-group .input-wrapper input {
+.filter-bar .filter-group .input-wrapper input,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper select,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper input,
+.filter-bar-collapsible .filter-group .input-wrapper select,
+.filter-bar-collapsible .filter-group .input-wrapper input {
     width: 100%;
     padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
     border: 1.5px solid var(--border-light);
@@ -715,7 +721,9 @@ textarea.form-control {
     line-height: var(--leading-normal);
 }
 
-.filter-bar .filter-group .input-wrapper select {
+.filter-bar .filter-group .input-wrapper select,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper select,
+.filter-bar-collapsible .filter-group .input-wrapper select {
     appearance: none;
     -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -726,7 +734,9 @@ textarea.form-control {
 }
 
 /* Icon inside input - positioned at far left */
-.filter-bar .filter-group .input-wrapper .input-icon {
+.filter-bar .filter-group .input-wrapper .input-icon,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper .input-icon,
+.filter-bar-collapsible .filter-group .input-wrapper .input-icon {
     position: absolute;
     left: var(--space-3);
     top: 50%;
@@ -740,14 +750,24 @@ textarea.form-control {
     justify-content: center;
 }
 
-.filter-bar .filter-group .input-wrapper:focus-within .input-icon {
+.filter-bar .filter-group .input-wrapper:focus-within .input-icon,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper:focus-within .input-icon,
+.filter-bar-collapsible .filter-group .input-wrapper:focus-within .input-icon {
     color: var(--primary-500);
 }
 
 .filter-bar .filter-group select:hover,
 .filter-bar .filter-group input:hover,
 .filter-bar .filter-group .input-wrapper select:hover,
-.filter-bar .filter-group .input-wrapper input:hover {
+.filter-bar .filter-group .input-wrapper input:hover,
+.filter-bar-collapsible .filter-row .filter-group select:hover,
+.filter-bar-collapsible .filter-row .filter-group input:hover,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper select:hover,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper input:hover,
+.filter-bar-collapsible .filter-group select:hover,
+.filter-bar-collapsible .filter-group input:hover,
+.filter-bar-collapsible .filter-group .input-wrapper select:hover,
+.filter-bar-collapsible .filter-group .input-wrapper input:hover {
     border-color: var(--border-medium);
     background: var(--bg-tertiary);
 }
@@ -755,7 +775,15 @@ textarea.form-control {
 .filter-bar .filter-group select:focus,
 .filter-bar .filter-group input:focus,
 .filter-bar .filter-group .input-wrapper select:focus,
-.filter-bar .filter-group .input-wrapper input:focus {
+.filter-bar .filter-group .input-wrapper input:focus,
+.filter-bar-collapsible .filter-row .filter-group select:focus,
+.filter-bar-collapsible .filter-row .filter-group input:focus,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper select:focus,
+.filter-bar-collapsible .filter-row .filter-group .input-wrapper input:focus,
+.filter-bar-collapsible .filter-group select:focus,
+.filter-bar-collapsible .filter-group input:focus,
+.filter-bar-collapsible .filter-group .input-wrapper select:focus,
+.filter-bar-collapsible .filter-group .input-wrapper input:focus {
     border-color: var(--primary-500);
     outline: none;
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
@@ -807,24 +835,31 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
-    .filter-bar .filter-group {
+    .filter-bar .filter-group,
+    .filter-bar-collapsible .filter-row .filter-group,
+    .filter-bar-collapsible .filter-group {
         flex: 1 1 100%;
         max-width: none;
         min-width: 0;
     }
 
-    .filter-bar .filter-row {
+    .filter-bar .filter-row,
+    .filter-bar-collapsible .filter-row {
         width: 100%;
     }
 
-    .filter-bar .filter-actions {
+    .filter-bar .filter-actions,
+    .filter-bar-collapsible .filter-group .filter-actions,
+    .filter-bar-collapsible .filter-actions {
         width: 100%;
         flex-direction: column;
         gap: var(--space-3);
         margin-left: 0;
     }
 
-    .filter-bar .filter-actions .btn {
+    .filter-bar .filter-actions .btn,
+    .filter-bar-collapsible .filter-group .filter-actions .btn,
+    .filter-bar-collapsible .filter-actions .btn {
         width: 100%;
         justify-content: center;
         min-height: 52px;
@@ -834,7 +869,11 @@ textarea.form-control {
 
     /* Mobile: Full-width form inputs with larger touch targets */
     .filter-bar .filter-group .input-wrapper select,
-    .filter-bar .filter-group .input-wrapper input {
+    .filter-bar .filter-group .input-wrapper input,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper select,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper input,
+    .filter-bar-collapsible .filter-group .input-wrapper select,
+    .filter-bar-collapsible .filter-group .input-wrapper input {
         min-height: 52px;
         font-size: var(--text-base);
         padding-left: var(--space-10);
@@ -845,6 +884,8 @@ textarea.form-control {
 @media (max-width: 768px) {
     /* 1. All filter groups - force full width, single column */
     .filter-bar .filter-group,
+    .filter-bar-collapsible .filter-row .filter-group,
+    .filter-bar-collapsible .filter-group,
     .report-filters .filter-group,
     .deposit-filters .filter-group,
     .prof-history-filters .filter-group,
@@ -874,6 +915,8 @@ textarea.form-control {
 
     /* 3. Input wrappers - full width, proper box sizing */
     .filter-bar .input-wrapper,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper,
+    .filter-bar-collapsible .filter-group .input-wrapper,
     .report-filters .input-wrapper,
     .deposit-filters .input-wrapper,
     .prof-history-filters .input-wrapper,
@@ -890,6 +933,10 @@ textarea.form-control {
     /* 4. All inputs & selects - 100% width, touch-friendly, no overflow */
     .filter-bar .input-wrapper input,
     .filter-bar .input-wrapper select,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper input,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper select,
+    .filter-bar-collapsible .filter-group .input-wrapper input,
+    .filter-bar-collapsible .filter-group .input-wrapper select,
     .report-filters .input-wrapper input,
     .report-filters .input-wrapper select,
     .deposit-filters .input-wrapper input,
@@ -909,13 +956,15 @@ textarea.form-control {
         max-width: 100% !important;
         box-sizing: border-box !important;
         min-height: 52px !important;
-        font-size: 16px !important; /* prevents iOS zoom on focus */
-        padding-left: var(--space-10) !important; /* space for icon */
+        font-size: 16px !important;
+        padding-left: var(--space-10) !important;
         padding-right: var(--space-4) !important;
     }
 
     /* 5. Select dropdowns - prevent overflow, ensure arrow visible */
     .filter-bar .input-wrapper select,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper select,
+    .filter-bar-collapsible .filter-group .input-wrapper select,
     .report-filters .input-wrapper select,
     .deposit-filters .input-wrapper select,
     .prof-history-filters .input-wrapper select,
@@ -980,6 +1029,8 @@ textarea.form-control {
 
     /* 8. Icon positioning inside inputs */
     .filter-bar .input-wrapper .input-icon,
+    .filter-bar-collapsible .filter-row .filter-group .input-wrapper .input-icon,
+    .filter-bar-collapsible .filter-group .input-wrapper .input-icon,
     .report-filters .input-wrapper .input-icon,
     .deposit-filters .input-wrapper .input-icon,
     .prof-history-filters .input-wrapper .input-icon,
@@ -5029,6 +5080,159 @@ textarea.form-control {
 .family-summary-card.spouses { border-left-color: var(--primary-500); }
 .family-summary-card.children { border-left-color: #f59e0b; }
 
+/* Family Dashboard Overview Cards */
+.family-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.family-overview-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.family-overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.family-overview-card.primary::before { background: linear-gradient(180deg, var(--primary-600) 0%, var(--primary-700) 100%); }
+.family-overview-card.success::before { background: linear-gradient(180deg, #16a34a 0%, #15803d 100%); }
+.family-overview-card.warning::before { background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); }
+.family-overview-card.info::before { background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); }
+
+.family-overview-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.family-overview-card:active {
+    transform: translateY(0);
+}
+
+.family-overview-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+
+.family-overview-card:hover .family-overview-icon {
+    transform: scale(1.08);
+}
+
+.family-overview-card.primary .family-overview-icon {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.06) 100%);
+    color: var(--primary-600);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+}
+
+.family-overview-card.success .family-overview-icon {
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(22, 163, 74, 0.06) 100%);
+    color: #16a34a;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+}
+
+.family-overview-card.warning .family-overview-icon {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.06) 100%);
+    color: #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.family-overview-card.info .family-overview-icon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.06) 100%);
+    color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.family-overview-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.family-overview-value {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.family-overview-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.family-overview-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    margin-top: 0.35rem;
+}
+
+.family-overview-trend.up {
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+}
+
+.family-overview-trend.down {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+[data-theme="dark"] .family-overview-card {
+    background: var(--secondary-800, #1e293b);
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .family-overview-value {
+    color: var(--secondary-100, #f1f5f9);
+}
+
+[data-theme="dark"] .family-overview-label {
+    color: var(--secondary-400, #94a3b8);
+}
+
+[data-theme="dark"] .family-table th {
+    background: var(--bg-tertiary);
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .family-table td {
+    border-color: var(--secondary-700, #334155);
+}
+
+[data-theme="dark"] .family-table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
 .family-table-card {
     background: var(--bg-secondary);
     border-radius: var(--radius-xl);
@@ -5036,6 +5240,222 @@ textarea.form-control {
     border: 1px solid var(--border-light);
     overflow: hidden;
     margin-bottom: var(--space-6);
+}
+
+.family-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.family-role-badge.primary {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--primary-600);
+}
+
+.family-role-badge.spouse {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.08) 100%);
+    color: #ef4444;
+}
+
+.family-role-badge.child {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.08) 100%);
+    color: #f59e0b;
+}
+
+.family-table.family-table {
+    font-size: 0.85rem;
+}
+
+.family-table .table-light {
+    background: var(--bg-tertiary);
+}
+
+.family-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.family-table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
+.family-table th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-light);
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    background: var(--bg-secondary);
+}
+
+.family-table td {
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-light);
+    padding: 0.75rem 1rem;
+}
+
+.family-table thead tr:first-child th:first-child {
+    border-top-left-radius: var(--radius-xl);
+}
+
+.family-table thead tr:first-child th:last-child {
+    border-top-right-radius: var(--radius-xl);
+}
+
+.family-table .secret-value {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.family-table .secret-toggle {
+    margin-left: 0.35rem;
+    padding: 0.15rem 0.3rem;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.85rem;
+}
+
+.family-table .secret-toggle:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary-600);
+    transform: scale(1.1);
+}
+
+.family-table .secret-toggle:active {
+    transform: scale(0.95);
+}
+
+.dashboard-section-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-section-header h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--dark-color);
+}
+
+.dashboard-section-header.family-view-header {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border-bottom-color: var(--border-color);
+}
+
+.dashboard-section-header.family-view-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #d97706;
+}
+
+.dashboard-section-header .dashboard-section-title {
+    flex: 1;
+}
+
+.dashboard-section-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--dark-color);
+}
+
+.dashboard-section-header.family-view-header h4 .family-view-tag {
+    font-size: 0.65rem;
+    background: rgba(245, 158, 11, 0.2);
+    color: #d97706;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.dashboard-section-header .section-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-section-body {
+    padding: 1.25rem;
+}
+
+.dashboard-section-card.family-view {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dashboard-section-card.family-view .dashboard-section-header {
+    border-bottom-color: rgba(245, 158, 11, 0.2);
+}
+
+.dashboard-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.dashboard-empty-state .dashboard-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--text-secondary);
+}
+
+.dashboard-empty-state h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-empty-state p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+}
+
+.dashboard-empty-state .dashboard-empty-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .family-table-card .card-header {

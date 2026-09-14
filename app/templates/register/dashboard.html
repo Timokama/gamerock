@@ -1,6 +1,6 @@
 {% extends 'base_f/base.html' %}
 
-{% block page_title %}My Dashboard{% endblock %}
+{% block page_title %}{% if is_viewing_family %}Family Dashboard - {{ family_member_name }}'s Account{% else %}My Dashboard{% endif %}{% endblock %}
 
 {% block styles %}
 <meta http-equiv="refresh" content="60">
@@ -792,6 +792,39 @@
 .deposit-strip-meta {
     font-size: 0.8rem;
     color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contributor-tag {
+    font-size: 0.7rem;
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.family-view-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.view-only-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
 .deposit-strip-amount {
@@ -807,28 +840,55 @@
     }
 }
 
-/* Profile Section Redesign */
-.profile-section-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+/* Family View Banner */
+.family-view-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
+    padding: 0.75rem 1.25rem;
+    gap: 1rem;
 }
 
-.profile-section-card:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-.profile-section-header {
+.family-view-content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 0.75rem;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    background: var(--bg-color);
+    flex: 1;
+}
+
+.family-view-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.family-view-tag {
+    font-size: 0.65rem;
+    background: rgba(245, 158, 11, 0.2);
+    color: #d97706;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.family-view-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #667eea;
+    text-decoration: none;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.family-view-back:hover {
+     background: rgba(102, 126, 234, 0.2);
 }
 
 .profile-header-left {
@@ -861,8 +921,12 @@
     display: block;
 }
 
-.profile-section-body {
-    padding: 1.5rem;
+.profile-avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .profile-stats-row {
@@ -870,80 +934,6 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     margin-bottom: 1.5rem;
-}
-
-.profile-stat-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    background: var(--card-bg);
-    transition: all 0.25s ease;
-}
-
-.profile-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-}
-
-.profile-stat-card.primary {
-    border-left: 4px solid #667eea;
-}
-
-.profile-stat-card.success {
-    border-left: 4px solid #10b981;
-}
-
-.profile-stat-card.warning {
-    border-left: 4px solid #f59e0b;
-}
-
-.profile-stat-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
-
-.profile-stat-card.primary .profile-stat-icon {
-    background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
-    color: #667eea;
-}
-
-.profile-stat-card.success .profile-stat-icon {
-    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
-    color: #10b981;
-}
-
-.profile-stat-card.warning .profile-stat-icon {
-    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08));
-    color: #f59e0b;
-}
-
-.profile-stat-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.profile-stat-value {
-    font-weight: 700;
-    color: var(--dark-color);
-    font-size: 0.95rem;
-    line-height: 1.2;
-    margin-bottom: 0.15rem;
-}
-
-.profile-stat-label {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 .profile-details-grid {
@@ -987,63 +977,128 @@
 
 {% block content %}
 {% if member %}
+{% if is_viewing_family %}
+<!-- Family View Banner -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="family-view-banner">
+            <div class="family-view-content">
+                <i class="bi bi-info-circle"></i>
+                <span class="family-view-text">You are viewing <strong>{{ member.firstname }} {{ member.lastname }}</strong>'s family dashboard as <strong>{{ family_member_name }}</strong>.</span>
+            </div>
+            <a href="{{ url_for('register.dashboard') }}" class="family-view-back">
+                <i class="bi bi-arrow-left"></i> My Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
 <!-- Profile Section -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="profile-section-card">
-            <div class="profile-section-header">
+        <div class="dashboard-section-card {% if is_viewing_family %}family-view{% endif %}">
+            <div class="dashboard-section-header {% if is_viewing_family %}family-view-header{% endif %}">
                 <div class="profile-header-left">
                     <div class="profile-avatar-wrapper">
                     {% if user_image %}
                     <img src="data:{{ user_image_mime_type }};base64,{{ user_image }}" alt="{{ member.firstname }} {{ member.lastname }}" class="profile-avatar-img">
                     {% else %}
                         <div class="profile-avatar">{{ member.firstname[0] }}{{ member.lastname[0] }}</div>
-                        {% endif %}
+                    {% endif %}
                     </div>
                     <div>
                         <h4 class="mb-1 fw-bold">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</h4>
-                        <p class="text-muted mb-0">Member since {{ member.created_at.strftime('%B %d, %Y') if member.created_at else 'N/A' }}</p>
+                        {% if is_viewing_family %}
+                        <p class="text-muted mb-0 d-flex align-items-center">
+                            Viewing as family member: {{ family_member_name }}
+                            <span class="family-view-tag">Family Dashboard</span>
+                        </p>
+                        {% else %}
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-calendar"></i> Member since {{ member.created_at.strftime('%B %d, %Y') if member.created_at else 'N/A' }}
+                        </p>
+                        {% endif %}
                     </div>
                 </div>
                 <span class="section-badge">Active</span>
             </div>
-            <div class="profile-section-body">
-                <div class="profile-stats-row">
-                    <div class="profile-stat-card primary">
-                        <div class="profile-stat-icon"><i class="bi bi-person"></i></div>
-                        <div class="profile-stat-content">
-                            <div class="profile-stat-value">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</div>
-                            <div class="profile-stat-label">Full Name</div>
+            <div class="dashboard-section-body">
+                <div class="family-overview profile-stats-row">
+                    <div class="family-overview-card primary">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">{{ member.firstname }} {{ member.lastname }} {{ member.surname }}</div>
+                            <div class="family-overview-label">Full Name</div>
                         </div>
                     </div>
-                    <div class="profile-stat-card success">
-                        <div class="profile-stat-icon"><i class="bi bi-envelope"></i></div>
-                        <div class="profile-stat-content">
-                            <div class="profile-stat-value">{{ member.email }}</div>
-                            <div class="profile-stat-label">Email</div>
+                    <div class="family-overview-card success">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">{{ member.email }}</div>
+                            <div class="family-overview-label">Email</div>
                         </div>
                     </div>
-                    <div class="profile-stat-card warning">
-                        <div class="profile-stat-icon"><i class="bi bi-cash-stack"></i></div>
-                        <div class="profile-stat-content">
-                            <div class="profile-stat-value">Ksh. {{ total_contributed }}</div>
-                            <div class="profile-stat-label">Total Contributions</div>
+                    <div class="family-overview-card warning">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            {% if is_viewing_family %}
+                            <div class="family-overview-value">Ksh. {{ total_deposits }}</div>
+                            <div class="family-overview-label">Family Total</div>
+                            {% else %}
+                            <div class="family-overview-value">Ksh. {{ total_contributed }}</div>
+                            <div class="family-overview-label">Total Contributions</div>
+                            {% endif %}
                         </div>
                     </div>
+                    {% if is_viewing_family %}
+                    <div class="family-overview-card warning">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-hourglass"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">{{ pending_contributions_count }}</div>
+                            <div class="family-overview-label">Pending Contributions</div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="profile-details-grid">
                     <div class="profile-detail-item">
                         <span class="profile-detail-label">ID Number</span>
                         <span class="profile-detail-value">
+                            {% if is_viewing_family %}
+                            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                             <span class="secret-value" data-full="{{ member.id_number }}" data-masked="****">****</span>
                             <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                            {% else %}
+                            <span class="text-muted">Restricted</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="secret-value" data-full="{{ member.id_number }}" data-masked="****">****</span>
+                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                            {% endif %}
                         </span>
                     </div>
                     <div class="profile-detail-item">
                         <span class="profile-detail-label">Phone</span>
                         <span class="profile-detail-value">
+                            {% if is_viewing_family %}
+                            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                             <span class="secret-value" data-full="{{ member.phone_num }}" data-masked="****">****</span>
                             <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                            {% else %}
+                            <span class="text-muted">Restricted</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="secret-value" data-full="{{ member.phone_num }}" data-masked="****">****</span>
+                            <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                            {% endif %}
                         </span>
                     </div>
                     <div class="profile-detail-item">
@@ -1099,112 +1154,200 @@
             </div>
         </div>
         {% endif %}
-        <div class="report-summary mb-3">
-            <div class="report-summary-card">
-                <div class="summary-icon"><i class="bi bi-heart"></i></div>
-                <div class="summary-value">{{ spouses|length }}</div>
-                <div class="summary-label">Total Spouses</div>
-            </div>
-            <div class="report-summary-card">
-                <div class="summary-icon"><i class="bi bi-baby"></i></div>
-                <div class="summary-value">{{ all_children|length }}</div>
-                <div class="summary-label">Total Children</div>
-            </div>
-        </div>
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 pt-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <h4 class="mb-0">My Family</h4>
-                    <div class="d-flex align-items-center gap-2">
-                        {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                        <button type="button" class="action-btn outline btn-sm" id="maskToggle" onclick="toggleFamilyMask()">🙈 Mask Sensitive Data</button>
-                        <a href="{{ url_for('family.family', depo_id=member.id) }}" class="action-btn primary btn-sm">View Full Family</a>
-                        <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Spouse</a>
-                        <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm"><i class="bi bi-plus"></i> Add Child</a>
-                        {% endif %}
-                    </div>
+        <div class="family-overview">
+            <div class="family-overview-card primary">
+                <div class="family-overview-icon">
+                    <i class="bi bi-heart"></i>
+                </div>
+                <div class="family-overview-content">
+                    <div class="family-overview-value">{{ spouses|length }}</div>
+                    <div class="family-overview-label">Total Spouses</div>
                 </div>
             </div>
-            <div class="card-body" style="padding: 0;">
+            <div class="family-overview-card success">
+                <div class="family-overview-icon">
+                    <i class="bi bi-baby"></i>
+                </div>
+                <div class="family-overview-content">
+                    <div class="family-overview-value">{{ all_children|length }}</div>
+                    <div class="family-overview-label">Total Children</div>
+                </div>
+            </div>
+            {% if is_viewing_family %}
+            <div class="family-overview-card primary">
+                <div class="family-overview-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="family-overview-content">
+                    <div class="family-overview-value">Ksh. {{ total_deposits }}</div>
+                    <div class="family-overview-label">Family Total</div>
+                </div>
+            </div>
+            <div class="family-overview-card warning">
+                <div class="family-overview-icon">
+                    <i class="bi bi-hourglass"></i>
+                </div>
+                <div class="family-overview-content">
+                    <div class="family-overview-value">{{ pending_contributions_count }}</div>
+                    <div class="family-overview-label">Pending Contributions</div>
+                </div>
+            </div>
+            <div class="family-overview-card info">
+                <div class="family-overview-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div class="family-overview-content">
+                    <div class="family-overview-value">{{ family_member_name }}</div>
+                    <div class="family-overview-label">Viewing As</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="dashboard-section-card {% if is_viewing_family %}family-view{% endif %}">
+            <div class="dashboard-section-header {% if is_viewing_family %}family-view-header{% endif %}">
+                <div class="dashboard-section-title">
+                    <h4 class="mb-0">
+                        {% if is_viewing_family %}
+                        <i class="bi bi-people"></i> Primary Member's Family
+                        <span class="family-view-tag">Family Dashboard</span>
+                        {% else %}
+                        <i class="bi bi-people"></i> My Family
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="dashboard-section-actions">
+                    {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                    <button type="button" class="action-btn outline btn-sm" id="maskToggle" onclick="toggleFamilyMask()">🙈 Mask Sensitive Data</button>
+                    {% endif %}
+                    {% if is_viewing_family %}
+                    <a href="{{ url_for('family.family', depo_id=member.id) }}" class="action-btn outline btn-sm">View Full Family</a>
+                    {% elif current_user.role.name in ['DEVEL', 'ADMIN'] %}
+                    <a href="{{ url_for('family.family', depo_id=member.id) }}" class="action-btn primary btn-sm">View Full Family</a>
+                    <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm"><i class="bi bi-plus"></i> Add Spouse</a>
+                    <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm"><i class="bi bi-plus"></i> Add Child</a>
+                    {% else %}
+                    <a href="{{ url_for('family.family', depo_id=member.id) }}" class="action-btn outline btn-sm">View Full Family</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="dashboard-section-body">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="family-table-body">
+                    <table class="table table-hover family-table mb-0" id="family-table-body">
                         <thead>
                             <tr>
                                 <th style="width: 40px;"></th>
                                 <th>Name</th>
                                 <th>Relationship</th>
                                 <th>Phone</th>
+                                <th>Email</th>
                                 <th>ID Number</th>
                                 <th>Date of Birth</th>
+                                <th style="width: 90px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for spouse in spouses %}
                             <tr class="searchable-item" data-family-type="spouse">
-                                <td style="text-align: center;">
-                                    <button class="expand-btn" onclick="toggleFamilyDetail(this, 'spouse-{{ spouse.id }}')" title="Toggle Spouse Details">+</button>
+                                <td class="align-middle text-center">
+                                    <button class="expand-btn" onclick="toggleFamilyDetail(this, 'spouse-{{ spouse.id }}')" title="Toggle details">+</button>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <span class="family-avatar spouse">{{ spouse.firstname[0] }}{{ spouse.lastname[0] }}</span>
                                     <strong>{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</strong>
                                 </td>
-                                <td><span class="family-badge spouse-badge"><i class="bi bi-heart"></i> Spouse</span></td>
-                                <td>
+                                <td class="align-middle"><span class="family-badge spouse-badge"><i class="bi bi-heart"></i> Spouse</span></td>
+                                <td class="align-middle">
+                                    {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                    <span class="text-muted">Restricted</span>
+                                    {% elif spouse.phone_num %}
                                     <span class="secret-value" data-full="{{ spouse.phone_num }}" data-masked="****">****</span>
                                     <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                    {% else %}
+                                    <span class="text-muted">N/A</span>
+                                    {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">{{ spouse.display_email or '' }}</td>
+                                <td class="align-middle">
+                                    {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                    <span class="text-muted">Restricted</span>
+                                    {% elif spouse.id_number %}
                                     <span class="secret-value" data-full="{{ spouse.id_number }}" data-masked="****">****</span>
                                     <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                    {% else %}
+                                    <span class="text-muted">N/A</span>
+                                    {% endif %}
                                 </td>
-                                <td>{{ spouse.date_of_birth }}</td>
+                                <td class="align-middle">{{ spouse.date_of_birth }}</td>
+                                <td class="align-middle">
+                                    {% if not is_viewing_family %}
+                                    <a href="{{ url_for('family.edit_spouse', depo_id=member.id, edit_id=spouse.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    {% else %}
+                                    <span class="view-only-text">View Only</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% if spouse.child %}
-                             <tr class="family-detail-row{% if spouse.id in expand_spouse_ids %} open{% endif %}" id="spouse-{{ spouse.id }}">
-                                <td colspan="6" class="family-detail-cell">
+                            <tr class="family-detail-row{% if spouse.id in expand_spouse_ids %} open{% endif %}" id="spouse-{{ spouse.id }}">
+                                <td colspan="8" class="family-detail-cell">
                                     <div class="family-detail-wrapper">
                                         <div class="children-detail-card">
-                                        <div class="children-header">
-                                            <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-baby"></i></div>
-                                            <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
-                                            <span class="children-badge family-badge child-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else 'd' }}</span>
+                                            <div class="children-header">
+                                                <div class="family-avatar child" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="bi bi-baby"></i></div>
+                                                <h5>Children of {{ spouse.firstname }} {{ spouse.lastname }}</h5>
+                                                <span class="children-badge family-badge child-badge">{{ spouse.child|length }} Child{{ 'ren' if spouse.child|length != 1 else 'd' }}</span>
+                                            </div>
+                                            <table class="children-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Phone</th>
+                                                        <th>Email</th>
+                                                        <th>ID Number</th>
+                                                        <th>Date of Birth</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                    <tbody>
+                                                        {% for child in spouse.child %}
+                                                        <tr class="searchable-item" data-family-type="child">
+                                                            <td>
+                                                                <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.7rem; margin-right: 0.5rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                                                <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                                                            </td>
+                                                            <td>
+                                                                {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                                                <span class="text-muted">Restricted</span>
+                                                                {% elif child.phone_num %}
+                                                                <span class="secret-value" data-full="{{ child.phone_num }}" data-masked="****">****</span>
+                                                                <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                                                {% else %}
+                                                                <span class="text-muted">N/A</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>{{ child.display_email or '' }}</td>
+                                                            <td>
+                                                                {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                                                <span class="text-muted">Restricted</span>
+                                                                {% elif child.id_number %}
+                                                                <span class="secret-value" data-full="{{ child.id_number }}" data-masked="****">****</span>
+                                                                <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                                                {% else %}
+                                                                <span class="text-muted">N/A</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>{{ child.date_of_birth }}</td>
+                                                            <td>
+                                                                {% if not is_viewing_family %}
+                                                                <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm">Edit</a>
+                                                                {% else %}
+                                                                <span class="view-only-text">View Only</span>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                            </table>
                                         </div>
-                                        <table class="children-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Phone</th>
-                                                    <th>ID Number</th>
-                                                    <th>Date of Birth</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for child in spouse.child %}
-                                                <tr class="searchable-item" data-family-type="child">
-                                                    <td>
-                                                        <span class="family-avatar child" style="width: 28px; height: 28px; font-size: 0.7rem; margin-right: 0.5rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
-                                                        <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
-                                                    </td>
-                                                     <td>
-                                                        <span class="secret-value" data-full="{{ child.phone_num }}" data-masked="****">****</span>
-                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
-                                                    </td>
-                                                    <td>
-                                                        <span class="secret-value" data-full="{{ child.id_number }}" data-masked="****">****</span>
-                                                        <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
-                                                    </td>
-                                                    <td>{{ child.date_of_birth }}</td>
-                                                    <td>
-                                                        {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
-                                                        <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm">Edit</a>
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
                                     </div>
                                 </td>
                             </tr>
@@ -1212,31 +1355,51 @@
                             {% endfor %}
                             {% for child in children %}
                             <tr class="searchable-item" data-family-type="child">
-                                <td style="text-align: center; color: var(--text-muted);">—</td>
-                                <td>
+                                <td class="align-middle text-center" style="color: var(--text-muted);">—</td>
+                                <td class="align-middle">
                                     <span class="family-avatar child">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
                                     <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
                                 </td>
-                                <td><span class="family-badge child-badge"><i class="bi bi-baby"></i> Direct Child</span></td>
-                                <td>
+                                <td class="align-middle"><span class="family-badge child-badge"><i class="bi bi-baby"></i> Direct Child</span></td>
+                                <td class="align-middle">
+                                    {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                    <span class="text-muted">Restricted</span>
+                                    {% elif child.phone_num %}
                                     <span class="secret-value" data-full="{{ child.phone_num }}" data-masked="****">****</span>
                                     <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show phone" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                    {% else %}
+                                    <span class="text-muted">N/A</span>
+                                    {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">{{ child.display_email or '' }}</td>
+                                <td class="align-middle">
+                                    {% if is_viewing_family and current_user.role.name not in ['DEVEL', 'ADMIN'] %}
+                                    <span class="text-muted">Restricted</span>
+                                    {% elif child.id_number %}
                                     <span class="secret-value" data-full="{{ child.id_number }}" data-masked="****">****</span>
                                     <button type="button" class="secret-toggle" onclick="toggleSecret(this)" aria-label="Show ID number" title="Show / hide"><i class="bi bi-eye"></i></button>
+                                    {% else %}
+                                    <span class="text-muted">N/A</span>
+                                    {% endif %}
                                 </td>
-                                <td>{{ child.date_of_birth }}</td>
+                                <td class="align-middle">{{ child.date_of_birth }}</td>
+                                <td class="align-middle">
+                                    {% if not is_viewing_family %}
+                                    <a href="{{ url_for('register.editchild', depo_id=member.id, child_id=child.id) }}" class="action-btn outline btn-sm">Edit</a>
+                                    {% else %}
+                                    <span class="view-only-text">View Only</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                             {% if not spouses and not children %}
                             <tr>
-                                <td colspan="6">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
+                                <td colspan="8">
+                                    <div class="dashboard-empty-state">
+                                        <div class="dashboard-empty-icon"><i class="bi bi-people"></i></div>
                                         <h3>No Family Members Yet</h3>
                                         <p>Start building your family network by adding spouses and children.</p>
-                                        <div class="d-grid gap-2 d-md-block">
+                                        <div class="dashboard-empty-actions">
                                             <a href="{{ url_for('family.create_spouse', depo_id=member.id) }}" class="action-btn primary btn-sm">Add Spouse</a>
                                             <a href="{{ url_for('register.create_child', depo_id=member.id) }}" class="action-btn outline btn-sm">Add Child</a>
                                         </div>
@@ -1255,53 +1418,109 @@
 <!-- Deposits Section -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="report-table-card">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h4>My Deposits</h4>
-                <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="section-badge" style="text-decoration: none; color: inherit; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);">View All</a>
+        <div class="dashboard-section-card {% if is_viewing_family %}family-view{% endif %}">
+            <div class="dashboard-section-header {% if is_viewing_family %}family-view-header{% endif %}">
+                <div class="dashboard-section-title">
+                    <h4 class="mb-0">
+                        {% if is_viewing_family %}
+                        <i class="bi bi-cash-stack"></i> Family Deposits
+                        <span class="family-view-tag">Family Dashboard</span>
+                        {% else %}
+                        <i class="bi bi-cash-stack"></i> My Deposits
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="dashboard-section-actions">
+                    <a href="{% if member %}{{ url_for('deposit.deposit', depo_id=member.id) }}{% else %}#{% endif %}" class="section-badge" style="text-decoration: none; color: inherit;">View All</a>
+                </div>
             </div>
             {% if deposits %}
-            <div class="stats-row" style="border-bottom: 1px solid var(--border-color);">
-                <div class="stat-card">
-                    <div class="stat-card-label">Total Deposits</div>
-                    <div class="stat-card-value">Ksh. {{ total_deposits }}</div>
+            <div class="family-overview" style="border-bottom: 1px solid var(--border-color); padding: 1.25rem;">
+                <div class="family-overview-card primary">
+                    <div class="family-overview-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="family-overview-content">
+                        <div class="family-overview-value">Ksh. {{ total_deposits }}</div>
+                        <div class="family-overview-label">{% if is_viewing_family %}Family Total{% else %}Total Deposits{% endif %}</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-card-label">Transactions</div>
-                    <div class="stat-card-value">{{ deposits|length }}</div>
+                {% if is_viewing_family %}
+                <div class="family-overview-card warning">
+                    <div class="family-overview-icon">
+                        <i class="bi bi-hourglass"></i>
+                    </div>
+                    <div class="family-overview-content">
+                        <div class="family-overview-value">{{ pending_contributions_count }}</div>
+                        <div class="family-overview-label">Pending Contributions</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-card-label">Payment Methods</div>
-                    <div class="stat-card-value">
-                        {% set payment_types = deposits | map(attribute='payment_type') | reject('none') | map(attribute='value') | unique | list %}
-                        {{ payment_types|length }}
+                <div class="family-overview-card info">
+                    <div class="family-overview-icon">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div class="family-overview-content">
+                        <div class="family-overview-value">{{ family_member_name }}</div>
+                        <div class="family-overview-label">Viewing As</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="family-overview-card success">
+                    <div class="family-overview-icon">
+                        <i class="bi bi-receipt-cutoff"></i>
+                    </div>
+                    <div class="family-overview-content">
+                        <div class="family-overview-value">{{ deposits|length }}</div>
+                        <div class="family-overview-label">Transactions</div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="family-overview-card warning">
+                    <div class="family-overview-icon">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                    <div class="family-overview-content">
+                        <div class="family-overview-value">
+                            {% set payment_types = deposits | map(attribute='payment_type') | reject('none') | map(attribute='value') | unique | list %}
+                            {{ payment_types|length }}
+                        </div>
+                        <div class="family-overview-label">Payment Methods</div>
                     </div>
                 </div>
             </div>
             {% endif %}
-            <div class="card-body">
+            <div class="dashboard-section-body">
                 {% if deposits %}
                 <div class="deposit-strip">
                     {% for deposit in deposits[:8] %}
-                    <a href="{{ url_for('deposit.deposit', depo_id=member.id) }}" class="deposit-strip-item">
+                    {% set contributor = deposit.member if deposit.member else member %}
+                    {% set is_own = contributor and member and contributor.id == member.id %}
+                    <a href="{% if contributor %}{{ url_for('deposit.deposit', depo_id=contributor.id) }}{% endif %}" class="deposit-strip-item">
                         <div class="deposit-strip-avatar">
-                            {% if user_image %}
+                            {% if is_own and user_image %}
                              <img src="data:{{ user_image_mime_type }};base64,{{ user_image }}" alt="{{ member.firstname }} {{ member.lastname }} {{ member.surname }}">
+                            {% elif not is_own and contributor.image %}
+                             <img src="data:;base64,{{ contributor.image }}" alt="{{ contributor.firstname }} {{ contributor.lastname }}">
                             {% else %}
-                            {{ member.firstname[0] }}{{ member.lastname[0] }}
+                             {{ contributor.firstname[0] if contributor.firstname else '' }}{{ contributor.lastname[0] if contributor.lastname else '' }}
                             {% endif %}
                         </div>
                         <div class="deposit-strip-info">
                             <div class="deposit-strip-name">{{ deposit.trans_date.strftime('%b %d, %Y') if deposit.trans_date else 'N/A' }}</div>
-                            <div class="deposit-strip-meta">{{ deposit.community_event.name if deposit.community_event else 'N/A' }}</div>
+                            <div class="deposit-strip-meta">
+                                {{ deposit.community_event.name if deposit.community_event else 'N/A' }}
+                                {% if not is_own %}
+                                  <span class="contributor-tag">by {{ contributor.firstname }} {{ contributor.lastname }}</span>
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="deposit-strip-amount">Ksh. {{ '{:,}'.format(deposit.amount or 0) }}</div>
                     </a>
                     {% endfor %}
                 </div>
                 {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="dashboard-empty-state">
+                    <div class="dashboard-empty-icon"><i class="bi bi-cash-stack"></i></div>
                     <h3>No Deposits Yet</h3>
                     <p>No contributions have been recorded yet.</p>
                 </div>
@@ -1311,17 +1530,23 @@
     </div>
 </div>
 
+{# Community Events section only for primary dashboard view #}
+{% if not is_viewing_family %}
 <!-- Community Section -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="report-table-card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <h4 class="mb-0">Community Events</h4>
+        <div class="dashboard-section-card">
+            <div class="dashboard-section-header">
+                <div class="dashboard-section-title">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-event"></i> Community Events
+                    </h4>
+                </div>
+                <div class="dashboard-section-actions">
                     <a href="{{ url_for('community.index') }}" class="action-btn primary btn-sm">View All Events</a>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="dashboard-section-body p-0">
                 {% if all_events %}
                 <div class="community-filters">
                     <button type="button" class="filter-bar-toggle" id="community-event-filters-toggle" aria-expanded="false" aria-controls="community-event-filters-list">
@@ -1356,21 +1581,64 @@
                     </div>
                     </div>
                 </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyCommunityFilters()"><i class="bi bi-search"></i> Filter</button>
+                        <a href="{{ url_for('register.dashboard') }}" class="btn btn-outline">Reset</a>
+                    </div>
+                    </div>
+                </div>
                 {% endif %}
                 
                 {% if all_events %}
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-card-label">Total Events</div>
-                        <div class="stat-card-value">{{ all_events|length }}</div>
+                <div class="family-overview">
+                    <div class="family-overview-card primary">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">{{ all_events|length }}</div>
+                            <div class="family-overview-label">Total Events</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-card-label">My Contributions</div>
-                        <div class="stat-card-value">{{ event_balances|selectattr('has_contributed')|list|length }}</div>
+                    <div class="family-overview-card success">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">{{ event_balances|selectattr('has_contributed')|list|length }}</div>
+                            <div class="family-overview-label">My Contributions</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-card-label">My Total</div>
-                        <div class="stat-card-value">Ksh. {{ total_contributed }}</div>
+                    <div class="family-overview-card warning">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            <div class="family-overview-value">Ksh. {{ total_contributed }}</div>
+                            <div class="family-overview-label">My Total</div>
+                        </div>
+                    </div>
+                    <div class="family-overview-card info">
+                        <div class="family-overview-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div class="family-overview-content">
+                            {% if event_balances and all_events|length > 0 %}
+                            {% set contributed_count = event_balances|selectattr('has_contributed')|list|length %}
+                            {% set total_count = all_events|length %}
+                            {% if total_count > 0 %}
+                            {% set pct = ((contributed_count / total_count * 100)|round) %}
+                            <div class="family-overview-value">{{ pct }}%</div>
+                            <div class="family-overview-label">Participation Rate</div>
+                            {% else %}
+                            <div class="family-overview-value">0%</div>
+                            <div class="family-overview-label">Participation Rate</div>
+                            {% endif %}
+                            {% else %}
+                            <div class="family-overview-value">—</div>
+                            <div class="family-overview-label">Participation Rate</div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
 
@@ -1513,13 +1781,23 @@
                                             </button>
                                         </form>
                                         {% endif %}
+                                        {% if not is_viewing_family %}
                                         <a href="{{ url_for('community.contribute', tag_name=item.event.name) }}" class="row-action-item" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
+                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Contribute</span>
                                                 <span class="row-action-hint">Make a contribution</span>
                                             </span>
                                         </a>
+                                        {% else %}
+                                        <span class="row-action-item disabled">
+                                            <span class="row-action-icon"><i class="bi bi-cash-stack"></i></span>
+                                            <span class="row-action-copy">
+                                                <span class="row-action-label">Contribute</span>
+                                                <span class="row-action-hint">Primary member must contribute</span>
+                                            </span>
+                                        </span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -1529,32 +1807,37 @@
                 </div>
                 {% endif %}
                 {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon"><i class="bi bi-calendar-event"></i></div>
+                <div class="dashboard-empty-state">
+                    <div class="dashboard-empty-icon"><i class="bi bi-calendar-event"></i></div>
                     <h3>No Events Yet</h3>
                     <p>There are no community events at the moment.</p>
                 </div>
                 {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
+{% if not is_viewing_family %}
 <!-- Reports Section -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="report-table-card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <h4 class="mb-0">All Reports</h4>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="search-box" style="max-width: 300px;">
-                            <input type="text" data-target="reports-list" placeholder="Search by Name, ID, Reference...">
-                        </div>
+        <div class="dashboard-section-card">
+            <div class="dashboard-section-header">
+                <div class="dashboard-section-title">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-text"></i> Reports
+                    </h4>
+                </div>
+                <div class="dashboard-section-actions">
+                    <div class="search-box" style="max-width: 300px;">
+                        <input type="text" data-target="reports-list" placeholder="Search by Name, ID, Reference...">
                     </div>
                 </div>
             </div>
-            <div class="card-body p-0" id="reports-list">
+            <div class="dashboard-section-body p-0" id="reports-list">
                 {% if all_contributions %}
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
@@ -1596,8 +1879,8 @@
                     </table>
                 </div>
                 {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
+                <div class="dashboard-empty-state">
+                    <div class="dashboard-empty-icon"><i class="bi bi-bar-chart"></i></div>
                     <h3>No Reports Yet</h3>
                     <p>Reports will appear here once contributions are made.</p>
                 </div>
@@ -1606,18 +1889,23 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% if current_user.role.name in ['DEVEL', 'ADMIN'] and faqs %}
 <div class="row mb-4">
     <div class="col-12">
-        <div class="report-table-card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <h4 class="mb-0">FAQ Management</h4>
+        <div class="dashboard-section-card">
+            <div class="dashboard-section-header">
+                <div class="dashboard-section-title">
+                    <h4 class="mb-0">
+                        <i class="bi bi-question-circle"></i> FAQ Management
+                    </h4>
+                </div>
+                <div class="dashboard-section-actions">
                     <a href="{{ url_for('register.faq_create') }}" class="action-btn primary btn-sm"><i class="bi bi-plus-circle-dotted"></i> Add FAQ</a>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="dashboard-section-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead>
@@ -1650,8 +1938,8 @@
 {% else %}
 <div class="row mb-4">
     <div class="col-12">
-        <div class="empty-state">
-            <div class="empty-state-icon"><i class="bi bi-person"></i></div>
+        <div class="dashboard-empty-state">
+            <div class="dashboard-empty-icon"><i class="bi bi-person"></i></div>
             <h3>No Member Profile</h3>
             <p>You don't have a member profile yet. Please contact an administrator to create one.</p>
         </div>
@@ -1728,6 +2016,7 @@ function toggleSecret(btn) {
     var span = btn.parentElement.querySelector('.secret-value');
     if (!span) return;
     var full = span.getAttribute('data-full') || '';
+    if (full === '') return;
     if (btn.getAttribute('data-revealed') === '1') {
         span.textContent = span.getAttribute('data-masked') || span.textContent;
         btn.setAttribute('data-revealed', '0');

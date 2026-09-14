@@ -119,6 +119,8 @@ def create_app():
     from app.models.faq import FAQ
     from app.models.community_event import CommunityEvent
     from app.models.contribute import Contribution
+    from app.models.spouse import Spouse
+    from app.models.child import Child
 
     @app.context_processor
     def inject_global_variables():
@@ -127,6 +129,9 @@ def create_app():
         faq_categories = []
         pending_deposits_count = 0
         recent_updates = []
+        is_viewing_family = False
+        family_member_name = None
+        primary_member_id = None
         try:
             if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
                 if current_user.role.name in ['DEVEL', 'ADMIN']:
@@ -209,8 +214,21 @@ def create_app():
                         recent_updates = []
                 elif current_user.member_profile:
                     try:
+                        member = current_user.member_profile
+                        spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+                        child_link = Child.query.filter_by(user_id=current_user.id).first()
+                        
+                        if spouse_link and spouse_link.member_id == member.id:
+                            is_viewing_family = True
+                            primary_member_id = spouse_link.member_id
+                            family_member_name = f"{spouse_link.firstname} {spouse_link.lastname}"
+                        elif child_link and child_link.member_id == member.id:
+                            is_viewing_family = True
+                            primary_member_id = child_link.member_id
+                            family_member_name = f"{child_link.firstname} {child_link.lastname}"
+                        
                         member_contribution_events = db.session.query(Contribution.propose).where(
-                            Contribution.member_id == current_user.member_profile.id
+                            Contribution.member_id == member.id
                         ).distinct()
                         pending_deposits_count = CommunityEvent.query.filter(
                             CommunityEvent.id.notin_(member_contribution_events)
@@ -218,6 +236,32 @@ def create_app():
                     except Exception:
                         db.session.rollback()
                         pending_deposits_count = 0
+                        is_viewing_family = False
+                else:
+                    try:
+                        spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+                        child_link = Child.query.filter_by(user_id=current_user.id).first()
+                        
+                        if spouse_link and spouse_link.member_id:
+                            is_viewing_family = True
+                            primary_member_id = spouse_link.member_id
+                            family_member_name = f"{spouse_link.firstname} {spouse_link.lastname}"
+                        elif child_link and child_link.member_id:
+                            is_viewing_family = True
+                            primary_member_id = child_link.member_id
+                            family_member_name = f"{child_link.firstname} {child_link.lastname}"
+                        
+                        if is_viewing_family:
+                            member_contribution_events = db.session.query(Contribution.propose).where(
+                                Contribution.member_id == primary_member_id
+                            ).distinct()
+                            pending_deposits_count = CommunityEvent.query.filter(
+                                CommunityEvent.id.notin_(member_contribution_events)
+                            ).count()
+                    except Exception:
+                        db.session.rollback()
+                        pending_deposits_count = 0
+                        is_viewing_family = False
         except Exception:
             pending_deposits_count = 0
             recent_updates = []
@@ -229,6 +273,9 @@ def create_app():
             faq_categories=faq_categories,
             pending_deposits_count=pending_deposits_count,
             recent_updates=recent_updates,
+            is_viewing_family=is_viewing_family,
+            family_member_name=family_member_name,
+            family_primary_member_id=primary_member_id,
         )
 
     def mask_phone(value):

@@ -1,7 +1,8 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from datetime import datetime
 import base64
+from functools import wraps
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import IntegrityError
 from app.register import bp
@@ -22,9 +23,45 @@ from sqlalchemy.orm import joinedload, subqueryload
 def is_developer():
     return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
 
+def can_approve_member():
+    """Admin-level users may approve member registrations."""
+    return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER']
+
 def can_manage_faq():
     """Developers and administrators may manage the knowledge base."""
     return current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN']
+
+def is_family_user():
+    """Check if current user is a spouse or child of a primary member."""
+    if not current_user.is_authenticated:
+        return False
+    if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']:
+        return False
+    return get_primary_member_id() is not None
+
+def get_primary_member_id():
+    """Returns the primary member ID if the current user is a spouse/child of a member."""
+    if not current_user.is_authenticated:
+        return None
+    if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']:
+        return None
+    spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+    if spouse_link and spouse_link.member_id:
+        return spouse_link.member_id
+    child_link = Child.query.filter_by(user_id=current_user.id).first()
+    if child_link and child_link.member_id:
+        return child_link.member_id
+    return None
+
+def family_member_required(f):
+    """Decorator to restrict access to family member users only."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_family_user():
+            flash('This area is only accessible by family members.', 'error')
+            return redirect(url_for('register.dashboard'))
+        return f(*args, **kwargs)
+    return decorated
 
 @bp.route('/')
 @login_required
@@ -114,10 +151,21 @@ def deposit(depo_id):
     date_from = request.args.get('date_from')
     date_to = request.args.get('date_to')
     
+    family_member_ids = db.session.query(Member.id).where(
+        Member.user_id.in_(
+            db.session.query(Spouse.user_id).where(Spouse.member_id == register.id)
+                .union(
+                    db.session.query(Child.user_id).where(Child.member_id == register.id)
+                )
+        )
+    ).all()
+    family_member_ids = [m[0] for m in family_member_ids]
+    all_member_ids = [register.id] + family_member_ids
+
     query = Contribution.query.options(
         joinedload(Contribution.member),
         joinedload(Contribution.community_event)
-    ).filter_by(member_id=register.id)
+    ).filter(Contribution.member_id.in_(all_member_ids))
     
     if event_id:
         query = query.filter_by(propose=event_id)
@@ -139,7 +187,7 @@ def deposit(depo_id):
     contributions = query.order_by(Contribution.trans_date.desc()).all()
     total = sum(c.amount or 0 for c in contributions)
     member_contribution_events = db.select(Contribution.propose).where(
-        Contribution.member_id == register.id
+        Contribution.member_id.in_(all_member_ids)
     ).distinct()
     pending_contributions = CommunityEvent.query.filter(
         ~CommunityEvent.id.in_(member_contribution_events)
@@ -498,13 +546,47 @@ def edit(depo_id):
 @bp.route('/dashboard')
 @login_required
 def dashboard():
+    primary_member_id = get_primary_member_id()
+    if primary_member_id:
+        return redirect(url_for('register.dashboard_member', member_id=primary_member_id))
     user = User.query.get_or_404(current_user.id)
+    member = Member.query.filter_by(user_id=user.id).first()
+    if member:
+        return redirect(url_for('register.dashboard_member', member_id=member.id))
+    return redirect(url_for('register.dashboard_member', member_id=0))
+
+@bp.route('/dashboard/<int:member_id>')
+@login_required
+def dashboard_member(member_id):
+    user = User.query.get_or_404(current_user.id)
+    
+    is_viewing_family = False
+    family_member_name = None
+
+    primary_member_id = get_primary_member_id()
+    if primary_member_id:
+        if member_id != primary_member_id:
+            flash('You can only view your primary member\'s dashboard.', 'error')
+            return redirect(url_for('register.dashboard_member', member_id=primary_member_id))
+        member = Member.query.get_or_404(member_id)
+        is_viewing_family = True
+        spouse_link = Spouse.query.filter_by(user_id=user.id).first()
+        child_link = Child.query.filter_by(user_id=user.id).first()
+        if spouse_link and spouse_link.member_id == member.id:
+            family_member_name = f"{spouse_link.firstname or ''} {spouse_link.lastname or ''}".strip()
+        if child_link and child_link.member_id == member.id:
+            family_member_name = f"{child_link.firstname or ''} {child_link.lastname or ''}".strip()
+    else:
+        member = Member.query.filter_by(user_id=user.id).first()
+        if member and member_id != member.id:
+            flash('Access denied.', 'error')
+            return redirect(url_for('register.dashboard'))
+        if not member and member_id > 0:
+            member = Member.query.get_or_404(member_id)
     
     search = request.args.get('search', '')
     date_from = request.args.get('date_from', '')
     date_to = request.args.get('date_to', '')
-    
-    member = Member.query.filter_by(user_id=user.id).first()
     
     user_image = None
     user_image_mime_type = 'image/jpeg'
@@ -514,7 +596,7 @@ def dashboard():
         user_image_mime_type = get_image_mime_type(first_img.image)
     
     if not member:
-        return render_template('register/dashboard.html', user=user, member=None, user_image=user_image, user_image_mime_type=user_image_mime_type)
+        return render_template('register/dashboard.html', user=user, member=None, user_image=user_image, user_image_mime_type=user_image_mime_type, is_viewing_family=False, family_member_name=None)
     
     contributions = Contribution.query.filter_by(member_id=member.id).order_by(Contribution.trans_date.desc()).all()
     
@@ -548,10 +630,21 @@ def dashboard():
     
     events = query.order_by(CommunityEvent.event_date.desc()).all()
     
+    family_member_ids = db.session.query(Member.id).where(
+        Member.user_id.in_(
+            db.session.query(Spouse.user_id).where(Spouse.member_id == member.id)
+                .union(
+                    db.session.query(Child.user_id).where(Child.member_id == member.id)
+                )
+        )
+    ).all()
+    family_member_ids = [m[0] for m in family_member_ids]
+    all_member_ids = [member.id] + family_member_ids
+
     event_balances = []
     contributed_event_ids = set()
     for event in events:
-        event_total = sum(c.amount for c in event.contribute if c.member_id == member.id)
+        event_total = sum(c.amount for c in event.contribute if c.member_id in all_member_ids)
         event_balances.append({
             'event': event,
             'contributed': event_total,
@@ -578,9 +671,15 @@ def dashboard():
         else:
             pending_events.append(event_data)
     
-    all_contributions = Contribution.query.order_by(Contribution.trans_date.desc()).all()
+    all_contributions = Contribution.query.filter(
+        Contribution.member_id.in_(all_member_ids)
+    ).order_by(Contribution.trans_date.desc()).all()
     
-    spouses = member.spouse
+    spouses = Member.query\
+        .filter_by(id=member.id)\
+        .options(subqueryload(Member.spouse).subqueryload(Spouse.child))\
+        .first().spouse
+
     children = member.child
 
     all_children = list(member.child)
@@ -591,9 +690,35 @@ def dashboard():
 
     family_members = list(spouses) + list(children) + all_children
 
-    expand_spouse_ids = set()
-    if family_members:
-        expand_spouse_ids = {s.id for s in spouses if s.child}
+    expand_spouse_ids = {s.id for s in spouses if s.child}
+    
+    family_deposits = Contribution.query.filter(
+        Contribution.member_id == member.id
+    ).order_by(Contribution.trans_date.desc()).all()
+    
+    total_family_deposits = sum(c.amount or 0 for c in family_deposits)
+    total_family_deposits = "{:,}".format(total_family_deposits)
+    
+    viewing_user = None
+    spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+    child_link = Child.query.filter_by(user_id=current_user.id).first()
+    if spouse_link and spouse_link.member_id == member.id:
+        viewing_user = spouse_link
+    if child_link and child_link.member_id == member.id:
+        viewing_user = child_link
+    
+    if is_viewing_family and viewing_user:
+        family_member_contributions = Contribution.query.filter(
+            Contribution.member_id == member.id,
+            Contribution.added_by == current_user.id
+        ).all()
+    else:
+        family_member_contributions = []
+    family_member_total = sum(c.amount or 0 for c in family_member_contributions)
+    family_member_total = "{:,}".format(family_member_total)
+    family_contributions = family_member_contributions
+    
+    pending_contributions_count = len(pending_events)
     
     deposits = contributions
     total_deposits = sum(c.amount or 0 for c in deposits)
@@ -621,7 +746,12 @@ def dashboard():
                          faqs=faqs,
                          user_image=user_image,
                          user_image_mime_type=user_image_mime_type,
-                         expand_spouse_ids=expand_spouse_ids)
+                         expand_spouse_ids=expand_spouse_ids,
+                         is_viewing_family=True,
+                         family_member_name=viewing_user.firstname if viewing_user else None,
+                          family_contributions=family_contributions,
+                          family_member_total=family_member_total,
+                          pending_contributions_count=pending_contributions_count)
 
 @bp.post('/<int:member_id>/assign_admin')
 @login_required

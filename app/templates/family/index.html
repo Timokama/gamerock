@@ -1050,9 +1050,13 @@
                                         <span class="family-badge spouse-badge" style="margin-left: auto;">Spouse</span>
                                     </div>
                                     <div class="detail-grid">
-                                        <div class="family-detail-item">
+                                         <div class="family-detail-item">
                                             <span class="detail-icon"><i class="bi bi-telephone"></i></span>
                                             <span>{{ spouse.phone_num|member_phone }}</span>
+                                        </div>
+                                        <div class="family-detail-item">
+                                            <span class="detail-icon"><i class="bi bi-envelope"></i></span>
+                                            <span>{{ spouse.display_email or '' }}</span>
                                         </div>
                                         <div class="family-detail-item">
                                             <span class="detail-icon"><i class="bi bi-fingerprint"></i></span>
@@ -1072,31 +1076,33 @@
                                         </div>
                                         <div class="table-responsive">
                                             <table class="children-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Phone</th>
-                                                        <th>ID Number</th>
-                                                        <th>Date of Birth</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for child in spouse.child %}
-                                                    <tr>
-                                                        <td>
-                                                            <span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
-                                                            <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
-                                                        </td>
-                                                        <td>{{ child.phone_num|member_phone }}</td>
-                                                        <td>{{ child.id_number|member_id }}</td>
-                                                        <td>{{ child.date_of_birth }}</td>
-                                                        <td>
-                                                            <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Phone</th>
+                                                    <th>Email</th>
+                                                    <th>ID Number</th>
+                                                    <th>Date of Birth</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for child in spouse.child %}
+                                                <tr>
+                                                    <td>
+                                                        <span class="family-avatar child" style="width: 24px; height: 24px; font-size: 0.65rem; margin-right: 0.4rem;">{{ child.firstname[0] }}{{ child.lastname[0] }}</span>
+                                                        <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
+                                                    </td>
+                                                    <td>{{ child.phone_num|member_phone }}</td>
+                                                    <td>{{ child.display_email or '' }}</td>
+                                                    <td>{{ child.id_number|member_id }}</td>
+                                                    <td>{{ child.date_of_birth }}</td>
+                                                    <td>
+                                                        <a href="{{ url_for('family.edit_child', depo_id=member.id, edit_id=spouse.id, child_id=child.id) }}" class="action-btn outline btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -1117,6 +1123,7 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Phone</th>
+                                                    <th>Email</th>
                                                     <th>ID Number</th>
                                                     <th>Date of Birth</th>
                                                     <th>Actions</th>
@@ -1130,6 +1137,7 @@
                                                         <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
                                                     </td>
                                                     <td>{{ child.phone_num|member_phone }}</td>
+                                                    <td>{{ child.display_email or '' }}</td>
                                                     <td>{{ child.id_number|member_id }}</td>
                                                     <td>{{ child.date_of_birth }}</td>
                                                     <td>
@@ -1184,9 +1192,10 @@
                         <th>Name</th>
                         <th>Relationship</th>
                         <th>Phone</th>
+                        <th>Email</th>
                         <th>ID Number</th>
                         <th>Date of Birth</th>
-                        <th>Actions</th>
+                        <th style="width: 80px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1205,6 +1214,7 @@
                         </td>
                         <td><span class="family-badge spouse-badge"><i class="bi bi-heart"></i> Spouse</span></td>
                         <td>{{ father.phone_num|member_phone }}</td>
+                        <td>{{ father.display_email or '' }}</td>
                         <td>{{ father.id_number|member_id }}</td>
                         <td>{{ father.date_of_birth }}</td>
                         <td>
@@ -1213,7 +1223,7 @@
                     </tr>
                     {% if father.child %}
                     <tr class="family-detail-row" id="myfamily-spouse-{{ father.id }}">
-                        <td colspan="7" class="family-detail-cell">
+                        <td colspan="8" class="family-detail-cell">
                             <div class="family-detail-wrapper">
                                 <div class="family-detail-card">
                                     <div class="detail-header">
@@ -1227,6 +1237,7 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Phone</th>
+                                                    <th>Email</th>
                                                     <th>ID Number</th>
                                                     <th>Date of Birth</th>
                                                     <th>Actions</th>
@@ -1240,6 +1251,7 @@
                                                         <strong>{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</strong>
                                                     </td>
                                                     <td>{{ child.phone_num|member_phone }}</td>
+                                                    <td>{{ child.display_email or '' }}</td>
                                                     <td>{{ child.id_number|member_id }}</td>
                                                     <td>{{ child.date_of_birth }}</td>
                                                     <td>
@@ -1257,7 +1269,7 @@
                     {% endif %}
                     {% else %}
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="empty-state">
                                 <div class="empty-state-icon"><i class="bi bi-people"></i></div>
                                 <h3>No Family Records</h3>
@@ -1379,6 +1391,19 @@ function clearFamilyFilters() {
         }
     });
 }
+
+// Trigger filter on Enter key press in filter inputs
+document.addEventListener('DOMContentLoaded', function() {
+    var filterInputs = document.querySelectorAll('#family-directory-filters-list input, #family-directory-filters-list select');
+    filterInputs.forEach(function(input) {
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                filterFamilyDirectory();
+            }
+        });
+    });
+});
 
 function toggleSpouse(btn, memberId) {
     if (!btn || !memberId) return;

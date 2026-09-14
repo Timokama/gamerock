@@ -125,6 +125,14 @@
     transition: var(--transition);
 }
 
+.contributor-tag {
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    margin-left: 12px;
+}
+
 .contribution-section-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
@@ -910,7 +918,12 @@
         <div class="contribution-icon"><i class="bi bi-cash-stack"></i></div>
         <div class="contribution-info">
             <div class="contribution-title">Ksh. {{ '{:,}'.format(depo.amount or 0) }}</div>
-            <div class="contribution-subtitle">{{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }} · {{ depo.payment_type.value if depo.payment_type else 'N/A' }}</div>
+            <div class="contribution-subtitle">
+              {{ depo.trans_date.strftime('%B %d, %Y') if depo.trans_date else 'N/A' }} · {{ depo.payment_type.value if depo.payment_type else 'N/A' }}
+              {% if depo.member and depo.member.id != register.id %}
+                <span class="contributor-tag">Contributed by: {{ depo.member.firstname }} {{ depo.member.lastname }} {{ depo.member.surname }}</span>
+              {% endif %}
+            </div>
         </div>
         {% if current_user.is_authenticated and current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
         <div class="row-actions">

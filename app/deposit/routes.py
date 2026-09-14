@@ -178,13 +178,25 @@ def index():
 @bp.route('/<int:depo_id>/')
 def deposit(depo_id):
     register = Member.query.get_or_404(depo_id)
+
+    family_member_ids = db.session.query(Member.id).where(
+        Member.user_id.in_(
+            db.session.query(Spouse.user_id).where(Spouse.member_id == register.id)
+                .union(
+                    db.session.query(Child.user_id).where(Child.member_id == register.id)
+                )
+        )
+    ).all()
+    family_member_ids = [m[0] for m in family_member_ids]
+    all_member_ids = [register.id] + family_member_ids
+
     deposit = Contribution.query.options(
         joinedload(Contribution.member),
         joinedload(Contribution.community_event)
-    ).filter_by(member_id=register.id).order_by(Contribution.trans_date.desc()).all()
-    
+    ).filter(Contribution.member_id.in_(all_member_ids)).order_by(Contribution.trans_date.desc()).all()
+
     member_contribution_events = db.select(Contribution.propose).where(
-        Contribution.member_id == register.id
+        Contribution.member_id.in_(all_member_ids)
     ).distinct()
     pending_contributions = CommunityEvent.query.filter(
         ~CommunityEvent.id.in_(member_contribution_events)

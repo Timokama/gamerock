@@ -263,7 +263,7 @@
             <ul class="sidebar-nav">
                 {% if current_user.is_authenticated %}
                 <li>
-                    <a href="{{ url_for('home.home') }}" class="{% if request.endpoint == 'home.home' %}active{% endif %}">
+                    <a href="{% if is_viewing_family %}{{ url_for('register.dashboard') }}{% else %}{{ url_for('home.home') }}{% endif %}" class="{% if request.endpoint == 'home.home' or request.endpoint == 'register.dashboard' or request.endpoint == 'register.dashboard_member' %}active{% endif %}">
                         <i class="bi bi-house sidebar-nav-icon" aria-hidden="true"></i> Overview
                     </a>
                 </li>
@@ -278,7 +278,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('family.family', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('family.index') }}" class="{% if request.endpoint and request.endpoint.startswith('family') %}active{% endif %}">
+                    <a href="{% if is_viewing_family %}{{ url_for('family.family', depo_id=family_primary_member_id) }}{% elif current_user.member_profile %}{{ url_for('family.family', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('family.index') }}{% endif %}" class="{% if request.endpoint and request.endpoint.startswith('family') %}active{% endif %}">
                         <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Family
                     </a>
                 </li>
@@ -293,16 +293,16 @@
                           {% endif %}
                       </a>
                   </li>
-                  {% else %}
-                  <li>
-                      <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) if current_user.member_profile else url_for('deposit.index') }}" class="{% if deposit_section_active %}active{% endif %}">
-                          <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
-                          {% if (pending_deposits_count|default(0)) > 0 %}
-                          <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting payment">{{ pending_deposits_count|default(0) }}</span>
-                          {% endif %}
-                      </a>
-                  </li>
-                  {% endif %}
+                   {% else %}
+                   <li>
+                       <a href="{% if is_viewing_family %}{{ url_for('deposit.deposit', depo_id=family_primary_member_id) }}{% elif current_user.member_profile %}{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('deposit.index') }}{% endif %}" class="{% if deposit_section_active %}active{% endif %}">
+                           <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
+                           {% if (pending_deposits_count|default(0)) > 0 %}
+                           <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting payment">{{ pending_deposits_count|default(0) }}</span>
+                           {% endif %}
+                       </a>
+                   </li>
+                   {% endif %}
                 <li>
                     <a href="{{ url_for('community.index') }}" class="{% if request.endpoint and request.endpoint.startswith('community') %}active{% endif %}">
                         <i class="bi bi-calendar-event sidebar-nav-icon" aria-hidden="true"></i> Community
