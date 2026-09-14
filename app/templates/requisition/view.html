@@ -1,0 +1,90 @@
+{% extends 'base_f/base.html' %}
+
+{% block page_title %}View Requisition #{{ requisition.id }}{% endblock %}
+
+{% block content %}
+<div class="mg-page-header">
+    <h2>Requisition #{{ requisition.id }}</h2>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('requisition.index') }}" class="btn btn-outline"><i class="bi bi-arrow-left"></i> Back to List</a>
+        {% if can_manage_requisition() %}
+        <a href="{{ url_for('requisition.edit', req_id=requisition.id) }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mg-card mb-4">
+    <div class="card-header">
+        <h4>Requisition Details</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="mg-badge mg-badge-{{ requisition.status.lower() }}">
+                            {{ requisition.status }}
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Member</dt>
+                    <dd class="col-sm-8">
+                        {% if requisition.member %}
+                        <a href="{{ url_for('register.deposit', depo_id=requisition.member.id) }}">
+                            <strong>{{ requisition.member.firstname }} {{ requisition.member.lastname }} {{ requisition.member.surname }}</strong>
+                        </a>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4">Date Taken</dt>
+                    <dd class="col-sm-8">{{ requisition.date_taken.strftime('%b %d, %Y') if requisition.date_taken else 'N/A' }}</dd>
+
+                    <dt class="col-sm-4">Expected Return</dt>
+                    <dd class="col-sm-8">{{ requisition.expected_return_date.strftime('%b %d, %Y') if requisition.expected_return_date else 'N/A' }}</dd>
+
+                    <dt class="col-sm-4">Created By</dt>
+                    <dd class="col-sm-8">
+                        {% if requisition.creator %}
+                        {{ requisition.creator.firstname }} {{ requisition.creator.lastname }}
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4">Created On</dt>
+                    <dd class="col-sm-8">{{ requisition.created_at.strftime('%b %d, %Y %H:%M') if requisition.created_at else 'N/A' }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mg-card">
+    <div class="card-header">
+        <h4>Items</h4>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in requisition.items %}
+                    <tr>
+                        <td data-label="Item">{{ item.item_name }}</td>
+                        <td data-label="Quantity">{{ item.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
