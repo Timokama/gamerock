@@ -638,48 +638,64 @@
             <div class="alert alert-danger" style="display: block;">{{ error }}</div>
             {% endif %}
 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'danger' %}
+            <div class="alert alert-danger" style="display: block;">{{ message }}</div>
+            {% elif category == 'info' %}
+            <div class="alert-info" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; border-radius: var(--radius-md); padding: 0.875rem 1.125rem; font-weight: 500; font-size: 0.875rem; margin-bottom: 1.25rem; display: block;">{{ message }}</div>
+            {% elif category == 'success' %}
+            <div class="alert alert-success" style="display: block;">{{ message }}</div>
+            {% else %}
+            <div class="alert alert-danger" style="display: block;">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
             <form method="POST" action="{{ url_for('auth.signup') }}" novalidate>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name</label>
-                        <input type="text" class="form-input" id="first_name" name="first_name" placeholder="Enter first name" required>
+                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name" required>
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
-                        <input type="text" class="form-input" id="last_name" name="last_name" placeholder="Enter last name" required>
+                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="surname">Surname</label>
-                    <input type="text" class="form-input" id="surname" name="surname" placeholder="Enter surname" required>
+                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter surname" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="date_of_birth">Date of Birth</label>
-                        <input type="date" class="form-input" id="date_of_birth" name="date_of_birth">
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
                     </div>
                     <div class="form-group">
                         <label for="id_number">ID Number</label>
-                        <input type="text" class="form-input" id="id_number" name="id_number" placeholder="Enter ID number">
+                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" class="form-input" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="phone_num">Phone Number</label>
-                    <input type="tel" class="form-input" id="phone_num" name="phone_num" placeholder="+254 700 000000" required autocomplete="tel">
+                    <input type="tel" class="form-control" id="phone_num" name="phone_num" placeholder="+254 700 000000" required autocomplete="tel">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="password-field">
-                        <input type="password" class="form-input" id="password" name="password" placeholder="Create a password" required autocomplete="new-password">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required autocomplete="new-password">
                         <button type="button" class="password-toggle" id="toggle-password" data-input-id="password" title="Show password" aria-label="Show password" aria-pressed="false">
                         </button>
                     </div>
@@ -689,7 +705,7 @@
                 <div class="form-group">
                     <label for="confirm_password">Confirm Password</label>
                     <div class="password-field">
-                        <input type="password" class="form-input" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required autocomplete="new-password">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required autocomplete="new-password">
                         <button type="button" class="password-toggle" id="toggle-confirm-password" data-input-id="confirm_password" title="Show password" aria-label="Show password" aria-pressed="false">
                         </button>
                     </div>
@@ -697,7 +713,7 @@
 
                 <div class="form-group" style="display: none;">
                     <label for="role">Account Type</label>
-                    <select class="form-input" id="role" name="role">
+                    <select class="form-control" id="role" name="role">
                         <option value="USER" selected>User</option>
                     </select>
                 </div>

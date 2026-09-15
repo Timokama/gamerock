@@ -57,7 +57,47 @@ def create_app():
         return response
 
     db.init_app(app)
-    
+
+    from sqlalchemy import inspect as sqlinspect
+    with app.app_context():
+        inspector = sqlinspect(db.engine)
+        user_columns = [c['name'] for c in inspector.get_columns('user')]
+        if 'status' not in user_columns:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'"))
+                conn.commit()
+        if 'created_at' not in user_columns:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"))
+                conn.commit()
+        if 'phone_num' not in user_columns:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN phone_num VARCHAR(20)"))
+                conn.commit()
+        if 'id_number' not in user_columns:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN id_number INTEGER"))
+                conn.commit()
+        if 'date_of_birth' not in user_columns:
+            with db.engine.connect() as conn:
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN date_of_birth DATE"))
+                conn.commit()
+        with db.engine.connect() as conn:
+            id_number_constraint = inspector.get_unique_constraints('user')
+            has_id_number_unique = any(
+                'id_number' in (c['column_names'] if isinstance(c['column_names'], list) else [c['column_names']])
+                for c in id_number_constraint
+            )
+            if not has_id_number_unique:
+                try:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD CONSTRAINT \"user_id_number_key\" UNIQUE (\"id_number\")"))
+                    conn.commit()
+                except Exception:
+                    pass
+        with db.engine.connect() as conn:
+            conn.execute(db.text("UPDATE \"user\" SET status = 'active' WHERE role IN ('Developer', 'Administrator', 'Chairperson', 'Welfare Officer', 'Treasurer', 'Secretary') AND status = 'pending'"))
+            conn.commit()
+
     login_manager = LoginManager()
     login_manager.login_view = 'auth.index'
     login_manager.init_app(app)
@@ -128,6 +168,7 @@ def create_app():
         faq_count = 0
         faq_categories = []
         pending_deposits_count = 0
+        pending_users_count = 0
         recent_updates = []
         is_viewing_family = False
         family_member_name = None
@@ -154,6 +195,7 @@ def create_app():
                             )
                         ).count()
                         pending_deposits_count = events_needing_contributions
+                        pending_users_count = User.query.filter(User.status == 'pending').count()
                     except Exception:
                         db.session.rollback()
                         pending_deposits_count = 0
@@ -272,6 +314,7 @@ def create_app():
             faq_count=faq_count,
             faq_categories=faq_categories,
             pending_deposits_count=pending_deposits_count,
+            pending_users_count=pending_users_count,
             recent_updates=recent_updates,
             is_viewing_family=is_viewing_family,
             family_member_name=family_member_name,

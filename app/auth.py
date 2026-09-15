@@ -70,6 +70,10 @@ def login(role):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login', role=role))
 
+        if user.status != 'active':
+            flash('Your account is pending approval. Please wait for an administrator to approve your account.', 'warning')
+            return redirect(url_for('auth.login', role=role))
+
         login_user(user)
         session.pop('auth_email', None)
         
@@ -124,37 +128,17 @@ def signup_post():
         flash('Password must be at least 6 characters long.', 'danger')
         return redirect(url_for('auth.signup'))
 
-    last_name = last_name or first_name
+    role_enum = AccessLevel.USER
 
-    user = User.query.filter_by(email=email).first()
-
-    if user:
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
         flash('Email address already exists', 'danger')
-        return redirect(url_for('auth.signup'))
-
-    existing_member = Member.query.filter_by(id_number=id_number).first() if id_number else None
-    if existing_member:
-        flash('ID number already exists. Please check your details.', 'danger')
         return redirect(url_for('auth.signup'))
 
     existing_member_email = Member.query.filter_by(email=email).first()
     if existing_member_email:
         flash('Email already exists. Please use a different email.', 'danger')
         return redirect(url_for('auth.signup'))
-
-    role_enum = AccessLevel.USER
-
-    new_user = User(surname=surname, first_name=first_name, email=email, password=generate_password_hash(password, method='pbkdf2:sha256'), role=role_enum)
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    dob = None
-    if date_of_birth:
-        try:
-            dob = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            pass
 
     member_id_number = None
     if id_number and str(id_number).strip():
@@ -163,23 +147,40 @@ def signup_post():
         except (ValueError, TypeError):
             member_id_number = None
 
-    member = Member(
-        firstname=first_name,
-        lastname=last_name,
+    if member_id_number:
+        existing_user_id = User.query.filter_by(id_number=member_id_number).first()
+        if existing_user_id:
+            flash('ID number already exists. Please check your details.', 'danger')
+            return redirect(url_for('auth.signup'))
+        existing_member = Member.query.filter_by(id_number=member_id_number).first()
+        if existing_member:
+            flash('ID number already exists. Please check your details.', 'danger')
+            return redirect(url_for('auth.signup'))
+
+    dob = None
+    if date_of_birth:
+        try:
+            dob = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            pass
+
+    new_user = User(
         surname=surname,
-        date_of_birth=dob,
-        phone_num=phone_num,
+        first_name=first_name,
         email=email,
+        password=generate_password_hash(password, method='pbkdf2:sha256'),
+        phone_num=phone_num,
         id_number=member_id_number,
-        user_id=new_user.id,
-        added_by=new_user.id,
+        date_of_birth=dob,
+        role=role_enum,
+        status='pending',
     )
-    db.session.add(member)
+
+    db.session.add(new_user)
     db.session.commit()
 
-    usr = User.query.get(new_user.id)
-    login_user(usr)
-    return redirect(url_for('home.home'))
+    flash('Your account has been created and is pending approval. Please wait for an administrator to approve your account.', 'info')
+    return redirect(url_for('auth.signup'))
 
 @auth.route('/logout')
 @login_required

@@ -942,6 +942,7 @@ def faq_create():
         return redirect(url_for('register.faq_list'))
     return render_template('register/faq_form.html', faq=None, categories=faq_category_choices())
 
+
 @bp.route('/faq/<int:faq_id>/edit', methods=('GET', 'POST'))
 @login_required
 def faq_edit(faq_id):
@@ -974,3 +975,151 @@ def faq_delete(faq_id):
     db.session.commit()
     flash('FAQ deleted successfully!', 'success')
     return redirect(url_for('register.faq_list'))
+
+
+@bp.route('/pending-users')
+@login_required
+def pending_users():
+    if not is_developer():
+        flash('You do not have permission to view pending users.')
+        return redirect(url_for('register.index'))
+
+    search = request.args.get('search', '')
+    role_filter = request.args.get('role', '')
+    member_status = request.args.get('member_status', '')
+    email_filter = request.args.get('email_filter', '')
+    date_from = request.args.get('date_from', '')
+    date_to = request.args.get('date_to', '')
+
+    query = User.query.filter(User.status == 'pending')
+
+    if search:
+        search_terms = [term.strip() for term in search.split() if term.strip()]
+        name_conditions = []
+        for term in search_terms:
+            name_conditions.append(
+                db.or_(
+                    User.first_name.ilike(f'%{term}%'),
+                    User.surname.ilike(f'%{term}%'),
+                    User.email.ilike(f'%{term}%')
+                )
+            )
+        query = query.filter(db.and_(*name_conditions))
+
+    if role_filter:
+        try:
+            role_enum = AccessLevel[role_filter]
+            query = query.filter(User.role == role_enum)
+        except KeyError:
+            pass
+
+    if member_status == 'with_member':
+        query = query.join(Member).filter(Member.user_id == User.id)
+    elif member_status == 'without_member':
+        query = query.outerjoin(Member, Member.user_id == User.id).filter(Member.id.is_(None))
+
+    if email_filter:
+        query = query.filter(User.email.ilike(f'%{email_filter}%'))
+
+    if date_from:
+        try:
+            from_date = datetime.strptime(date_from, '%Y-%m-%d')
+            query = query.filter(User.created_at >= from_date)
+        except (ValueError, TypeError):
+            pass
+
+    if date_to:
+        try:
+            to_date = datetime.strptime(date_to, '%Y-%m-%d')
+            query = query.filter(User.created_at <= to_date)
+        except (ValueError, TypeError):
+            pass
+
+    pending_users_list = query.order_by(User.id.desc()).all()
+
+    all_recorded_emails = set()
+    member_emails = db.session.query(Member.email).filter(Member.email.isnot(None)).all()
+    spouse_emails = db.session.query(Spouse.email).filter(Spouse.email.isnot(None)).all()
+    child_emails = db.session.query(Child.email).filter(Child.email.isnot(None)).all()
+    all_recorded_emails.update(e[0] for e in member_emails)
+    all_recorded_emails.update(e[0] for e in spouse_emails)
+    all_recorded_emails.update(e[0] for e in child_emails)
+
+    filters = {
+        'search': search,
+        'role': role_filter,
+        'member_status': member_status,
+        'email_filter': email_filter,
+        'date_from': date_from,
+        'date_to': date_to,
+    }
+
+    return render_template('register/pending_users.html', pending_users_list=pending_users_list, filters=filters, all_recorded_emails=all_recorded_emails)
+
+
+@bp.post('/<int:user_id>/approve_user')
+@login_required
+def approve_user(user_id):
+    if not is_developer():
+        flash('You do not have permission to approve user accounts.')
+        return redirect(url_for('register.pending_users'))
+
+    user = User.query.get_or_404(user_id)
+    action = request.form.get('action', 'approve')
+
+    if action == 'cancel':
+        user.status = 'cancelled'
+        db.session.commit()
+        flash(f'User account for {user.first_name} {user.surname} has been cancelled.', 'info')
+    else:
+        member_exists = Member.query.filter_by(email=user.email).first() is not None
+        spouse_exists = Spouse.query.filter_by(email=user.email).first() is not None
+        child_exists = Child.query.filter_by(email=user.email).first() is not None
+
+        in_records = member_exists or spouse_exists or child_exists
+
+        if user.status == 'active':
+            user.status = 'pending'
+            db.session.commit()
+            flash(f'User account for {user.first_name} {user.surname} has been set back to pending.', 'info')
+        else:
+            user.status = 'active'
+            db.session.commit()
+            flash(f'User account for {user.first_name} {user.surname} has been approved.', 'success')
+
+    return redirect(url_for('register.pending_users'))
+
+
+@bp.post('/<int:user_id>/cancel_user')
+@login_required
+def cancel_user(user_id):
+    if not is_developer():
+        flash('You do not have permission to manage user accounts.')
+        return redirect(url_for('register.pending_users'))
+
+    user = User.query.get_or_404(user_id)
+    user.status = 'cancelled'
+    db.session.commit()
+    flash(f'User account for {user.first_name} {user.surname} has been cancelled.', 'info')
+    return redirect(url_for('register.pending_users'))
+
+
+@bp.post('/<int:user_id>/delete_user')
+@login_required
+def delete_user(user_id):
+    if not is_developer():
+        flash('You do not have permission to delete user accounts.')
+        return redirect(url_for('register.pending_users'))
+
+    user = User.query.get_or_404(user_id)
+
+    member = Member.query.filter_by(user_id=user.id).first()
+    if member:
+        db.session.delete(member)
+
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'User account for {user.first_name} {user.surname} has been deleted.', 'success')
+    return redirect(url_for('register.pending_users'))
+
+
