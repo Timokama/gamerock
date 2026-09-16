@@ -4,32 +4,39 @@
 
 {% block styles %}
 <style>
-    /* ===== Pending Users Page ===== */
+    /* ===== Pending Users Summary (Stat Cards) ===== */
     .pending-users-summary {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
     }
 
-    .pending-users-summary .family-summary-card {
+    .stat-card {
         background: var(--card-bg, #fff);
         border-radius: var(--radius, 14px);
-        padding: 1.25rem;
+        padding: 0.5rem;
         box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
         border: 1px solid var(--border-color, #e2e8f0);
+        transition: all 0.2s ease, transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.10);
+    }
+
+    .stat-card-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        transition: all 0.2s ease;
+        gap: 0.75rem;
+        margin-bottom: 0.25rem;
     }
 
-    .pending-users-summary .family-summary-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .family-summary-icon {
+    .stat-card-icon {
         width: 44px;
         height: 44px;
         border-radius: 12px;
@@ -38,44 +45,71 @@
         justify-content: center;
         font-size: 1.3rem;
         flex-shrink: 0;
+        transition: all 0.2s ease;
     }
 
-    .family-summary-icon.pending {
-        background: rgba(245, 158, 11, 0.12);
-        color: #d97706;
+    .stat-icon-primary {
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.12) 0%, rgba(20, 184, 166, 0.06) 100%);
+        color: var(--primary-color, #14b8a6);
     }
 
-    .family-summary-icon.approved {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
+    .stat-icon-warning {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%);
+        color: var(--warning-600, #d97706);
     }
 
-    .family-summary-icon.cancelled {
-        background: rgba(239, 68, 68, 0.12);
-        color: #dc2626;
+    .stat-icon-success {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.06) 100%);
+        color: var(--success-600, #16a34a);
     }
 
-    .family-summary-info {
-        flex: 1;
-        min-width: 0;
+    .stat-icon-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.06) 100%);
+        color: var(--danger-600, #dc2626);
     }
 
-    .family-summary-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--dark-color, #0f172a);
-        line-height: 1.2;
-    }
-
-    .family-summary-label {
-        font-size: 0.75rem;
+    .stat-card-label {
+        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: var(--text-muted, #64748b);
         font-weight: 600;
+        color: var(--text-muted, #64748b);
     }
 
-    /* ===== Filter Bar ===== */
+    .stat-card-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark-color, #0f172a);
+        line-height: 1.1;
+    }
+
+    .stat-card-trend {
+        font-size: 0.78rem;
+        color: var(--text-tertiary, #94a3b8);
+        font-weight: 500;
+    }
+
+    .stat-card-primary {
+        border-left: 4px solid var(--primary-color, #14b8a6);
+    }
+
+    .stat-card-warning {
+        border-left: 4px solid var(--warning-500, #f59e0b);
+    }
+
+    .stat-card-success {
+        border-left: 4px solid var(--success-500, #22c55e);
+    }
+
+    .stat-card-danger {
+        border-left: 4px solid var(--danger-500, #ef4444);
+    }
+
+    @media (max-width: 576px) {
+        .pending-users-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
     .filter-bar {
         display: flex;
         align-items: center;
@@ -414,14 +448,37 @@
 
 {% block content %}
 <div class="pending-users-summary">
-    <div class="family-summary-card">
-        <div class="family-summary-icon pending">
-            <i class="bi bi-person-paused"></i>
+    <div class="stat-card stat-card-primary">
+        <div class="stat-card-header">
+            <div class="stat-card-icon stat-icon-primary"><i class="bi bi-people"></i></div>
+            <div class="stat-card-label">Total Users</div>
         </div>
-        <div class="family-summary-info">
-            <div class="family-summary-value">{{ pending_users_list|length }}</div>
-            <div class="family-summary-label">Accounts</div>
+        <div class="stat-card-value">{{ total_users }}</div>
+        <div class="stat-card-trend">All registered accounts</div>
+    </div>
+    <div class="stat-card stat-card-warning">
+        <div class="stat-card-header">
+            <div class="stat-card-icon stat-icon-warning"><i class="bi bi-pause-circle"></i></div>
+            <div class="stat-card-label">Pending</div>
         </div>
+        <div class="stat-card-value">{{ pending_count }}</div>
+        <div class="stat-card-trend">Awaiting member records</div>
+    </div>
+    <div class="stat-card stat-card-success">
+        <div class="stat-card-header">
+            <div class="stat-card-icon stat-icon-success"><i class="bi bi-person-check"></i></div>
+            <div class="stat-card-label">Approved</div>
+        </div>
+        <div class="stat-card-value">{{ approved_count }}</div>
+        <div class="stat-card-trend">Active member records</div>
+    </div>
+    <div class="stat-card stat-card-danger">
+        <div class="stat-card-header">
+            <div class="stat-card-icon stat-icon-danger"><i class="bi bi-person-x"></i></div>
+            <div class="stat-card-label">Cancelled</div>
+        </div>
+        <div class="stat-card-value">{{ cancelled_count }}</div>
+        <div class="stat-card-trend">Inactive accounts</div>
     </div>
 </div>
 

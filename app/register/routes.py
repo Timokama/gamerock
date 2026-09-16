@@ -1065,6 +1065,21 @@ def pending_users():
     all_recorded_emails.update(e[0] for e in spouse_emails)
     all_recorded_emails.update(e[0] for e in child_emails)
 
+    total_users = User.query.count()
+    pending_count = User.query.filter(
+        ~db.exists().where(Member.user_id == User.id),
+        ~db.exists().where(Spouse.user_id == User.id),
+        ~db.exists().where(Child.user_id == User.id)
+    ).count()
+    approved_count = User.query.filter(
+        db.or_(
+            db.exists().where(Member.user_id == User.id),
+            db.exists().where(Spouse.user_id == User.id),
+            db.exists().where(Child.user_id == User.id)
+        )
+    ).count()
+    cancelled_count = User.query.filter(User.status == 'cancelled').count()
+
     filters = {
         'search': search,
         'role': role_filter,
@@ -1074,7 +1089,16 @@ def pending_users():
         'date_to': date_to,
     }
 
-    return render_template('register/pending_users.html', pending_users_list=pending_users_list, filters=filters, all_recorded_emails=all_recorded_emails)
+    return render_template(
+        'register/pending_users.html',
+        pending_users_list=pending_users_list,
+        filters=filters,
+        all_recorded_emails=all_recorded_emails,
+        total_users=total_users,
+        pending_count=pending_count,
+        approved_count=approved_count,
+        cancelled_count=cancelled_count
+    )
 
 
 @bp.post('/<int:user_id>/approve_user')

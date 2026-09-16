@@ -18,10 +18,10 @@ def get_primary_member_id():
         return None
     if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']:
         return None
-    spouse_link = Spouse.query.filter_by(user_id=current_user.id).first()
+    spouse_link = current_user.spouse
     if spouse_link and spouse_link.member_id:
         return spouse_link.member_id
-    child_link = Child.query.filter_by(user_id=current_user.id).first()
+    child_link = current_user.child
     if child_link and child_link.member_id:
         return child_link.member_id
     return None
@@ -43,6 +43,7 @@ def index():
             return redirect(url_for('auth.index'))
         detected_role = user.role.value
         session['auth_email'] = email
+        session['auth_user_id'] = user.id
         return redirect(url_for('auth.login', role=detected_role))
     return render_template('index.html', level=level, detected_role=detected_role)
 
@@ -65,7 +66,11 @@ def login(role):
                 if member.value == role:
                     role_enum = member
                     break
-        user = User.query.filter_by(email=email, role=role_enum).first()
+        user_id = session.get('auth_user_id')
+        if user_id:
+            user = User.query.filter_by(id=user_id, email=email, role=role_enum).first()
+        else:
+            user = User.query.filter_by(email=email, role=role_enum).first()
         if not user or not check_password_hash(user.password, password):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login', role=role))
@@ -76,6 +81,7 @@ def login(role):
 
         login_user(user)
         session.pop('auth_email', None)
+        session.pop('auth_user_id', None)
         
         # Check if user is a spouse/child of a primary member
         primary_member_id = get_primary_member_id()
@@ -84,7 +90,7 @@ def login(role):
         
         # Regular user redirect
         if current_user.role == AccessLevel.USER:
-            member = Member.query.filter_by(user_id=user.id).first()
+            member = user.member_profile
             if member:
                 return redirect(url_for('register.dashboard_member', member_id=member.id))
         
