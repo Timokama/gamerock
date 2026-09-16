@@ -33,6 +33,16 @@
                     <i class="bi bi-person sidebar-nav-icon" aria-hidden="true"></i> Profile
                 </a>
             </li>
+            {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
+            <li>
+                <a href="{{ url_for('register.pending_users') }}" class="{% if request.endpoint == 'register.pending_users' %}active{% endif %}">
+                    <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Users
+                    {% if (pending_users_count|default(0)) > 0 %}
+                    <span class="sidebar-nav-badge" title="{{ pending_users_count|default(0) }} pending account(s)">{{ pending_users_count|default(0) }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% endif %}
             <li>
                 <a href="{{ url_for('register.index') }}" class="{% if request.endpoint and request.endpoint.startswith('register') %}active{% endif %}">
                     <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Members
