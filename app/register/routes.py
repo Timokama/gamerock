@@ -986,12 +986,37 @@ def pending_users():
 
     search = request.args.get('search', '')
     role_filter = request.args.get('role', '')
-    member_status = request.args.get('member_status', '')
     email_filter = request.args.get('email_filter', '')
+    status_filter = request.args.get('status_filter', '')
     date_from = request.args.get('date_from', '')
     date_to = request.args.get('date_to', '')
 
-    query = User.query.filter(User.status == 'pending')
+    valid_statuses = {'pending', 'active', 'cancelled'}
+
+    query = User.query
+
+    if 'status_filter' in request.args:
+        if status_filter and status_filter in valid_statuses:
+            if status_filter == 'pending':
+                query = query.filter(
+                    ~db.exists().where(Member.user_id == User.id),
+                    ~db.exists().where(Spouse.user_id == User.id),
+                    ~db.exists().where(Child.user_id == User.id)
+                )
+            elif status_filter == 'active':
+                query = query.filter(
+                    db.or_(
+                        db.exists().where(Member.user_id == User.id),
+                        db.exists().where(Spouse.user_id == User.id),
+                        db.exists().where(Child.user_id == User.id)
+                    )
+                )
+            elif status_filter == 'cancelled':
+                query = query.filter(User.status == 'cancelled')
+        elif status_filter and status_filter not in valid_statuses:
+            status_filter = ''
+    else:
+        query = query.filter(User.status == 'pending')
 
     if search:
         search_terms = [term.strip() for term in search.split() if term.strip()]
@@ -1012,11 +1037,6 @@ def pending_users():
             query = query.filter(User.role == role_enum)
         except KeyError:
             pass
-
-    if member_status == 'with_member':
-        query = query.join(Member).filter(Member.user_id == User.id)
-    elif member_status == 'without_member':
-        query = query.outerjoin(Member, Member.user_id == User.id).filter(Member.id.is_(None))
 
     if email_filter:
         query = query.filter(User.email.ilike(f'%{email_filter}%'))
@@ -1048,8 +1068,8 @@ def pending_users():
     filters = {
         'search': search,
         'role': role_filter,
-        'member_status': member_status,
         'email_filter': email_filter,
+        'status': status_filter,
         'date_from': date_from,
         'date_to': date_to,
     }
@@ -1115,7 +1135,24 @@ def delete_user(user_id):
 
     member = Member.query.filter_by(user_id=user.id).first()
     if member:
+        for contribution in member.contribute:
+            db.session.delete(contribution)
+        spouse_records = Spouse.query.filter_by(member_id=member.id).all()
+        for spouse in spouse_records:
+            for child in Child.query.filter_by(spouse_id=spouse.id).all():
+                db.session.delete(child)
+            db.session.delete(spouse)
+        child_records = Child.query.filter_by(member_id=member.id).all()
+        for child in child_records:
+            db.session.delete(child)
         db.session.delete(member)
+
+    spouse_user_records = Spouse.query.filter_by(user_id=user.id).all()
+    for spouse in spouse_user_records:
+        db.session.delete(spouse)
+    child_user_records = Child.query.filter_by(user_id=user.id).all()
+    for child in child_user_records:
+        db.session.delete(child)
 
     db.session.delete(user)
     db.session.commit()

@@ -478,6 +478,7 @@ function filterMembersTable() {
 
         var detailRow = row.nextElementSibling;
         if (detailRow && detailRow.classList.contains('family-detail-row')) {
+
             detailRow.style.display = show ? '' : 'none';
             if (show && (search || email || phone || idNumber || statusValue)) {
                 detailRow.classList.add('open');
