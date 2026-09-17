@@ -5,50 +5,50 @@
 ```mermaid
 graph TB
     subgraph "Client Layer"
-        UI[Flask-WebGUI Desktop App<br/>Electron-like Wrapper]
-        WEB[Web Browser<br/>Standard HTTP Client]
+        UI["Flask-WebGUI Desktop App\nElectron-like Wrapper"]
+        WEB["Web Browser\nStandard HTTP Client"]
     end
 
     subgraph "Application Layer"
-        WSGI[WSGI Server<br/>Flask Development Server / Waitress / Gunicorn]
-        APP["Flask Application Factory<br/>create_app()"]
+        WSGI["WSGI Server\nFlask Development Server / Waitress / Gunicorn"]
+        APP["Flask Application Factory\ncreate_app()"]
         
         subgraph "Blueprints"
-            AUTH[auth<br/>Authentication (Email/Role Lookup)]
-            MAIN[main<br/>Core Entry & Routing]
-            HOME[home<br/>Role-Based Dashboards]
-            REG[register<br/>Member/Member Management]
-            DEP[deposit<br/>Contributions & Deposits]
-            FAM[family<br/>Spouse, Child, Member Relations]
-            COM[community<br/>Events, FAQs, Members]
-            BUD[budget<br/>Budget Management]
-            TRE[treasurer<br/>Treasury Records]
-            MIN[minutes<br/>Meeting Minutes]
-            REQ[requisition<br/>Item Requisitions]
-            SPO[sponsor<br/>Sponsor Management]
-            REP[reports<br/>Analytics & Reports]
-            ACC[account<br/>User/Role Administration]
+            AUTH["auth\nAuthentication (Email/Role Lookup)"]
+            MAIN["main\nCore Entry & Routing"]
+            HOME["home\nRole-Based Dashboards"]
+            REG["register\nMember/Member Management"]
+            DEP["deposit\nContributions & Deposits"]
+            FAM["family\nSpouse, Child, Member Relations"]
+            COM["community\nEvents, FAQs, Members"]
+            BUD["budget\nBudget Management"]
+            TRE["treasurer\nTreasury Records"]
+            MIN["minutes\nMeeting Minutes"]
+            REQ["requisition\nItem Requisitions"]
+            SPO["sponsor\nSponsor Management"]
+            REP["reports\nAnalytics & Reports"]
+            ACC["account\nUser/Role Administration"]
         end
     end
 
     subgraph "Service Layer"
-        DB[(SQLAlchemy ORM<br/>Models & Relationships)]
-        MIG[Alembic Migrations]
-        LOGIN[Flask-Login<br/>Session Management]
-        JINJA[Jinja2<br/>Template Rendering]
-        BOOT[Flask-Bootstrap<br/>UI Components]
-        IMG[Image Service<br/>Upload & MIME Detection]
-        LEVEL[AccessLevel Enum<br/>RBAC Logic]
+        DB[("SQLAlchemy ORM\nModels & Relationships")]
+        MIG["Alembic Migrations"]
+        LOGIN["Flask-Login\nSession Management"]
+        JINJA["Jinja2\nTemplate Rendering"]
+        BOOT["Flask-Bootstrap\nUI Components"]
+        IMG["Image Service\nUpload & MIME Detection"]
+        LEVEL["AccessLevel Enum\nRBAC Logic"]
     end
 
     subgraph "Data Layer"
-        PG[(PostgreSQL<br/>Primary)]
-        MYSQL[(MySQL<br/>Alternative)]
-        SQLITE[(SQLite<br/>Development)]
+        PG[("PostgreSQL\nPrimary")]
+        MYSQL[("MySQL\nAlternative")]
+        SQLITE[("SQLite\nDevelopment")]
     end
 
     subgraph "Active Config"
-        CFG[Single Active DB<br/>Selected at startup via<br/>SQLALCHEMY_DATABASE_URI]
+        CFG["Single Active DB\nSelected at startup via\nSQLALCHEMY_DATABASE_URI"]
     end
 
     UI --> WSGI
@@ -393,40 +393,40 @@ The RBAC system is built on the `AccessLevel` enum (`app/level.py`), which defin
 
 ```mermaid
 flowchart TD
-    Request[Incoming Request] -->     AuthCheck{"@login_required"}
-    AuthCheck -->|Not Authenticated| Login[Redirect to /auth/index]
+    Request["Incoming Request"] --> AuthCheck["@login_required"]
+    AuthCheck -->|Not Authenticated| Login["Redirect to /auth/index"]
     AuthCheck -->|Authenticated| RoleCheck{Check current_user.role.name}
 
-    RoleCheck -->|DEVEL or ADMIN| FullAccess[Full System Access<br/>All permissions]
-    RoleCheck -->|CHAIRPERSON| ChairAccess[Budgets, Minutes,<br/>Requisitions, Sponsors, Events<br/>Member Management]
-    RoleCheck -->|TREASURER| TreasurerAccess[Treasury, Deposits,<br/>Contributions, Register]
-    RoleCheck -->|SECRETARY| SecretaryAccess[Minutes, Member Management,<br/>Pending Users]
-    RoleCheck -->|WELFARE_OFFICER| WelfareAccess[Contributions,<br/>Deposits, Register, Family Access]
-    RoleCheck -->|USER| UserAccess[Own Dashboard,<br/>Contribution Record,<br/>Family Network]
+    RoleCheck -->|DEVEL or ADMIN| FullAccess["Full System Access\nAll permissions"]
+    RoleCheck -->|CHAIRPERSON| ChairAccess["Budgets, Minutes,\nRequisitions, Sponsors, Events\nMember Management"]
+    RoleCheck -->|TREASURER| TreasurerAccess["Treasury, Deposits,\nContributions, Register"]
+    RoleCheck -->|SECRETARY| SecretaryAccess["Minutes, Member Management,\nPending Users"]
+    RoleCheck -->|WELFARE_OFFICER| WelfareAccess["Contributions,\nDeposits, Register, Family Access"]
+    RoleCheck -->|USER| UserAccess["Own Dashboard,\nContribution Record,\nFamily Network"]
 
-    FullAccess --> PermissionCheck{Permission Check<br/>via role name list}
+    FullAccess --> PermissionCheck{Permission Check\nvia role name list}
     ChairAccess --> PermissionCheck
     TreasurerAccess --> PermissionCheck
     SecretaryAccess --> PermissionCheck
     WelfareAccess --> PermissionCheck
     UserAccess --> PermissionCheck
 
-    PermissionCheck -->|Template Globals<br/>app/__init__.py:344-363| TemplateChecks
-    PermissionCheck -->|Route Functions<br/>bp/routes.py| RouteChecks
+    PermissionCheck -->|Template Globals\napp/__init__.py:344-363| TemplateChecks
+    PermissionCheck -->|Route Functions\nbp/routes.py| RouteChecks
 
-    TemplateChecks -->|is_admin_or_dev<br/>['DEVEL', 'ADMIN']| AdminUI[Admin UI Elements]
-    TemplateChecks -->|can_manage_minutes<br/>['DEVEL', 'ADMIN', 'SECRETARY']| MinutesUI[Minute Controls]
-    TemplateChecks -->|can_manage_treasurer<br/>['DEVEL', 'ADMIN', 'TREASURER']| TreasuryUI[Treasury Controls]
-    TemplateChecks -->|can_manage_requisition<br/>['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnUI[Requisition Controls]
+    TemplateChecks -->|is_admin_or_dev\n['DEVEL', 'ADMIN']| AdminUI["Admin UI Elements"]
+    TemplateChecks -->|can_manage_minutes\n['DEVEL', 'ADMIN', 'SECRETARY']| MinutesUI["Minute Controls"]
+    TemplateChecks -->|can_manage_treasurer\n['DEVEL', 'ADMIN', 'TREASURER']| TreasuryUI["Treasury Controls"]
+    TemplateChecks -->|can_manage_requisition\n['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnUI["Requisition Controls"]
 
-    RouteChecks -->|Budget: ['DEVEL', 'ADMIN']<br/>['DEVEL', 'ADMIN', 'CHAIRPERSON']| BudgetRoutes[Budget Pages]
-    RouteChecks -->|Treasurer: ['DEVEL', 'ADMIN', 'TREASURER']<br/>['DEVEL', 'ADMIN']| TreasuryRoutes[Treasury Pages]
-    RouteChecks -->|Minutes: ['DEVEL', 'ADMIN', 'SECRETARY']<br/>['DEVEL', 'ADMIN']| MinutesRoutes[Minutes Pages]
-    RouteChecks -->|Sponsor: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| SponsorRoutes[Sponsor Pages]
-    RouteChecks -->|Requisition: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnRoutes[Requisition Pages]
-    RouteChecks -->|Register: ['DEVEL', 'ADMIN']<br/>['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']| RegisterRoutes[Member Pages]
+    RouteChecks -->|Budget: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'CHAIRPERSON']| BudgetRoutes["Budget Pages"]
+    RouteChecks -->|Treasurer: ['DEVEL', 'ADMIN', 'TREASURER']\n['DEVEL', 'ADMIN']| TreasuryRoutes["Treasury Pages"]
+    RouteChecks -->|Minutes: ['DEVEL', 'ADMIN', 'SECRETARY']\n['DEVEL', 'ADMIN']| MinutesRoutes["Minutes Pages"]
+    RouteChecks -->|Sponsor: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| SponsorRoutes["Sponsor Pages"]
+    RouteChecks -->|Requisition: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnRoutes["Requisition Pages"]
+    RouteChecks -->|Register: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']| RegisterRoutes["Member Pages"]
 
-    BudgetRoutes --> ContextProcessor[Global Context Injection]
+    BudgetRoutes --> ContextProcessor["Global Context Injection"]
     TreasuryRoutes --> ContextProcessor
     MinutesRoutes --> ContextProcessor
     SponsorRoutes --> ContextProcessor
@@ -437,8 +437,8 @@ flowchart TD
     TreasuryUI --> ContextProcessor
     ReqnUI --> ContextProcessor
 
-    ContextProcessor --> Template[Render Template with<br/>Role-Aware Data Scope]
-    Template --> Render[Final HTML]
+    ContextProcessor --> Template["Render Template with\nRole-Aware Data Scope"]
+    Template --> Render["Final HTML"]
 ```
 
 ### Permission Hierarchy
@@ -666,7 +666,7 @@ sequenceDiagram
     DB-->>DepositBP: Success
     DepositBP->>User: Redirect to deposit view
     
-    Note over DepositBP,DB: Auto-updates member balance<br/>Updates event contribution totals
+    Note over DepositBP,DB: Auto-updates member balance\nUpdates event contribution totals
 ```
 
 ## 2.7 Security Architecture
@@ -674,27 +674,27 @@ sequenceDiagram
 ```mermaid
 graph TB
     subgraph "Authentication"
-        HASH[PBKDF2-SHA256<br/>Password Hashing]
-        SESSION[Flask-Login<br/>Session Management]
-        ROLE[AccessLevel Enum<br/>Role Enumeration]
+        HASH["PBKDF2-SHA256\nPassword Hashing"]
+        SESSION["Flask-Login\nSession Management"]
+        ROLE["AccessLevel Enum\nRole Enumeration"]
     end
 
     subgraph "Authorization"
-        DECORATORS[@login_required<br/>Role Check Decorators]
-        CONTEXT[Template Globals<br/>is_admin_or_dev, can_manage_*]
-        FILTERS[Template Filters<br/>mask_phone, mask_id]
+        DECORATORS["@login_required\nRole Check Decorators"]
+        CONTEXT["Template Globals\nis_admin_or_dev, can_manage_*"]
+        FILTERS["Template Filters\nmask_phone, mask_id"]
     end
 
     subgraph "Data Protection"
-        MASKING[Phone/ID Masking<br/>Non-admin views]
-        VALIDATION[Input Validation<br/>Form & Model Level]
-        SQL_INJ[SQLAlchemy ORM<br/>Parameterized Queries]
+        MASKING["Phone/ID Masking\nNon-admin views"]
+        VALIDATION["Input Validation\nForm & Model Level"]
+        SQL_INJ["SQLAlchemy ORM\nParameterized Queries"]
     end
 
     subgraph "Configuration"
-        SECRET[SECRET_KEY<br/>Session Signing]
-        DEBUG[DEBUG=False<br/>Production Mode]
-        CACHE[Cache-Control Headers<br/>No-Cache Policy]
+        SECRET["SECRET_KEY\nSession Signing"]
+        DEBUG["DEBUG=False\nProduction Mode"]
+        CACHE["Cache-Control Headers\nNo-Cache Policy"]
     end
 
     HASH --> SESSION
@@ -712,22 +712,22 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Development"
-        DEV_VENV[venv]
-        DEV_DB[(SQLite db.sqlite)]
-        DEV_RUN[python main.py]
-        DEV_UI[Flask-WebGUI Window]
+        DEV_VENV["venv"]
+        DEV_DB[("SQLite db.sqlite")]
+        DEV_RUN["python main.py"]
+        DEV_UI["Flask-WebGUI Window"]
     end
 
     subgraph "Production"
-        PROD_VENV[venv]
-        PROD_DB[(PostgreSQL)]
-        PROD_WSGI[Flask-WebGUI / Gunicorn]
-        PROD_UI[Desktop App / Web]
+        PROD_VENV["venv"]
+        PROD_DB[("PostgreSQL")]
+        PROD_WSGI["Flask-WebGUI / Gunicorn"]
+        PROD_UI["Desktop App / Web"]
     end
 
     subgraph "Migration"
-        ALEMBIC[Alembic Migrations]
-        SCRIPTS[migrations/versions/*.py]
+        ALEMBIC["Alembic Migrations"]
+        SCRIPTS["migrations/versions/*.py"]
     end
 
     DEV_VENV --> DEV_RUN
