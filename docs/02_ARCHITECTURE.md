@@ -394,15 +394,15 @@ The RBAC system is built on the `AccessLevel` enum (`app/level.py`), which defin
 ```mermaid
 flowchart TD
     Request["Incoming Request"] --> AuthCheck["@login_required"]
-    AuthCheck -->|Not Authenticated| Login["Redirect to /auth/index"]
-    AuthCheck -->|Authenticated| RoleCheck{Check current_user.role.name}
+    AuthCheck -->|"Not Authenticated"| Login["Redirect to /auth/index"]
+    AuthCheck -->|"Authenticated"| RoleCheck{Check current_user.role.name}
 
-    RoleCheck -->|DEVEL or ADMIN| FullAccess["Full System Access\nAll permissions"]
-    RoleCheck -->|CHAIRPERSON| ChairAccess["Budgets, Minutes,\nRequisitions, Sponsors, Events\nMember Management"]
-    RoleCheck -->|TREASURER| TreasurerAccess["Treasury, Deposits,\nContributions, Register"]
-    RoleCheck -->|SECRETARY| SecretaryAccess["Minutes, Member Management,\nPending Users"]
-    RoleCheck -->|WELFARE_OFFICER| WelfareAccess["Contributions,\nDeposits, Register, Family Access"]
-    RoleCheck -->|USER| UserAccess["Own Dashboard,\nContribution Record,\nFamily Network"]
+    RoleCheck -->|"DEVEL or ADMIN"| FullAccess["Full System Access\nAll permissions"]
+    RoleCheck -->|"CHAIRPERSON"| ChairAccess["Budgets, Minutes,\nRequisitions, Sponsors, Events\nMember Management"]
+    RoleCheck -->|"TREASURER"| TreasurerAccess["Treasury, Deposits,\nContributions, Register"]
+    RoleCheck -->|"SECRETARY"| SecretaryAccess["Minutes, Member Management,\nPending Users"]
+    RoleCheck -->|"WELFARE_OFFICER"| WelfareAccess["Contributions,\nDeposits, Register, Family Access"]
+    RoleCheck -->|"USER"| UserAccess["Own Dashboard,\nContribution Record,\nFamily Network"]
 
     FullAccess --> PermissionCheck{Permission Check\nvia role name list}
     ChairAccess --> PermissionCheck
@@ -411,20 +411,20 @@ flowchart TD
     WelfareAccess --> PermissionCheck
     UserAccess --> PermissionCheck
 
-    PermissionCheck -->|Template Globals\napp/__init__.py:344-363| TemplateChecks
-    PermissionCheck -->|Route Functions\nbp/routes.py| RouteChecks
+    PermissionCheck -->|"Template Globals\napp/__init__.py:344-363"| TemplateChecks
+    PermissionCheck -->|"Route Functions\nbp/routes.py"| RouteChecks
 
-    TemplateChecks -->|is_admin_or_dev\n['DEVEL', 'ADMIN']| AdminUI["Admin UI Elements"]
-    TemplateChecks -->|can_manage_minutes\n['DEVEL', 'ADMIN', 'SECRETARY']| MinutesUI["Minute Controls"]
-    TemplateChecks -->|can_manage_treasurer\n['DEVEL', 'ADMIN', 'TREASURER']| TreasuryUI["Treasury Controls"]
-    TemplateChecks -->|can_manage_requisition\n['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnUI["Requisition Controls"]
+    TemplateChecks -->|"is_admin_or_dev\n['DEVEL', 'ADMIN']"| AdminUI["Admin UI Elements"]
+    TemplateChecks -->|"can_manage_minutes\n['DEVEL', 'ADMIN', 'SECRETARY']"| MinutesUI["Minute Controls"]
+    TemplateChecks -->|"can_manage_treasurer\n['DEVEL', 'ADMIN', 'TREASURER']"| TreasuryUI["Treasury Controls"]
+    TemplateChecks -->|"can_manage_requisition\n['DEVEL', 'ADMIN', 'CHAIRPERSON']"| ReqnUI["Requisition Controls"]
 
-    RouteChecks -->|Budget: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'CHAIRPERSON']| BudgetRoutes["Budget Pages"]
-    RouteChecks -->|Treasurer: ['DEVEL', 'ADMIN', 'TREASURER']\n['DEVEL', 'ADMIN']| TreasuryRoutes["Treasury Pages"]
-    RouteChecks -->|Minutes: ['DEVEL', 'ADMIN', 'SECRETARY']\n['DEVEL', 'ADMIN']| MinutesRoutes["Minutes Pages"]
-    RouteChecks -->|Sponsor: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| SponsorRoutes["Sponsor Pages"]
-    RouteChecks -->|Requisition: ['DEVEL', 'ADMIN', 'CHAIRPERSON']| ReqnRoutes["Requisition Pages"]
-    RouteChecks -->|Register: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']| RegisterRoutes["Member Pages"]
+    RouteChecks -->|"Budget: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'CHAIRPERSON']"| BudgetRoutes["Budget Pages"]
+    RouteChecks -->|"Treasurer: ['DEVEL', 'ADMIN', 'TREASURER']\n['DEVEL', 'ADMIN']"| TreasuryRoutes["Treasury Pages"]
+    RouteChecks -->|"Minutes: ['DEVEL', 'ADMIN', 'SECRETARY']\n['DEVEL', 'ADMIN']"| MinutesRoutes["Minutes Pages"]
+    RouteChecks -->|"Sponsor: ['DEVEL', 'ADMIN', 'CHAIRPERSON']"| SponsorRoutes["Sponsor Pages"]
+    RouteChecks -->|"Requisition: ['DEVEL', 'ADMIN', 'CHAIRPERSON']"| ReqnRoutes["Requisition Pages"]
+    RouteChecks -->|"Register: ['DEVEL', 'ADMIN']\n['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']"| RegisterRoutes["Member Pages"]
 
     BudgetRoutes --> ContextProcessor["Global Context Injection"]
     TreasuryRoutes --> ContextProcessor
