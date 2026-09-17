@@ -195,7 +195,11 @@ def create_app():
                             )
                         ).count()
                         pending_deposits_count = events_needing_contributions
-                        pending_users_count = User.query.filter(User.status == 'pending').count()
+                        pending_users_count = User.query.filter(
+                            ~db.exists().where(Member.user_id == User.id),
+                            ~db.exists().where(Spouse.user_id == User.id),
+                            ~db.exists().where(Child.user_id == User.id)
+                        ).count()
                     except Exception:
                         db.session.rollback()
                         pending_deposits_count = 0
