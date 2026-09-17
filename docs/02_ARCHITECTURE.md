@@ -488,45 +488,45 @@ The context processor (`app/__init__.py:261-298`) uses these relationships to pr
 ```mermaid
 graph LR
     subgraph "Core"
-        INIT[app/__init__.py]
-        AUTH[app/auth.py]
-        USER[app/user.py]
-        LEVEL[app/level.py]
-        IMAGE[app/image.py]
-        MAIN[app/main.py]
+        INIT["app/__init__.py"]
+        AUTH["app/auth.py"]
+        USER["app/user.py"]
+        LEVEL["app/level.py"]
+        IMAGE["app/image.py"]
+        MAIN["app/main.py"]
     end
 
     subgraph "Models"
-        MREG[models/register.py]
-        MCONT[models/contribute.py]
-        MEVENT[models/community_event.py]
-        MDEP[models/deposit.py]
-        MBUD[models/budget.py]
-        MTRE[models/treasurer.py]
-        MMIN[models/minutes.py]
-        MREQ[models/requisition.py]
-        MSPO[models/sponsor.py]
-        MFAQ[models/faq.py]
-        MSPOU[models/spouse.py]
-        MCHILD[models/child.py]
-        MPAY[models/payments.py]
-        MCR[models/cont_reg.py]
-        MCD[models/cont_depo.py]
+        MREG["models/register.py"]
+        MCONT["models/contribute.py"]
+        MEVENT["models/community_event.py"]
+        MDEP["models/deposit.py"]
+        MBUD["models/budget.py"]
+        MTRE["models/treasurer.py"]
+        MMIN["models/minutes.py"]
+        MREQ["models/requisition.py"]
+        MSPO["models/sponsor.py"]
+        MFAQ["models/faq.py"]
+        MSPOU["models/spouse.py"]
+        MCHILD["models/child.py"]
+        MPAY["models/payments.py"]
+        MCR["models/cont_reg.py"]
+        MCD["models/cont_depo.py"]
     end
 
     subgraph "Blueprints"
-        BPHOME[home/routes.py]
-        BPREG[register/routes.py]
-        BPDEP[deposit/routes.py]
-        BPFAM[family/routes.py]
-        BPCOM[community/views.py]
-        BPBUD[budget/routes.py]
-        BPTRE[treasurer/routes.py]
-        BPMIN[minutes/routes.py]
-        BPREQ[requisition/routes.py]
-        BPSPO[sponsor/routes.py]
-        BPREP[reports/routes.py]
-        BPACC[account/routes.py]
+        BPHOME["home/routes.py"]
+        BPREG["register/routes.py"]
+        BPDEP["deposit/routes.py"]
+        BPFAM["family/routes.py"]
+        BPCOM["community/views.py"]
+        BPBUD["budget/routes.py"]
+        BPTRE["treasurer/routes.py"]
+        BPMIN["minutes/routes.py"]
+        BPREQ["requisition/routes.py"]
+        BPSPO["sponsor/routes.py"]
+        BPREP["reports/routes.py"]
+        BPACC["account/routes.py"]
     end
 
     INIT --> AUTH
@@ -534,7 +534,7 @@ graph LR
     INIT --> LEVEL
     INIT --> IMAGE
     INIT --> MAIN
-    INIT --> DB[(SQLAlchemy db)]
+    INIT --> DB[("SQLAlchemy db")]
     
     DB --> MREG
     DB --> MCONT
