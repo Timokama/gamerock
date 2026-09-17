@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, abort
+from flask import render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 import base64
@@ -1182,5 +1182,71 @@ def delete_user(user_id):
     db.session.commit()
     flash(f'User account for {user.first_name} {user.surname} has been deleted.', 'success')
     return redirect(url_for('register.pending_users'))
+
+
+def can_view_dashboard(user, member_id):
+    """Check if user can view the specified member's dashboard."""
+    if not user.is_authenticated:
+        return False
+    if user.role.name in ['DEVEL', 'ADMIN']:
+        return True
+    if user.role == AccessLevel.USER:
+        member = user.member_profile
+        return member and member.id == member_id
+    if user.role in [AccessLevel.SPOUSE, AccessLevel.CHILD]:
+        primary_member_id = user.primary_member_id
+        if not primary_member_id:
+            spouse_link = user.spouse
+            if spouse_link and spouse_link.member_id:
+                primary_member_id = spouse_link.member_id
+            else:
+                child_link = user.child
+                if child_link and child_link.member_id:
+                    primary_member_id = child_link.member_id
+        return primary_member_id == member_id
+    return False
+
+
+@bp.route('/api/dashboard/<int:member_id>/summary')
+@login_required
+def api_dashboard_summary(member_id):
+    """API endpoint for dashboard summary data."""
+    if not can_view_dashboard(current_user, member_id):
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    member = Member.query.get_or_404(member_id)
+    contributions = Contribution.query.filter_by(member_id=member_id).all()
+    
+    # Calculate pending events
+    contributed_event_ids = {c.propose for c in contributions if c.propose}
+    pending_events = CommunityEvent.query.filter(
+        ~CommunityEvent.id.in_(contributed_event_ids)
+    ).count() if contributed_event_ids else CommunityEvent.query.count()
+    
+    return jsonify({
+        'member': {
+            'id': member.id,
+            'name': f"{member.firstname} {member.lastname} {member.surname}",
+            'email': member.email,
+            'phone': member.phone_num,
+        },
+        'stats': {
+            'total_contributions': sum(c.amount for c in contributions),
+            'contribution_count': len(contributions),
+            'pending_events': pending_events,
+        },
+        'recent_contributions': [
+            {
+                'date': c.trans_date.isoformat() if c.trans_date else None,
+                'amount': c.amount,
+                'event': c.community_event.name if c.community_event else None,
+            }
+            for c in contributions[:5]
+        ],
+        'family': {
+            'spouses': [{'id': s.id, 'name': f"{s.firstname} {s.surname}"} for s in member.spouse],
+            'children': [{'id': c.id, 'name': f"{c.firstname} {c.surname}"} for c in member.child],
+        }
+    })
 
 

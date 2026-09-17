@@ -397,6 +397,7 @@
           <p class="hero-card-subtitle" id="hero-card-subtitle">Enter your email to pick up right where you left off.</p>
         </div>
         <form method="POST" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="filter-group">
             <label for="email">Email Address</label>
             <input type="email" class="has-icon" id="email" name="email" placeholder="Enter your registered email" required autofocus autocomplete="email" inputmode="email">

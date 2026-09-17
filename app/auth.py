@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash,session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import datetime
@@ -11,20 +11,32 @@ from app.models.spouse import Spouse
 from app.models.child import Child
 
 auth = Blueprint('auth', __name__)
-
-def get_primary_member_id():
-    """Returns the primary member ID if the current user is a spouse/child of a member."""
-    if not current_user.is_authenticated:
+def get_family_member_redirect(user):
+    """
+    Query spouse and child tables for user's identifier.
+    If found in either, return redirect to family dashboard.
+    Otherwise, return None to use standard redirect logic.
+    """
+    if not user or not user.is_authenticated:
         return None
-    if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER']:
-        return None
-    spouse_link = current_user.spouse
-    if spouse_link and spouse_link.member_id:
-        return spouse_link.member_id
-    child_link = current_user.child
-    if child_link and child_link.member_id:
-        return child_link.member_id
+    
+    # 1. Query spouse table for user's unique identifier
+    spouse_record = Spouse.query.filter_by(user_id=user.id).first()
+    if spouse_record and spouse_record.member_id:
+        return redirect(url_for('register.dashboard_member', member_id=spouse_record.member_id))
+    
+    # 2. Query child table for user's unique identifier
+    child_record = Child.query.filter_by(user_id=user.id).first()
+    if child_record and child_record.member_id:
+        return redirect(url_for('register.dashboard_member', member_id=child_record.member_id))
+    
+    # 3. Check user's primary_member_id as fallback
+    if user.primary_member_id:
+        return redirect(url_for('register.dashboard_member', member_id=user.primary_member_id))
+    
+    # 4. No match in spouse or child tables
     return None
+
 
 @auth.route('/', methods=['POST', 'GET'])
 def index():
@@ -49,7 +61,8 @@ def index():
 
 # @auth.route('/login')
 # def login():
-    
+     
+
 
 @auth.route('/<role>/login', methods=['POST', 'GET'])
 def login(role):
@@ -58,23 +71,34 @@ def login(role):
     if request.method == 'POST':
         email = request.form.get('email') or session_email
         password = request.form.get('password')
-        role_enum = None
-        if role in AccessLevel.__members__:
-            role_enum = AccessLevel[role]
-        else:
-            for member in AccessLevel:
-                if member.value == role:
-                    role_enum = member
-                    break
+        
         user_id = session.get('auth_user_id')
         if user_id:
-            user = User.query.filter_by(id=user_id, email=email, role=role_enum).first()
+            user = User.query.filter_by(id=user_id, email=email).first()
         else:
-            user = User.query.filter_by(email=email, role=role_enum).first()
+            user = User.query.filter_by(email=email).first()
+        
         if not user or not check_password_hash(user.password, password):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login', role=role))
 
+        # Check if user is a spouse/child by querying relationship tables directly
+        is_spouse = Spouse.query.filter_by(user_id=user.id).first() is not None
+        is_child = Child.query.filter_by(user_id=user.id).first() is not None
+        is_family_member = is_spouse or is_child
+        
+        # Auto-approve spouse/child accounts (they should always be active)
+        if is_family_member and user.status != 'active':
+            user.status = 'active'
+            # Also fix the role if it's wrong
+            if is_spouse and user.role != AccessLevel.SPOUSE:
+                user.role = AccessLevel.SPOUSE
+            elif is_child and user.role != AccessLevel.CHILD:
+                user.role = AccessLevel.CHILD
+            user.is_primary_account = False
+            user.family_relation_type = 'spouse' if is_spouse else 'child'
+            db.session.commit()
+        
         if user.status != 'active':
             flash('Your account is pending approval. Please wait for an administrator to approve your account.', 'warning')
             return redirect(url_for('auth.login', role=role))
@@ -83,20 +107,20 @@ def login(role):
         session.pop('auth_email', None)
         session.pop('auth_user_id', None)
         
-        # Check if user is a spouse/child of a primary member
-        primary_member_id = get_primary_member_id()
-        if primary_member_id:
-            return redirect(url_for('register.dashboard_member', member_id=primary_member_id))
+        # Use the family member redirect logic
+        family_redirect = get_family_member_redirect(user)
+        if family_redirect:
+            return family_redirect
         
-        # Regular user redirect
-        if current_user.role == AccessLevel.USER:
+        # Primary member redirect
+        if user.role == AccessLevel.USER:
             member = user.member_profile
             if member:
                 return redirect(url_for('register.dashboard_member', member_id=member.id))
         
+        # Admin/Staff redirect
         return redirect(url_for('home.home'))
     return render_template('login.html', level=level, role=role, session_email=session_email)
-
 @auth.route('/signup')
 def signup():
     level = AccessLevel
@@ -106,13 +130,14 @@ def signup():
 def signup_post():
     surname = request.form.get('surname')
     first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
+    middle_name = request.form.get('middle_name')
     phone_num = request.form.get('phone_num')
     email = request.form.get('email')
     password = request.form.get('password')
     confirm_password = request.form.get('confirm_password')
     date_of_birth = request.form.get('date_of_birth')
     id_number = request.form.get('id_number')
+    account_type = request.form.get('account_type', 'member')
 
     if not first_name or not surname:
         flash('First name and surname are required.', 'danger')
@@ -134,7 +159,22 @@ def signup_post():
         flash('Password must be at least 6 characters long.', 'danger')
         return redirect(url_for('auth.signup'))
 
-    role_enum = AccessLevel.USER
+    # Determine role and status based on account type
+    if account_type == 'spouse':
+        role_enum = AccessLevel.SPOUSE
+        account_status = 'active'
+        is_primary = False
+        family_relation = 'spouse'
+    elif account_type == 'child':
+        role_enum = AccessLevel.CHILD
+        account_status = 'active'
+        is_primary = False
+        family_relation = 'child'
+    else:
+        role_enum = AccessLevel.USER
+        account_status = 'pending'
+        is_primary = True
+        family_relation = 'primary'
 
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
@@ -179,13 +219,18 @@ def signup_post():
         id_number=member_id_number,
         date_of_birth=dob,
         role=role_enum,
-        status='pending',
+        status=account_status,
+        is_primary_account=is_primary,
+        family_relation_type=family_relation,
     )
 
     db.session.add(new_user)
     db.session.commit()
 
-    flash('Your account has been created and is pending approval. Please wait for an administrator to approve your account.', 'info')
+    if account_type in ['spouse', 'child']:
+        flash('Your account has been created and approved. You can now login.', 'success')
+    else:
+        flash('Your account has been created and is pending approval. Please wait for an administrator to approve your account.', 'info')
     return redirect(url_for('auth.signup'))
 
 @auth.route('/logout')
@@ -249,28 +294,57 @@ def forgot_password():
 #     # mycon=sqltor.connect(host="localhost",user="root",passwd="root",database="gamerock")
 #     # db=mycon.cursor
 #     """"Change users' password"""
-
+#
 #     user = User.query.get_or_404(current_user.id)
 #     if request.method == "POST":
 #         newPassword = request.form.get("newPassword")
 #         newConfirmation = request.form.get("newConfirmation")
-
+#
 #         # Ensure that the user has inputted
 #         if (not newPassword) or (not newConfirmation):
 #             return apology("Please fill all of the provided fields!", 400)
-
+#
 #         # Check to see if password confirmation were the same or not
 #         if newPassword != newConfirmation:
 #             return apology("password did not match with password (again)", 400)
-        
+#         
 #         user_id = user.id
-        
+#         
 #         newHash = generate_password_hash("newPassword")
-
+#
 #         # user.password = newHash
 #         # db.session.add(user)
 #         # db.session.commit()
 #         db.execute("UPDATE user SET hash = ? WHERE id = ?", newHash, user_id)
+
+@auth.route('/debug/user/<email>')
+@login_required
+def debug_user(email):
+    """Debug endpoint to check user status and role."""
+    if current_user.role.name not in ['DEVEL', 'ADMIN']:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    return jsonify({
+        'id': user.id,
+        'email': user.email,
+        'first_name': user.first_name,
+        'surname': user.surname,
+        'role': user.role.name,
+        'role_value': user.role.value,
+        'status': user.status,
+        'is_primary_account': user.is_primary_account,
+        'family_relation_type': user.family_relation_type,
+        'primary_member_id': user.primary_member_id,
+        'has_spouse': user.spouse is not None,
+        'has_child': user.child is not None,
+        'spouse_member_id': user.spouse.member_id if user.spouse else None,
+        'child_member_id': user.child.member_id if user.child else None,
+        'member_profile_id': user.member_profile.id if user.member_profile else None,
+    })
 #         passwordChange = check_password_hash(newHash, newPassword)
 
 #         print(f'\n\n{passwordChange}\n\n')

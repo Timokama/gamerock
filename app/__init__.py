@@ -2,6 +2,7 @@ from flask import Flask, url_for
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
+from flask_wtf.csrf import CSRFProtect
 from flaskwebgui import FlaskUI
 import os
 import sys
@@ -26,6 +27,7 @@ logging.getLogger('alembic').setLevel(logging.WARNING)
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
+csrf = CSRFProtect()
 
 def create_app():
     app = Flask(__name__)
@@ -37,14 +39,14 @@ def create_app():
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['TEMPLATES_AUTO_RELOAD'] = False
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.config['USE_RELOADER'] = False
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.config['DEBUG'] = False
     app.config['EXPLAIN_TEMPLATE_LOADING'] = False
 
-    app.jinja_env.auto_reload = False
-    app.jinja_env.cache = {}
+    app.jinja_env.auto_reload = True
+    app.jinja_env.cache = None
     app.jinja_env.autoescape = True
 
     app.logger.setLevel(logging.WARNING)
@@ -97,11 +99,21 @@ def create_app():
         with db.engine.connect() as conn:
             conn.execute(db.text("UPDATE \"user\" SET status = 'active' WHERE role IN ('Developer', 'Administrator', 'Chairperson', 'Welfare Officer', 'Treasurer', 'Secretary') AND status = 'pending'"))
             conn.commit()
+        
+        # Add new enum values to PostgreSQL accesslevel type
+        with db.engine.connect() as conn:
+            try:
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Spouse'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Child'"))
+                conn.commit()
+            except Exception:
+                pass
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.index'
     login_manager.init_app(app)
     bootstrap.init_app(app)
+    csrf.init_app(app)
         
     from .user import User
 

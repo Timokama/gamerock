@@ -671,14 +671,15 @@
             {% endwith %}
 
             <form method="POST" action="{{ url_for('auth.signup') }}" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name" required>
                     </div>
                     <div class="form-group">
-                        <label for="last_name">Middle Name</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name" required>
+                        <label for="middle_name">Middle Name</label>
+                        <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="Enter middle name">
                     </div>
                 </div>
 
@@ -729,11 +730,14 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="display: none;">
-                    <label for="role">Account Type</label>
-                    <select class="form-control" id="role" name="role">
-                        <option value="USER" selected>User</option>
+                <div class="form-group">
+                    <label for="account_type">Account Type</label>
+                    <select class="form-control" id="account_type" name="account_type">
+                        <option value="member" selected>Primary Member</option>
+                        <option value="spouse">Spouse of Member</option>
+                        <option value="child">Child of Member</option>
                     </select>
+                    <small class="form-text text-muted">Spouse/Child accounts are auto-approved; Primary Members require admin approval</small>
                 </div>
 
                 <button type="submit" class="btn-signup">Create Account</button>

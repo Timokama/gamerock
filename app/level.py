@@ -8,6 +8,8 @@ class AccessLevel(Enum):
     SECRETARY = 'Secretary'
     WELFARE_OFFICER = 'Welfare Officer'
     USER = 'User'
+    SPOUSE = 'Spouse'
+    CHILD = 'Child'
 
     @property
     def display_name(self):
@@ -34,6 +36,10 @@ class AccessLevel(Enum):
         return self in (AccessLevel.DEVEL, AccessLevel.CHAIRPERSON, AccessLevel.ADMIN)
 
     @property
+    def is_family_member(self):
+        return self in (AccessLevel.SPOUSE, AccessLevel.CHILD)
+
+    @property
     def level(self):
         hierarchy = {
             AccessLevel.DEVEL: 5,
@@ -42,6 +48,8 @@ class AccessLevel(Enum):
             AccessLevel.TREASURER: 3,
             AccessLevel.SECRETARY: 3,
             AccessLevel.WELFARE_OFFICER: 3,
-            AccessLevel.USER: 1,
+            AccessLevel.USER: 2,
+            AccessLevel.SPOUSE: 1,
+            AccessLevel.CHILD: 1,
         }
         return hierarchy.get(self, 0)

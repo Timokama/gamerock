@@ -382,7 +382,7 @@
                 <i class="bi bi-lock-fill"></i>
             </div>
             <h1 class="login-card-title">Welcome back</h1>
-            <p class="login-card-subtitle">Sign in to your {{ role }} account</p>
+            <p class="login-card-subtitle">Sign in to your account</p>
         </div>
 
         <div class="login-card-body">
@@ -398,6 +398,7 @@
             {% endif %}
 
             <form method="POST" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 {% if not session_email %}
                 <div class="form-group">
                     <label for="email" class="form-label">Email address</label>
