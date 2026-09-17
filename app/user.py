@@ -17,6 +17,11 @@ class User(UserMixin, db.Model):
     status = db.Column(db.String(20), nullable=False, default='pending')
     bookmarks = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    
+    # Family relationship fields
+    is_primary_account = db.Column(db.Boolean, default=False)
+    family_relation_type = db.Column(db.String(20), nullable=True)
+    primary_member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=True)
 
     event = db.relationship('CommunityEvent', backref='user')
     contribution = db.relationship('Contribution', backref='user')
@@ -25,6 +30,7 @@ class User(UserMixin, db.Model):
     image = db.relationship('Images', backref='user')
     spouse = db.relationship('Spouse', backref='user_account', uselist=False)
     child = db.relationship('Child', backref='user_account', uselist=False)
+    primary_member = db.relationship('Member', backref='family_members', foreign_keys='User.primary_member_id')
 
     def is_active(self):
         return self.status == 'active'

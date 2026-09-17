@@ -30,11 +30,7 @@ def get_family_member_redirect(user):
     if child_record and child_record.member_id:
         return redirect(url_for('register.dashboard_member', member_id=child_record.member_id))
     
-    # 3. Check user's primary_member_id as fallback
-    if user.primary_member_id:
-        return redirect(url_for('register.dashboard_member', member_id=user.primary_member_id))
-    
-    # 4. No match in spouse or child tables
+    # 3. No match in spouse or child tables
     return None
 
 
@@ -72,6 +68,11 @@ def login(role):
         email = request.form.get('email') or session_email
         password = request.form.get('password')
         
+        # Validate role parameter
+        role_enum = None
+        if role in AccessLevel.__members__:
+            role_enum = AccessLevel[role]
+        
         user_id = session.get('auth_user_id')
         if user_id:
             user = User.query.filter_by(id=user_id, email=email).first()
@@ -80,6 +81,11 @@ def login(role):
         
         if not user or not check_password_hash(user.password, password):
             flash('Please check your login details and try again.')
+            return redirect(url_for('auth.login', role=role))
+
+        # Validate user's actual role matches expected role from URL
+        if role_enum and user.role != role_enum:
+            flash(f'Account exists but has role "{user.role.value}", not "{role_enum.value}".', 'danger')
             return redirect(url_for('auth.login', role=role))
 
         # Check if user is a spouse/child by querying relationship tables directly
@@ -137,7 +143,6 @@ def signup_post():
     confirm_password = request.form.get('confirm_password')
     date_of_birth = request.form.get('date_of_birth')
     id_number = request.form.get('id_number')
-    account_type = request.form.get('account_type', 'member')
 
     if not first_name or not surname:
         flash('First name and surname are required.', 'danger')
@@ -159,22 +164,11 @@ def signup_post():
         flash('Password must be at least 6 characters long.', 'danger')
         return redirect(url_for('auth.signup'))
 
-    # Determine role and status based on account type
-    if account_type == 'spouse':
-        role_enum = AccessLevel.SPOUSE
-        account_status = 'active'
-        is_primary = False
-        family_relation = 'spouse'
-    elif account_type == 'child':
-        role_enum = AccessLevel.CHILD
-        account_status = 'active'
-        is_primary = False
-        family_relation = 'child'
-    else:
-        role_enum = AccessLevel.USER
-        account_status = 'pending'
-        is_primary = True
-        family_relation = 'primary'
+    # Only Primary Member account type is supported
+    role_enum = AccessLevel.USER
+    account_status = 'pending'
+    is_primary = True
+    family_relation = 'primary'
 
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
@@ -227,10 +221,7 @@ def signup_post():
     db.session.add(new_user)
     db.session.commit()
 
-    if account_type in ['spouse', 'child']:
-        flash('Your account has been created and approved. You can now login.', 'success')
-    else:
-        flash('Your account has been created and is pending approval. Please wait for an administrator to approve your account.', 'info')
+    flash('Your account has been created and is pending approval. Please wait for an administrator to approve your account.', 'info')
     return redirect(url_for('auth.signup'))
 
 @auth.route('/logout')

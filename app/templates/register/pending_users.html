@@ -626,9 +626,10 @@
                             </a>
                             {% endif %}
                             <div class="row-actions-divider"></div>
-                            {% if user.email in all_recorded_emails %}
+{% if user.email in all_recorded_emails %}
                              <form method="post" action="{{ url_for('register.approve_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Revoke approval? The user will be set back to to be approved.');">
                                  <input type="hidden" name="action" value="toggle">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                  <button type="submit" class="row-action-item" role="menuitem">
                                      <span class="row-action-icon" aria-hidden="true"><i class="bi bi-arrow-counterclockwise"></i></span>
                                      <span class="row-action-copy">
@@ -638,8 +639,9 @@
                                  </button>
                              </form>
                              {% else %}
-                             <form method="post" action="{{ url_for('register.approve_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Approve this account? The user will be added to member, spouse, or child records.');">
+                             <form method="post" action="{{ url_for('register.approve_user', user_id=user.id) }}" class="row-action-form approve-form" data-user-id="{{ user.id }}" onsubmit="return approveUser(event, this);">
                                  <input type="hidden" name="action" value="toggle">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                  <button type="submit" class="row-action-item" role="menuitem">
                                      <span class="row-action-icon" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
                                      <span class="row-action-copy">
@@ -649,26 +651,28 @@
                                  </button>
                              </form>
                              {% endif %}
-                            <form method="post" action="{{ url_for('register.approve_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Cancel this account? The user will not be able to log in.');">
-                                <input type="hidden" name="action" value="cancel">
-                                <button type="submit" class="row-action-item" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-stop-circle"></i></span>
-                                    <span class="row-action-copy">
-                                        <span class="row-action-label">Cancel</span>
-                                        <span class="row-action-hint">Mark as cancelled</span>
-                                    </span>
-                                </button>
-                            </form>
-                            <div class="row-actions-divider"></div>
-                            <form method="post" action="{{ url_for('register.delete_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Permanently delete this user? This removes all associated member, spouse, and child records. This cannot be undone.');">
-                                <button type="submit" class="row-action-item danger" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
-                                    <span class="row-action-copy">
-                                        <span class="row-action-label">Delete</span>
-                                        <span class="row-action-hint">Cannot be undone</span>
-                                    </span>
-                                </button>
-                            </form>
+                             <form method="post" action="{{ url_for('register.approve_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Cancel this account? The user will not be able to log in.');">
+                                 <input type="hidden" name="action" value="cancel">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                 <button type="submit" class="row-action-item" role="menuitem">
+                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-stop-circle"></i></span>
+                                     <span class="row-action-copy">
+                                         <span class="row-action-label">Cancel</span>
+                                         <span class="row-action-hint">Mark as cancelled</span>
+                                     </span>
+                                 </button>
+                             </form>
+                             <div class="row-actions-divider"></div>
+                             <form method="post" action="{{ url_for('register.delete_user', user_id=user.id) }}" class="row-action-form" onsubmit="return confirm('Permanently delete this user? This removes all associated member, spouse, and child records. This cannot be undone.');">
+                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                 <button type="submit" class="row-action-item danger" role="menuitem">
+                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                     <span class="row-action-copy">
+                                         <span class="row-action-label">Delete</span>
+                                         <span class="row-action-hint">Cannot be undone</span>
+                                     </span>
+                                 </button>
+                             </form>
                         </div>
                     </div>
                 </td>
@@ -708,5 +712,114 @@
             });
         });
     });
+
+    // AJAX Approve User Function
+    async function approveUser(event, form) {
+        event.preventDefault();
+        
+        const userId = form.dataset.userId;
+        const csrfToken = form.querySelector('input[name="csrf_token"]').value;
+        const btn = form.querySelector('button[type="submit"]');
+        const originalBtnHtml = btn.innerHTML;
+        
+        // Show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Approving...';
+        
+        try {
+            const response = await fetch(`/register/${userId}/approve_user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: new URLSearchParams({
+                    'action': 'toggle',
+                    'csrf_token': csrfToken
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                // Show success toast notification
+                showNotification('Successfully Approved user', 'success');
+                
+                // Update UI - change the approve form to revoke form
+                const row = form.closest('tr');
+                const approveForm = row.querySelector('.approve-form');
+                
+                if (approveForm) {
+                    // Get fresh CSRF token from meta tag
+                    const freshCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+                        || form.querySelector('input[name="csrf_token"]').value;
+                    
+                    // Replace with revoke form
+                    approveForm.outerHTML = `
+                        <form method="post" action="/register/${userId}/approve_user" class="row-action-form" onsubmit="return confirm('Revoke approval? The user will be set back to to be approved.');">
+                            <input type="hidden" name="action" value="toggle">
+                            <input type="hidden" name="csrf_token" value="${freshCsrfToken}">
+                            <button type="submit" class="row-action-item" role="menuitem">
+                                <span class="row-action-icon" aria-hidden="true"><i class="bi bi-arrow-counterclockwise"></i></span>
+                                <span class="row-action-copy">
+                                    <span class="row-action-label">Approved</span>
+                                    <span class="row-action-hint">Toggle to to be approved</span>
+                                </span>
+                            </button>
+                        </form>
+                    `;
+                }
+                
+                // Update status badge in the row if present
+                const statusCell = row.querySelector('[data-label="Role"] .role-badge');
+                if (statusCell) {
+                    // The role badge doesn't show status, but we could add a status indicator
+                }
+                
+            } else {
+                showNotification(data.message || 'Approval failed', 'danger');
+            }
+        } catch (error) {
+            console.error('Approval error:', error);
+            showNotification('An error occurred during approval', 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
+        }
+        
+        return false;
+    }
+    
+    function showNotification(message, type) {
+        // Create toast notification
+        const toastContainer = document.getElementById('toast-container') || createToastContainer();
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        toastContainer.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', () => toast.remove());
+    }
+    
+    function createToastContainer() {
+        const container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+        return container;
+    }
 </script>
 {% endblock %}

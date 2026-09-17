@@ -100,9 +100,15 @@ def create_app():
             conn.execute(db.text("UPDATE \"user\" SET status = 'active' WHERE role IN ('Developer', 'Administrator', 'Chairperson', 'Welfare Officer', 'Treasurer', 'Secretary') AND status = 'pending'"))
             conn.commit()
         
-        # Add new enum values to PostgreSQL accesslevel type
+        # Add missing enum values to PostgreSQL accesslevel type
         with db.engine.connect() as conn:
             try:
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'DEVEL'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'ADMIN'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'CHAIRPERSON'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'TREASURER'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'SECRETARY'"))
+                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'WELFARE_OFFICER'"))
                 conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Spouse'"))
                 conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Child'"))
                 conn.commit()

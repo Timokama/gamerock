@@ -1105,6 +1105,8 @@ def pending_users():
 @login_required
 def approve_user(user_id):
     if not is_developer():
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': 'You do not have permission to approve user accounts.'}), 403
         flash('You do not have permission to approve user accounts.')
         return redirect(url_for('register.pending_users'))
 
@@ -1114,7 +1116,11 @@ def approve_user(user_id):
     if action == 'cancel':
         user.status = 'cancelled'
         db.session.commit()
-        flash(f'User account for {user.first_name} {user.surname} has been cancelled.', 'info')
+        message = f'User account for {user.first_name} {user.surname} has been cancelled.'
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': message})
+        flash(message, 'info')
+        return redirect(url_for('register.pending_users'))
     else:
         member_exists = Member.query.filter_by(email=user.email).first() is not None
         spouse_exists = Spouse.query.filter_by(email=user.email).first() is not None
@@ -1125,13 +1131,35 @@ def approve_user(user_id):
         if user.status == 'active':
             user.status = 'pending'
             db.session.commit()
-            flash(f'User account for {user.first_name} {user.surname} has been set back to pending.', 'info')
+            message = f'User account for {user.first_name} {user.surname} has been set back to pending.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': True, 'message': message})
+            flash(message, 'info')
         else:
             user.status = 'active'
+            
+            # Create or update Member record if user doesn't have one
+            if not member_exists:
+                member = Member(
+                    firstname=user.first_name,
+                    lastname='',
+                    surname=user.surname,
+                    email=user.email,
+                    phone_num=user.phone_num,
+                    id_number=user.id_number,
+                    date_of_birth=user.date_of_birth,
+                    user_id=user.id,
+                    added_by=current_user.id
+                )
+                db.session.add(member)
+            
             db.session.commit()
-            flash(f'User account for {user.first_name} {user.surname} has been approved.', 'success')
+            message = f'User account for {user.first_name} {user.surname} has been approved and member record created.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': True, 'message': message})
+            flash(message, 'success')
 
-    return redirect(url_for('register.pending_users'))
+        return redirect(url_for('register.pending_users'))
 
 
 @bp.post('/<int:user_id>/cancel_user')
