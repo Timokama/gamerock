@@ -239,27 +239,43 @@
         padding-right: 3rem;
     }
 
-    .password-toggle {
+    .pwd-visibility-toggle {
         position: absolute;
         right: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
-        background: transparent;
-        border: none;
-        color: var(--text-tertiary);
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 8px;
-        transition: all var(--transition-fast);
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
         z-index: 2;
+        transition: color var(--transition-fast), background-color var(--transition-fast);
     }
 
-    .password-toggle:hover {
+    .pwd-visibility-toggle:hover {
         color: var(--primary-600);
-        background: rgba(20, 184, 166, 0.10);
+        background-color: rgba(20, 184, 166, 0.10);
+    }
+
+    .pwd-visibility-toggle:focus-visible {
+        outline: 2px solid var(--primary-400);
+        outline-offset: 2px;
+    }
+
+    .pwd-visibility-toggle i {
+        font-size: 1.1rem;
+    }
+
+    .pwd-visibility-toggle[aria-pressed="true"] {
+        color: var(--primary-600);
+        background-color: rgba(20, 184, 166, 0.12);
     }
 
     .form-actions {
@@ -412,7 +428,8 @@
                             required
                             autocomplete="current-password"
                         >
-                        <button type="button" class="password-toggle" id="toggle-password" data-input-id="password" title="Show password" aria-label="Show password" aria-pressed="false">
+                        <button type="button" class="pwd-visibility-toggle" id="toggle-password" data-input-id="password" title="Show password" aria-label="Show password" aria-pressed="false">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -442,6 +459,24 @@
         html.setAttribute('data-theme', 'light');
         try { localStorage.setItem('theme', 'light'); } catch (e) {}
     }
+
+    document.querySelectorAll('.pwd-visibility-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+            const inputId = this.getAttribute('data-input-id');
+            const input = document.getElementById(inputId);
+            if (input) {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                this.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+                this.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
+                }
+            }
+        });
+    });
 
     const emailInput = document.getElementById('email');
     if (emailInput) {
