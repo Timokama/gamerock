@@ -892,7 +892,8 @@ textarea.form-control {
     .family-filter-bar .filter-group,
     .community-filters .filter-group,
     .dashboard-filters .filter-group,
-    .members-filter-bar .family-search-box {
+    .members-filter-bar .family-search-box,
+    .birthday-filters .filter-group {
         flex: 1 1 100% !important;
         max-width: none !important;
         min-width: 0 !important;
@@ -907,6 +908,7 @@ textarea.form-control {
     .family-filter-bar .filter-row,
     .community-filters .filter-row,
     .dashboard-filters .filter-row,
+    .birthday-filters .filter-row,
     .filter-bar-collapsible .filter-row {
         width: 100% !important;
         flex-direction: column !important;
@@ -924,7 +926,8 @@ textarea.form-control {
     .family-search-box .input-wrapper,
     .community-filters .input-wrapper,
     .dashboard-filters .input-wrapper,
-    .members-filter-bar .family-search-box .input-wrapper {
+    .members-filter-bar .family-search-box .input-wrapper,
+    .birthday-filters .input-wrapper {
         width: 100% !important;
         display: block !important;
         box-sizing: border-box !important;
@@ -950,7 +953,9 @@ textarea.form-control {
     .community-filters .input-wrapper select,
     .dashboard-filters .input-wrapper input,
     .dashboard-filters .input-wrapper select,
-    .members-filter-bar .family-search-box .input-wrapper input {
+    .members-filter-bar .family-search-box .input-wrapper input,
+    .birthday-filters .input-wrapper input,
+    .birthday-filters .input-wrapper select {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
@@ -972,7 +977,8 @@ textarea.form-control {
     .community-filters .input-wrapper select,
     .dashboard-filters .input-wrapper select,
     .family-filter-select,
-    .members-filter-bar .family-filter-select {
+    .members-filter-bar .family-filter-select,
+    .birthday-filters .input-wrapper select {
         appearance: none !important;
         -webkit-appearance: none !important;
         background-position: right var(--space-4) center !important;
@@ -991,12 +997,12 @@ textarea.form-control {
     .family-filter-bar .filter-actions,
     .family-filter-actions,
     .community-filters .filter-actions,
-    .dashboard-filters .filter-actions {
+    .dashboard-filters .filter-actions,
+    .birthday-filters .filter-actions {
         width: 100% !important;
         flex-direction: column !important;
         gap: var(--space-3) !important;
         margin-left: 0 !important;
-        align-items: stretch !important;
     }
 
     .filter-bar .filter-actions .btn,
@@ -1008,6 +1014,7 @@ textarea.form-control {
     .family-filter-actions .btn,
     .community-filters .filter-actions .btn,
     .dashboard-filters .filter-actions .btn,
+    .birthday-filters .filter-actions .btn,
     .members-filter-bar .action-btn {
         width: 100% !important;
         justify-content: center !important;
@@ -1020,7 +1027,8 @@ textarea.form-control {
     /* 7. Search/icon boxes - full width */
     .family-search-box,
     .members-filter-bar .family-search-box,
-    .members-filter-bar .family-filter-select {
+    .members-filter-bar .family-filter-select,
+    .birthday-filters .filter-group {
         flex: 1 1 100% !important;
         max-width: none !important;
         min-width: 0 !important;
@@ -1038,7 +1046,8 @@ textarea.form-control {
     .family-search-box .input-wrapper .input-icon,
     .community-filters .input-wrapper .input-icon,
     .dashboard-filters .input-wrapper .input-icon,
-    .members-filter-bar .family-search-box .input-icon {
+    .members-filter-bar .family-search-box .input-icon,
+    .birthday-filters .input-wrapper .input-icon {
         left: var(--space-3) !important;
         font-size: 1.1rem !important;
     }
@@ -1236,7 +1245,8 @@ textarea.form-control {
     .community-filters .filter-group,
     .dashboard-filters .filter-group,
     .members-filter-bar .family-search-box,
-    .members-filter-bar .family-filter-select {
+    .members-filter-bar .family-filter-select,
+    .birthday-filters .filter-group {
         min-width: 180px;
     }
 
@@ -1255,7 +1265,9 @@ textarea.form-control {
     .dashboard-filters .filter-group select,
     .dashboard-filters .filter-group input,
     .members-filter-bar .family-search-box input,
-    .members-filter-bar .family-filter-select {
+    .members-filter-bar .family-filter-select,
+    .birthday-filters .filter-group select,
+    .birthday-filters .filter-group input {
         min-height: 48px;
         font-size: var(--text-base);
     }
@@ -1268,6 +1280,7 @@ textarea.form-control {
     .family-filter-actions .btn,
     .community-filters .filter-actions .btn,
     .dashboard-filters .filter-actions .btn,
+    .birthday-filters .filter-actions .btn,
     .members-filter-bar .action-btn {
         min-height: 48px;
         font-size: var(--text-base);

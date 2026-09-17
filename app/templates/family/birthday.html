@@ -1,10 +1,11 @@
-{% extends "base_f/base.html" %}
+{% extends 'base_f/base.html' %}
 
-{% block page_title %}Fetha Members{% endblock %}
+{% block page_title %}Member Birthdays{% endblock %}
 
 {% block styles %}
 {{ super() }}
 <style>
+    /* ===== Page Header ===== */
     .birthday-page-header {
         display: flex;
         justify-content: space-between;
@@ -19,6 +20,9 @@
         font-weight: var(--font-weight-bold);
         color: var(--text-primary);
         font-size: var(--text-2xl);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
     }
 
     .birthday-page-header .header-meta {
@@ -27,104 +31,646 @@
         margin-top: var(--space-1);
     }
 
-    .member-grid {
+    /* ===== Summary Cards ===== */
+    .birthday-summary-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: var(--space-5);
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
     }
 
-    .member-card {
+    .summary-card {
         background: var(--bg-secondary);
-        border-radius: var(--radius-xl);
         border: 1px solid var(--border-light);
-        box-shadow: var(--shadow-sm);
-        padding: var(--space-6);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
         text-align: center;
         transition: all var(--transition-base);
+    }
+
+    .summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--border-medium);
+    }
+
+    .summary-value {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-weight-extrabold);
+        color: var(--primary-600);
+        margin-bottom: var(--space-1);
+    }
+
+    .summary-label {
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .summary-card.today .summary-value {
+        color: var(--danger-600);
+    }
+
+    .summary-card.upcoming .summary-value {
+        color: var(--warning-600);
+    }
+
+    /* ===== Tabs ===== */
+    .birthday-tabs {
+        margin-bottom: var(--space-6);
+        border-bottom: 2px solid var(--border-light);
+    }
+
+    .birthday-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-6);
+        background: none;
+        border: none;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all var(--transition-fast);
+    }
+
+    .birthday-tab:hover {
+        color: var(--text-primary);
+    }
+
+    .birthday-tab.active {
+        color: var(--primary-600);
+        border-bottom-color: var(--primary-500);
+    }
+
+    .birthday-tab .tab-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.15rem 0.5rem;
+        background: var(--secondary-100);
+        border-radius: var(--radius-full);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-bold);
+        color: var(--secondary-600);
+    }
+
+    /* ===== Filters ===== */
+    .birthday-filters {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        padding: var(--space-4);
+        margin-bottom: var(--space-6);
+    }
+
+    .birthday-filters .filter-bar-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+        border: 1.5px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: var(--text-sm);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        min-height: 48px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        align-self: flex-start;
+    }
+
+    .birthday-filters .filter-bar-toggle:hover {
+        border-color: var(--primary-500);
+        color: var(--primary-700);
+        background: var(--bg-tertiary);
+    }
+
+    .birthday-filters .filter-bar-toggle:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.25);
+        border-color: var(--primary-500);
+    }
+
+    .birthday-filters .filter-bar-toggle .filter-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        transition: transform var(--transition-base);
+    }
+
+    .birthday-filters .filter-bar-toggle[aria-expanded="true"] .filter-icon {
+        transform: rotate(180deg);
+    }
+
+    .birthday-filters .filter-bar-collapsible {
+        width: 100%;
+    }
+
+    .birthday-filters .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        align-items: flex-end;
+        width: 100%;
+    }
+
+    .birthday-filters .filter-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 200px;
+        min-width: 180px;
+        max-width: 320px;
+        gap: var(--space-2);
+    }
+
+    .birthday-filters .filter-group label {
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        line-height: var(--leading-tight);
+        margin: 0;
+    }
+
+    .birthday-filters .input-wrapper {
         position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .birthday-filters .input-wrapper select,
+    .birthday-filters .input-wrapper input {
+        width: 100%;
+        padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+        border: 1.5px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        font-size: var(--text-base);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        transition: all var(--transition-fast);
+        min-height: 48px;
+        line-height: var(--leading-normal);
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    .birthday-filters .input-wrapper select {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right var(--space-3) center;
+        background-size: 16px;
+        padding-right: var(--space-10);
+        text-overflow: ellipsis;
+        white-space: nowrap;
         overflow: hidden;
     }
 
-    .member-card:hover {
-        box-shadow: var(--shadow-md);
-        border-color: var(--border-medium);
-        transform: translateY(-4px);
-    }
-
-    .member-card::before {
-        content: '';
+    .birthday-filters .input-wrapper .input-icon {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-400) 100%);
-        opacity: 0;
-        transition: opacity var(--transition-base);
+        left: var(--space-3);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: var(--text-base);
+        color: var(--text-tertiary);
+        pointer-events: none;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .member-card:hover::before {
-        opacity: 1;
+    .birthday-filters .input-wrapper:focus-within .input-icon {
+        color: var(--primary-500);
+    }
+
+    .birthday-filters .input-wrapper select:hover,
+    .birthday-filters .input-wrapper input:hover {
+        border-color: var(--border-medium);
+        background: var(--bg-tertiary);
+    }
+
+    .birthday-filters .input-wrapper select:focus,
+    .birthday-filters .input-wrapper input:focus {
+        border-color: var(--primary-500);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+        background: var(--bg-secondary);
+    }
+
+    .birthday-filters .filter-actions {
+        display: flex;
+        gap: var(--space-3);
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-left: auto;
+    }
+
+    .birthday-filters .filter-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: var(--space-2) 1.25rem;
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: var(--text-sm);
+        border: none;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        min-height: 48px;
+        font-family: inherit;
+    }
+
+    .birthday-filters .filter-actions .btn-primary {
+        background: var(--primary-700);
+        color: white;
+        border: 1px solid var(--primary-700);
+    }
+
+    .birthday-filters .filter-actions .btn-primary:hover {
+        background: var(--primary-600);
+        border-color: var(--primary-600);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .birthday-filters .filter-actions .btn-outline {
+        background: transparent;
+        color: var(--text-primary);
+        border: 1.5px solid var(--border-light);
+    }
+
+    .birthday-filters .filter-actions .btn-outline:hover {
+        border-color: var(--primary-700);
+        color: var(--primary-700);
+        background: var(--bg-tertiary);
+    }
+
+    /* ===== Age Range ===== */
+    .age-range-inputs {
+        display: flex;
+        gap: var(--space-2);
+        align-items: flex-end;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .age-range-inputs .age-range-input {
+        flex: 1;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .age-range-inputs .age-range-input .input-wrapper {
+        display: block;
+    }
+
+    .age-range-inputs .age-range-separator {
+        color: var(--text-tertiary);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--space-3);
+        align-self: flex-end;
+    }
+
+    /* ===== Active Filter Indicator ===== */
+    .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+    }
+
+    .filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.8rem;
+        background: var(--primary-50);
+        color: var(--primary-700);
+        border-radius: var(--radius-full);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .filter-tag .remove-filter {
+        cursor: pointer;
+        font-size: var(--text-sm);
+        line-height: 1;
+        padding: 0;
+        background: none;
+        border: none;
+        color: var(--primary-600);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+    }
+
+    .filter-tag .remove-filter:hover {
+        background: var(--primary-100);
+        border-radius: var(--radius-full);
+    }
+
+    /* ===== Table ===== */
+    .birthday-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .birthday-table thead th {
+        background: var(--secondary-50);
+        border-bottom: 2px solid var(--border-light);
+        padding: var(--space-4) var(--space-5);
+        text-align: left;
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    .birthday-table thead th:first-child {
+        border-top-left-radius: 0;
+    }
+
+    .birthday-table thead th:last-child {
+        border-top-right-radius: 0;
+    }
+
+    .birthday-table tbody tr {
+        border-bottom: 1px solid var(--border-light);
+        transition: background var(--transition-fast);
+        position: relative;
+    }
+
+    .birthday-table tbody tr:hover {
+        background: var(--secondary-50);
+    }
+
+    .birthday-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .birthday-table td {
+        padding: var(--space-4) var(--space-5);
+        vertical-align: middle;
+        font-size: var(--text-sm);
+    }
+
+    /* ===== Member Cell ===== */
+    .member-cell {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
     }
 
     .member-avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-full);
         background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
         color: white;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--text-xl);
+        font-size: var(--text-sm);
         font-weight: var(--font-weight-bold);
-        margin-bottom: var(--space-4);
-        box-shadow: var(--shadow-md);
-        transition: transform var(--transition-base), box-shadow var(--transition-base);
+        box-shadow: var(--shadow-xs);
         flex-shrink: 0;
     }
 
-    .member-card:hover .member-avatar {
-        transform: scale(1.08);
-        box-shadow: var(--shadow-lg);
-    }
-
     .member-name {
-        font-weight: var(--font-weight-bold);
-        color: var(--text-primary);
-        font-size: var(--text-base);
-        margin-bottom: var(--space-2);
-    }
-
-    .member-details {
-        color: var(--text-secondary);
-        font-size: var(--text-sm);
-        line-height: var(--leading-relaxed);
-    }
-
-    .member-details p {
-        margin-bottom: var(--space-2);
-        color: var(--text-secondary);
-    }
-
-    .member-details p:last-child {
-        margin-bottom: 0;
-    }
-
-    .member-details strong {
-        color: var(--text-primary);
         font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
     }
 
+    .member-subtext {
+        color: var(--text-secondary);
+        font-size: var(--text-xs);
+    }
+
+    /* ===== Birthday Column ===== */
+    .birthday-date {
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+    }
+
+    .birthday-weekday {
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
+    }
+
+    /* ===== Age Badge ===== */
+    .age-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 50px;
+        padding: 0.3rem 0.75rem;
+        border-radius: var(--radius-full);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .age-badge.today {
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+        color: white;
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3);
+    }
+
+    .age-badge.upcoming {
+        background: var(--warning-100);
+        color: var(--warning-800);
+    }
+
+    .age-badge.default {
+        background: var(--secondary-100);
+        color: var(--secondary-800);
+    }
+
+    /* ===== Actions Column ===== */
+    .member-actions {
+        text-align: right;
+    }
+
+    .view-profile-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: var(--radius-md);
+        background: var(--primary-50);
+        color: var(--primary-700);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-medium);
+        text-decoration: none;
+        transition: all var(--transition-fast);
+    }
+
+    .view-profile-btn:hover {
+        background: var(--primary-100);
+        color: var(--primary-800);
+    }
+
+    /* ===== Section Headers ===== */
+    .birthday-section {
+        margin-bottom: var(--space-6);
+    }
+
+    .birthday-section .section-title {
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        margin-bottom: var(--space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    /* ===== Integrated Table System ===== */
+    .birthday-integrated-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: var(--space-6);
+    }
+
+    .birthday-integrated-container .integrated-table-section {
+        padding: var(--space-5);
+    }
+
+    .birthday-integrated-container .integrated-table-section:first-child {
+        padding-top: var(--space-6);
+    }
+
+    .birthday-integrated-container .section-title {
+        margin-bottom: var(--space-3);
+        font-size: var(--text-lg);
+    }
+
+    .birthday-integrated-container .table-section-divider {
+        border-top: 1px solid var(--border-light);
+        padding: var(--space-5);
+    }
+
+    .birthday-integrated-container .table-section-divider .section-title {
+        margin-bottom: var(--space-3);
+        font-size: var(--text-lg);
+    }
+
+    .birthday-integrated-container .no-dob-section {
+        margin: 0;
+    }
+
+    .birthday-integrated-container .no-dob-section h3 {
+        margin-bottom: var(--space-3);
+    }
+
+    /* ===== Member Avatar Variants ===== */
+    .member-avatar.child {
+        width: 36px;
+        height: 36px;
+        font-size: var(--text-xs);
+        background: linear-gradient(135deg, var(--info-500) 0%, var(--info-600) 100%);
+    }
+
+    .member-avatar.spouse {
+        width: 36px;
+        height: 36px;
+        font-size: var(--text-xs);
+        background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+    }
+
+    /* ===== No DOB Section ===== */
+    .no-dob-section {
+        margin-top: var(--space-8);
+    }
+
+    .no-dob-section h3 {
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        margin-bottom: var(--space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .no-dob-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .no-dob-table th,
+    .no-dob-table td {
+        padding: var(--space-3) var(--space-5);
+        text-align: left;
+        border-bottom: 1px solid var(--border-light);
+        font-size: var(--text-sm);
+    }
+
+    .no-dob-table th {
+        background: var(--secondary-50);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .no-dob-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ===== Sorting ===== */
+    .sortable-th {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .sortable-th:hover {
+        background: var(--secondary-100);
+    }
+
+    .sort-indicator {
+        margin-left: var(--space-1);
+        font-size: var(--text-xs);
+        opacity: 0.5;
+    }
+
+    .sort-indicator.active {
+        opacity: 1;
+        color: var(--primary-600);
+    }
+
+    /* ===== Empty State ===== */
     .empty-state {
         text-align: center;
         padding: var(--space-16) var(--space-6);
         color: var(--text-tertiary);
-        background: var(--bg-secondary);
-        border-radius: var(--radius-xl);
-        border: 1px solid var(--border-light);
-        box-shadow: var(--shadow-sm);
-        grid-column: 1 / -1;
     }
 
     .empty-state-icon {
@@ -144,69 +690,167 @@
         max-width: 480px;
         margin: 0 auto;
         color: var(--text-secondary);
+        font-size: var(--text-sm);
     }
 
-    @media (max-width: 1024px) {
-        .member-grid {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: var(--space-4);
-        }
-    }
-
+    /* ===== Responsive: Mobile (≤768px) ===== */
     @media (max-width: 768px) {
-        .member-grid {
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        .birthday-filters {
+            padding: var(--space-3);
+        }
+
+        .birthday-filters .filter-bar-toggle {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .birthday-filters .filter-row {
+            flex-direction: column;
             gap: var(--space-4);
         }
 
-        .member-card {
-            padding: var(--space-5);
+        .birthday-filters .filter-group {
+            flex: 1 1 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            width: 100% !important;
+        }
+
+        .birthday-filters .filter-actions {
+            flex-direction: column !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            gap: var(--space-3) !important;
+        }
+
+        .birthday-filters .filter-actions .btn {
+            width: 100% !important;
+            min-height: 52px !important;
+            font-size: var(--text-base) !important;
+            font-weight: 600 !important;
+            box-sizing: border-box !important;
+        }
+
+        .age-range-inputs {
+            flex-direction: column !important;
+            gap: var(--space-3) !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            flex-wrap: nowrap !important;
+        }
+
+        .age-range-inputs .age-range-input {
+            width: 100% !important;
+            flex: none !important;
+            box-sizing: border-box !important;
+        }
+
+        .age-range-inputs .age-range-separator {
+            display: none;
+        }
+
+        .birthday-table {
+            font-size: var(--text-xs);
+        }
+
+        .birthday-table thead {
+            display: none;
+        }
+
+        .birthday-table tbody tr {
+            display: block;
+            padding: var(--space-4);
+            margin-bottom: var(--space-2);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .birthday-table td {
+            display: block;
+            padding: var(--space-2) 0;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .birthday-table td:last-child {
+            border-bottom: none;
+        }
+
+        .summary-value {
+            font-size: var(--text-2xl);
         }
     }
 
-    @media (max-width: 576px) {
-        .member-grid {
-            grid-template-columns: 1fr;
-            gap: var(--space-4);
-        }
-
-        .member-card {
-            padding: var(--space-5);
-        }
-    }
-
-    [data-theme="dark"] .member-card {
+    /* ===== Dark Theme ===== */
+    [data-theme="dark"] .summary-card {
         background: var(--secondary-800);
         border-color: var(--secondary-700);
     }
 
-    [data-theme="dark"] .member-card:hover {
+    [data-theme="dark"] .summary-card:hover {
         border-color: var(--secondary-600);
     }
 
-    [data-theme="dark"] .member-name {
-        color: var(--secondary-100);
-    }
-
-    [data-theme="dark"] .member-details {
-        color: var(--text-tertiary);
-    }
-
-    [data-theme="dark"] .member-details strong {
-        color: var(--secondary-200);
-    }
-
-    [data-theme="dark"] .empty-state {
+    [data-theme="dark"] .birthday-filters {
         background: var(--secondary-800);
         border-color: var(--secondary-700);
     }
 
-    [data-theme="dark"] .empty-state h3 {
-        color: var(--secondary-100);
+    [data-theme="dark"] .birthday-filters .filter-bar-toggle {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+        color: var(--secondary-200);
     }
 
-    [data-theme="dark"] .empty-state p {
-        color: var(--text-tertiary);
+    [data-theme="dark"] .birthday-filters .filter-bar-toggle:hover {
+        background: var(--secondary-700);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .birthday-integrated-container {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .birthday-table thead th {
+        background: var(--secondary-900);
+        border-bottom-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .birthday-table tbody tr:hover {
+        background: var(--secondary-800);
+    }
+
+    [data-theme="dark"] .no-dob-section h3 {
+        color: var(--secondary-200);
+    }
+
+    [data-theme="dark"] .no-dob-table th {
+        background: var(--secondary-900);
+        border-bottom-color: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .no-dob-table tr:hover {
+        background: var(--secondary-800);
+    }
+
+    [data-theme="dark"] .birthday-filters .input-wrapper select,
+    [data-theme="dark"] .birthday-filters .input-wrapper input {
+        background: var(--secondary-800);
+        border-color: var(--secondary-700);
+        color: var(--secondary-200);
+    }
+
+    [data-theme="dark"] .birthday-filters .filter-actions .btn-outline:hover {
+        background: var(--secondary-700);
+    }
+
+    [data-theme="dark"] .birthday-section .section-title {
+        color: var(--secondary-200);
+    }
+
+    [data-theme="dark"] .birthday-integrated-container .table-section-divider {
+        border-top-color: var(--secondary-700);
     }
 </style>
 {% endblock %}
@@ -214,43 +858,604 @@
 {% block content %}
 <div class="birthday-page-header">
     <div>
-        <h2>Fetha Members</h2>
-        <p class="header-meta">View member birthdays and ages</p>
+        <h2><i class="bi bi-gift"></i> Member Birthdays</h2>
+        <p class="header-meta">
+            {% if member and member|length > 0 %}
+                Showing {{ member|length }} member(s) with birthday records
+            {% else %}
+                No birthday records available
+            {% endif %}
+        </p>
+    </div>
+    <div class="header-meta">
+        <i class="bi bi-calendar3"></i> Today: {{ today.strftime('%B %d, %Y') }}
     </div>
 </div>
 
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 pt-4">
-                <h4>Fetha Members</h4>
-                <p class="text-muted mt-2">View member birthdays and ages</p>
-            </div>
-            <div class="card-body px-4 pb-4">
-                <div class="member-grid">
-                    {% for member in member %}
-                    <div class="member-card">
-                        <div class="member-avatar">
-                            {{ member.firstname[0] }}{{ member.lastname[0] }}
-                        </div>
-                        <div class="member-name">{{ member.first_name }} {{ member.last_name }}</div>
-                        <div class="member-details">
-                            <p class="mb-1"><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
-                            {% if age %}
-                            <p class="mb-0"><strong>Age:</strong> {{ age[member.id-1:member.id] }} years</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="empty-state col-12">
-                        <div class="empty-state-icon"><i class="bi bi-calendar-date"></i></div>
-                        <h3>No Birthday Records</h3>
-                        <p>Birthday records will appear here once members are added.</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+{# Summary Cards #}
+{% set today_count = member | selectattr('is_today', 'equalto', true) | list | length %}
+{% set upcoming_count = member | selectattr('is_upcoming', 'equalto', true) | list | length %}
+{% set no_dob_count = members_without_dob | length %}
+
+<div class="birthday-summary-grid">
+    <div class="summary-card today">
+        <div class="summary-value">{{ today_count }}</div>
+        <div class="summary-label">Birthday Today</div>
+    </div>
+    <div class="summary-card upcoming">
+        <div class="summary-value">{{ upcoming_count }}</div>
+        <div class="summary-label">Upcoming (30 days)</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-value">{{ member|length }}</div>
+        <div class="summary-label">Total Members</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-value">{{ no_dob_count }}</div>
+        <div class="summary-label">No DOB Recorded</div>
     </div>
 </div>
+
+{# Filters Section #}
+{% if member and member|length > 0 %}
+<div class="birthday-filters">
+    <button type="button" class="filter-bar-toggle" id="birthday-filters-toggle" aria-expanded="false" aria-controls="birthday-filters-list">
+        <span class="filter-icon"><i class="bi bi-funnel"></i></span>
+        Filters
+    </button>
+    <div class="filter-bar-collapsible" id="birthday-filters-list">
+    <div class="filter-row">
+        <div class="filter-group">
+            <label for="month-filter">Birthday Month</label>
+            <div class="input-wrapper">
+                <i class="bi bi-calendar-month input-icon"></i>
+                <select class="form-control" id="month-filter" onchange="applyFilters()">
+                    <option value="all">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label for="search-filter">Search Members</label>
+            <div class="input-wrapper">
+                <i class="bi bi-search input-icon"></i>
+                <input type="text" class="form-control" id="search-filter" placeholder="Search by name or ID..." onkeyup="applyFilters()" onkeypress="if(event.key==='Enter') applyFilters()">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label for="age-range-min">Age Range</label>
+            <div class="input-wrapper age-range-inputs">
+                <input type="number" class="form-control age-range-input" id="age-range-min" placeholder="Min" min="0" onkeyup="applyFilters()">
+                <span class="age-range-separator">-</span>
+                <input type="number" class="form-control age-range-input" id="age-range-max" placeholder="Max" min="0" onkeyup="applyFilters()">
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button type="button" class="btn btn-outline" onclick="resetFilters()">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+            </button>
+            <button type="button" class="btn btn-primary" onclick="applyFilters()">
+                <i class="bi bi-funnel"></i> Apply
+            </button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="active-filters" id="active-filters" style="display: none;">
+    <!-- Dynamically populated -->
+</div>
+
+{# Tabs for filtering #}
+<div class="birthday-tabs">
+    <button class="birthday-tab active" onclick="filterByGroup('all')">
+        All Members
+        <span class="tab-count">{{ member|length }}</span>
+    </button>
+    <button class="birthday-tab" onclick="filterByGroup('today')">
+        Today
+        <span class="tab-count">{{ today_count }}</span>
+    </button>
+    <button class="birthday-tab" onclick="filterByGroup('upcoming')">
+        Upcoming (30 days)
+        <span class="tab-count">{{ upcoming_count }}</span>
+    </button>
+    <button class="birthday-tab" onclick="filterByGroup('other')">
+        Past Birthdays
+        <span class="tab-count">{{ member|length - today_count - upcoming_count }}</span>
+    </button>
+</div>
+
+{# Integrated Table System #}
+<div class="birthday-integrated-container">
+    {# All Members Table #}
+    <div class="integrated-table-section">
+        <h3 class="section-title"><i class="bi bi-people"></i> All Members</h3>
+        <table class="birthday-table">
+            <thead>
+                <tr>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('birthday-tbody', 0)">
+                        Member <span class="sort-indicator" id="main-sort-0">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('birthday-tbody', 1)">
+                        Date of Birth <span class="sort-indicator" id="main-sort-1">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('birthday-tbody', 2)">
+                        Age <span class="sort-indicator" id="main-sort-2">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('birthday-tbody', 3)">
+                        Next Birthday <span class="sort-indicator" id="main-sort-3">⇵</span>
+                    </th>
+                    <th scope="col" style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="birthday-tbody">
+                {% for item in member %}
+                <tr class="birthday-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.member.firstname }} {{ item.member.lastname }}" data-member_id="{{ item.member.id }}" data-age="{{ item.age }}">
+                    <td>
+                        <div class="member-cell">
+                            <div class="member-avatar">{{ item.initials }}</div>
+                            <div>
+                                <div class="member-name">{{ item.member.firstname }} {{ item.member.lastname }}</div>
+                                <div class="member-subtext">
+                                    {% if item.member.id_number %}ID: {{ item.member.id_number }}{% endif %}
+                                    {% if item.member.phone_num %}| {{ item.member.phone_num | member_phone }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="birthday-date">{{ item.birthday.strftime('%b %d, %Y') if item.birthday else 'N/A' }}</div>
+                        <div class="birthday-weekday">{{ item.birthday.strftime('%A') if item.birthday else '' }}</div>
+                    </td>
+                    <td>
+                        <span class="age-badge
+                            {% if item.is_today %}today
+                            {% elif item.is_upcoming %}upcoming
+                            {% else %}default{% endif %}">
+                            {{ item.age }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.is_today %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">Today</span>
+                        {% elif item.is_upcoming %}
+                            <span class="text-warning fw-medium">{{ item.days_until }} day(s)</span>
+                        {% else %}
+                            <span class="text-secondary">{{ item.days_until }} day(s) ago</span>
+                        {% endif %}
+                    </td>
+                    <td class="member-actions">
+                        <a href="{{ url_for('family.family', depo_id=item.member.id) }}" class="view-profile-btn">
+                            <i class="bi bi-person-badge"></i> View Profile
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# No DOB Section #}
+    {% if members_without_dob and members_without_dob|length > 0 %}
+    <div class="table-section-divider">
+        <div class="no-dob-section">
+            <h3 class="section-title"><i class="bi bi-question-circle"></i> Members Without Birthdate</h3>
+            <table class="no-dob-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>ID Number</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in members_without_dob %}
+                    <tr>
+                        <td>{{ m.firstname }} {{ m.lastname }}</td>
+                        <td>{{ m.id_number or 'N/A' }}</td>
+                        <td>{{ m.phone_num | member_phone }}</td>
+                        <td>
+                            <a href="{{ url_for('family.edit', depo_id=m.id) }}" class="view-profile-btn">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Spouse Birthdays Table #}
+    {% if spouse_birthday and spouse_birthday|length > 0 %}
+    <div class="table-section-divider">
+        <h3 class="section-title"><i class="bi bi-ring"></i> Spouse Birthdays</h3>
+        <table class="birthday-table">
+            <thead>
+                <tr>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('spouse-table-tbody', 0)">
+                        Spouse <span class="sort-indicator" id="spouse-sort-0">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('spouse-table-tbody', 1)">
+                        Member <span class="sort-indicator" id="spouse-sort-1">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('spouse-table-tbody', 2)">
+                        Date of Birth <span class="sort-indicator" id="spouse-sort-2">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('spouse-table-tbody', 3)">
+                        Age <span class="sort-indicator" id="spouse-sort-3">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('spouse-table-tbody', 4)">
+                        Next Birthday <span class="sort-indicator" id="spouse-sort-4">⇵</span>
+                    </th>
+                        <th scope="col" style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="spouse-table-tbody">
+                {% for item in spouse_birthday %}
+                <tr class="birthday-row spouse-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.spouse.firstname }} {{ item.spouse.lastname }}" data-member_id="{{ item.spouse.id }}" data-age="{{ item.age }}">
+                    <td>
+                        <div class="member-cell">
+                            <div class="member-avatar spouse">{{ item.initials }}</div>
+                            <div>
+                                <div class="member-name">{{ item.spouse.firstname }} {{ item.spouse.lastname }} {{ item.spouse.surname }}</div>
+                                <div class="member-subtext">
+                                    {% if item.spouse.id_number %}ID: {{ item.spouse.id_number }}{% endif %}
+                                    {% if item.spouse.phone_num %}| {{ item.spouse.phone_num | member_phone }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ item.member.firstname }} {{ item.member.lastname }}</td>
+                    <td>
+                        <div class="birthday-date">{{ item.birthday.strftime('%b %d, %Y') }}</div>
+                        <div class="birthday-weekday">{{ item.birthday.strftime('%A') }}</div>
+                    </td>
+                    <td>
+                        <span class="age-badge{% if item.is_today %} today{% elif item.is_upcoming %} upcoming{% else %} default{% endif %}">
+                            {{ item.age }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.is_today %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">Today</span>
+                        {% elif item.is_upcoming %}
+                            <span class="text-warning fw-medium">{{ item.days_until }} day(s)</span>
+                        {% else %}
+                            <span class="text-secondary">{{ item.days_until }} day(s) ago</span>
+                        {% endif %}
+                    </td>
+                    <td class="member-actions">
+                        <a href="{{ url_for('family.family', depo_id=item.member.id) }}" class="view-profile-btn">
+                            <i class="bi bi-person-badge"></i> View Profile
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {# Child Birthdays Table #}
+    {% if child_birthday and child_birthday|length > 0 %}
+    <div class="table-section-divider">
+        <h3 class="section-title"><i class="bi bi-baby"></i> Child Birthdays</h3>
+        <table class="birthday-table">
+            <thead>
+                <tr>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('child-table-tbody', 0)">
+                        Child <span class="sort-indicator" id="child-sort-0">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('child-table-tbody', 1)">
+                        Parent Member <span class="sort-indicator" id="child-sort-1">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('child-table-tbody', 2)">
+                        Date of Birth <span class="sort-indicator" id="child-sort-2">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('child-table-tbody', 3)">
+                        Age <span class="sort-indicator" id="child-sort-3">⇵</span>
+                    </th>
+                    <th scope="col" class="sortable-th" onclick="sortTableByColumn('child-table-tbody', 4)">
+                        Next Birthday <span class="sort-indicator" id="child-sort-4">⇵</span>
+                    </th>
+                        <th scope="col" style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="child-table-tbody">
+                {% for item in child_birthday %}
+                <tr class="birthday-row child-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.child.firstname }} {{ item.child.lastname }}" data-member_id="{{ item.child.id }}" data-age="{{ item.age }}">
+                    <td>
+                        <div class="member-cell">
+                            <div class="member-avatar child">{{ item.initials }}</div>
+                            <div>
+                                <div class="member-name">{{ item.child.firstname }} {{ item.child.lastname }} {{ item.child.surname }}</div>
+                                <div class="member-subtext">
+                                    {% if item.child.id_number %}ID: {{ item.child.id_number }}{% endif %}
+                                    {% if item.child.phone_num %}| {{ item.child.phone_num | member_phone }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ item.member.firstname }} {{ item.member.lastname }}</td>
+                    <td>
+                        <div class="birthday-date">{{ item.birthday.strftime('%b %d, %Y') }}</div>
+                        <div class="birthday-weekday">{{ item.birthday.strftime('%A') }}</div>
+                    </td>
+                    <td>
+                        <span class="age-badge{% if item.is_today %} today{% elif item.is_upcoming %} upcoming{% else %} default{% endif %}">
+                            {{ item.age }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.is_today %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">Today</span>
+                        {% elif item.is_upcoming %}
+                            <span class="text-warning fw-medium">{{ item.days_until }} day(s)</span>
+                        {% else %}
+                            <span class="text-secondary">{{ item.days_until }} day(s) ago</span>
+                        {% endif %}
+                    </td>
+                    <td class="member-actions">
+                        <a href="{{ url_for('family.family', depo_id=item.member.id) }}" class="view-profile-btn">
+                            <i class="bi bi-person-badge"></i> View Profile
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+{% else %}
+{# Empty State #}
+<div class="empty-state">
+    <div class="empty-state-icon"><i class="bi bi-calendar-x"></i></div>
+    <h3>No Birthday Records</h3>
+    <p>Birthday records will appear here once members with date of birth information are added to the system.</p>
+</div>
+{% endif %}
+
+<script>
+    let currentGroup = 'all';
+    let sortDirections = {};
+
+    function filterByGroup(group) {
+        currentGroup = group;
+        applyAllFilters();
+
+        // Update active tab
+        const tabs = document.querySelectorAll('.birthday-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+
+        const tabMap = {
+            'all': 'All Members',
+            'today': 'Today',
+            'upcoming': 'Upcoming',
+            'other': 'Past Birthdays'
+        };
+
+        tabs.forEach((tab, idx) => {
+            if (tab.textContent.includes(tabMap[group]?.split(' ').slice(0,2).join(' '))) {
+                tab.classList.add('active');
+            }
+        });
+    }
+
+    function applyFilters() {
+        applyAllFilters();
+    }
+
+    function applyAllFilters() {
+        const monthFilter = document.getElementById('month-filter');
+        const searchFilter = document.getElementById('search-filter');
+        const ageMin = document.getElementById('age-range-min');
+        const ageMax = document.getElementById('age-range-max');
+
+        const selectedMonth = monthFilter ? monthFilter.value : 'all';
+        const searchTerm = searchFilter ? searchFilter.value.toLowerCase().trim() : '';
+        const minAge = ageMin ? parseInt(ageMin.value) || 0 : 0;
+        const maxAge = ageMax ? parseInt(ageMax.value) || Infinity : Infinity;
+
+        const rows = document.querySelectorAll('.birthday-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            // Group filter
+            if (currentGroup !== 'all' && row.dataset.group !== currentGroup) {
+                row.style.display = 'none';
+                return;
+            }
+
+            // Get filter values from data attributes
+            const rowMonth = parseInt(row.dataset.month || '0');
+            const fullName = (row.dataset.member_name || '').toLowerCase();
+            const memberId = row.dataset.member_id || '';
+            const age = parseInt(row.dataset.age || '0');
+
+            let showRow = true;
+
+            if (selectedMonth !== 'all' && rowMonth !== parseInt(selectedMonth)) {
+                showRow = false;
+            }
+
+            if (searchTerm !== '') {
+                if (!fullName.includes(searchTerm) && !memberId.includes(searchTerm)) {
+                    showRow = false;
+                }
+            }
+
+            if (minAge > 0 && age < minAge) {
+                showRow = false;
+            }
+
+            if (maxAge !== Infinity && maxAge > 0 && age > maxAge) {
+                showRow = false;
+            }
+
+            row.style.display = showRow ? '' : 'none';
+            if (showRow) visibleCount++;
+        });
+
+        // Update active filters display
+        const activeFiltersDiv = document.getElementById('active-filters');
+        if (activeFiltersDiv) {
+            let tags = [];
+            if (selectedMonth !== 'all') {
+                const months = ['', 'January', 'February', 'March', 'April', 'May', 'June',
+                                'July', 'August', 'September', 'October', 'November', 'December'];
+                tags.push(`Month: ${months[parseInt(selectedMonth)]}`);
+            }
+            if (searchTerm) tags.push(`Search: ${searchTerm}`);
+            if (minAge > 0) tags.push(`Min Age: ${minAge}`);
+            if (maxAge !== Infinity && maxAge > 0) tags.push(`Max Age: ${maxAge}`);
+
+            if (tags.length > 0) {
+                activeFiltersDiv.innerHTML = tags.map(tag =>
+                    `<span class="filter-tag">${tag} <button class="remove-filter" onclick="removeTag('${tag.split(':')[0]}')">&times;</button></span>`
+                ).join('');
+                activeFiltersDiv.style.display = 'flex';
+            } else {
+                activeFiltersDiv.style.display = 'none';
+            }
+        }
+
+        // Update group tab counts
+        updateTabCounts();
+    }
+
+    function removeTag(filterType) {
+        if (filterType === 'Month') {
+            document.getElementById('month-filter').value = 'all';
+        }
+        if (filterType === 'Search') {
+            document.getElementById('search-filter').value = '';
+        }
+        if (filterType === 'Min Age') {
+            document.getElementById('age-range-min').value = '';
+        }
+        if (filterType === 'Max Age') {
+            document.getElementById('age-range-max').value = '';
+        }
+        applyAllFilters();
+    }
+
+    function updateTabCounts() {
+        const counts = { all: 0, today: 0, upcoming: 0, other: 0 };
+        document.querySelectorAll('.birthday-row').forEach(row => {
+            if (row.style.display !== 'none') {
+                counts.all++;
+                const group = row.dataset.group;
+                if (group === 'today') counts.today++;
+                else if (group === 'upcoming') counts.upcoming++;
+                else counts.other++;
+            }
+        });
+
+        // Update count badges (find them in order)
+        const tabs = document.querySelectorAll('.birthday-tab .tab-count');
+        if (tabs.length >= 4) {
+            tabs[0].textContent = counts.all;
+            tabs[1].textContent = counts.today;
+            tabs[2].textContent = counts.upcoming;
+            tabs[3].textContent = counts.other;
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('month-filter').value = 'all';
+        document.getElementById('search-filter').value = '';
+        document.getElementById('age-range-min').value = '';
+        document.getElementById('age-range-max').value = '';
+        currentGroup = 'all';
+
+        // Reset tabs
+        document.querySelectorAll('.birthday-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector('.birthday-tab').classList.add('active');
+
+        // Show all rows
+        document.querySelectorAll('.birthday-row').forEach(row => row.style.display = '');
+
+        // Hide active filters
+        const activeFiltersDiv = document.getElementById('active-filters');
+        if (activeFiltersDiv) {
+            activeFiltersDiv.style.display = 'none';
+        }
+    }
+
+    function sortTable(colIndex) {
+        sortTableByColumn('birthday-tbody', colIndex);
+    }
+
+    function sortTableByColumn(tbodyId, colIndex) {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+
+        const table = tbody.closest('table');
+        const tableIdMap = {
+            'birthday-tbody': 'main',
+            'spouse-table-tbody': 'spouse',
+            'child-table-tbody': 'child'
+        };
+        const tablePrefix = tableIdMap[tbodyId] || 'main';
+
+        const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+        const ascending = !sortDirections[colIndex + '_' + tbodyId];
+
+        rows.sort((a, b) => {
+            const aText = a.cells[colIndex]?.textContent?.trim() || '';
+            const bText = b.cells[colIndex]?.textContent?.trim() || '';
+
+            // For age column, use numeric comparison
+            if (colIndex === 2) {
+                const aNum = parseInt(aText);
+                const bNum = parseInt(bText);
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                    return ascending ? aNum - bNum : bNum - aNum;
+                }
+            }
+
+            // For member/child column, sort by name
+            if (colIndex === 0) {
+                const aName = a.dataset.member_name || '';
+                const bName = b.dataset.member_name || '';
+                return ascending ? aName.localeCompare(bName) : bName.localeCompare(aName);
+            }
+
+            // Default string comparison
+            return ascending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+        sortDirections[colIndex + '_' + tbodyId] = ascending;
+
+        // Update sort indicators - only within this table
+        const indicators = table.querySelectorAll('.sort-indicator');
+        indicators.forEach(ind => ind.classList.remove('active'));
+        const activeIndicator = document.getElementById(`${tablePrefix}-sort-${colIndex}`);
+        if (activeIndicator) {
+            activeIndicator.classList.add('active');
+            activeIndicator.textContent = ascending ? '↑' : '↓';
+        }
+    }
+</script>
 {% endblock %}

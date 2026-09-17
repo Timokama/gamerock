@@ -292,7 +292,7 @@
                         <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Family
                     </a>
                 </li>
-                  {% set deposit_endpoint = request.endpoint or '' %}
+                {% set deposit_endpoint = request.endpoint or '' %}
                   {% set deposit_section_active = 'deposit' in deposit_endpoint %}
                   {% if current_user.role.name in ['DEVEL', 'ADMIN'] %}
                   <li>
@@ -753,7 +753,7 @@
                 if (window.innerWidth > mobileFilterBreakpoint) return;
                 const active = document.activeElement;
                 if (!active) return;
-                const filterRow = active.closest('.filter-row, .faq-toolbar-row, .family-filter-bar');
+                const filterRow = active.closest('.filter-row, .faq-toolbar-row, .family-filter-bar, .birthday-filters');
                 if (!filterRow) return;
                 const rect = active.getBoundingClientRect();
                 if (rect.top < 0 || rect.bottom > window.innerHeight) {

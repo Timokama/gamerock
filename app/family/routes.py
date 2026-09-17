@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from datetime import date, datetime
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import joinedload
 from app.family import bp
 from app import db
 from app.user import User
@@ -10,7 +11,6 @@ from app.models.register import Member
 from app.models.community_event import CommunityEvent
 from app.models.child import Child
 from app.models.spouse import Spouse
-from datetime import date
 
 @bp.route('/')
 @login_required
@@ -565,16 +565,131 @@ def delete_member(depo_id):
 #         age = d3.year - d4.year - ((today.month, today.day) < (d4.month, d4.day))
 @bp.route('/birthday')
 @login_required
-def contact():
+def birthday():
     user = User.query.get_or_404(current_user.id)
-    member = user.family
-    age_list = []
-    if member:
-        for birthday in member:
-            today = date.today()
-            age = today.year - birthday.date_of_birth.year - ((today.month, today.day) < (birthday.date_of_birth.month, birthday.date_of_birth.day))
-            age_list.append(age)
+    
+    # Get all members added by the current user (or all for admin/dev roles)
+    if user.role.name in ['DEVEL', 'ADMIN']:
+        members = Member.query.options(
+            joinedload(Member.user_account).subqueryload(User.image)
+        ).order_by(Member.firstname).all()
+    else:
+        members = Member.query.filter_by(added_by=user.id).options(
+            joinedload(Member.user_account).subqueryload(User.image)
+        ).order_by(Member.firstname).all()
+    
+    # Build combined member list with age and birthday info
+    birthday_data = []
+    today = date.today()
+    upcoming_birthdays = []
+    
+    for member in members:
+        if member.date_of_birth:
+            age = today.year - member.date_of_birth.year - (
+                (today.month, today.day) < (member.date_of_birth.month, member.date_of_birth.day)
+            )
+            try:
+                birthday_this_year = member.date_of_birth.replace(year=today.year)
+            except ValueError:
+                # Handle Feb 29th in non-leap years - move to March 1st
+                birthday_this_year = member.date_of_birth.replace(year=today.year, day=1, month=3)
+            if birthday_this_year < today:
+                try:
+                    birthday_this_year = member.date_of_birth.replace(year=today.year + 1)
+                except ValueError:
+                    birthday_this_year = member.date_of_birth.replace(year=today.year + 1, day=1, month=3)
+            days_until = (birthday_this_year - today).days
+            
+            member_data = {
+                'member': member,
+                'age': age,
+                'birthday': member.date_of_birth,
+                'birthday_month': member.date_of_birth.month,
+                'birthday_day': member.date_of_birth.day,
+                'days_until': days_until,
+                'is_today': days_until == 0,
+                'is_upcoming': 0 < days_until <= 30,
+                'initials': f"{member.firstname[0]}{member.lastname[0]}".upper() if member.firstname and member.lastname else '?',
+            }
+            birthday_data.append(member_data)
+            
+            if 0 <= days_until <= 30:
+                upcoming_birthdays.append(member_data)
+    
+    # Sort by days until birthday
+    birthday_data.sort(key=lambda x: x['days_until'])
+    upcoming_birthdays.sort(key=lambda x: x['days_until'])
+     # Separate members with and without DOB
+    members_without_dob = [m for m in members if not m.date_of_birth]
+    
+    # Helper function to calculate birthday info
+    def build_birthday_entry(person, person_type='member'):
+        try:
+            birthday_this_year = person.date_of_birth.replace(year=today.year)
+        except ValueError:
+            # Handle Feb 29th in non-leap years - move to March 1st
+            birthday_this_year = date(today.year, 3, 1)
+        if birthday_this_year < today:
+            try:
+                birthday_this_year = person.date_of_birth.replace(year=today.year + 1)
+            except ValueError:
+                birthday_this_year = date(today.year + 1, 3, 1)
+        days_until = (birthday_this_year - today).days
+        age = today.year - person.date_of_birth.year - (
+            (today.month, today.day) < (person.date_of_birth.month, person.date_of_birth.day)
+        )
+        return {
+            'birthday': person.date_of_birth,
+            'birthday_month': person.date_of_birth.month,
+            'birthday_day': person.date_of_birth.day,
+            'days_until': days_until,
+            'is_today': days_until == 0,
+            'is_upcoming': 0 < days_until <= 30,
+            'age': age,
+        }
+    
+    # Build spouse birthday data
+    spouse_birthday_data = []
+    for member in members:
+        for spouse in member.spouse:
+            if spouse.date_of_birth:
+                spouse_data = build_birthday_entry(spouse, 'spouse')
+                spouse_data['spouse'] = spouse
+                spouse_data['member'] = member
+                spouse_data['initials'] = f"{spouse.firstname[0]}{spouse.lastname[0]}".upper() if spouse.firstname and spouse.lastname else '?'
+                spouse_birthday_data.append(spouse_data)
+    
+    spouse_birthday_data.sort(key=lambda x: x['days_until'])
+    
+    # Build child birthday data
+    child_birthday_data = []
+    for member in members:
+        # Direct children of member
+        for child in member.child:
+            if child.date_of_birth:
+                child_data = build_birthday_entry(child, 'child')
+                child_data['child'] = child
+                child_data['member'] = member
+                child_data['initials'] = f"{child.firstname[0]}{child.lastname[0]}".upper() if child.firstname and child.lastname else '?'
+                child_birthday_data.append(child_data)
+        # Children of spouses
+        for spouse in member.spouse:
+            for child in spouse.child:
+                if child.date_of_birth:
+                    child_data = build_birthday_entry(child, 'child')
+                    child_data['child'] = child
+                    child_data['member'] = member
+                    child_data['initials'] = f"{child.firstname[0]}{child.lastname[0]}".upper() if child.firstname and child.lastname else '?'
+                    child_birthday_data.append(child_data)
+    
+    child_birthday_data.sort(key=lambda x: x['days_until'])
 
-
-#    return render_template('contact.html', member = member, age = age_list)
-    return render_template("family/birthday.html", member = member, age=age_list)
+    return render_template(
+        "family/birthday.html",
+        member=birthday_data,
+        upcoming_birthdays=upcoming_birthdays,
+        members_without_dob=members_without_dob,
+        spouse_birthday=spouse_birthday_data,
+        child_birthday=child_birthday_data,
+        today=today
+    )
