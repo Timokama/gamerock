@@ -571,11 +571,15 @@ def birthday():
     # Get all members added by the current user (or all for admin/dev roles)
     if user.role.name in ['DEVEL', 'ADMIN']:
         members = Member.query.options(
-            joinedload(Member.user_account).subqueryload(User.image)
+            joinedload(Member.user_account).subqueryload(User.image),
+            joinedload(Member.spouse),
+            joinedload(Member.child)
         ).order_by(Member.firstname).all()
     else:
         members = Member.query.filter_by(added_by=user.id).options(
-            joinedload(Member.user_account).subqueryload(User.image)
+            joinedload(Member.user_account).subqueryload(User.image),
+            joinedload(Member.spouse),
+            joinedload(Member.child)
         ).order_by(Member.firstname).all()
     
     # Build combined member list with age and birthday info
@@ -619,7 +623,7 @@ def birthday():
     # Sort by days until birthday
     birthday_data.sort(key=lambda x: x['days_until'])
     upcoming_birthdays.sort(key=lambda x: x['days_until'])
-     # Separate members with and without DOB
+    # Separate members with and without DOB
     members_without_dob = [m for m in members if not m.date_of_birth]
     
     # Helper function to calculate birthday info
@@ -658,6 +662,8 @@ def birthday():
                 spouse_data['member'] = member
                 spouse_data['initials'] = f"{spouse.firstname[0]}{spouse.lastname[0]}".upper() if spouse.firstname and spouse.lastname else '?'
                 spouse_birthday_data.append(spouse_data)
+                if 0 <= spouse_data['days_until'] <= 30:
+                    upcoming_birthdays.append(spouse_data)
     
     spouse_birthday_data.sort(key=lambda x: x['days_until'])
     
@@ -672,6 +678,8 @@ def birthday():
                 child_data['member'] = member
                 child_data['initials'] = f"{child.firstname[0]}{child.lastname[0]}".upper() if child.firstname and child.lastname else '?'
                 child_birthday_data.append(child_data)
+                if 0 <= child_data['days_until'] <= 30:
+                    upcoming_birthdays.append(child_data)
         # Children of spouses
         for spouse in member.spouse:
             for child in spouse.child:
@@ -681,8 +689,14 @@ def birthday():
                     child_data['member'] = member
                     child_data['initials'] = f"{child.firstname[0]}{child.lastname[0]}".upper() if child.firstname and child.lastname else '?'
                     child_birthday_data.append(child_data)
+                    if 0 <= child_data['days_until'] <= 30:
+                        upcoming_birthdays.append(child_data)
     
     child_birthday_data.sort(key=lambda x: x['days_until'])
+    
+    # Aggregate counts across all three data sources
+    total_today_count = sum(1 for d in birthday_data + spouse_birthday_data + child_birthday_data if d.get('is_today'))
+    total_upcoming_count = sum(1 for d in upcoming_birthdays if 0 < d['days_until'] <= 30)
 
     return render_template(
         "family/birthday.html",
@@ -691,5 +705,9 @@ def birthday():
         members_without_dob=members_without_dob,
         spouse_birthday=spouse_birthday_data,
         child_birthday=child_birthday_data,
-        today=today
+        today=today,
+        total_today_count=total_today_count,
+        total_upcoming_count=total_upcoming_count,
+        spouse_count=len(spouse_birthday_data),
+        child_count=len(child_birthday_data)
     )

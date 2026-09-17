@@ -585,6 +585,13 @@
         margin-bottom: var(--space-3);
     }
 
+    .birthday-integrated-container .empty-sub-section {
+        padding: var(--space-4) var(--space-5);
+        text-align: center;
+        color: var(--text-tertiary);
+        font-size: var(--text-sm);
+    }
+
     /* ===== Member Avatar Variants ===== */
     .member-avatar.child {
         width: 36px;
@@ -860,8 +867,9 @@
     <div>
         <h2><i class="bi bi-gift"></i> Member Birthdays</h2>
         <p class="header-meta">
-            {% if member and member|length > 0 %}
-                Showing {{ member|length }} member(s) with birthday records
+            {% set total_individuals = member|length + spouse_count + child_count if spouse_count is defined and child_count is defined else member|length %}
+            {% if total_individuals > 0 %}
+                Showing {{ total_individuals }} individual(s) with birthday records (Members: {{ member|length }}, Spouses: {{ spouse_count|default(0) }}, Children: {{ child_count|default(0) }})
             {% else %}
                 No birthday records available
             {% endif %}
@@ -873,9 +881,11 @@
 </div>
 
 {# Summary Cards #}
-{% set today_count = member | selectattr('is_today', 'equalto', true) | list | length %}
-{% set upcoming_count = member | selectattr('is_upcoming', 'equalto', true) | list | length %}
+{% set today_count = total_today_count if total_today_count is defined else (member | selectattr('is_today', 'equalto', true) | list | length) %}
+{% set upcoming_count = total_upcoming_count if total_upcoming_count is defined else (member | selectattr('is_upcoming', 'equalto', true) | list | length) %}
 {% set no_dob_count = members_without_dob | length %}
+{% set spouse_count = spouse_count if spouse_count is defined else (spouse_birthday | length) %}
+{% set child_count = child_count if child_count is defined else (child_birthday | length) %}
 
 <div class="birthday-summary-grid">
     <div class="summary-card today">
@@ -887,8 +897,8 @@
         <div class="summary-label">Upcoming (30 days)</div>
     </div>
     <div class="summary-card">
-        <div class="summary-value">{{ member|length }}</div>
-        <div class="summary-label">Total Members</div>
+        <div class="summary-value">{{ member|length + spouse_count + child_count }}</div>
+        <div class="summary-label">Total Individuals</div>
     </div>
     <div class="summary-card">
         <div class="summary-value">{{ no_dob_count }}</div>
@@ -964,7 +974,7 @@
 <div class="birthday-tabs">
     <button class="birthday-tab active" onclick="filterByGroup('all')">
         All Members
-        <span class="tab-count">{{ member|length }}</span>
+        <span class="tab-count">{{ member|length + spouse_count + child_count }}</span>
     </button>
     <button class="birthday-tab" onclick="filterByGroup('today')">
         Today
@@ -976,7 +986,7 @@
     </button>
     <button class="birthday-tab" onclick="filterByGroup('other')">
         Past Birthdays
-        <span class="tab-count">{{ member|length - today_count - upcoming_count }}</span>
+        <span class="tab-count">{{ (member|length + spouse_count + child_count) - today_count - upcoming_count }}</span>
     </button>
 </div>
 
@@ -1084,9 +1094,9 @@
     {% endif %}
 
     {# Spouse Birthdays Table #}
-    {% if spouse_birthday and spouse_birthday|length > 0 %}
     <div class="table-section-divider">
         <h3 class="section-title"><i class="bi bi-ring"></i> Spouse Birthdays</h3>
+        {% if spouse_birthday and spouse_birthday|length > 0 %}
         <table class="birthday-table">
             <thead>
                 <tr>
@@ -1151,13 +1161,17 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="empty-sub-section">
+            <p>No spouse birthday records found.</p>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 
     {# Child Birthdays Table #}
-    {% if child_birthday and child_birthday|length > 0 %}
     <div class="table-section-divider">
         <h3 class="section-title"><i class="bi bi-baby"></i> Child Birthdays</h3>
+        {% if child_birthday and child_birthday|length > 0 %}
         <table class="birthday-table">
             <thead>
                 <tr>
@@ -1222,8 +1236,12 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="empty-sub-section">
+            <p>No child birthday records found.</p>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 {% else %}
