@@ -946,14 +946,14 @@
                         <td>{{ member.id_number|member_id }}</td>
                         <td>{{ member.phone_num|member_phone }}</td>
                         <td>{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
-                        <td>
+<td>
                             <div class="row-actions">
-                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
-                                    <span>Actions</span>
-                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                </button>
-                                <div class="row-actions-menu" role="menu">
+                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}" data-bs-auto-close="outside">
+                                     <span aria-hidden="true"><i class="bi bi-gear"></i></span>
+                                     <span>Actions</span>
+                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                 </button>
+                                 <div class="row-actions-menu" role="menu">
                                     <div class="row-actions-menu-header">
                                         <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
                                         <span class="row-actions-menu-sub">{{ spouse_count }} spouse{{ 's' if spouse_count != 1 else '' }} · {{ children_count }} child{{ 'ren' if children_count != 1 else '' }}</span>
@@ -1002,18 +1002,18 @@
                         <td>{{ member.id_number|member_id }}</td>
                         <td>{{ member.phone_num|member_phone }}</td>
                         <td>{{ member.created_at.strftime('%b %d, %Y') if member.created_at else 'N/A' }}</td>
-                        <td>
+<td>
                             <div class="row-actions">
-                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}">
-                                    <span aria-hidden="true"><i class="bi bi-gear"></i></span>
-                                    <span>Actions</span>
-                                    <span class="row-actions-caret" aria-hidden="true">▾</span>
-                                </button>
-                                <div class="row-actions-menu" role="menu">
-                                    <div class="row-actions-menu-header">
-                                        <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
-                                        <span class="row-actions-menu-sub">No family records</span>
-                                    </div>
+                                    <button type="button" class="row-actions-toggle" aria-haspopup="true" aria-expanded="false" aria-label="Actions for {{ member.firstname }} {{ member.lastname }}" data-bs-auto-close="outside">
+                                     <span aria-hidden="true"><i class="bi bi-gear"></i></span>
+                                     <span>Actions</span>
+                                     <span class="row-actions-caret" aria-hidden="true">▾</span>
+                                 </button>
+                                 <div class="row-actions-menu" role="menu">
+                                     <div class="row-actions-menu-header">
+                                         <span class="row-actions-menu-title">{{ member.firstname }} {{ member.lastname }}</span>
+                                         <span class="row-actions-menu-sub">No family records</span>
+                                     </div>
                                     <a href="{{ url_for('family.family', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-eye"></i></span>
                                         <span class="row-action-copy">

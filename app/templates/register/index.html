@@ -626,17 +626,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </button>
                                     {% endif %}
 
-                                    <div class="row-actions-divider"></div>
-                                    <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this member?');">
-                                        <button type="submit" class="row-action-item danger" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
-                                            <span class="row-action-copy">
-                                                <span class="row-action-label">Delete</span>
-                                                <span class="row-action-hint">Cannot be undone</span>
-                                            </span>
-                                        </button>
-                                    </form>
-                                    {% endif %}
+<div class="row-actions-divider"></div>
+                                     <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         <button type="submit" class="row-action-item danger" role="menuitem">
+                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                             <span class="row-action-copy">
+                                                 <span class="row-action-label">Delete</span>
+                                                 <span class="row-action-hint">Cannot be undone</span>
+                                             </span>
+                                         </button>
+                                     </form>
+                                     {% endif %}
                                 </div>
                             </div>
                         </td>
@@ -815,16 +816,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <span class="row-action-hint">Contribution history</span>
                                         </span>
                                     </a>
-                                    <div class="row-actions-divider"></div>
-                                    <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this member?');">
-                                        <button type="submit" class="row-action-item danger" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
-                                            <span class="row-action-copy">
-                                                <span class="row-action-label">Delete</span>
-                                                <span class="row-action-hint">Cannot be undone</span>
-                                            </span>
-                                        </button>
-                                    </form>
+<div class="row-actions-divider"></div>
+                                     <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         <button type="submit" class="row-action-item danger" role="menuitem">
+                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                             <span class="row-action-copy">
+                                                 <span class="row-action-label">Delete</span>
+                                                 <span class="row-action-hint">Cannot be undone</span>
+                                             </span>
+                                         </button>
+                                     </form>
                                 </div>
                             </div>
                         </td>
