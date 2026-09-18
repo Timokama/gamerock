@@ -288,7 +288,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% if is_viewing_family %}{{ url_for('family.family', depo_id=family_primary_member_id) }}{% elif current_user.member_profile %}{{ url_for('family.family', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('family.index') }}{% endif %}" class="{% if request.endpoint and request.endpoint.startswith('family') %}active{% endif %}">
+                    <a href="{% if is_viewing_family and family_primary_member_id %}{{ url_for('family.family', depo_id=family_primary_member_id) }}{% elif current_user.member_profile and current_user.member_profile.id %}{{ url_for('family.family', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('family.index') }}{% endif %}" class="{% if request.endpoint and request.endpoint.startswith('family') %}active{% endif %}">
                         <i class="bi bi-people sidebar-nav-icon" aria-hidden="true"></i> Family
                     </a>
                 </li>
@@ -304,14 +304,14 @@
                       </a>
                   </li>
                    {% else %}
-                   <li>
-                       <a href="{% if is_viewing_family %}{{ url_for('deposit.deposit', depo_id=family_primary_member_id) }}{% elif current_user.member_profile %}{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('deposit.index') }}{% endif %}" class="{% if deposit_section_active %}active{% endif %}">
-                           <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
-                           {% if (pending_deposits_count|default(0)) > 0 %}
-                           <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting payment">{{ pending_deposits_count|default(0) }}</span>
-                           {% endif %}
-                       </a>
-                   </li>
+<li>
+                        <a href="{% if is_viewing_family and family_primary_member_id %}{{ url_for('deposit.deposit', depo_id=family_primary_member_id) }}{% elif current_user.member_profile and current_user.member_profile.id %}{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('deposit.index') }}{% endif %}" class="{% if deposit_section_active %}active{% endif %}">
+                            <i class="bi bi-cash-stack sidebar-nav-icon" aria-hidden="true"></i> Deposits
+                            {% if (pending_deposits_count|default(0)) > 0 %}
+                            <span class="sidebar-nav-badge" title="{{ pending_deposits_count|default(0) }} event(s) awaiting payment">{{ pending_deposits_count|default(0) }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
                    {% endif %}
                 <li>
                     <a href="{{ url_for('community.index') }}" class="{% if request.endpoint and request.endpoint.startswith('community') %}active{% endif %}">
@@ -507,12 +507,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('register.create_child', depo_id=current_user.member_profile.id) }}" title="Add Child">
+                    <a href="{% if current_user.member_profile and current_user.member_profile.id %}{{ url_for('register.create_child', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('register.index') }}{% endif %}" title="Add Child">
                         <i class="bi bi-baby sidebar-nav-icon" aria-hidden="true"></i> Add Child
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}" title="View My Deposits">
+                    <a href="{% if current_user.member_profile and current_user.member_profile.id %}{{ url_for('deposit.deposit', depo_id=current_user.member_profile.id) }}{% else %}{{ url_for('deposit.index') }}{% endif %}" title="View My Deposits">
                         <i class="bi bi-clipboard sidebar-nav-icon" aria-hidden="true"></i> My Deposits
                     </a>
                 </li>

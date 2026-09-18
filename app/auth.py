@@ -113,7 +113,11 @@ def login(role):
         session.pop('auth_email', None)
         session.pop('auth_user_id', None)
         
-        # Use the family member redirect logic
+        # Admin/Developer users should always go to admin dashboard
+        if user.role in (AccessLevel.DEVEL, AccessLevel.ADMIN):
+            return redirect(url_for('home.home'))
+        
+        # Use the family member redirect logic for non-admin users
         family_redirect = get_family_member_redirect(user)
         if family_redirect:
             return family_redirect
@@ -124,7 +128,7 @@ def login(role):
             if member:
                 return redirect(url_for('register.dashboard_member', member_id=member.id))
         
-        # Admin/Staff redirect
+        # Other staff redirect
         return redirect(url_for('home.home'))
     return render_template('login.html', level=level, role=role, session_email=session_email)
 @auth.route('/signup')
