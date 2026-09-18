@@ -586,19 +586,60 @@
         gap: var(--space-3);
     }
 
-    .family-detail-card .detail-item {
+    /* Enhanced responsive grid for spouse/child detail fields */
+    .family-detail-card .detail-grid .detail-item {
         display: flex;
         align-items: center;
         gap: var(--space-2);
         font-size: var(--text-sm);
         color: var(--text-secondary);
+        min-width: 0; /* Prevent overflow in grid */
     }
 
-    .family-detail-card .detail-item .detail-icon {
+    .family-detail-card .detail-grid .detail-item .detail-icon {
         font-size: 1rem;
         width: 20px;
         text-align: center;
         flex-shrink: 0;
+        color: var(--text-tertiary);
+    }
+
+    /* Responsive grid adjustments for spouse/child detail fields */
+    @media (max-width: 1024px) {
+        .family-detail-card .detail-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-2);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .family-detail-card .detail-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-2);
+        }
+        
+        .family-detail-card .detail-item {
+            padding: var(--space-2) var(--space-3);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+        
+        .family-detail-card .detail-item .detail-icon {
+            font-size: 1.1rem;
+            width: 24px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .family-detail-card .detail-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-1);
+        }
+        
+        .family-detail-card .detail-item {
+            padding: var(--space-2);
+        }
     }
 
     .family-detail-card .detail-actions {
@@ -627,18 +668,23 @@
         align-items: center;
         gap: var(--space-3);
         margin-bottom: var(--space-3);
+        flex-wrap: wrap;
     }
 
-    .children-section {
-        margin-top: var(--space-4);
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--border-light);
+    .spouse-section-header .family-avatar.spouse {
+        flex-shrink: 0;
     }
 
-    .children-section--standalone {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
+    .spouse-section-header strong {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .spouse-section-header .family-badge {
+        flex-shrink: 0;
     }
 
     .children-section-header {
@@ -646,6 +692,23 @@
         align-items: center;
         gap: var(--space-3);
         margin-bottom: var(--space-3);
+        flex-wrap: wrap;
+    }
+
+    .children-section-header .family-avatar.child {
+        flex-shrink: 0;
+    }
+
+    .children-section-header strong {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .children-section-header .family-badge {
+        flex-shrink: 0;
     }
 
     .children-table {
@@ -1036,6 +1099,7 @@
                                         </span>
                                     </a>
                                     <form method="post" action="{{ url_for('family.delete_member', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This will also delete their spouses, children, contributions, and cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="row-action-item danger" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                             <span class="row-action-copy">

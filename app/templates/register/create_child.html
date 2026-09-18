@@ -418,6 +418,7 @@
             </div>
 
             <form method="post" onsubmit="return validateChildForm();">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstname">First Name</label>
