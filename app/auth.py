@@ -117,18 +117,20 @@ def login(role):
         if user.role in (AccessLevel.DEVEL, AccessLevel.ADMIN):
             return redirect(url_for('home.home'))
         
-        # Use the family member redirect logic for non-admin users
+        # Staff roles go to staff dashboard
+        if user.role in (AccessLevel.WELFARE_OFFICER, AccessLevel.TREASURER, AccessLevel.SECRETARY, AccessLevel.CHAIRPERSON):
+            return redirect(url_for('home.home'))
+        
+        # Primary member (USER) goes to user dashboard (home interface)
+        if user.role == AccessLevel.USER:
+            return redirect(url_for('home.home'))
+        
+        # Family members (spouse/child) go to family interface
         family_redirect = get_family_member_redirect(user)
         if family_redirect:
             return family_redirect
         
-        # Primary member redirect
-        if user.role == AccessLevel.USER:
-            member = user.member_profile
-            if member:
-                return redirect(url_for('register.dashboard_member', member_id=member.id))
-        
-        # Other staff redirect
+        # Fallback
         return redirect(url_for('home.home'))
     return render_template('login.html', level=level, role=role, session_email=session_email)
 @auth.route('/signup')
