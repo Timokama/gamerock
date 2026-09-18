@@ -1123,6 +1123,7 @@
                 </a>
                 <div class="row-actions-divider"></div>
                 <form method="POST" action="{{ url_for('family.delete', depo_id=register.id, del_id=spouse.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this spouse?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="row-action-item danger" role="menuitem">
                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash"></i></span>
                         <span class="row-action-copy">
@@ -1200,6 +1201,7 @@
                                 </a>
                                 <div class="row-actions-divider"></div>
                                 <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="row-action-item danger" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash"></i></span>
                                         <span class="row-action-copy">
@@ -1284,8 +1286,9 @@
                                         </span>
                                     </a>
                                     <div class="row-actions-divider"></div>
-                                    <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
-                                        <button type="submit" class="row-action-item danger" role="menuitem">
+<form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="row-action-item danger" role="menuitem">
                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash"></i></span>
                                             <span class="row-action-copy">
                                                 <span class="row-action-label">Delete Child</span>

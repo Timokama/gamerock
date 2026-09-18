@@ -441,8 +441,8 @@
                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
                     </div>
                     <div class="form-group">
-                        <label for="id_number">ID Number</label>
-                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number" required>
+                        <label for="id_number">ID Number <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="Enter ID number (optional)">
                     </div>
                 </div>
 
@@ -473,7 +473,6 @@
 function validateChildForm() {
     var phone = document.getElementById('phone_num').value.trim();
     var email = document.getElementById('email').value.trim();
-    var idNumber = document.getElementById('id_number').value.trim();
     
     if (!phone) {
         showToast('Please enter a phone number.', 'error');
@@ -488,11 +487,6 @@ function validateChildForm() {
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         showToast('Please enter a valid email address.', 'error');
-        return false;
-    }
-    
-    if (!idNumber) {
-        showToast('Please enter an ID number.', 'error');
         return false;
     }
     

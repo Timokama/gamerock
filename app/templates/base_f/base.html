@@ -898,6 +898,9 @@
                 const toggle = wrapper.querySelector('.row-actions-toggle');
                 if (!menu || !toggle) return;
 
+                // Don't position if menu is not portaled (mobile view)
+                if (!menu.classList.contains('is-portaled')) return;
+
                 const rect = toggle.getBoundingClientRect();
                 const menuWidth = menu.offsetWidth || 268;
                 const menuHeight = menu.offsetHeight || 320;
@@ -905,11 +908,25 @@
                 let left = rect.right - menuWidth;
                 if (left < 8) left = 8;
 
+                // Ensure menu doesn't go off right edge
+                if (left + menuWidth > window.innerWidth - 8) {
+                    left = window.innerWidth - menuWidth - 8;
+                }
+                if (left < 8) left = 8;
+
                 let top = rect.bottom + 8;
                 wrapper.classList.remove('drop-up');
+                
+                // Check if we need to flip up
                 if (top + menuHeight > window.innerHeight - 8 && rect.top > menuHeight + 8) {
                     top = rect.top - menuHeight - 8;
                     wrapper.classList.add('drop-up');
+                }
+
+                // Ensure menu stays within viewport
+                if (top < 8) top = 8;
+                if (top + menuHeight > window.innerHeight - 8) {
+                    top = window.innerHeight - menuHeight - 8;
                 }
 
                 menu.style.left = `${left}px`;
@@ -958,6 +975,13 @@
             window.addEventListener('resize', () => {
                 if (isMobile()) optimizeMobileExpand();
                 else cleanupMobileExpand();
+
+                // Reposition any open dropdown menus on resize
+                document.querySelectorAll('.row-actions.open').forEach(wrapper => {
+                    if (window.innerWidth > 768) {
+                        positionRowActionsMenu(wrapper);
+                    }
+                });
             });
             new MutationObserver(() => {
                 if (isMobile()) optimizeMobileExpand();

@@ -651,6 +651,7 @@
         flex-wrap: wrap;
     }
 
+    /* ===== Enhanced Spouse Section Styling ===== */
     .spouse-section {
         margin-bottom: var(--space-5);
         padding-bottom: var(--space-5);
@@ -687,11 +688,130 @@
         flex-shrink: 0;
     }
 
+    /* ===== Spouse Card Container ===== */
+    .spouse-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        margin-bottom: var(--space-4);
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .spouse-card:hover {
+        border-color: var(--primary-500);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .spouse-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .spouse-header .spouse-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xl);
+        font-weight: var(--font-weight-bold);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .spouse-header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .spouse-header-content h5 {
+        margin: 0 0 var(--space-1) 0;
+        font-size: var(--text-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+    }
+
+    .spouse-header-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+    }
+
+    .spouse-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: var(--space-3);
+        margin-top: var(--space-4);
+    }
+
+    .spouse-detail-item {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        transition: all var(--transition-base);
+    }
+
+    .spouse-detail-item:hover {
+        border-color: var(--primary-500);
+        background: var(--bg-secondary);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .spouse-detail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        color: #667eea;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-lg);
+        margin-bottom: var(--space-2);
+    }
+
+    .spouse-detail-label {
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-1);
+    }
+
+    .spouse-detail-value {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        word-break: break-word;
+    }
+
+    /* ===== Enhanced Children Section ===== */
+    .children-section {
+        margin-top: var(--space-5);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--border-light);
+    }
+
     .children-section-header {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        margin-bottom: var(--space-3);
+        margin-bottom: var(--space-4);
         flex-wrap: wrap;
     }
 
@@ -709,6 +829,182 @@
 
     .children-section-header .family-badge {
         flex-shrink: 0;
+    }
+
+    /* ===== Children Grid ===== */
+    .children-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-4);
+    }
+
+    .child-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .child-card:hover {
+        border-color: var(--primary-500);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+        background: var(--bg-secondary);
+    }
+
+    .child-card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+        padding-bottom: var(--space-3);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .child-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-bold);
+        flex-shrink: 0;
+        box-shadow: var(--shadow-md);
+    }
+
+    .child-header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .child-header-content h6 {
+        margin: 0 0 var(--space-1) 0;
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-primary);
+    }
+
+    .child-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: var(--space-2);
+        flex: 1;
+    }
+
+    .child-detail-item {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: var(--space-3);
+        transition: all var(--transition-base);
+    }
+
+    .child-detail-item:hover {
+        border-color: var(--primary-500);
+        background: var(--bg-secondary);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .child-detail-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+        color: #f59e0b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-base);
+        margin-bottom: var(--space-1);
+    }
+
+    .child-detail-label {
+        font-size: var(--text-xs);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-1);
+    }
+
+    .child-detail-value {
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+        font-size: var(--text-sm);
+        word-break: break-word;
+    }
+
+    .child-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--border-light);
+        justify-content: flex-end;
+    }
+
+    .child-action-btn {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--text-xs);
+        font-weight: var(--font-weight-medium);
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .spouse-details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .child-meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .spouse-header {
+            flex-direction: column;
+            text-align: center;
+            gap: var(--space-3);
+        }
+
+        .spouse-header-content h5 {
+            font-size: var(--text-base);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .spouse-card {
+            padding: var(--space-4);
+        }
+
+        .spouse-details-grid {
+            gap: var(--space-2);
+        }
+
+        .spouse-detail-item {
+            padding: var(--space-3);
+        }
+
+        .child-card {
+            padding: var(--space-3);
+        }
+
+        .child-meta-grid {
+            gap: var(--space-1);
+        }
+
+        .child-detail-item {
+            padding: var(--space-2);
+        }
     }
 
     .children-table {
@@ -865,6 +1161,7 @@
         overflow: visible !important;
     }
 
+    /* ===== Row Actions Dropdown (Responsive) ===== */
     @media (max-width: 768px) {
         .family-table-card .row-actions {
             display: block;
@@ -883,10 +1180,50 @@
             margin-top: var(--space-2);
             box-shadow: none;
             display: none;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+            padding: var(--space-2) 0;
+            z-index: auto;
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            transition: none;
         }
 
         .family-table-card .row-actions.open .row-actions-menu {
             display: block;
+        }
+
+        .family-table-card .row-actions-menu.is-portaled {
+            position: static;
+            z-index: auto;
+            box-shadow: none;
+            transform: none;
+            opacity: 1;
+            visibility: visible;
+            right: auto;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .family-table-card .row-actions-toggle {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+        }
+
+        .family-table-card .row-actions-menu {
+            padding: var(--space-2);
+        }
+
+        .family-table-card .row-action-item {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
         }
     }
 </style>

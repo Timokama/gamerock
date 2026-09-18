@@ -214,16 +214,7 @@ def create_child(depo_id, spouse_id):
             phone_num = request.form.get('phone_num', '').strip()
             email = request.form.get('email', '').strip()
 
-            # Check for duplicate ID number
-            if id_number:
-                if Child.query.filter_by(id_number=id_number).first():
-                    flash('This ID number is already associated with another child.', 'error')
-                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
-                if Member.query.filter_by(id_number=id_number).first():
-                    flash('This ID number is already associated with a member.', 'error')
-                    return redirect(url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id))
-
-            # Check for duplicate email
+            # Check for duplicate email (keep email unique)
             if email:
                 if User.query.filter_by(email=email).first():
                     flash('This email is already associated with an account.', 'error')
@@ -377,18 +368,7 @@ def edit_child(depo_id, edit_id, child_id):
             id_number = int(raw_id) if raw_id and raw_id.lower() != 'none' else None
             date_of_birth = datetime.strptime(request.form['date_of_birth'], '%Y-%m-%d').date()
 
-            # Check for duplicate ID number
-            if id_number:
-                existing_child = Child.query.filter_by(id_number=id_number).first()
-                if existing_child and existing_child.id != child.id:
-                    flash('This ID number is already associated with another child.', 'error')
-                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
-                existing_member = Member.query.filter_by(id_number=id_number).first()
-                if existing_member:
-                    flash('This ID number is already associated with a member.', 'error')
-                    return redirect(url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id))
-
-            # Check for duplicate email
+            # Check for duplicate email (keep email unique)
             if email:
                 existing_user = User.query.filter_by(email=email).first()
                 if existing_user and (not child.user_id or existing_user.id != child.user_id):
