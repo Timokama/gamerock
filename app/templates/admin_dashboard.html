@@ -1936,6 +1936,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                          </a>
                                          {% endif %}
                                                 <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <button type="submit" class="row-action-item danger" role="menuitem">
                                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                                         <span class="row-action-copy">
@@ -2489,8 +2490,9 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                                                  <span class="row-action-hint">Change permissions</span>
                                              </span>
                                          </a>
-                                         <form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
-                                             <button type="submit" class="row-action-item danger" role="menuitem">
+<form method="post" action="{{ url_for('register.delete', depo_id=member.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ member.firstname }} {{ member.lastname }}? This removes their contributions and family records permanently.');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="row-action-item danger" role="menuitem">
                                                  <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                                                  <span class="row-action-copy">
                                                      <span class="row-action-label">Delete Member</span>
@@ -2661,6 +2663,7 @@ html[data-theme="dark"] .pending-contribution-item .pending-event-name {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="" id="adminAssignRoleForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-body">
                     <p class="text-muted mb-3">Assign a role to <strong id="adminAssignRoleMemberName"></strong></p>
                     

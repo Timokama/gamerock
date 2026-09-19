@@ -148,39 +148,42 @@
                                             <span class="row-action-hint">Update details</span>
                                         </span>
                                     </a>
-                                    {% if can_manage %}
-                                    <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
-                                        <input type="hidden" name="status" value="Approved">
-                                        <button type="submit" class="row-action-item success" role="menuitem" onclick="return confirm('Approve this requisition?')">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-check-circle"></i></span>
-                                            <span class="row-action-copy">
-                                                <span class="row-action-label">Approve</span>
-                                                <span class="row-action-hint">Mark as approved</span>
-                                            </span>
-                                        </button>
-                                    </form>
-                                    <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
-                                        <input type="hidden" name="status" value="Cancelled">
-                                        <button type="submit" class="row-action-item danger" role="menuitem" onclick="return confirm('Cancel this requisition?')">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
-                                            <span class="row-action-copy">
-                                                <span class="row-action-label">Cancel</span>
-                                                <span class="row-action-hint">Mark as cancelled</span>
-                                            </span>
-                                        </button>
-                                    </form>
-                                    {% endif %}
-                                    <form method="post" action="{{ url_for('requisition.delete', req_id=req.id) }}" class="row-action-form" onsubmit="return confirm('Delete this requisition? This cannot be undone.');">
-                                        {% if can_manage %}
-                                        <button type="submit" class="row-action-item danger" role="menuitem">
-                                            <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
-                                            <span class="row-action-copy">
-                                                <span class="row-action-label">Delete</span>
-                                                <span class="row-action-hint">Permanently remove</span>
-                                            </span>
-                                        </button>
-                                        {% endif %}
-                                    </form>
+{% if can_manage %}
+                                     <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         <input type="hidden" name="status" value="Approved">
+                                         <button type="submit" class="row-action-item success" role="menuitem" onclick="return confirm('Approve this requisition?')">
+                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-check-circle"></i></span>
+                                             <span class="row-action-copy">
+                                                 <span class="row-action-label">Approve</span>
+                                                 <span class="row-action-hint">Mark as approved</span>
+                                             </span>
+                                         </button>
+                                     </form>
+                                     <form method="post" action="{{ url_for('requisition.update_status', req_id=req.id) }}" class="row-action-form">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         <input type="hidden" name="status" value="Cancelled">
+                                         <button type="submit" class="row-action-item danger" role="menuitem" onclick="return confirm('Cancel this requisition?')">
+                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                             <span class="row-action-copy">
+                                                 <span class="row-action-label">Cancel</span>
+                                                 <span class="row-action-hint">Mark as cancelled</span>
+                                             </span>
+                                         </button>
+                                     </form>
+                                     {% endif %}
+                                     <form method="post" action="{{ url_for('requisition.delete', req_id=req.id) }}" class="row-action-form" onsubmit="return confirm('Delete this requisition? This cannot be undone.');">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         {% if can_manage %}
+                                         <button type="submit" class="row-action-item danger" role="menuitem">
+                                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
+                                             <span class="row-action-copy">
+                                                 <span class="row-action-label">Delete</span>
+                                                 <span class="row-action-hint">Permanently remove</span>
+                                             </span>
+                                         </button>
+                                         {% endif %}
+                                     </form>
                                 </div>
                             </div>
                         </td>

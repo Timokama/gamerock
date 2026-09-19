@@ -323,6 +323,7 @@
                         <span id="validationMessage"></span>
                     </div>
                     <form method="post" enctype="multipart/form-data" id="eventForm" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">Event Name <span style="color: #dc2626;">*</span></label>

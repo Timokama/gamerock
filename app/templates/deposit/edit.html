@@ -583,6 +583,7 @@
             </div>
 
             <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="transaction_ref" value="{{ register.firstname }} {{ register.lastname }}">
 
                 <div class="form-row">

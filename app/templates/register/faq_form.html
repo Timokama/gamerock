@@ -246,6 +246,7 @@
         </div>
         <div class="faq-form-body">
             <form method="post" id="faqForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="faq-form-group">
                     <label for="question">
                         <span>Question <span aria-hidden="true">*</span></span>

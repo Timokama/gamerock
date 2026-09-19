@@ -22,6 +22,7 @@
                     </span>
                 </a>
                 <form method="post" action="{{ url_for('sponsor.delete', sponsor_id=sponsor.id) }}" class="row-action-form" onsubmit="return confirm('Delete {{ sponsor.name }}? This action cannot be undone.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="row-action-item danger" role="menuitem">
                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                         <span class="row-action-copy">

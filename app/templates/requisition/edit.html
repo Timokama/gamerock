@@ -59,6 +59,7 @@
         </div>
         <div class="card-body">
             <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 {% if error %}
                 <div class="form-error" style="margin-bottom: 1rem;">{{ error }}</div>
                 {% endif %}

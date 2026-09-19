@@ -608,6 +608,7 @@
                         </span>
                     </a>
                     <form method="post" action="{{ url_for('register.faq_delete', faq_id=faq.id) }}" class="row-action-form" onsubmit="return confirm('Delete this FAQ?\n\n{{ faq.question|truncate(80)|replace("'", "") }}');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="row-action-item danger" role="menuitem">
                             <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash3"></i></span>
                             <span class="row-action-copy">
