@@ -38,8 +38,12 @@ def create_app():
     # Use DATABASE_URL from environment (Render.com provides this), fall back to local PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL',
-        'postgresql://gamerock_user:gamerock_password@localhost/gamerock'
+        'postgresql://gamerock_user:AplSXAHeBYp1P714FQ908HzRIcBVgmrV@dpg-daoflhgae00c73cbg030-a/gamerock'
     )
+    # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    #     'DATABASE_URL',
+    #     'postgresql://gamerock_user:gamerock_password@localhost/gamerock'
+    # )
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
