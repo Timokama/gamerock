@@ -575,17 +575,19 @@ def birthday():
             try:
                 birthday_this_year = member.date_of_birth.replace(year=today.year)
             except ValueError:
-                # Handle Feb 29th in non-leap years - move to March 1st
-                birthday_this_year = member.date_of_birth.replace(year=today.year, day=1, month=3)
+                # Handle Feb 29th in non-leap years - move to Feb 28th (day before)
+                birthday_this_year = date(today.year, 2, 28)
             if birthday_this_year < today:
                 try:
                     birthday_this_year = member.date_of_birth.replace(year=today.year + 1)
                 except ValueError:
-                    birthday_this_year = member.date_of_birth.replace(year=today.year + 1, day=1, month=3)
+                    birthday_this_year = date(today.year + 1, 2, 28)
             days_until = (birthday_this_year - today).days
             
             member_data = {
+                'person': member,
                 'member': member,
+                'person_type': 'member',
                 'age': age,
                 'birthday': member.date_of_birth,
                 'birthday_month': member.date_of_birth.month,
@@ -611,18 +613,21 @@ def birthday():
         try:
             birthday_this_year = person.date_of_birth.replace(year=today.year)
         except ValueError:
-            # Handle Feb 29th in non-leap years - move to March 1st
-            birthday_this_year = date(today.year, 3, 1)
+            # Handle Feb 29th in non-leap years - move to Feb 28th (day before)
+            birthday_this_year = date(today.year, 2, 28)
         if birthday_this_year < today:
             try:
                 birthday_this_year = person.date_of_birth.replace(year=today.year + 1)
             except ValueError:
-                birthday_this_year = date(today.year + 1, 3, 1)
+                birthday_this_year = date(today.year + 1, 2, 28)
         days_until = (birthday_this_year - today).days
         age = today.year - person.date_of_birth.year - (
             (today.month, today.day) < (person.date_of_birth.month, person.date_of_birth.day)
         )
         return {
+            'person': person,
+            'member': person if person_type == 'member' else None,
+            'person_type': person_type,
             'birthday': person.date_of_birth,
             'birthday_month': person.date_of_birth.month,
             'birthday_day': person.date_of_birth.day,
@@ -649,10 +654,12 @@ def birthday():
     
     # Build child birthday data
     child_birthday_data = []
+    seen_child_ids = set()
     for member in members:
         # Direct children of member
         for child in member.child:
-            if child.date_of_birth:
+            if child.date_of_birth and child.id not in seen_child_ids:
+                seen_child_ids.add(child.id)
                 child_data = build_birthday_entry(child, 'child')
                 child_data['child'] = child
                 child_data['member'] = member
@@ -663,7 +670,8 @@ def birthday():
         # Children of spouses
         for spouse in member.spouse:
             for child in spouse.child:
-                if child.date_of_birth:
+                if child.date_of_birth and child.id not in seen_child_ids:
+                    seen_child_ids.add(child.id)
                     child_data = build_birthday_entry(child, 'child')
                     child_data['child'] = child
                     child_data['member'] = member

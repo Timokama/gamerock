@@ -954,6 +954,19 @@
             </div>
         </div>
 
+        <div class="filter-group">
+            <label for="person-type-filter">Person Type</label>
+            <div class="input-wrapper">
+                <i class="bi bi-people input-icon"></i>
+                <select class="form-control" id="person-type-filter" onchange="applyFilters()">
+                    <option value="all">All Types</option>
+                    <option value="member">Members</option>
+                    <option value="spouse">Spouses</option>
+                    <option value="child">Children</option>
+                </select>
+            </div>
+        </div>
+
         <div class="filter-actions">
             <button type="button" class="btn btn-outline" onclick="resetFilters()">
                 <i class="bi bi-arrow-counterclockwise"></i> Reset
@@ -1015,15 +1028,15 @@
             </thead>
             <tbody id="birthday-tbody">
                 {% for item in member %}
-                <tr class="birthday-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.member.firstname }} {{ item.member.lastname }}" data-member_id="{{ item.member.id }}" data-age="{{ item.age }}">
+                <tr class="birthday-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-person-type="{{ item.person_type }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.person.firstname }} {{ item.person.lastname }}" data-member_id="{{ item.member.id }}" data-age="{{ item.age }}">
                     <td>
                         <div class="member-cell">
                             <div class="member-avatar">{{ item.initials }}</div>
                             <div>
-                                <div class="member-name">{{ item.member.firstname }} {{ item.member.lastname }}</div>
+                                <div class="member-name">{{ item.person.firstname }} {{ item.person.lastname }}</div>
                                 <div class="member-subtext">
-                                    {% if item.member.id_number %}ID: {{ item.member.id_number }}{% endif %}
-                                    {% if item.member.phone_num %}| {{ item.member.phone_num | member_phone }}{% endif %}
+                                    {% if item.person.id_number %}ID: {{ item.person.id_number }}{% endif %}
+                                    {% if item.person.phone_num %}| {{ item.person.phone_num | member_phone }}{% endif %}
                                 </div>
                             </div>
                         </div>
@@ -1060,39 +1073,6 @@
         </table>
     </div>
 
-    {# No DOB Section #}
-    {% if members_without_dob and members_without_dob|length > 0 %}
-    <div class="table-section-divider">
-        <div class="no-dob-section">
-            <h3 class="section-title"><i class="bi bi-question-circle"></i> Members Without Birthdate</h3>
-            <table class="no-dob-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>ID Number</th>
-                        <th>Phone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for m in members_without_dob %}
-                    <tr>
-                        <td>{{ m.firstname }} {{ m.lastname }}</td>
-                        <td>{{ m.id_number or 'N/A' }}</td>
-                        <td>{{ m.phone_num | member_phone }}</td>
-                        <td>
-                            <a href="{{ url_for('family.edit', depo_id=m.id) }}" class="view-profile-btn">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
-
     {# Spouse Birthdays Table #}
     <div class="table-section-divider">
         <h3 class="section-title"><i class="bi bi-ring"></i> Spouse Birthdays</h3>
@@ -1120,15 +1100,15 @@
             </thead>
             <tbody id="spouse-table-tbody">
                 {% for item in spouse_birthday %}
-                <tr class="birthday-row spouse-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.spouse.firstname }} {{ item.spouse.lastname }}" data-member_id="{{ item.spouse.id }}" data-age="{{ item.age }}">
+                <tr class="birthday-row spouse-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-person-type="{{ item.person_type }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.person.firstname }} {{ item.person.lastname }}" data-member_id="{{ item.member.id }}" data-age="{{ item.age }}">
                     <td>
                         <div class="member-cell">
                             <div class="member-avatar spouse">{{ item.initials }}</div>
                             <div>
-                                <div class="member-name">{{ item.spouse.firstname }} {{ item.spouse.lastname }} {{ item.spouse.surname }}</div>
+                                <div class="member-name">{{ item.person.firstname }} {{ item.person.lastname }} {{ item.person.surname }}</div>
                                 <div class="member-subtext">
-                                    {% if item.spouse.id_number %}ID: {{ item.spouse.id_number }}{% endif %}
-                                    {% if item.spouse.phone_num %}| {{ item.spouse.phone_num | member_phone }}{% endif %}
+                                    {% if item.person.id_number %}ID: {{ item.person.id_number }}{% endif %}
+                                    {% if item.person.phone_num %}| {{ item.person.phone_num | member_phone }}{% endif %}
                                 </div>
                             </div>
                         </div>
@@ -1195,15 +1175,15 @@
             </thead>
             <tbody id="child-table-tbody">
                 {% for item in child_birthday %}
-                <tr class="birthday-row child-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.child.firstname }} {{ item.child.lastname }}" data-member_id="{{ item.child.id }}" data-age="{{ item.age }}">
+                <tr class="birthday-row child-row" data-group="{{ 'today' if item.is_today else ('upcoming' if item.is_upcoming else 'other') }}" data-person-type="{{ item.person_type }}" data-month="{{ item.birthday_month }}" data-member_name="{{ item.person.firstname }} {{ item.person.lastname }}" data-member_id="{{ item.member.id }}" data-age="{{ item.age }}">
                     <td>
                         <div class="member-cell">
                             <div class="member-avatar child">{{ item.initials }}</div>
                             <div>
-                                <div class="member-name">{{ item.child.firstname }} {{ item.child.lastname }} {{ item.child.surname }}</div>
+                                <div class="member-name">{{ item.person.firstname }} {{ item.person.lastname }} {{ item.person.surname }}</div>
                                 <div class="member-subtext">
-                                    {% if item.child.id_number %}ID: {{ item.child.id_number }}{% endif %}
-                                    {% if item.child.phone_num %}| {{ item.child.phone_num | member_phone }}{% endif %}
+                                    {% if item.person.id_number %}ID: {{ item.person.id_number }}{% endif %}
+                                    {% if item.person.phone_num %}| {{ item.person.phone_num | member_phone }}{% endif %}
                                 </div>
                             </div>
                         </div>
@@ -1243,7 +1223,6 @@
         {% endif %}
     </div>
 </div>
-
 {% else %}
 {# Empty State #}
 <div class="empty-state">
@@ -1252,6 +1231,38 @@
     <p>Birthday records will appear here once members with date of birth information are added to the system.</p>
 </div>
 {% endif %}
+{# No DOB Section #}
+    {% if members_without_dob and members_without_dob|length > 0 %}
+    <div class="table-section-divider">
+        <div class="no-dob-section">
+            <h3 class="section-title"><i class="bi bi-question-circle"></i> Members Without Birthdate</h3>
+            <table class="no-dob-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>ID Number</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in members_without_dob %}
+                    <tr>
+                        <td>{{ m.firstname }} {{ m.lastname }}</td>
+                        <td>{{ m.id_number or 'N/A' }}</td>
+                        <td>{{ m.phone_num | member_phone }}</td>
+                        <td>
+                            <a href="{{ url_for('family.edit', depo_id=m.id) }}" class="view-profile-btn">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 
 <script>
     let currentGroup = 'all';
@@ -1288,16 +1299,24 @@
         const searchFilter = document.getElementById('search-filter');
         const ageMin = document.getElementById('age-range-min');
         const ageMax = document.getElementById('age-range-max');
+        const personTypeFilter = document.getElementById('person-type-filter');
 
         const selectedMonth = monthFilter ? monthFilter.value : 'all';
         const searchTerm = searchFilter ? searchFilter.value.toLowerCase().trim() : '';
         const minAge = ageMin ? parseInt(ageMin.value) || 0 : 0;
         const maxAge = ageMax ? parseInt(ageMax.value) || Infinity : Infinity;
+        const selectedPersonType = personTypeFilter ? personTypeFilter.value : 'all';
 
         const rows = document.querySelectorAll('.birthday-row');
         let visibleCount = 0;
 
         rows.forEach(row => {
+            // Person type filter
+            if (selectedPersonType !== 'all' && row.dataset.personType !== selectedPersonType) {
+                row.style.display = 'none';
+                return;
+            }
+
             // Group filter
             if (currentGroup !== 'all' && row.dataset.group !== currentGroup) {
                 row.style.display = 'none';
@@ -1346,6 +1365,10 @@
             if (searchTerm) tags.push(`Search: ${searchTerm}`);
             if (minAge > 0) tags.push(`Min Age: ${minAge}`);
             if (maxAge !== Infinity && maxAge > 0) tags.push(`Max Age: ${maxAge}`);
+            if (selectedPersonType !== 'all') {
+                const typeLabels = { 'member': 'Members', 'spouse': 'Spouses', 'child': 'Children' };
+                tags.push(`Type: ${typeLabels[selectedPersonType] || selectedPersonType}`);
+            }
 
             if (tags.length > 0) {
                 activeFiltersDiv.innerHTML = tags.map(tag =>
@@ -1373,6 +1396,9 @@
         }
         if (filterType === 'Max Age') {
             document.getElementById('age-range-max').value = '';
+        }
+        if (filterType === 'Type') {
+            document.getElementById('person-type-filter').value = 'all';
         }
         applyAllFilters();
     }
