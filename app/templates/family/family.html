@@ -598,6 +598,59 @@
             top: auto;
             bottom: auto;
         }
+
+        /* Prevent dropdown clipping inside grid/flex/table containers on mobile */
+        .children-grid,
+        .child-card,
+        .spouse-section-card,
+        .direct-children-section,
+        .direct-children-body .table-responsive,
+        .table-responsive,
+        .direct-children-body,
+        .direct-children-table td,
+        .direct-children-table tr {
+            overflow: visible !important;
+            -webkit-overflow-scrolling: initial !important;
+        }
+
+        /* Ensure dropdown menu appears above sibling content including table cells */
+        .row-actions {
+            z-index: calc(var(--z-dropdown, 1200) + 1);
+            position: relative;
+        }
+
+        .row-actions-menu {
+            z-index: calc(var(--z-dropdown, 1200) + 2);
+        }
+
+        /* Improve touch target size for dropdown items on mobile */
+        .row-action-item {
+            min-height: 44px;
+            padding: var(--space-2) var(--space-4);
+        }
+
+        .row-actions-divider {
+            margin: var(--space-2) var(--space-3);
+        }
+
+        .row-action-copy {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .row-action-label {
+            font-size: var(--text-sm);
+        }
+
+        .row-action-hint {
+            font-size: var(--text-xs);
+        }
+
+        /* Visual separation for "Full Family" item group */
+        .row-action-item .row-action-icon {
+            width: 36px;
+            height: 36px;
+        }
     }
 
     @media (max-width: 576px) {
@@ -629,6 +682,22 @@
 
         .direct-children-body {
             padding: var(--space-4);
+        }
+
+        /* Extra-small phone screens: ensure dropdown items have adequate touch targets */
+        .row-action-item {
+            min-height: 48px;
+            padding: var(--space-3) var(--space-5);
+        }
+
+        .row-actions-toggle {
+            font-size: var(--text-base);
+            padding: var(--space-2) var(--space-4);
+        }
+
+        .row-action-icon {
+            width: 40px;
+            height: 40px;
         }
     }
 
@@ -1107,22 +1176,22 @@
                     <span class="row-actions-menu-title">{{ spouse.firstname }} {{ spouse.lastname }} {{ spouse.surname }}</span>
                     <span class="row-actions-menu-sub"><i class="bi bi-heart"></i> Spouse</span>
                 </div>
-                <a href="{{ url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id) }}" class="row-action-item" role="menuitem">
-                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
-                    <span class="row-action-copy">
-                        <span class="row-action-label">Edit Spouse</span>
-                        <span class="row-action-hint">Update personal details</span>
-                    </span>
-                </a>
-                <a href="{{ url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id) }}" class="row-action-item" role="menuitem">
-                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-person-plus"></i></span>
-                    <span class="row-action-copy">
-                        <span class="row-action-label">Add Child</span>
-                        <span class="row-action-hint">Link a new child</span>
-                    </span>
-                </a>
-                <div class="row-actions-divider"></div>
-                <form method="POST" action="{{ url_for('family.delete', depo_id=register.id, del_id=spouse.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this spouse?')">
+                                 <a href="{{ url_for('family.edit_spouse', depo_id=register.id, edit_id=spouse.id) }}" class="row-action-item" role="menuitem">
+                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
+                                     <span class="row-action-copy">
+                                         <span class="row-action-label">Edit Spouse</span>
+                                         <span class="row-action-hint">Update personal details</span>
+                                     </span>
+                                 </a>
+                                 <a href="{{ url_for('family.create_child', depo_id=register.id, spouse_id=spouse.id) }}" class="row-action-item" role="menuitem">
+                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-person-plus"></i></span>
+                                     <span class="row-action-copy">
+                                         <span class="row-action-label">Add Child</span>
+                                         <span class="row-action-hint">Link a new child</span>
+                                     </span>
+                                 </a>
+                                 <div class="row-actions-divider"></div>
+                                 <form method="POST" action="{{ url_for('family.delete', depo_id=register.id, del_id=spouse.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this spouse?')">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="row-action-item danger" role="menuitem">
                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash"></i></span>
@@ -1192,15 +1261,15 @@
                                     <span class="row-actions-menu-title">{{ child.firstname }} {{ child.lastname }} {{ child.surname }}</span>
                                     <span class="row-actions-menu-sub"><i class="bi bi-person"></i> Child</span>
                                 </div>
-                                <a href="{{ url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
-                                    <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
-                                    <span class="row-action-copy">
-                                        <span class="row-action-label">Edit Child</span>
-                                        <span class="row-action-hint">Update details</span>
-                                    </span>
-                                </a>
-                                <div class="row-actions-divider"></div>
-                                <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
+                                 <a href="{{ url_for('family.edit_child', depo_id=register.id, edit_id=spouse.id, child_id=child.id) }}" class="row-action-item" role="menuitem">
+                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-pencil"></i></span>
+                                     <span class="row-action-copy">
+                                         <span class="row-action-label">Edit Child</span>
+                                         <span class="row-action-hint">Update details</span>
+                                     </span>
+                                 </a>
+                                 <div class="row-actions-divider"></div>
+                                 <form method="POST" action="{{ url_for('family.delete_child', depo_id=register.id, child_id=child.id) }}" class="row-action-form" onsubmit="return confirm('Are you sure you want to delete this child?');">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="row-action-item danger" role="menuitem">
                                         <span class="row-action-icon" aria-hidden="true"><i class="bi bi-trash"></i></span>
@@ -1380,6 +1449,8 @@ const optimizeFamilyRowActions = () => {
         toggle.style.touchAction = 'manipulation';
         toggle.addEventListener('click', function(e) {
             if (window.innerWidth <= familyMobileBreakpoint) {
+                e.stopPropagation();
+                e.preventDefault();
                 const wrapper = this.closest('.row-actions');
                 const menu = wrapper?.querySelector('.row-actions-menu');
                 if (!wrapper || !menu) return;
@@ -1397,8 +1468,6 @@ const optimizeFamilyRowActions = () => {
                 } else {
                     wrapper.classList.add('open');
                     this.setAttribute('aria-expanded', 'true');
-                    const firstItem = menu.querySelector('.row-action-item');
-                    if (firstItem) firstItem.focus({ preventScroll: true });
                 }
             }
         });
