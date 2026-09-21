@@ -67,57 +67,60 @@ def create_app():
     from sqlalchemy import inspect as sqlinspect
     with app.app_context():
         inspector = sqlinspect(db.engine)
-        user_columns = [c['name'] for c in inspector.get_columns('user')]
-        if 'status' not in user_columns:
+        # Only run migrations if the user table exists (skip on fresh databases)
+        all_tables = inspector.get_table_names()
+        if 'user' in all_tables:
+            user_columns = [c['name'] for c in inspector.get_columns('user')]
+            if 'status' not in user_columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'"))
+                    conn.commit()
+            if 'created_at' not in user_columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"))
+                    conn.commit()
+            if 'phone_num' not in user_columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN phone_num VARCHAR(20)"))
+                    conn.commit()
+            if 'id_number' not in user_columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN id_number INTEGER"))
+                    conn.commit()
+            if 'date_of_birth' not in user_columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN date_of_birth DATE"))
+                    conn.commit()
             with db.engine.connect() as conn:
-                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'"))
-                conn.commit()
-        if 'created_at' not in user_columns:
+                id_number_constraint = inspector.get_unique_constraints('user')
+                has_id_number_unique = any(
+                    'id_number' in (c['column_names'] if isinstance(c['column_names'], list) else [c['column_names']])
+                    for c in id_number_constraint
+                )
+                if not has_id_number_unique:
+                    try:
+                        conn.execute(db.text("ALTER TABLE \"user\" ADD CONSTRAINT \"user_id_number_key\" UNIQUE (\"id_number\")"))
+                        conn.commit()
+                    except Exception:
+                        pass
             with db.engine.connect() as conn:
-                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"))
+                conn.execute(db.text("UPDATE \"user\" SET status = 'active' WHERE role IN ('Developer', 'Administrator', 'Chairperson', 'Welfare Officer', 'Treasurer', 'Secretary') AND status = 'pending'"))
                 conn.commit()
-        if 'phone_num' not in user_columns:
+
+            # Add missing enum values to PostgreSQL accesslevel type
             with db.engine.connect() as conn:
-                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN phone_num VARCHAR(20)"))
-                conn.commit()
-        if 'id_number' not in user_columns:
-            with db.engine.connect() as conn:
-                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN id_number INTEGER"))
-                conn.commit()
-        if 'date_of_birth' not in user_columns:
-            with db.engine.connect() as conn:
-                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN date_of_birth DATE"))
-                conn.commit()
-        with db.engine.connect() as conn:
-            id_number_constraint = inspector.get_unique_constraints('user')
-            has_id_number_unique = any(
-                'id_number' in (c['column_names'] if isinstance(c['column_names'], list) else [c['column_names']])
-                for c in id_number_constraint
-            )
-            if not has_id_number_unique:
                 try:
-                    conn.execute(db.text("ALTER TABLE \"user\" ADD CONSTRAINT \"user_id_number_key\" UNIQUE (\"id_number\")"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'DEVEL'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'ADMIN'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'CHAIRPERSON'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'TREASURER'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'SECRETARY'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'WELFARE_OFFICER'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Spouse'"))
+                    conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Child'"))
                     conn.commit()
                 except Exception:
                     pass
-        with db.engine.connect() as conn:
-            conn.execute(db.text("UPDATE \"user\" SET status = 'active' WHERE role IN ('Developer', 'Administrator', 'Chairperson', 'Welfare Officer', 'Treasurer', 'Secretary') AND status = 'pending'"))
-            conn.commit()
-        
-        # Add missing enum values to PostgreSQL accesslevel type
-        with db.engine.connect() as conn:
-            try:
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'DEVEL'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'ADMIN'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'CHAIRPERSON'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'TREASURER'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'SECRETARY'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'WELFARE_OFFICER'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Spouse'"))
-                conn.execute(db.text("ALTER TYPE accesslevel ADD VALUE IF NOT EXISTS 'Child'"))
-                conn.commit()
-            except Exception:
-                pass
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.index'

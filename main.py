@@ -3,13 +3,14 @@ import logging
 from app import create_app
 from app import db
 
-# The app instance is created at module level for WSGI compatibility
+# The app instance is created at module level for WSGI compatibility (Render.com + gunicorn)
 app = create_app()
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
+# Ensure database tables exist (runs on WSGI import, e.g. via gunicorn)
+with app.app_context():
+    db.create_all()
 
+if __name__ == "__main__":
     host = os.environ.get("HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", 5000))
 
