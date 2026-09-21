@@ -180,6 +180,8 @@ def home():
 
     else:
         member = current_user.member_profile
+        if not member and current_user.primary_member_id:
+            member = Member.query.get(current_user.primary_member_id)
         if member:
             all_contributions = member.contribute
             total_contributions = sum(c.amount for c in all_contributions)

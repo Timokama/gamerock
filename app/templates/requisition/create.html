@@ -74,6 +74,9 @@
                     </select>
                 </div>
                 {% endif %}
+                {% if not can_manage and preselected_member_id %}
+                <input type="hidden" name="member_id" value="{{ preselected_member_id }}">
+                {% endif %}
                 <div class="mg-form-group">
                     <label>Items *</label>
                     <div id="items-container">
@@ -103,12 +106,11 @@
                                         <input type="text" name="item_name_other[]" value="{{ other_names[i] if i < other_names|length else '' }}" placeholder="Specify item..." class="form-control">
                                     </div>
                                     {% endif %}
+                                    <div class="mg-form-group quantity-group">
+                                        <input type="number" name="quantity[]" min="1" value="{{ quantities[i] if i < quantities|length else 1 }}" placeholder="Qty" required>
+                                    </div>
+                                    <button type="button" class="btn btn-outline remove-item-btn" onclick="removeItemRow(this)">Remove</button>
                                 </div>
-                                <div class="mg-form-group quantity-group">
-                                    <input type="number" name="quantity[]" min="1" value="{{ quantities[i] if i < quantities|length else 1 }}" placeholder="Qty" required>
-                                </div>
-                                <button type="button" class="btn btn-outline remove-item-btn" onclick="removeItemRow(this)">Remove</button>
-                            </div>
                             {% endfor %}
                         {% else %}
                             <div class="item-row">

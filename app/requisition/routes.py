@@ -30,10 +30,9 @@ def index():
         if member_filter:
             query = query.filter(Requisition.member_id == member_filter)
     else:
-        if not user.member_profile:
-            flash('You need a member profile to view requisitions.', 'warning')
-            return redirect(url_for('home.home'))
-        query = query.filter(Requisition.member_id == user.member_profile.id)
+        user_member_id = user.member_profile.id if user.member_profile else user.primary_member_id
+        if user_member_id:
+            query = query.filter(Requisition.member_id == user_member_id)
 
     if search:
         like = f'%{search}%'
@@ -81,7 +80,7 @@ def create():
 
         if not date_taken_str:
             members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-            preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+            preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
             return render_template(
                 'requisition/create.html',
                 members=members,
@@ -93,7 +92,7 @@ def create():
 
         if not item_names or not any(name.strip() for name in item_names):
             members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-            preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+            preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
             return render_template(
                 'requisition/create.html',
                 members=members,
@@ -111,7 +110,7 @@ def create():
                 other_value = other_names[other_idx].strip() if other_idx < len(other_names) else ''
                 if not other_value:
                     members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-                    preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+                    preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
                     return render_template(
                         'requisition/create.html',
                         members=members,
@@ -133,8 +132,8 @@ def create():
             except (ValueError, TypeError):
                 first_quantity = 1
 
-        if not member_id and user.member_profile:
-            member_id = user.member_profile.id
+        if not member_id and (user.member_profile or user.primary_member_id):
+            member_id = user.member_profile.id if user.member_profile else user.primary_member_id
 
         if not member_id:
             flash('You must be linked to a member profile to create a requisition.', 'danger')
@@ -143,7 +142,7 @@ def create():
         member = Member.query.get(member_id)
         if not member:
             members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-            preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+            preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
             return render_template(
                 'requisition/create.html',
                 members=members,
@@ -153,7 +152,8 @@ def create():
                 form_data=request.form
             )
 
-        if not can_manage_requisition() and member.id != user.member_profile.id:
+        user_member_id = user.member_profile.id if user.member_profile else user.primary_member_id
+        if not can_manage_requisition() and member.id != user_member_id:
             flash('You do not have permission to create requisitions for other members.', 'danger')
             return redirect(url_for('requisition.index'))
 
@@ -161,7 +161,7 @@ def create():
             date_taken = datetime.strptime(date_taken_str, '%Y-%m-%d').date()
         except (ValueError, TypeError):
             members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-            preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+            preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
             return render_template(
                 'requisition/create.html',
                 members=members,
@@ -177,7 +177,7 @@ def create():
                 expected_return_date = datetime.strptime(expected_return_date_str, '%Y-%m-%d').date()
             except (ValueError, TypeError):
                 members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-                preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+                preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
                 return render_template(
                     'requisition/create.html',
                     members=members,
@@ -223,7 +223,7 @@ def create():
         return redirect(url_for('requisition.index'))
 
     members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
-    preselected_member_id = current_user.member_profile.id if current_user.member_profile else None
+    preselected_member_id = current_user.member_profile.id if current_user.member_profile else current_user.primary_member_id
     return render_template(
         'requisition/create.html',
         members=members,
@@ -237,10 +237,14 @@ def create():
 def edit(req_id):
     user = User.query.get_or_404(current_user.id)
     requisition = Requisition.query.get_or_404(req_id)
-
-    if not can_manage_requisition() and requisition.member_id != (user.member_profile.id if user.member_profile else None):
+    
+    user_member_id = user.member_profile.id if user.member_profile else user.primary_member_id
+    
+    if not can_manage_requisition() and requisition.member_id != user_member_id:
         flash('You do not have permission to edit this requisition.', 'danger')
         return redirect(url_for('requisition.index'))
+
+    members = Member.query.order_by(Member.firstname).all() if can_manage_requisition() else []
 
     if request.method == 'POST':
         date_taken_str = request.form.get('date_taken', '').strip()
@@ -405,7 +409,7 @@ def view(req_id):
         db.joinedload(Requisition.items)
     ).get_or_404(req_id)
 
-    if not can_manage_requisition() and requisition.member_id != (user.member_profile.id if user.member_profile else None):
+    if not can_manage_requisition() and requisition.member_id != (user.member_profile.id if user.member_profile else user.primary_member_id):
         flash('You do not have permission to view this requisition.', 'danger')
         return redirect(url_for('requisition.index'))
 

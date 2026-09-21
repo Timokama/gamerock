@@ -398,34 +398,7 @@
     color: #fff;
 }
 
-@media (max-width: 768px) {
-    .expand-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.25rem;
-        touch-action: manipulation;
-    }
-}
-
 @media (max-width: 576px) {
-    .deposit-filters .filter-group label {
-        font-size: var(--text-xs);
-        margin-bottom: var(--space-1);
-    }
-
-    .deposit-filters .filter-group input,
-    .deposit-filters .filter-group select {
-        font-size: var(--text-sm);
-        padding: var(--space-2) var(--space-3);
-        border-radius: var(--radius-md);
-        min-height: 44px;
-    }
-
-    .deposit-filters .filter-actions .btn {
-        font-size: var(--text-sm);
-        min-height: 44px;
-    }
-
     .expand-btn {
         width: 40px;
         height: 40px;
@@ -2092,58 +2065,5 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
-// ===== Mobile Deposit Filter Optimization =====
-const depositMobileBreakpoint = 768;
-
-const optimizeDepositFilters = () => {
-    if (window.innerWidth > depositMobileBreakpoint) return;
-    document.querySelectorAll('.deposit-filters .filter-group input, .deposit-filters .filter-group select').forEach(el => {
-        if (el.style.fontSize === '' || parseFloat(getComputedStyle(el).fontSize) < 16) {
-            el.style.fontSize = '16px';
-        }
-    });
-};
-
-const keepDepositFilterVisible = () => {
-    if (window.innerWidth > depositMobileBreakpoint) return;
-    const active = document.activeElement;
-    if (!active) return;
-    const filterRow = active.closest('.filter-row');
-    if (!filterRow) return;
-    const rect = active.getBoundingClientRect();
-    if (rect.top < 0 || rect.bottom > window.innerHeight) {
-        active.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-};
-
-optimizeDepositFilters();
-window.addEventListener('resize', optimizeDepositFilters);
-document.addEventListener('focusin', keepDepositFilterVisible, true);
-
-// ===== Mobile Expand Optimization =====
-const optimizeDepositExpand = () => {
-    if (window.innerWidth > depositMobileBreakpoint) return;
-    document.querySelectorAll('.expand-btn, .dashboard-expand-btn').forEach(btn => {
-        if (!btn.dataset.mobileOptimized) {
-            btn.dataset.mobileOptimized = 'true';
-            btn.style.touchAction = 'manipulation';
-        }
-    });
-};
-
-const cleanupDepositExpand = () => {
-    document.querySelectorAll('.expand-btn, .dashboard-expand-btn').forEach(btn => {
-        if (btn.dataset.mobileOptimized) {
-            delete btn.dataset.mobileOptimized;
-            btn.style.touchAction = '';
-        }
-    });
-};
-
-optimizeDepositExpand();
-window.addEventListener('resize', () => {
-    if (window.innerWidth <= depositMobileBreakpoint) optimizeDepositExpand();
-    else cleanupDepositExpand();
-});
 </script>
 {% endblock %}

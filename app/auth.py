@@ -125,10 +125,10 @@ def login(role):
         if user.role == AccessLevel.USER:
             return redirect(url_for('home.home'))
         
-        # Family members (spouse/child) go to family interface
-        family_redirect = get_family_member_redirect(user)
-        if family_redirect:
-            return family_redirect
+        # Family members (spouse/child) go to their overview section
+        # The overview page handles family member context via the context processor
+        if user.role in (AccessLevel.SPOUSE, AccessLevel.CHILD):
+            return redirect(url_for('home.home'))
         
         # Fallback
         return redirect(url_for('home.home'))
