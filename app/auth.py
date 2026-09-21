@@ -68,10 +68,19 @@ def login(role):
         email = request.form.get('email') or session_email
         password = request.form.get('password')
         
-        # Validate role parameter
+        # Validate role parameter from URL - accept both enum names (SPOUSE) and values (Spouse)
         role_enum = None
-        if role in AccessLevel.__members__:
+        role_upper = role.upper()
+        if role_upper in AccessLevel.__members__:
+            role_enum = AccessLevel[role_upper]
+        elif role in AccessLevel.__members__:
             role_enum = AccessLevel[role]
+        else:
+            # Try matching by enum value (case-insensitive)
+            for member in AccessLevel:
+                if member.value.lower() == role.lower():
+                    role_enum = member
+                    break
         
         user_id = session.get('auth_user_id')
         if user_id:
@@ -125,10 +134,9 @@ def login(role):
         if user.role == AccessLevel.USER:
             return redirect(url_for('home.home'))
         
-        # Family members (spouse/child) go to their overview section
-        # The overview page handles family member context via the context processor
+        # Family members (spouse/child) go to family dashboard
         if user.role in (AccessLevel.SPOUSE, AccessLevel.CHILD):
-            return redirect(url_for('home.home'))
+            return redirect(url_for('register.dashboard'))
         
         # Fallback
         return redirect(url_for('home.home'))
