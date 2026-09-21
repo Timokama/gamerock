@@ -409,7 +409,8 @@ def view(req_id):
         db.joinedload(Requisition.items)
     ).get_or_404(req_id)
 
-    if not can_manage_requisition() and requisition.member_id != (user.member_profile.id if user.member_profile else user.primary_member_id):
+    user_member_id = user.member_profile.id if user.member_profile else user.primary_member_id
+    if not can_manage_requisition() and requisition.member_id != user_member_id:
         flash('You do not have permission to view this requisition.', 'danger')
         return redirect(url_for('requisition.index'))
 
