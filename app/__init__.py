@@ -34,8 +34,12 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = PEOPLE_FOLDER
     
     # app.config["SERVER_NAME"] = 'localhost'
-    app.config['SECRET_KEY'] = 'secret_key_goes_here'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gamerock_user:gamerock_password@localhost/gamerock'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret_key_goes_here')
+    # Use DATABASE_URL from environment (Render.com provides this), fall back to local PostgreSQL
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL',
+        'postgresql://gamerock_user:gamerock_password@localhost/gamerock'
+    )
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:secret123@localhost/gamerock"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
