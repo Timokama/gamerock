@@ -10,7 +10,7 @@ services:
     startCommand: gunicorn main:app
     envVars:
       - key: SECRET_KEY
-        value: "change_this_to_a_secure_random_string"
+        value: "lpsrgrgnrtowp5tn_tret-region"
       - key: DATABASE_URL
         fromDatabase:
           name: gamerock-db
