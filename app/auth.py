@@ -92,10 +92,8 @@ def login(role):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login', role=role))
 
-        # Validate user's actual role matches expected role from URL
-        if role_enum and user.role != role_enum:
-            flash(f'Account exists but has role "{user.role.value}", not "{role_enum.value}".', 'danger')
-            return redirect(url_for('auth.login', role=role))
+        # Role parameter from URL is just a hint; allow any valid user to log in
+        # The actual role-based redirect happens after successful authentication below
 
         # Check if user is a spouse/child by querying relationship tables directly
         is_spouse = Spouse.query.filter_by(user_id=user.id).first() is not None

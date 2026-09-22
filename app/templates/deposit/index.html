@@ -1443,13 +1443,7 @@
 {% endblock %}
 
 {% block content %}
-{% set add_contrib_disallowed = False %}
-{% for category, message in get_flashed_messages(with_categories=true) %}
-  {% if "You do not have permission to add contributions" in message %}
-    {% set add_contrib_disallowed = True %}
-  {% endif %}
-{% endfor %}
-{% if user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] and not add_contrib_disallowed %}
+{% if user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
 <!-- Page Header -->
 <div class="deposit-page-header">
     <h2>Deposits</h2>
@@ -1629,7 +1623,7 @@
                                         <span class="row-action-hint">View contribution history</span>
                                     </span>
                                 </a>
-                                {% if not add_contrib_disallowed %}
+                                {% if current_user.role.name in ['DEVEL', 'ADMIN', 'WELFARE_OFFICER', 'TREASURER'] %}
                                 <a href="{{ url_for('deposit.amount', depo_id=member.id) }}" class="row-action-item" role="menuitem">
                                     <span class="row-action-icon" aria-hidden="true"><i class="bi bi-cash-stack"></i></span>
                                     <span class="row-action-copy">
