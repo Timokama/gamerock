@@ -33,8 +33,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret_key_goes_here')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL',
-        # 'postgresql://gamerock_user:AplSXAHeBYp1P714FQ908HzRIcBVgmrV@dpg-daoflhgae00c73cbg030-a/gamerock'
-        'postgresql://gamerock_user:gamerock_password@localhost/gamerock'
+        'postgresql://gamerock_user:AplSXAHeBYp1P714FQ908HzRIcBVgmrV@dpg-daoflhgae00c73cbg030-a/gamerock'
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['TEMPLATES_AUTO_RELOAD'] = True
