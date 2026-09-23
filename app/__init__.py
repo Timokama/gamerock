@@ -31,6 +31,19 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = PEOPLE_FOLDER
     
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret_key_goes_here')
+
+    # Google Sites embeds this app in a cross-site iframe.
+    # Use a partitioned Secure cookie so Flask sessions work inside that iframe
+    # without disabling CSRF protection. Flask 3.1+ supports Partitioned cookies.
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_PARTITIONED'] = True
+
+    # Flask-Login remember cookies (for browsers that use remember-me).
+    app.config['REMEMBER_COOKIE_SAMESITE'] = 'None'
+    app.config['REMEMBER_COOKIE_SECURE'] = True
+    app.config['REMEMBER_COOKIE_HTTPONLY'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL',
         'postgresql://gamerock_user:AplSXAHeBYp1P714FQ908HzRIcBVgmrV@dpg-daoflhgae00c73cbg030-a/gamerock'
@@ -53,6 +66,12 @@ def create_app():
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
+        # Allow the application to be embedded by Google Sites.
+        # X-Frame-Options is intentionally omitted because it cannot express
+        # the allowed Google Sites origins as precisely as frame-ancestors.
+        response.headers['Content-Security-Policy'] = (
+            "frame-ancestors 'self' https://sites.google.com https://*.googleusercontent.com;"
+        )
         return response
 
     db.init_app(app)
