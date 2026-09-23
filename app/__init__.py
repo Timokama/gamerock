@@ -32,19 +32,16 @@ def create_app():
     
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret_key_goes_here')
 
-    # For authenticated Google Sites embedding, use the same custom registrable domain
-    # for both sites (for example www.gamerockwelfare.co.ke and app.gamerockwelfare.co.ke).
-    # This keeps the Flask session same-site and lets CSRF tokens persist normally.
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    # Google Sites embeds this app in a cross-site iframe.
+    # Keep CSRF protection enabled while allowing the Flask session cookie
+    # to persist inside the embedded context using CHIPS/Partitioned cookies.
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['SESSION_COOKIE_HTTPONLY'] = True
-    # Google Sites and Render use subdomains of the same custom domain
-    # (for example www.gamerockwelfare.co.ke + app.gamerockwelfare.co.ke),
-    # so the browser treats the session as same-site and can send it in the iframe.
-    app.config['SESSION_COOKIE_PARTITIONED'] = False
+    app.config['SESSION_COOKIE_PARTITIONED'] = True
 
-    # Flask-Login remember cookies (for browsers that use remember-me).
-    app.config['REMEMBER_COOKIE_SAMESITE'] = 'Lax'
+    # Flask-Login remember cookie.
+    app.config['REMEMBER_COOKIE_SAMESITE'] = 'None'
     app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_HTTPONLY'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -69,12 +66,6 @@ def create_app():
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
-        # Allow the application to be embedded by Google Sites.
-        # X-Frame-Options is intentionally omitted because it cannot express
-        # the allowed Google Sites origins as precisely as frame-ancestors.
-        response.headers['Content-Security-Policy'] = (
-            "frame-ancestors 'self' https://sites.google.com https://*.googleusercontent.com;"
-        )
         return response
 
     db.init_app(app)
